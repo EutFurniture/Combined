@@ -1,0 +1,16 @@
+.chart{
+    background-color: #d1ecf1;
+    margin: 20px;
+    padding: 20px;
+    color:#1c1cf0;
+
+background-color: white;
+}
+.chartTitle{
+    margin-bottom: 20px;
+    color: black;
+}
+.Line{
+    border-radius: 10px;
+    -fx-padding: 20px;
+}
