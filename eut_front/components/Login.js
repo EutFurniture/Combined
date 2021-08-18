@@ -41,16 +41,16 @@ function Login() {
       if (response.data.message) {
         setLoginStatus(response.data.message);
       } 
-      else if(response.data[0].user_role === 'SalesManager'){
+      else if((response.data[0].user_role === 'SalesManager') && (response.data[0].u_verify === 1)){
           window.location.href='/DashboardNew'
         } 
       else if((response.data[0].user_role === 'DeliveryManager') && (response.data[0].u_verify === 1)){
           window.location.href='/dManager/pages/Dashboard'
       }
-      else if(response.data[0].user_role === 'Customer'){
+      else if((response.data[0].user_role === 'Customer') && (response.data[0].u_verify === 1)){
         window.location.href='/dManager/pages/ManageDelivery'
     }
-    else if(response.data[0].user_role === 'Deliver'){
+    else if((response.data[0].user_role === 'Deliver') && (response.data[0].u_verify === 1)){
       window.location.href='/dPerson/pages/DpDashboard'
   }
 

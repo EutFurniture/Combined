@@ -32,6 +32,7 @@ function ForgetPassword() {
       if (response.data.message) {
         setforgetStatus(response.data.message);
         alert(response.data.message)
+        window.location.href='/ResetPassword'
       } 
     }
     );
