@@ -1,0 +1,30 @@
+.logo{
+    width:95vw;
+    height: 70vh;
+    align-items: center;
+    position: relative;
+    left:2%;
+}
+
+.p1{
+    text-align: center;
+    color: rgb(17, 83, 170);
+    text-shadow: 0 10px 100px rgb(20, 19, 19);
+    font-size:30px;
+    margin-top: 10px;
+    font-weight: bold;
+    padding: 10px;
+}
+
+#ab{
+    
+    font-weight: 20px;
+}
+
+ul .ser{
+    list-style-type:circle;
+}
+
+.about{
+    font-size: 20px;
+}
