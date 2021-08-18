@@ -33,7 +33,9 @@ import Grid from '@material-ui/core/Grid';
 import Divider from '@material-ui/core/Divider';
 import DoughnutChart from '../../charts/DoughnutChart'
 import {Redirect} from "react-router-dom"
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+import {toast} from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+
 
 import {Bar, Pie, Doughnut} from 'react-chartjs-2'
 import {userData} from "../../charts/dummydata"
@@ -181,12 +183,20 @@ const styles = {
 };
 
 
-
+toast.configure()
 const DashboardNew=()=> {
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
   const {todate}=useParams();
   const {fromdate}=useParams();
+
+  const [cusorderCount,setCusOrderCount]=useState([])
+  useEffect(()=>{
+    axios.get("http://localhost:3001/CustomizedOrderCount").then((response)=>{
+      setCusOrderCount(response.data)
+      
+    })
+  },[])
   
   const [quantityList,setQuantityList]=useState([])
   useEffect(()=>{
@@ -286,7 +296,7 @@ const DashboardNew=()=> {
       });
 
       setDt(response.data[0]);
-         console.log(response.data[0]);
+        //  console.log(response.data[0]);
 
   };
   fetchData();
@@ -296,12 +306,23 @@ const [catList,setCatList]=useState([])
 useEffect(()=>{
   axios.get("http://localhost:3001/CategoryNoChart").then((response)=>{
     setCatList(response.data)
-    console.log(response)
+    // console.log(response)
   })
 },[])
 
 const arr=catList.map(record=>record.quantity);
 const cat=catList.map(record=>record.name);
+
+const NotificationClick = async () => {
+  const response = await axios.get('http://localhost:3001/NoficationActive', {
+     
+      
+  });
+  notify();
+}
+
+const customizedcount=cusorderCount.map(record=>record.count);
+console.log(customizedcount);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -327,6 +348,12 @@ const cat=catList.map(record=>record.name);
     return <Redirect to="" />
   }
 
+  const notify=()=>{
+   
+    toast.info('You have Customized Order notification from Customer ',{position:toast.POSITION.TOP_RIGHT,autoClose:false})
+  
+      }
+
 
   return (
     <div className={classes.root}>
@@ -345,11 +372,13 @@ const cat=catList.map(record=>record.name);
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
             <b>ADMIN</b>
           </Typography>
+          
           <IconButton color="inherit">
-            <Badge badgeContent={4} color="secondary">
-              <NotificationsIcon />
+            <Badge badgeContent={customizedcount} color="secondary">
+              <NotificationsIcon onClick={NotificationClick}/>
             </Badge>
           </IconButton>
+           
 
          
           {/* <IconButton color="inherit" fontSize="inherit">
