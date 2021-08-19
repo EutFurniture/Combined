@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 
 import React, {useState} from 'react';
 import Axios from 'axios';
-//import Dashboard from "../Dashboard";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import login from "../images/sofa1.jpeg";
@@ -31,10 +30,10 @@ function Login() {
   const logininfo = (data) => {
   
     Axios.post("http://localhost:3001/login", {
-      
      email: data.email,
      password: data.password,
      role: data.role,
+     verify: data.verify,
       
     }).then((response) => {
       console.log(response)
@@ -42,16 +41,16 @@ function Login() {
       if (response.data.message) {
         setLoginStatus(response.data.message);
       } 
-      else if(response.data[0].user_role === 'SalesManager'){
+      else if((response.data[0].user_role === 'SalesManager') && (response.data[0].u_verify === 1)){
           window.location.href='/DashboardNew'
         } 
-      else if(response.data[0].user_role === 'DeliveryManager'){
+      else if((response.data[0].user_role === 'DeliveryManager') && (response.data[0].u_verify === 1)){
           window.location.href='/dManager/pages/Dashboard'
       }
-      else if(response.data[0].user_role === 'Customer'){
+      else if((response.data[0].user_role === 'Customer') && (response.data[0].u_verify === 1)){
         window.location.href='/dManager/pages/ManageDelivery'
     }
-    else if(response.data[0].user_role === 'Deliver'){
+    else if((response.data[0].user_role === 'Deliver') && (response.data[0].u_verify === 1)){
       window.location.href='/dPerson/pages/DpDashboard'
   }
 
@@ -102,7 +101,7 @@ function Login() {
                <button  type="submit"   className="btnlogin">Log in</button><br/>
 
                 <div class="forget">
-                <Link to="/forgotpassword">Forgot Password?</Link>
+                <Link to="/ForgetPassword">Forgot Password?</Link>
                 </div>
                 <div className="mainpage">
                 

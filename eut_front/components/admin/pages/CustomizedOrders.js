@@ -1,8 +1,16 @@
 import clsx from 'clsx';
 import sofa from '../../../assets/sofa.jpg'
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import '../css/popupmodel.css'
-import {Link} from 'react-router-dom'
+import {Link, useParams} from 'react-router-dom'
+import axios from 'axios'
+import "../css/manageEmployee.css";
+import 'bootstrap/dist/css/bootstrap.min.css';
+import {Table} from 'react-bootstrap';
+import ReactNotification from 'react-notifications-component'
+import {store} from "react-notifications-component"
+import "animate.css"
+import "react-notifications-component/dist/theme.css"
 
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -168,22 +176,22 @@ const useStyles = makeStyles((theme) => ({
  accept:{
    marginLeft:'200px',
    backgroundColor:'#32cd32',
-   width:'120px',
-   height:'40px',
+   padding:'10px 30px 10px 30px',
    border:'none',
    borderRadius:'5px',
    color:'white',
-   fontSize:'18px'
+   fontSize:'18px',
+   textDecoration:'none'
  },
  reject:{
   marginLeft:'20px',
   backgroundColor:'#ff0000',
-  width:'120px',
-  height:'40px',
+  padding:'10px 30px 10px 30px',
   border:'none',
   borderRadius:'5px',
   color:'white',
-  fontSize:'18px'
+  fontSize:'18px',
+  textDecoration:'none'
 
 },
 furimg:{
@@ -204,6 +212,15 @@ addbtn:{
 categoryInput:{
   border:'1px',
   borderColor:'black'
+},
+cusbutton:{
+  marginLeft:'20px',
+  width:'100px',
+  marginTop:'10px',
+  border:'none',
+  borderRadius:'10px',
+  backgroundColor:'blue',
+  color:'white'
 }
 
 
@@ -216,6 +233,7 @@ const styles = {
 };
 
 
+
 export default function CustomizedOrders() {
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
@@ -226,10 +244,114 @@ export default function CustomizedOrders() {
     setOpen(false);
   };
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
-
+  const [searchTerm,setSearchTerm]=useState("");
   const [isOpen, setIsOpen] = useState(false);
 
+  const [cus_orderList,setCus_OrderList]=useState([])
+ useEffect(()=>{
+   axios.get("http://localhost:3001/Customized").then((response)=>{
+    setCus_OrderList(response.data)
+   })
+ },[])
+
+ const [orderview,setOrderView]=useState([])
+const {cus_product_id}=useParams();
   
+ const viewOrder = async (cus_product_id) => {
+     const response = await axios.get('http://localhost:3001/ViewCusOrder', {
+         params: {
+             cus_product_id:cus_product_id,  
+         }
+         
+     });
+
+     setOrderView(response.data);
+        console.log(response.data[0]);
+
+ }
+
+ const deleteOrder = async (cus_product_id) => {
+   await axios.put('http://localhost:3001/DeleteCustomizedOrder', {
+      params: {
+          cus_product_id:cus_product_id,  
+      }
+      
+  });
+
+}
+
+
+const statusUpdate = async (cus_product_id) => {
+  const response = await axios.get('http://localhost:3001/OrderStatus', {
+      params: {
+          cus_product_id:cus_product_id,  
+      }
+      
+  });
+alert("Order Removed from list");
+}
+
+const [newdelivery_date,setDate] = useState(0);
+const [newtotal_payment,setTotal] = useState(0);
+const [newadvanced_payment,setAdvanced] = useState(0);
+const {customer_id}=useParams();
+const [Dt, setDt] = useState([])
+
+
+//   const orderData = async (customer_id) => {
+//     console.log(customer_id)
+//       const response = await axios.get('http://localhost:3001/updateCustomized', {
+//           params: {
+//             customer_id: customer_id,
+              
+//           }
+//       });
+
+//       setDt(response.data[0]);
+      
+//   };
+  
+
+// const [categoryList,setCategoryList]=useState([])
+// useEffect(()=>{
+//   axios.get("http://localhost:3001/loadcusorder").then((response)=>{
+//     setCategoryList(response.data)
+//   })
+// },[])
+
+// const InsertOrder = (customer_id) => {
+//   axios.put("http://localhost:3001/InsertCustomized", {delivery_date: newdelivery_date,total_payment:newtotal_payment,advanced_payment:newadvanced_payment,customer_id: customer_id}).then(
+//     (response) => {
+      
+//       setCategoryList(Dt.map((val) => {
+//         return val.customer_id === customer_id ? {customer_id: val.customer_id, delivery_date: val.delivery_date,total_payment: val.total_payment,advanced_payment:val.advanced_payment,  delivery_date: newdelivery_date,total_payment:newtotal_payment,advanced_payment:newadvanced_payment} : val
+        
+//       }))
+//    }
+//   )
+//   alert("Category Edited successfully")  
+// };
+
+// const addCustomizedOrder =  async (customer_id)=>{
+
+//   await axios.post('http://localhost:3001/AddCustomizedOrder',{
+//     params: {
+//       customer_id:customer_id,  
+//   },
+//      delivery_date:delivery_date,
+//      total_payment:total_payment,
+//      advanced_payment:advanced_payment,
+     
+
+//     }).then(()=>{
+//      alert('Category added successfully')
+//      window.location.href='/admin/pages/CustomizedOrders'
+//      });
+// };
+
+//  const deleteOrder =(cus_product_id)=>{
+//   axios.delete("http://localhost:3001/DeleteCustomizedOrder");
+// }
 
   const [reject, setReject] = useState(false);
 
@@ -245,7 +367,7 @@ export default function CustomizedOrders() {
 
   const [accept, setAccept] = useState(false);
 
-  const toggleAccept = () => {
+  const toggleAccept = (customer_id) => {
     setAccept(!accept);
   };
 
@@ -322,86 +444,87 @@ export default function CustomizedOrders() {
                   <strong>  CUSTOMIZED ORDERS </strong>
                 
                 </Typography>
-                <Button  className={classes.viewbutton} href='\admin\pages\ViewCustomizedOrder'> View</Button><br/>
+                <Button  className={classes.viewbutton} href='\admin\pages\ViewCustomizedOrder'> View</Button>
               
               
                
                <Paper className={classes.orderbox}>
-                  <div className={classes.orderboxleft} style={{ width: '45%' }}>
+                  <div className={classes.orderboxleft} style={{ width: '50%' }}>
                   <Box display="flex" flexDirection="row" p={0} m={1} bgcolor="background.paper" style={{ height: '40px',marginTop:'20px' }}>
-                     <Box p={0} style={{ fontSize:'25px',marginLeft:'100px' }}><b>Requested Order Lists </b></Box>
+                     <Box p={0} style={{ fontSize:'25px',marginLeft:'100px' }}><h2 ><b>REQUESTED ORDERS</b> </h2></Box>
                    </Box>
-                   <Box display="flex" flexDirection="row" p={0} m={1} bgcolor="background.paper" style={{ height: '40px' }}>
-                     <Box p={1} >Search here </Box>
+                   
+                   <Box display="flex" flexDirection="row" p={0} m={1} bgcolor="background.paper" style={{ height: '40px' }} >
+                     <Box p={1} ><input type="text"  placeholder="Search" onChange={(e)=>{setSearchTerm(e.target.value);}} style={{border:'none'}} /> </Box>
                      <Box p={1} style={{ marginLeft: '380px' }}><SearchIcon/> </Box>
                    </Box>
-                   <Box display="flex" flexDirection="row" p={0} m={1} bgcolor="background.paper" style={{ height: '40px',borderRadius:'10px' }}>
-                     <Box style={{ marginLeft: '20px' }} p={1} p={1} >ID: 2 </Box>
-                     <Box style={{ marginLeft: '50px' }} p={1} >Productname: Sofa </Box>
-                     <Box p={1} style={{ marginLeft: '210px' }}>< NotificationImportantIcon/> </Box>
-                   </Box>
-                   <Box display="flex" flexDirection="row" p={0} m={1} bgcolor="background.paper" style={{ height: '40px',borderRadius:'10px' }}>
-                     <Box style={{ marginLeft: '20px' }} p={1} p={1} >ID: 5 </Box>
-                     <Box style={{ marginLeft: '50px' }} p={1} >Productname: Table </Box>
-                     <Box p={1} style={{ marginLeft: '205px' }}>< NotificationImportantIcon/> </Box>
-                   </Box>
-                   <Box display="flex" flexDirection="row" p={0} m={1} bgcolor="background.paper" style={{ height: '40px',borderRadius:'10px' }}>
-                     <Box style={{ marginLeft: '20px' }} p={1} p={1} >ID: 7 </Box>
-                     <Box style={{ marginLeft: '50px' }} p={1} >Productname: Cupboard </Box>
-                     <Box p={1} style={{ marginLeft: '175px' }}>< NotificationImportantIcon/> </Box>
-                   </Box>
-                   <Box display="flex" flexDirection="row" p={0} m={1} bgcolor="background.paper" style={{ height: '40px',borderRadius:'10px' }}>
-                     <Box style={{ marginLeft: '20px' }} p={1} p={1} >ID: 12 </Box>
-                     <Box style={{ marginLeft: '40px' }} p={1} >Productname: Dining </Box>
-                     <Box p={1} style={{ marginLeft: '200px' }}>< NotificationImportantIcon/> </Box>
-                   </Box>
-                   <Box display="flex" flexDirection="row" p={0} m={1} bgcolor="background.paper" style={{ height: '40px',borderRadius:'10px' }}>
-                     <Box style={{ marginLeft: '20px' }} p={1} p={1} >ID: 17 </Box>
-                     <Box style={{ marginLeft: '40px' }} p={1} >Productname: Track </Box>
-                     <Box p={1} style={{ marginLeft: '205px' }}><CheckIcon/> </Box>
-                   </Box>
-                   <Box display="flex" flexDirection="row" p={0} m={1} bgcolor="background.paper" style={{ height: '40px',borderRadius:'10px' }}>
-                     <Box style={{ marginLeft: '20px' }} p={1} p={1} >ID: 11 </Box>
-                     <Box style={{ marginLeft: '40px' }} p={1} >Productname: Bookshelf </Box>
-                     <Box p={1} style={{ marginLeft: '180px' }}><CheckIcon/> </Box>
-                   </Box>
-                   <Box display="flex" flexDirection="row" p={0} m={1} bgcolor="background.paper" style={{ height: '40px',borderRadius:'10px' }}>
-                     <Box style={{ marginLeft: '20px' }} p={1} p={1} >ID: 15 </Box>
-                     <Box style={{ marginLeft: '40px' }} p={1} >Productname: Chair</Box>
-                     <Box p={1} style={{ marginLeft: '205px' }}><CloseIcon/> </Box>
-                   </Box>
+                   <Table striped bordered hover responsive style={{width:'590px',marginLeft:'10px',backgroundColor:'white'}}>
+        <thead className="tableheading">
+          <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Product Name</th>
+            <th align="center">Action</th>
+            
+          </tr>
+        </thead>
+       <tbody className="tablebody">
+                   {cus_orderList.map((record)=>{
+                       return(
+                        <tr align='center'>
+                        <th scope="row">{record.customer_id}</th>
+                        <td>{record.product_name}</td>
+                       
+                        <td align="center">
+                          
+                          <Link onClick={()=>{viewOrder(record.cus_product_id)}} className="viewbtn" > View </Link>
+                         <Link onClick={()=>{deleteOrder(record.cus_product_id)}} 
+                         style={{marginLeft:'20px'}} className="deletebtn" onClick={()=>{statusUpdate(record.cus_product_id)}}>Remove</Link>
+                        
+                            
+                        </td>
+                      </tr>
+                       )
+                       })}
+                  
+                  </tbody> 
+      </Table>
+                  
       
      
      
                   </div> 
                   <div className={classes.orderboxright}>
-                  
-                      <Box  bgcolor="background.paper" style={{ height: 'auto',borderRadius:'10px',width:'650px',marginTop:'15px' }}>
-                      <h1 align='center'>Order Details</h1>
+                  {orderview.map((record)=>{
+                       return(
+                      <Box  bgcolor="background.paper" style={{ height: 'auto',borderRadius:'10px',width:'600px',marginTop:'15px' }}>
+                      <h1 align='center'><b>ORDER DETAILS</b></h1><br/>
                      <Box display='flex' marginLeft='20px'>
+                  
                         <div className={classes.formbox}>
                          
-                           {/* <p><br/></p> */}
+                        
                            
-                           <p><b>Customer Name:</b> Suviththa Yoganathan</p>
-                           <p><b>Customer ID:</b> 2</p>
-                           <p><b>Product Name:</b> Sofa</p>
-                           <p><b>Product Design:</b> </p>
-                           <img src={sofa} className={classes.furimg}/>
-                           <p><b>Description:</b> Make a bold and appealing statement to  living space with this 3-seater fabric sofa</p>
-                           <p><b>Measurement:</b> 82.75" W x 33.25" D x 35.25" H</p>
-                           <p><b>Material:</b> Fabric</p>
-                           <p><b>Color:</b> Blue</p>
+                           <p><b>Customer Name:</b> {record.name}</p>
+                           <p><b>Customer ID:</b>{record.customer_id}</p>
+                           <p><b>Product Name:</b>{record.product_name}</p>
+                           <p><b>Product Design:</b></p>
+                           <img src={record.design} className={classes.furimg}/>
+                           <p><b>Description:</b> {record.description}</p>
+                           <p><b>Measurement:</b> {record.measurement}</p>
+                           <p><b>Material:</b> {record.material}</p>
+                           <p><b>Color:</b> {record.color}</p>
                            </div>
-                           
+                      
                           </Box>
                           <div display='flex'>
                             
-                          <Button className={classes.accept} onClick={toggleAccept}>Accept</Button>
-                          <Button className={classes.reject} onClick={toggleReject}>Reject</Button>
+                          <Link to={location=> `/Customize/${record.cus_product_id}`}  className={classes.accept}  >Accept</Link>
+                          <Link className={classes.reject} onClick={toggleReject}>Reject</Link>
                           </div>
                            <br/>
                       </Box>
+                        )
+                      })}
                       <br/>
                   </div> 
                 
@@ -417,25 +540,7 @@ export default function CustomizedOrders() {
         </Container>
 
       </main>
-      {accept && (
-        <div className="reject">
-        <div onClick={toggleAccept} className="overlay"></div>
-        <div className="modal-content">
-        <h6>Your Order has been accepted.<br/>You can see payment and delivery date details below.</h6>
-            <label>Delivery Date</label>
-            <input type="Date"  className='categoryInput' required /><br/>
-            <label>Advanced Payment</label>
-            <input type="text" className='categoryInput' required /><br/>
-            <label>Total Payment</label>
-            <input type="text" className='categoryInput' required /><br/>
-          <button type="submit" size='md' className={classes.addbtn} > Send</button>
-          <button align='center' className="close-modal" onClick={toggleAccept}>
-           <HighlightOffIcon/>
-          </button>
-        </div>
-      </div>
-      
-      )}
+     
 
 {reject && (
         <div className="reject">
