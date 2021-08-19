@@ -24,8 +24,10 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Grid from '@material-ui/core/Grid';
 import Divider from '@material-ui/core/Divider';
-
+import TimelineIcon from '@material-ui/icons/Timeline';
+import TrendingUpIcon from '@material-ui/icons/TrendingUp';
 import {Redirect} from "react-router-dom"
+import TrendingDownIcon from '@material-ui/icons/TrendingDown';
 
 
 import {Bar, Pie, Doughnut} from 'react-chartjs-2'
@@ -424,12 +426,12 @@ const count=moving.map(record=>record.count);
             <Grid  >
               <Paper style={{align:'center',marginLeft:'20px',backgroundColor: '#045de9',backgroundImage:'linear-gradient(315deg, #045de9 0%, #09c6f9 74%)',height:'230px',borderRadius:'20px'}}>
                   <h4 style={{color:'white',marginLeft:'50px',marginTop:'50px',paddingTop:'20px'}}>Fast Moving Item</h4>
-             <BarChartIcon style={{marginLeft:'100px',width:'100px',height:'120px',color:'white'}}/>
+             <TrendingUpIcon style={{marginLeft:'100px',width:'100px',height:'120px',color:'white'}}/>
              <h6 style={{marginLeft:'120px'}}>Sofa Set</h6>
               </Paper><br/>
               <Paper style={{align:'center',marginLeft:'20px',backgroundColor: '#045de9',backgroundImage:'linear-gradient(315deg, #045de9 0%, #09c6f9 74%)',height:'230px',borderRadius:'20px'}}>
                   <h4 style={{color:'white',marginLeft:'50px',paddingTop:'20px'}}>Slow Moving Item</h4>
-             <BarChartIcon style={{marginLeft:'100px',width:'100px',height:'120px',color:'white'}}/>
+             <TrendingDownIcon style={{marginLeft:'100px',width:'100px',height:'120px',color:'white'}}/>
              <h6 style={{marginLeft:'120px'}}>Sofa Set</h6>
               </Paper><br/>
               </Grid>  
