@@ -4,7 +4,7 @@ const GiftEdit=()=>{
     return(
         <div>
             <Switch>
-                <Route path="/GiftEdit/:ID">
+                <Route path="/GiftEdit/:product_id">
                     <EditGifts />
                 </Route>
             </Switch>
