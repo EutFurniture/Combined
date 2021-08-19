@@ -1,9 +1,10 @@
-import React from "react";
-import { Component } from 'react';
+import React,{ useState, useEffect } from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {Table} from 'react-bootstrap';
 import Alert from 'react-bootstrap/Alert'
 import { Link } from "react-router-dom";
+import axios from "axios";
+import SearchIcon from '@material-ui/icons/Search';
 
 const dateOnly = (d) => {
   const date = new Date(d);
@@ -43,70 +44,93 @@ updatebtn:{
   color: 'white',
   borderRadius: '7px',
 },
+
+searchbar:{
+  display: 'flex', 
+  width: '1200px',
+  height: '40px',
+  boxShadow: '0px 0px 12px -5px rgba(0, 0, 0, 0.75)',
+},
+
+input:{
+  border:'none',
+  fontSize:'18px',
+  paddingLeft:'10px',
+},
+
+icon:{
+  marginTop:'7px',
+  marginLeft:'120px',
+  color:'grey',
+},
+
 }
 
-class ViewDelivery extends Component{
-  constructor(props) {
-    super(props);
-    this.state = {
-      records: [],
-      isLoaded: false,
-    };
-  }
+export default function ViewDelivery(){
+  const [searchTerm, setSearchTerm] = useState("");
+  const [deliveryList,setDeliveryList]=useState([])
+  useEffect(()=>{
+    axios.get("http://localhost:3001/delivery").then((response)=>{
+      setDeliveryList(response.data)
+    })
+  },[])
 
-  componentDidMount() {
-    fetch('http://localhost:3001/delivery')
-      .then(res => res.json())
-      .then(result => {
-        this.setState({
-          isLoaded: true,
-          records: result,
+  return(
+    <div>
 
-        });
-      });
-      
-  }
+    <div style={styles.searchbar}>
+    <input type="text" onChange={(e)=>{setSearchTerm(e.target.value);}} placeholder="Search" style={styles.input}/>
+    <SearchIcon  className='searchicon' style={styles.icon}/>
+    </div>
+    <br></br>
+    <Table striped bordered hover responsive>
+      <thead >
+        <tr>
+          <th scope="col">OrderId</th>
+          <th scope="col">Last Date</th>
+          <th scope="col">Customer</th>
+          {/*<th scope="col">Ship To</th>*/}
+          <th scope="col">Payment Method</th>
+          <th scope="col">Status</th>
+          <th scope="col">DeliverId</th>
+          <th scope="col">Action</th>
+        </tr>
+      </thead>
+
+     <tbody>
+       {deliveryList.filter(val=>{if(searchTerm===""){
+         return val;
+       }
+       else if(
+         val.c_name.toLowerCase().includes(searchTerm.toLocaleLowerCase()) || val.o_status.toLocaleLowerCase().includes(searchTerm.toLocaleLowerCase()) || val.payment_method.toLocaleLowerCase().includes(searchTerm.toLocaleLowerCase())  )
+         {
+           return val
+         }
+     }).map((record) => {
+      return(
+        <tr>
+        <th scope="row">{record.order_id}</th>
+        <td>{dateOnly(record.order_last_date)}</td>
+        <td>{record.c_name}</td>
+        {/*<td>{record.c_address}</td>*/}
+        <td>{record.payment_method}</td>
+        <td>{record.o_status === "Completed" ? <Alert size = "small" variant="success">Completed</Alert> : record.o_status === "Returned" ? <Alert variant="danger">Returned</Alert> : record.o_status === "Pending" ? <Alert variant="secondary">Pending</Alert> : record.o_status === "R_Pending" ? <Alert variant="secondary">R_Pending</Alert> : record.o_status}</td>
+        <td>{record.employee_id === 0 ? <Alert variant="warning">Not Assign</Alert> : record.employee_id}</td>
+        
+        <td>
+            <Link style={styles.viewbtn} to={location=> `/DeliveryInfoRoute/${record.order_id}`}> View </Link>
+            <Link style={styles.updatebtn} to={location=> `/UpdateDeliveryRoute/${record.order_id}`} >  Update </Link>
+        </td>
+      </tr>
+       )
+       })}
+        
+      </tbody> 
+    </Table>
+    </div>
   
-    render(){   
+)
 
-      //const { records } = this.state;
-     return(
-            <Table striped bordered hover responsive>
-              <thead >
-                <tr>
-                  <th scope="col">OrderId</th>
-                  <th scope="col">Last Date</th>
-                  <th scope="col">Name</th>
-                  <th scope="col">Ship To</th>
-                  <th scope="col">Status</th>
-                  <th scope="col">DeliverId</th>
-                  <th scope="col">Action</th>
-                </tr>
-              </thead>
-
-             <tbody>
-                 {this.state.records.map((record)=>{
-                   return(
-                    <tr>
-                    <th scope="row">{record.order_id}</th>
-                    <td>{dateOnly(record.order_last_date)}</td>
-                    <td>{record.c_name}</td>
-                    <td>{record.c_address}</td>
-                    <td>{record.o_status === "Completed" ? <Alert size = "small" variant="success">Completed</Alert> : record.o_status === "Returned" ? <Alert variant="danger">Returned</Alert> : record.o_status === "Pending" ? <Alert variant="secondary">Pending</Alert> :record.o_status === "Scheduled" ? <Alert variant="secondary">Scheduled</Alert> : record.o_status}</td>
-                    <td>{record.employee_id === 0 ? <Alert variant="warning">Not Assign</Alert> : record.employee_id}</td>
-                    <td>
-                        <Link style={styles.viewbtn} to={location=> `/DeliveryInfoRoute/${record.order_id}`}> View </Link>
-                        <Link style={styles.updatebtn} to={location=> `/UpdateDeliveryRoute/${record.order_id}`} >  Update </Link>
-                    </td>
-                  </tr>
-                   )
-                 })}
-                
-              </tbody> 
-            </Table>
-          
-     )
-    }
 }
 
-export default ViewDelivery;
+  

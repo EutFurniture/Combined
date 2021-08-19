@@ -20,6 +20,11 @@ import Grid from '@material-ui/core/Grid';
 import Divider from '@material-ui/core/Divider';
 import {useParams} from 'react-router-dom'
 import { ListGroup,Alert } from "react-bootstrap";
+import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+import {Redirect} from "react-router-dom";
+import {Link} from 'react-router-dom';
 
 import { mainListItems, Logout, Profile } from './listItems';
 
@@ -168,6 +173,23 @@ export default function DeliveryInfo() {
     setOpen(false);
   };
 
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+ 
+
+  const[isAuth,setIsAuth]=useState(true);
+
+  if(!isAuth){
+    return <Redirect to="" />
+  }
 
   return (
     <div className={classes.root}>
@@ -191,6 +213,16 @@ export default function DeliveryInfo() {
               <NotificationsIcon />
             </Badge>
           </IconButton>
+
+          <IconButton color="inherit" fontSize="inherit">
+           <AccountCircleIcon onClick={handleClick}  />
+          </IconButton>
+
+          <Menu id="simple-menu" anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={handleClose}>
+            <MenuItem onClick={handleClose}><Link to='/dManager/pages/ManageProfile' style={{textDecoration:'none',color:'black'}}>Profile</Link></MenuItem>
+            <MenuItem onClick={()=>setIsAuth(false)}>Logout</MenuItem>
+          </Menu>
+
         </Toolbar> 
       </AppBar>
       <div style={styles.side}>
@@ -259,7 +291,7 @@ export default function DeliveryInfo() {
                     <ListGroup.Item >Deliver Id : {Dt.employee_id} </ListGroup.Item>
                     <ListGroup.Item > Delivery Date : {dateOnly(Dt.o_d_date)} </ListGroup.Item>
                     <ListGroup.Item >Delivery Status : {Dt.o_status}</ListGroup.Item>
-                    <ListGroup.Item>{Dt.o_status === "Completed" ? <Alert size = "small" variant="success"></Alert > : Dt.o_status === "Returned" ? <Alert  variant="danger"></Alert > : Dt.o_status === "Pending" ? <Alert  variant="secondary"></Alert > : <Alert variant="primary"></Alert > }</ListGroup.Item>
+                    <ListGroup.Item>{Dt.o_status === "Completed" ? <Alert size = "small" variant="success"></Alert > : Dt.o_status === "Returned" ? <Alert  variant="danger"></Alert > : Dt.o_status === "Pending" ? <Alert  variant="secondary"></Alert > : Dt.o_status === "R_Pending" ? <Alert  variant="secondary"></Alert > : <Alert variant="primary"></Alert > }</ListGroup.Item>
   
                 </ListGroup>
                 
