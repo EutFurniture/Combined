@@ -348,9 +348,23 @@ console.log(customizedcount);
     return <Redirect to="" />
   }
 
+  const customToast=()=>{
+    return(
+      <div>
+        You have requested customized Order from Customer!
+        <button style={{marginLeft:'10px',border:'none',backgroundColor:'white',borderRadius:'5px'}} onClick={Cuspage}>View</button>
+      </div>
+    )
+  }
+
+const Cuspage=()=>{
+  window.location.href='/admin/pages/CustomizedOrders'
+}
+
   const notify=()=>{
    
-    toast.info('You have Customized Order notification from Customer ',{position:toast.POSITION.TOP_RIGHT,autoClose:false})
+    toast.info(customToast,{position:toast.POSITION.TOP_RIGHT,autoClose:false})
+  
   
       }
 
@@ -530,7 +544,7 @@ console.log(customizedcount);
             <Grid style={{marginTop:'10px'}} item xs={6} >
             <Paper >
               <div style={{marginLeft:'20px'}}>
-               <h2><b>WORKING EMPLOYEES</b></h2>
+               <h2><b>ORDER ANALYTICS</b></h2>
                </div><br/>
                <ApexChart />
                </Paper>
