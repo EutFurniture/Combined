@@ -236,14 +236,14 @@ export default function GiftInfo() {
    
     const classes = useStyles();
     const [open, setOpen] = React.useState(true);
-    const { ID } = useParams();
+    const {product_id } = useParams();
     const [Dt, setDt] = useState([])
 
     useEffect(() => {
       const fetchData = async () => {
           const response = await axios.get('http://localhost:3001/viewGift', {
               params: {
-                  ID: ID,
+                  product_id: product_id,
                   
               }
           });
@@ -252,7 +252,7 @@ export default function GiftInfo() {
              console.log(response.data[0]);
       };
       fetchData();
-    }, [ID]);
+    }, [product_id]);
     
 
   const handleDrawerOpen = () => {
@@ -332,9 +332,9 @@ export default function GiftInfo() {
                 </Typography>
                
                 <div ><br/>
-                  <div style={{display:'flex'}}><label className={classes.formlabel1}><b style={{marginRight:'65px'}}>Gift ID :</b>{Dt.ID}</label></div>
+                  <div style={{display:'flex'}}><label className={classes.formlabel1}><b style={{marginRight:'65px'}}>Gift ID :</b>{Dt.product_id}</label></div>
                   <label className={classes.formlabel1}><b style={{marginRight:'30px'}}>Gift Name :</b > {Dt.name}</label><br/>
-                  <label className={classes.formlabel1}><b>Gift Image :</b></label><br/><img style={{marginLeft:'120px'}} src={`/${Dt.gift_img}`} className="image1" /><br/><br/>
+                  <label className={classes.formlabel1}><b>Gift Image :</b></label><br/><img style={{marginLeft:'120px'}} src={`/${Dt.product_img}`} className="image1" /><br/><br/>
                   <label className={classes.formlabel1}><b style={{marginRight:'70px'}}>Price : </b>{Dt.price}</label><br/>       
                   <label className={classes.formlabel1}><b style={{marginRight:'40px'}}>Quantity :</b> {Dt.quantity} </label><br/>
                   </div>

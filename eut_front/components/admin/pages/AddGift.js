@@ -1,7 +1,7 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 import clsx from 'clsx';
 
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
@@ -167,6 +167,7 @@ export default function AddGift() {
   const[quantity,setQuantity]=useState("");
   const[image,setImage]=useState("");
   const [progressbar,setProgressbar] = useState(0);
+  const[category_id,setCategoryID]=useState("");
  
   const submitForm =(e) =>{
     e.preventDefault();
@@ -187,6 +188,7 @@ export default function AddGift() {
         name:name,
         price:price,
         quantity:quantity,
+        category_id:category_id,
        
         
       }).then(()=>{
@@ -219,6 +221,12 @@ export default function AddGift() {
     reader.readAsDataURL(file);
   }
   
+  const [typeList,setTypeList]=useState([])
+  useEffect(()=>{
+    axios.get("http://localhost:3001/loadCategoryType").then((response)=>{
+      setTypeList(response.data)
+    })
+  },[])
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -342,10 +350,10 @@ export default function AddGift() {
 
    <Form.Group as={Row} controlId="formHorizontalPrice">
      <Form.Label column lg={2} >
-     Price :
+     Points :
      </Form.Label>
      <Col >
-       <Form.Control type="text" placeholder="Rs.xxxx.xx" 
+       <Form.Control type="text" placeholder="xxxx" 
        onChange={(event)=> {
          setPrice(event.target.value);
        }}
@@ -364,8 +372,26 @@ export default function AddGift() {
     
 {state.message && <h6 className={classes.mess}>{state.message}</h6>}            
      <div style={{marginLeft:'227px'}}>
-{state.gift_img && (<img src={state.gift_img}  width="20%" height="20%"  alt="preview" />)}
+{state.product_img && (<img src={state.product_img}  width="20%" height="20%"  alt="preview" />)}
 </div><br/>
+
+<Form.Group as={Row} controlId="formHorizontalCategory">
+
+<Form.Label column lg={2} >
+ Category ID:
+</Form.Label>
+<Col >
+  <Form.Control as="Select" name='type' onChange={(event)=> { setCategoryID(event.target.value); }} >
+    <option>Select Category</option>
+  {typeList.map((record)=>{return(
+  <option value={record.category_id}>{record.category_id}-{record.name}</option>
+  )
+ })}
+ 
+ 
+  </Form.Control>  
+</Col>
+</Form.Group><br/>
    
   
    <Form.Group as={Row} controlId="formHorizontalQuantity">

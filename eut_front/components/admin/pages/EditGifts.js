@@ -162,11 +162,11 @@ export default function EditGifts() {
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
   const [state,setState]=useState({file:'',product_img:'',message:'',success:false})
-  const {ID} = useParams();
+  const {product_id} = useParams();
  const [Dt, setDt] = useState([])
  const [newName, setNewName] = useState();
  const [newPrice, setNewPrice] = useState();
- const [newGift_img,setNewGift_img]=useState();
+ const [newProduct_img,setNewProduct_img]=useState();
  const [newQuantity,setNewQuantity]=useState();
  
  const [giftList,setGiftList]=useState([])
@@ -180,7 +180,7 @@ export default function EditGifts() {
   const fetchData = async () => {
       const response = await axios.get('http://localhost:3001/viewGift', {
           params: {
-              ID: ID,
+            product_id:  product_id,
               
           }
       });
@@ -188,12 +188,12 @@ export default function EditGifts() {
       setDt(response.data[0]);
       setNewName(response.data[0].name)
       setNewPrice(response.data[0].price)
-      setNewGift_img(response.data[0].gift_img)
+      setNewProduct_img(response.data[0].product_img)
       setNewQuantity(response.data[0].quantity)
         
   };
   fetchData();
-}, [ID]);
+}, [product_id]);
 
 const updateGift = (ID) => {
   if(state.file)
@@ -204,12 +204,12 @@ const updateGift = (ID) => {
         'content-Type':'multipart/form-data',
       })
 
-  axios.put("http://localhost:3001/updateGift", {name: newName,price:newPrice,gift_img:state.file.name,quantity:newQuantity,ID: ID}).then(
+  axios.put("http://localhost:3001/updateGift", {name: newName,price:newPrice,product_img:state.file.name,quantity:newQuantity,product_id: product_id}).then(
     (response) => {
       
       setGiftList(Dt.map((val) => {
-        return val.ID === ID ? {ID: val.ID, name: val.name, price: val.price,gift_img:val.gift_img,quantity:val.quantity, 
-          name: newName,price:newPrice,gift_img:newGift_img,quantity:newQuantity } : val
+        return val.product_id === product_id ? {product_id: val.product_id, name: val.name, price: val.price,product_img:val.product_img,quantity:val.quantity, 
+          name: newName,price:newPrice,product_img:newProduct_img,quantity:newQuantity } : val
         
       }))
   
@@ -227,7 +227,7 @@ const handleInput =(e) =>{
     setState({
       ...state,
       file:file,
-      gift_img:reader.result,
+      product_img:reader.result,
       message:""
     })
   }
@@ -360,7 +360,7 @@ const handleInput =(e) =>{
 
    <Form.Group as={Row} controlId="formHorizontalPrice">
      <Form.Label column lg={2} >
-     Price :
+     Points :
      </Form.Label>
      <Col >
        <Form.Control type="text" defaultValue={newPrice}
@@ -376,7 +376,7 @@ const handleInput =(e) =>{
      <Form.Label column lg={2}>
       Gift Image :</Form.Label>
      <Col >
-       <Form.Control type="file" name="img" defaultValue={newGift_img}   className={classes.imageInput}
+       <Form.Control type="file" name="img" defaultValue={newProduct_img}   className={classes.imageInput}
       onChange={handleInput}
        />
      </Col>
@@ -399,7 +399,7 @@ const handleInput =(e) =>{
    </Form.Group><br/>
    
        <div align="center">
-       <Button  type="submit"   style={{fontSize:'20px',width:'200px'}} onClick={() => {updateGift(Dt.ID)}}>Update</Button>
+       <Button  type="submit"   style={{fontSize:'20px',width:'200px'}} onClick={() => {updateGift(Dt.product_id)}}>Update</Button>
        </div>
       
 
