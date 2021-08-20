@@ -258,6 +258,30 @@ app.delete("/deleteReturnitem/:order_id",(req,res)=>{
   });
 
 
+  app.get('/CountReturnItems',(req,res) => {
+    db.query('SELECT COUNT(return_id) AS returncount FROM return_item', (err, result) => {
+        if(err) {
+            console.log(err)
+        }else {
+            res.send(result);
+           
+        }
+    });
+  });
+
+  app.get('/TotalcashonIncome',(req,res) => {
+    db.query("SELECT SUM(total_price) AS income FROM orders JOIN payment ON orders.order_id= payment.order_id WHERE payment.payment_method = 'cash on delivery'", (err, result) => {
+        if(err) {
+            console.log(err)
+        }else {
+            res.send(result);
+           
+        }
+    });
+  });
+  
+
+
 
 //DELIVERY MANAGER
 
