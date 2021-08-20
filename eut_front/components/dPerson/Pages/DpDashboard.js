@@ -17,17 +17,25 @@ import  './DpDashboard.css';
 import {Redirect} from "react-router-dom";
 import { useState } from 'react';
 import { Link } from "react-router-dom"; 
-
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Grid from '@material-ui/core/Grid';
 import Divider from '@material-ui/core/Divider';
-
 import { DpListItems, Logout } from './dplistItems';
 import Testimonial  from './Testimonial';
-import shop1 from '../../../images/shop1.jpg'
 
-import { fontSize } from '@material-ui/system';
+function Copyright() {
+  return (
+    <Typography variant="body2" color="textSecondary" align="center">
+      {'Copyright © '}
+      <Link color="inherit" href="https://material-ui.com/">
+        Eut Furniture
+      </Link>{' '}
+      {new Date().getFullYear()}
+      {'.'}
+    </Typography>
+  );
+}
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
@@ -352,8 +360,9 @@ if(!isAuth){
             
             
          </Grid>
-<Testimonial />  
+      <Testimonial />  
         </Container>
+        <Copyright />
       </main>
     </div>
   );
