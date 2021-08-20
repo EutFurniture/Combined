@@ -173,7 +173,14 @@ const DpDashboard =()=> {
     })
   },[])
   
-  
+  const [pendingcount,setPendingCount]=useState([])
+  useEffect(()=>{
+    axios.get("http://localhost:3001/PendingCount").then((response)=>{
+      setPendingCount(response.data)
+    })
+  },[])
+
+
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -293,22 +300,28 @@ if(!isAuth){
                            </div>
 
                            <div className="card2">
-                               <h3>Total No of Deliveries</h3>
-                               <p>52</p>
-                           </div>
-
-                           <div className="card3">
-                               <h3>Pending Deliveries</h3>
-                               <p>4</p>
-                           </div>
-
-                           <div className="card4">
                            <h2>Returned Items</h2>
                            {returns_count.map((record)=>{
                                  return(
                                   <p style={{fontSize:'30px'}}>{record.returncount}</p>
                                  )
                                })}
+                           </div>
+
+                           <div className="card3">
+                               <h3> Total Pending Deliveries</h3>
+                               {pendingcount.map((record)=>{
+                                 return(
+                                  <p style={{fontSize:'30px'}}>{record.pendingcount}</p>
+                                 )
+                               })}
+                           </div>
+
+                           <div className="card4">
+
+
+                            <h3>Total No of Deliveries</h3>
+                               <p>52</p>
                            </div>
                            <div className="card1">
                                <h3>Free Deliveries </h3>
