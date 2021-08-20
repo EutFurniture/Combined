@@ -1,5 +1,11 @@
-import React,{useState} from 'react';
+import React from 'react';
 import clsx from 'clsx';
+
+//from customer
+import '../../../App.css';
+import { useState } from 'react';
+import Axios from 'axios';
+//
 
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -15,21 +21,19 @@ import Badge from '@material-ui/core/Badge';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
-
+import Link from '@material-ui/core/Link';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import NotificationsIcon from '@material-ui/icons/Notifications';
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import {Redirect} from "react-router-dom";
-import {Link} from 'react-router-dom';
 
-import { mainListItems, Logout, Profile } from './listItems';
-import Charts from './Charts';
+
+import { mainListItems, Logout } from './listItems';
+import Chart from './Chart';
+import Deposits from './Deposits';
 import Orders from './Orders';
-import ViewTotalCash from './ViewTotalCash';
 
+import DeliveryScheduleUI from './DeliveryScheduleUI';
+import NotificationPU from './NotificationPU';
 
 
 function Copyright() {
@@ -143,26 +147,14 @@ export default function Dashboard() {
   const handleDrawerClose = () => {
     setOpen(false);
   };
-
-  
-  const [anchorEl, setAnchorEl] = React.useState(null);
-
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
- 
-
-  const[isAuth,setIsAuth]=useState(true);
-
-  if(!isAuth){
-    return <Redirect to="" />
-  }
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
+
+  const [id, setId] = useState(0);
+  const [pro_id, setProId] = useState(0);
+  const [date, setDate] = useState();
+  const [due_date, setDueDate] = useState();
+
+  const [deliveryScheduleList, setDeliveryScheduleList] = useState([]);
 
   return (
     <div className={classes.root}>
@@ -179,23 +171,13 @@ export default function Dashboard() {
             <MenuIcon />
           </IconButton>
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-            <strong>DELIVERY MANAGER</strong>
+            <strong>SALES MANAGER</strong>
           </Typography>
-          <IconButton color="inherit">
-            <Badge badgeContent={4} color="secondary">
-              <NotificationsIcon />
-            </Badge>
+          <IconButton color="inherit" >
+           
+              <NotificationPU/>
+            
           </IconButton>
-
-          <IconButton color="inherit" fontSize="inherit">
-           <AccountCircleIcon onClick={handleClick}  />
-          </IconButton>
-
-          <Menu id="simple-menu" anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={handleClose}>
-            <MenuItem onClick={handleClose}><Link to='/dManager/pages/ManageProfile' style={{textDecoration:'none',color:'black'}}>Profile</Link></MenuItem>
-            <MenuItem onClick={()=>setIsAuth(false)}>Logout</MenuItem>
-          </Menu>
-
         </Toolbar>
       </AppBar>
       <div style={styles.side}>
@@ -214,42 +196,24 @@ export default function Dashboard() {
         <Divider />
         <List style={{backgroundColor: 'rgb(37,37,94)', color:'white'}}>{mainListItems}</List>
         <Divider />
-        <List style={{backgroundColor: 'rgb(37,37,94)', color:'white'}}>{Profile}</List>
-        <Divider />
-        <Divider />
-        <Divider />
-        <List style={{backgroundColor: 'rgb(37,37,94)' , color:'white'}}>{Logout}</List>
+        <List style={{backgroundColor: 'rgb(37,37,94)', color:'red'}}>{Logout}</List>
         <Divider />
       </Drawer>
       </div>
-      
       <main className={classes.content}>
         <div className={classes.appBarSpacer} />
         <Container maxWidth="lg" className={classes.container}>
-          <Grid container spacing={3}>
-            {/* Chart */}
-            <Grid item xs={12} md={8} lg={9}>
-              <Paper className={fixedHeightPaper}>
-                <Charts />
-              </Paper>
-            </Grid>
-            {/* Recent Deposits */}
-            <Grid item xs={12} md={4} lg={3}>
-              <Paper className={fixedHeightPaper}>
-                <ViewTotalCash />
-              </Paper>
-            </Grid>
-            {/* Recent Orders */}
-            <Grid item xs={12}>
-              <Paper className={classes.paper}>
-                <Orders />
-              </Paper>
-            </Grid>
-          </Grid>
-          <Box pt={4}>
+
+          <h3>Delivery Schedule</h3>
+         
+            <br/>
+          <DeliveryScheduleUI />
+
+        </Container>
+
+        <Box pt={4}>
             <Copyright />
           </Box>
-        </Container>
       </main>
     </div>
   );

@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from "react";
 import clsx from 'clsx';
 import axios from "axios";
-
+import React, {useState, useEffect} from 'react';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -19,14 +18,9 @@ import NotificationsIcon from '@material-ui/icons/Notifications';
 import Grid from '@material-ui/core/Grid';
 import Divider from '@material-ui/core/Divider';
 import {useParams} from 'react-router-dom'
-import { ListGroup,Alert } from "react-bootstrap";
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import {Redirect} from "react-router-dom";
-import {Link} from 'react-router-dom';
+import { Form,Row,Col } from "react-bootstrap";
 
-import { mainListItems, Logout, Profile } from './listItems';
+import { DpListItems, Logout } from './dplistItems';
 
 
 const drawerWidth = 240;
@@ -131,8 +125,14 @@ const styles = {
     display:"flex",
     flexDirection :"row",
     justifyContent:"space-between",
-  }
+  },
+
+  pack:{
+    justifyContent:'flex-around',
+    marginLeft:'20px'
+  }  
 };
+
 
 const dateOnly = (d) => {
   const date = new Date(d);
@@ -142,13 +142,13 @@ const dateOnly = (d) => {
   return `${year} - ${month} - ${day}`;
 };
 
-export default function DeliveryInfo() {
+export default function AvailableDeliveryInfo() {
   const { order_id } = useParams();
   const [Dt, setDt] = useState([])
  
  useEffect(() => {
   const fetchData = async () => {
-      const response = await axios.get('http://localhost:3001/viewDeliveryDetails', {
+      const response = await axios.get('http://localhost:3001/DeliveryDetails', {
           params: {
               order_id: order_id,
               
@@ -173,23 +173,6 @@ export default function DeliveryInfo() {
     setOpen(false);
   };
 
-  const [anchorEl, setAnchorEl] = React.useState(null);
-
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
- 
-
-  const[isAuth,setIsAuth]=useState(true);
-
-  if(!isAuth){
-    return <Redirect to="" />
-  }
 
   return (
     <div className={classes.root}>
@@ -206,22 +189,8 @@ export default function DeliveryInfo() {
             <MenuIcon />
           </IconButton>
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-            <strong>DELIVERY MANAGER</strong>
+            <strong>DELIVERY PERSON</strong>
           </Typography>
-          <IconButton color="inherit">
-            <Badge badgeContent={4} color="secondary">
-              <NotificationsIcon />
-            </Badge>
-          </IconButton>
-
-          <IconButton color="inherit" fontSize="inherit">
-           <AccountCircleIcon onClick={handleClick}  />
-          </IconButton>
-
-          <Menu id="simple-menu" anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={handleClose}>
-            <MenuItem onClick={handleClose}><Link to='/dManager/pages/ManageProfile' style={{textDecoration:'none',color:'black'}}>Profile</Link></MenuItem>
-            <MenuItem onClick={()=>setIsAuth(false)}>Logout</MenuItem>
-          </Menu>
 
         </Toolbar> 
       </AppBar>
@@ -239,10 +208,7 @@ export default function DeliveryInfo() {
           </IconButton>
         </div>
         <Divider />
-        <List style={{backgroundColor: 'rgb(37,37,94)', color:'white'}}>{mainListItems}</List>
-        <Divider />
-        <List style={{backgroundColor: 'rgb(37,37,94)', color:'white'}}>{Profile}</List>
-        <Divider />
+        <List style={{backgroundColor: 'rgb(37,37,94)', color:'white'}}>{DpListItems}</List>
         <Divider />
         <List style={{backgroundColor: 'rgb(37,37,94)', color:'white'}}>{Logout}</List>
         <Divider />
@@ -255,48 +221,67 @@ export default function DeliveryInfo() {
           <Grid container spacing={3}>
                   
            
-            <Grid item xs={12}  direction="row"  >
+          <Grid item xs={10} style={styles.pack} >
             <div >
               <Paper className={classes.paper}>
               <Typography component="h1" variant="h6" color="inherit" align="center" width="100%" noWrap className={classes.title}>
-                    <strong> DELIVERY  INFORMATION</strong>
+                    <strong>DELIVERY DETAILED INFORMATION</strong>
               </Typography>
               <br></br>
-              <div align="center" style={{fontSize:'15px'}}>
-                
-              <ListGroup style={{ width: '20rem',textAlign: 'left'}}>
-                  <ListGroup.Item  active> Order Details</ListGroup.Item>
-                  <ListGroup.Item >Order Id : {Dt.order_id} </ListGroup.Item>
-                  <ListGroup.Item > Order Description : {Dt.o_description} </ListGroup.Item>
-                  <ListGroup.Item >Order Date : {dateOnly(Dt.o_date)}</ListGroup.Item>
-                  <ListGroup.Item >Last Date : {dateOnly(Dt.order_last_date)}</ListGroup.Item>
+              <div>
 
-              </ListGroup>
-              
-              <br></br>
-              <div style={styles.card} >
-                
-              <ListGroup style={{ width: '20rem',textAlign: 'left'}}>
-                  <ListGroup.Item  active> Customer Details</ListGroup.Item>
-                  <ListGroup.Item >Name : {Dt.c_name} </ListGroup.Item>
-                  <ListGroup.Item > Email : {Dt.c_email} </ListGroup.Item>
-                  <ListGroup.Item >Phone Number  : {Dt.c_phone_no}</ListGroup.Item>
-                  <ListGroup.Item >Address : {Dt.c_address}</ListGroup.Item>
-
-              </ListGroup>
-              
-                
-                <ListGroup style={{ width: '20rem',textAlign: 'left'}}>
-                    <ListGroup.Item  active> Delivery Details</ListGroup.Item>
-                    <ListGroup.Item >Deliver Id : {Dt.employee_id} </ListGroup.Item>
-                    <ListGroup.Item > Delivery Date : {dateOnly(Dt.o_d_date)} </ListGroup.Item>
-                    <ListGroup.Item >Delivery Status : {Dt.o_status}</ListGroup.Item>
-                    <ListGroup.Item>{Dt.o_status === "Completed" ? <Alert size = "small" variant="success"></Alert > : Dt.o_status === "Returned" ? <Alert  variant="danger"></Alert > : Dt.o_status === "Pending" ? <Alert  variant="secondary"></Alert > : Dt.o_status === "R_Pending" ? <Alert  variant="secondary"></Alert > : <Alert variant="primary"></Alert > }</ListGroup.Item>
-  
-                </ListGroup>
-                
-                </div>
-                </div>
+              <Form.Group as={Row} controlId="formHorizontalName">
+                  <Form.Label column lg={2} >
+                   Order Id :
+                  </Form.Label>
+                  <Col >
+                  <Form.Label column lg={2} >
+                  {Dt.order_id}
+                  </Form.Label>
+                  </Col>
+              </Form.Group><br/>
+              <Form.Group as={Row} controlId="formHorizontalName">
+                  <Form.Label column lg={2} >
+                   Employee Id :
+                  </Form.Label>
+                  <Col >
+                  <Form.Label column lg={2} >
+                  {Dt.employee_id}
+                  </Form.Label>
+                  </Col>
+              </Form.Group><br/>
+             
+              <Form.Group as={Row} controlId="formHorizontalName">
+                  <Form.Label column lg={2} >
+                   Order Desription :
+                  </Form.Label>
+                  <Col >
+                  <Form.Label column lg={2} >
+                  {Dt.o_description}
+                  </Form.Label>
+                  </Col>
+              </Form.Group><br/>              
+              <Form.Group as={Row} controlId="formHorizontalOrderdate">
+                  <Form.Label column lg={2} >
+                   Order Date :
+                  </Form.Label>
+                  <Col >
+                  <Form.Label column lg={2} >
+                  {dateOnly(Dt.o_date)}
+                  </Form.Label>
+                  </Col>
+              </Form.Group><br/>
+              <Form.Group as={Row} controlId="formHorizontalOrderlastdate">
+                  <Form.Label column lg={2} >
+                   Order Last Date :
+                  </Form.Label>
+                  <Col >
+                  <Form.Label column lg={2} >
+                  {dateOnly(Dt.order_last_date)}
+                  </Form.Label>
+                  </Col>
+              </Form.Group><br/>
+              </div>
               </Paper>
               </div>
             </Grid>

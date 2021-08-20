@@ -1,55 +1,36 @@
-import React,{useState} from 'react';
+import React from 'react';
 import clsx from 'clsx';
-
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Drawer from '@material-ui/core/Drawer';
-import Box from '@material-ui/core/Box';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
-import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
-import Badge from '@material-ui/core/Badge';
 import Container from '@material-ui/core/Container';
-import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
-
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import NotificationsIcon from '@material-ui/icons/Notifications';
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+import Grid from '@material-ui/core/Grid';
+import Divider from '@material-ui/core/Divider';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
+import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import {Redirect} from "react-router-dom";
-import {Link} from 'react-router-dom';
-
-import { mainListItems, Logout, Profile } from './listItems';
-import Charts from './Charts';
-import Orders from './Orders';
-import ViewTotalCash from './ViewTotalCash';
+import { useState } from 'react';
+import { Link } from "react-router-dom";
+import ViewCashon from './ViewCashon'
+import { DpListItems, Logout } from './dplistItems';
 
 
-
-function Copyright() {
-  return (
-    <Typography variant="body2" color="textSecondary" align="center">
-      {'Copyright © '}
-      <Link color="inherit" href="https://material-ui.com/">
-        Eut Furniture
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
 
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
+   
   },
   toolbar: {
     paddingRight: 24, // keep right padding when drawer closed
@@ -84,6 +65,15 @@ const useStyles = makeStyles((theme) => ({
   },
   title: {
     flexGrow: 1,
+    fontSize:40,
+    fontWeight:600,
+  },
+  userimage : {
+    height: 60,
+    width: 60,
+    borderRadius:100,
+    borderColor:'white',
+
   },
   drawerPaper: {
     position: 'relative',
@@ -110,10 +100,13 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
     height: '100vh',
     overflow: 'auto',
+    
   },
+ 
   container: {
     paddingTop: theme.spacing(4),
     paddingBottom: theme.spacing(4),
+    marginTop:'20px',
   },
   paper: {
     padding: theme.spacing(2),
@@ -122,19 +115,30 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
   },
   fixedHeight: {
-    height: 240,
+    height: 'auto',
+  },
+  addbutton:{
+      backgroundColor:'#0000ff',
+      height:'50px',
+      width:'160px',
+      borderRadius:'5px',
+      marginRight:'50px',
+      textDecoration:'none',
+      textAlign:'center',
+      paddingTop:'10px'
   },
   
+
 }));
 
 const styles = {
   side:{
-    backgroundColor:'rgb(37,37,94)',
+    backgroundColor:'rgb(37, 37, 94)',
   }
 };
 
 
-export default function Dashboard() {
+export default function Categories() {
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
   const handleDrawerOpen = () => {
@@ -143,32 +147,31 @@ export default function Dashboard() {
   const handleDrawerClose = () => {
     setOpen(false);
   };
+  const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
-  
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
+      setAnchorEl(event.currentTarget);
   };
-
+  
   const handleClose = () => {
-    setAnchorEl(null);
+      setAnchorEl(null);
   };
-
- 
-
+  
+   // const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
+  
   const[isAuth,setIsAuth]=useState(true);
-
+  
   if(!isAuth){
-    return <Redirect to="" />
+      return <Redirect to="" />
   }
-  const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
   return (
     <div className={classes.root}>
       <CssBaseline />
       <AppBar position="absolute" className={clsx(classes.appBar, open && classes.appBarShift)}>
-        <Toolbar className={classes.toolbar} style={{backgroundColor: 'rgb(37,37,94)'}}>
+        <Toolbar className={classes.toolbar} style={{backgroundColor: 'rgb(37, 37, 94)'}}>
           <IconButton
             edge="start"
             color="inherit"
@@ -179,24 +182,25 @@ export default function Dashboard() {
             <MenuIcon />
           </IconButton>
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-            <strong>DELIVERY MANAGER</strong>
+            <b>DELIVERY PERSON</b>
           </Typography>
-          <IconButton color="inherit">
-            <Badge badgeContent={4} color="secondary">
-              <NotificationsIcon />
-            </Badge>
-          </IconButton>
-
+ 
           <IconButton color="inherit" fontSize="inherit">
-           <AccountCircleIcon onClick={handleClick}  />
+           <AccountCircleIcon   onClick={handleClick}/>
+  
           </IconButton>
-
-          <Menu id="simple-menu" anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={handleClose}>
-            <MenuItem onClick={handleClose}><Link to='/dManager/pages/ManageProfile' style={{textDecoration:'none',color:'black'}}>Profile</Link></MenuItem>
-            <MenuItem onClick={()=>setIsAuth(false)}>Logout</MenuItem>
-          </Menu>
-
+          <Menu
+        id="simple-menu"
+        anchorEl={anchorEl}
+        keepMounted
+        open={Boolean(anchorEl)}
+        onClose={handleClose}
+      >
+      <MenuItem component={Link} to="/Calender">Calendar</MenuItem>
+        <MenuItem onClick={()=>setIsAuth(false)}>Logout</MenuItem>
+      </Menu>
         </Toolbar>
+        
       </AppBar>
       <div style={styles.side}>
       <Drawer
@@ -206,49 +210,42 @@ export default function Dashboard() {
         }}
         open={open}
       >
-        <div className={classes.toolbarIcon} style={{backgroundColor: 'rgb(37,37,94)', color:'white'}}>
+        <div className={classes.toolbarIcon} style={{backgroundColor: 'rgb(37, 37, 94)', color:'white'}}>
           <IconButton onClick={handleDrawerClose} style={{color:'white'}}>
             <ChevronLeftIcon />
           </IconButton>
         </div>
-        <Divider />
-        <List style={{backgroundColor: 'rgb(37,37,94)', color:'white'}}>{mainListItems}</List>
-        <Divider />
-        <List style={{backgroundColor: 'rgb(37,37,94)', color:'white'}}>{Profile}</List>
-        <Divider />
-        <Divider />
-        <Divider />
-        <List style={{backgroundColor: 'rgb(37,37,94)' , color:'white'}}>{Logout}</List>
-        <Divider />
+        <Divider/>
+        <List style={{backgroundColor: 'rgb(37, 37, 94)', color:'white'}}>{DpListItems}</List>
+        <Divider/>
+        <List style={{backgroundColor: 'rgb(37, 37, 94)', color:'red'}}>{Logout}</List>
+        <Divider/>
       </Drawer>
       </div>
-      
-      <main className={classes.content}>
+     
+      <main style={{backgroundColor: '#f0f8ff'}} className={classes.content}>
         <div className={classes.appBarSpacer} />
         <Container maxWidth="lg" className={classes.container}>
-          <Grid container spacing={3}>
-            {/* Chart */}
-            <Grid item xs={12} md={8} lg={9}>
-              <Paper className={fixedHeightPaper}>
-                <Charts />
-              </Paper>
-            </Grid>
-            {/* Recent Deposits */}
-            <Grid item xs={12} md={4} lg={3}>
-              <Paper className={fixedHeightPaper}>
-                <ViewTotalCash />
-              </Paper>
-            </Grid>
-            {/* Recent Orders */}
-            <Grid item xs={12}>
-              <Paper className={classes.paper}>
-                <Orders />
-              </Paper>
-            </Grid>
-          </Grid>
-          <Box pt={4}>
-            <Copyright />
-          </Box>
+        
+        <Grid container spacing={3}>
+        {/* Recent Orders */}
+        <Grid item xs={12}  direction="row"  >
+        
+        <div >
+        
+           <Paper className={classes.paper}>
+               
+                <Typography  component="h1" variant="h6" color="inherit" align="center" width="100%" noWrap className={classes.title}>
+                <h3> DETAILS OF CASH ON DELIVERIES</h3>
+                </Typography>
+               
+                <ViewCashon/>
+                     
+          </Paper>
+          </div>
+        </Grid>
+
+      </Grid>
         </Container>
       </main>
     </div>

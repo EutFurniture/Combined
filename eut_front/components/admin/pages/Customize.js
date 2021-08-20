@@ -1,15 +1,15 @@
 import { BrowserRouter as Router, Route, Switch, Link, useParams } from "react-router-dom";
-import EditGifts from './EditGifts'
-const GiftEdit=()=>{
+import Cust_OrderAccept from './Cust_OrderAccept'
+const Customize=()=>{
     return(
         <div>
             <Switch>
-                <Route path="/GiftEdit/:product_id">
-                    <EditGifts />
+                <Route path="/Customize/:cus_product_id">
+                    <Cust_OrderAccept />
                 </Route>
             </Switch>
         </div>
     )
 }
 
-export default GiftEdit;
+export default Customize;

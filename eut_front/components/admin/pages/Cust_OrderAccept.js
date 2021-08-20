@@ -2,7 +2,11 @@ import React,{useEffect,useState} from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
 import clsx from 'clsx';
-import {useParams} from "react-router-dom"
+import ReactNotification from 'react-notifications-component'
+import {store} from "react-notifications-component"
+import "animate.css"
+import "react-notifications-component/dist/theme.css"
+
 
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import { makeStyles } from '@material-ui/core/styles';
@@ -33,10 +37,11 @@ import Form from 'react-bootstrap/Form';
 import { Button } from 'react-bootstrap';
 import { Row } from 'react-bootstrap';
 import { Col } from 'react-bootstrap';
+import {useParams} from 'react-router-dom'
 
 import { mainListItems, Logout } from './listItems';
-
-
+import {toast} from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 function Copyright() {
   return (
@@ -135,6 +140,8 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     overflow: 'auto',
     flexDirection: 'column',
+    marginLeft:'200px',
+    marginTop:'70px'
    
   },
   fixedHeight: {
@@ -155,88 +162,73 @@ const styles = {
   
 };
 
+toast.configure()
 
+export default function Cust_OrderAccept() {
 
-export default function EditGifts() {
+  const dateOnly = (d) => {
+    const date = new Date(d);
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    return `${year} - ${month} - ${day}`;
+  };
 
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
   const [state,setState]=useState({file:'',product_img:'',message:'',success:false})
-  const {product_id} = useParams();
- const [Dt, setDt] = useState([])
- const [newName, setNewName] = useState();
- const [newPrice, setNewPrice] = useState();
- const [newProduct_img,setNewProduct_img]=useState();
- const [newQuantity,setNewQuantity]=useState();
- 
- const [giftList,setGiftList]=useState([])
+  const[name,setName]=useState("");
+  const {cus_product_id} = useParams();
+  const [Dt, setDt] = useState([])
+  const [newdelivery_date, setNewDelivery] = useState();
+  const [newadvanced_payment, setNewAdvanced] = useState();
+  const [newtotal_payment, setNewTotal] = useState();
+
+  useEffect(() => {
+    const fetchData = async () => {
+        const response = await axios.get('http://localhost:3001/ViewCusOrder', {
+            params: {
+               cus_product_id: cus_product_id,
+                
+            }
+        });
+  
+        setDt(response.data[0]);
+       
+        
+    };
+    fetchData();
+  }, [cus_product_id]);
+
+  const [categoryList,setCategoryList]=useState([])
  useEffect(()=>{
-   axios.get("http://localhost:3001/loadGift").then((response)=>{
-     setGiftList(response.data)
+   axios.get("http://localhost:3001/loadcusorder").then((response)=>{
+     setCategoryList(response.data)
    })
  },[])
 
- useEffect(() => {
-  const fetchData = async () => {
-      const response = await axios.get('http://localhost:3001/viewGift', {
-          params: {
-            product_id:  product_id,
-              
-          }
-      });
-
-      setDt(response.data[0]);
-      setNewName(response.data[0].name)
-      setNewPrice(response.data[0].price)
-      setNewProduct_img(response.data[0].product_img)
-      setNewQuantity(response.data[0].quantity)
+ 
+    
+    
+ 
+  
+  const updateCustomized = (cus_product_id) => {
+    axios.put("http://localhost:3001/InsertCustomized", {delivery_date: newdelivery_date,advanced_payment:newadvanced_payment,total_payment:newtotal_payment,cus_product_id: cus_product_id}).then(
+      (response) => {
         
+        setCategoryList(Dt.map((val) => {
+          return val.cus_product_id === cus_product_id ? {cus_product_id: val.cus_product_id, delivery_date: val.delivery_date, advanced_payment: val.advanced_payment,total_payment:val.total_payment, delivery_date: newdelivery_date,advanced_payment:newadvanced_payment,total_payment:newtotal_payment} : val
+          
+        }))
+     }
+    )
+   notify();
+   
+  
   };
-  fetchData();
-}, [product_id]);
 
-const updateGift = (ID) => {
-  if(state.file)
-  {
-    let formData=new FormData();
-    formData.append('file',state.file) 
-    axios.post('http://localhost:3001/imageUpload',formData,{
-        'content-Type':'multipart/form-data',
-      })
-
-  axios.put("http://localhost:3001/updateGift", {name: newName,price:newPrice,product_img:state.file.name,quantity:newQuantity,product_id: product_id}).then(
-    (response) => {
-      
-      setGiftList(Dt.map((val) => {
-        return val.product_id === product_id ? {product_id: val.product_id, name: val.name, price: val.price,product_img:val.product_img,quantity:val.quantity, 
-          name: newName,price:newPrice,product_img:newProduct_img,quantity:newQuantity } : val
-        
-      }))
   
-    }
   
-  )
-  alert("Gift Edited successfully") 
-  } 
-};
-
-const handleInput =(e) =>{
-  let reader =new FileReader();
-  let file=e.target.files[0]
-  reader.onloadend =() =>{
-    setState({
-      ...state,
-      file:file,
-      product_img:reader.result,
-      message:""
-    })
-  }
-  reader.readAsDataURL(file);
-}
-  
-
-
-
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -262,6 +254,13 @@ const handleInput =(e) =>{
   if(!isAuth){
     return <Redirect to="" />
   }
+
+  const notify=()=>{
+   
+    toast.info('Your Accept message has been sent.',{position:toast.POSITION.TOP_RIGHT,autoClose:false})
+  
+      }
+  
 
 
   return (
@@ -323,90 +322,83 @@ const handleInput =(e) =>{
         <Divider />
       </Drawer>
       </div>
-      <main className={classes.content}>
+      <main  className={classes.content}>
         <div className={classes.appBarSpacer} />
         <Container maxWidth="lg" className={classes.container}>
-          <Grid container spacing={18}>
+          <Grid container spacing={20} >
         
             
             
 
             {/* Recent Orders */}
-            <Grid item xs={11} direction="row"  >
+            <Grid item xs={10} direction="row"  >
             
-  
+           
             <div >
               <Paper className={classes.paper}>
-              <Typography component="h1" variant="h6" color="inherit"  align="center" width="100%" noWrap className={classes.title}>
-              <strong>UPDATE GIFT DETAILS</strong>
+              <Typography component="h2" variant="h6" color="inherit"  align="center" width="100%" noWrap className={classes.title}>
+              <strong>ORDER ACCEPTANCE</strong>
+              
             </Typography><br/>
-
-            
+            <p style={{marginLeft:'30px',color:'red',fontSize:'18px'}}>Dear {Dt.name},<br/>Your Order has been accepted. You can continue your payment process.</p>
+             
             <Form>
-
+             
 <Form.Group as={Row} controlId="formHorizontalName">
-     <Form.Label column lg={2} >
-      Gift Name :
+     <Form.Label column lg={3} >
+      Delivery Date :
      </Form.Label>
      <Col >
        <Form.Control type="text" 
-      defaultValue={newName}
-      onChange={(event)=> {
-        setNewName(event.target.value);
-      }}
+       onChange={(event)=> {
+         setNewDelivery(event.target.value);
+       }}
+       ></Form.Control>
+     </Col>
+   </Form.Group><br/>
+
+   <Form.Group as={Row} controlId="formHorizontalPrice">
+     <Form.Label column lg={3} >
+    Advanced Payment :
+     </Form.Label>
+     <Col >
+       <Form.Control type="text"  onChange={(event)=> {
+         setNewAdvanced(event.target.value);
+       }}
+     
        />
      </Col>
    </Form.Group><br/>
 
    <Form.Group as={Row} controlId="formHorizontalPrice">
-     <Form.Label column lg={2} >
-     Points :
+     <Form.Label column lg={3} >
+    Total Payment :
      </Form.Label>
      <Col >
-       <Form.Control type="text" defaultValue={newPrice}
-       onChange={(event)=> {
-         setNewPrice(event.target.value);
+       <Form.Control type="text"  onChange={(event)=> {
+         setNewTotal(event.target.value);
        }}
+     
        />
      </Col>
    </Form.Group><br/>
   
    
-<Form.Group as={Row} controlId="formHorizontalFile" className="mb-3">
-     <Form.Label column lg={2}>
-      Gift Image :</Form.Label>
-     <Col >
-       <Form.Control type="file" name="img" defaultValue={newProduct_img}   className={classes.imageInput}
-      onChange={handleInput}
-       />
-     </Col>
-     </Form.Group>  
+  <div align="center">
+       <Button  type="submit"   style={{fontSize:'20px',width:'200px'}} onClick={() => {updateCustomized(Dt.cus_product_id)}} >Send</Button>
     
-
-   
-  
-   <Form.Group as={Row} controlId="formHorizontalQuantity">
-     <Form.Label column lg={2} >
-     Quantity :
-     </Form.Label>
-     <Col >
-       <Form.Control type="text" defaultValue={newQuantity}
-       onChange={(event)=> {
-         setNewQuantity(event.target.value);
-       }}
-       />
-     </Col>
-   </Form.Group><br/>
-   
-       <div align="center">
-       <Button  type="submit"   style={{fontSize:'20px',width:'200px'}} onClick={() => {updateGift(Dt.product_id)}}>Update</Button>
-       </div>
+       </div><br/><br/>
+       <div >
       
+       </div>
 
 </Form>
+{/* <Home />  */}
             
               </Paper>
+              
               </div>
+             
             </Grid>
  
           </Grid>
@@ -420,3 +412,42 @@ const handleInput =(e) =>{
   );
 }
 
+// function Home(){
+//     const handleOnClickDefault=()=>{
+        
+//   store.addNotification({
+//     title:'New card added',
+//     message:'Tom added the card',
+//     type:'success',
+//     container:"top-right",
+//     insert:"top",
+//     animationIn:["animated","fadeIn"],
+//     animation:["animated","fadeOut"],
+//     dismiss:{
+//       duration:2000,
+//       showIcon:true,
+//     },
+//     width:600
+//   })
+//     }
+  
+   
+//     return(
+//       <div>
+//         <button onClick={handleOnClickDefault}>
+//           default
+//         </button>
+        
+//       </div>
+//     )
+  
+//   }
+  
+//   function MyNotify(){
+//     return(
+//       <div className="bg-primary text-white">
+//         <h1>New Card Added</h1>
+//         <h4>Tom added the card</h4>
+//       </div>
+//     )
+//   }

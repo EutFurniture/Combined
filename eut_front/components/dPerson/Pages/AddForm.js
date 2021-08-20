@@ -1,41 +1,34 @@
-import React,{useEffect,useState} from 'react';
+import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import axios from 'axios';
+import Axios from 'axios';
 import clsx from 'clsx';
-import {useParams} from "react-router-dom"
-
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+import { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Drawer from '@material-ui/core/Drawer';
 import Box from '@material-ui/core/Box';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
+import List from '@material-ui/core/List';
 import IconButton from '@material-ui/core/IconButton';
-import Badge from '@material-ui/core/Badge';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import Link from '@material-ui/core/Link';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import NotificationsIcon from '@material-ui/icons/Notifications';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
-import {Redirect} from "react-router-dom"
+import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+import {Redirect} from "react-router-dom";
 import Form from 'react-bootstrap/Form';
 import { Button } from 'react-bootstrap';
 import { Row } from 'react-bootstrap';
 import { Col } from 'react-bootstrap';
 
-import { mainListItems, Logout } from './listItems';
-
+import { DpListItems, Logout } from './dplistItems';
 
 
 function Copyright() {
@@ -50,7 +43,6 @@ function Copyright() {
     </Typography>
   );
 }
-
 
 const drawerWidth = 240;
 
@@ -91,8 +83,6 @@ const useStyles = makeStyles((theme) => ({
   },
   title: {
     flexGrow: 1,
-    fontSize:40,
-    fontWeight:600,
   },
   drawerPaper: {
     position: 'relative',
@@ -119,7 +109,7 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
     height: '100vh',
     overflow: 'auto',
-    backgroundColor:'#f0f8ff'
+    backgroundColor:'#ede7f6'
   },
   container: {
     paddingTop: theme.spacing(4),
@@ -140,109 +130,57 @@ const useStyles = makeStyles((theme) => ({
   fixedHeight: {
     height: 240,
   },
-  imageInput:{
-    border:'none',
-    borderColor:'white'
-  }
   
 }));
 
 const styles = {
   side:{
-    backgroundColor:'rgb(37,37,94)',
+    backgroundColor:'#0E1372',
   },
- 
+  pack:{
+    justifyContent:'flex-around',
+    marginLeft:'20px'
+  }  ,
+  button_style:{
+    display:'flex',
+    justifyContent:'space-between',
+  }
   
 };
 
 
 
-export default function EditGifts() {
-
+export default function AddForm() {
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
-  const [state,setState]=useState({file:'',product_img:'',message:'',success:false})
-  const {product_id} = useParams();
- const [Dt, setDt] = useState([])
- const [newName, setNewName] = useState();
- const [newPrice, setNewPrice] = useState();
- const [newProduct_img,setNewProduct_img]=useState();
- const [newQuantity,setNewQuantity]=useState();
- 
- const [giftList,setGiftList]=useState([])
- useEffect(()=>{
-   axios.get("http://localhost:3001/loadGift").then((response)=>{
-     setGiftList(response.data)
-   })
- },[])
-
- useEffect(() => {
-  const fetchData = async () => {
-      const response = await axios.get('http://localhost:3001/viewGift', {
-          params: {
-            product_id:  product_id,
-              
-          }
-      });
-
-      setDt(response.data[0]);
-      setNewName(response.data[0].name)
-      setNewPrice(response.data[0].price)
-      setNewProduct_img(response.data[0].product_img)
-      setNewQuantity(response.data[0].quantity)
-        
-  };
-  fetchData();
-}, [product_id]);
-
-const updateGift = (ID) => {
-  if(state.file)
-  {
-    let formData=new FormData();
-    formData.append('file',state.file) 
-    axios.post('http://localhost:3001/imageUpload',formData,{
-        'content-Type':'multipart/form-data',
-      })
-
-  axios.put("http://localhost:3001/updateGift", {name: newName,price:newPrice,product_img:state.file.name,quantity:newQuantity,product_id: product_id}).then(
-    (response) => {
-      
-      setGiftList(Dt.map((val) => {
-        return val.product_id === product_id ? {product_id: val.product_id, name: val.name, price: val.price,product_img:val.product_img,quantity:val.quantity, 
-          name: newName,price:newPrice,product_img:newProduct_img,quantity:newQuantity } : val
-        
-      }))
-  
-    }
-  
-  )
-  alert("Gift Edited successfully") 
-  } 
-};
-
-const handleInput =(e) =>{
-  let reader =new FileReader();
-  let file=e.target.files[0]
-  reader.onloadend =() =>{
-    setState({
-      ...state,
-      file:file,
-      product_img:reader.result,
-      message:""
-    })
-  }
-  reader.readAsDataURL(file);
-}
-  
-
-
-
   const handleDrawerOpen = () => {
     setOpen(true);
   };
   const handleDrawerClose = () => {
     setOpen(false);
   };
+
+
+   const [product_id, setProduct_id]= useState("");
+   const [order_id, setOrder_id]= useState("");
+   const [return_date, setReturn_date]= useState("");
+   const [reason, setReason]= useState("");
+  
+  
+
+
+    const addReturnItem = () => {
+      Axios.post('http://localhost:3001/create', {
+       
+        product_id: product_id,
+        order_id: order_id,
+        return_date: return_date,
+        reason: reason,
+     
+      }).then(() => { 
+        alert("Details added success");
+      });
+    };
 
   const [anchorEl, setAnchorEl] = React.useState(null);
 
@@ -254,21 +192,21 @@ const handleInput =(e) =>{
     setAnchorEl(null);
   };
 
-  
+ // const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
-    
-    const[isAuth,setIsAuth]=useState(true);
+  const[isAuth,setIsAuth]=useState(true);
 
   if(!isAuth){
     return <Redirect to="" />
   }
 
 
+
   return (
     <div className={classes.root}>
       <CssBaseline />
       <AppBar position="absolute" className={clsx(classes.appBar, open && classes.appBarShift)}>
-        <Toolbar className={classes.toolbar} style={{backgroundColor: 'rgb(37,37,94)'}}>
+        <Toolbar className={classes.toolbar} style={{backgroundColor: '#0E1372'}}>
           <IconButton
             edge="start"
             color="inherit"
@@ -279,13 +217,8 @@ const handleInput =(e) =>{
             <MenuIcon />
           </IconButton>
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-            <strong>ADMIN</strong>
+            <strong>DELIVERY PERSON</strong>
           </Typography>
-          <IconButton color="inherit">
-            <Badge badgeContent={4} color="secondary">
-              <NotificationsIcon />
-            </Badge>
-          </IconButton>
           <IconButton color="inherit" fontSize="inherit">
            <AccountCircleIcon   onClick={handleClick}/>
   
@@ -297,7 +230,7 @@ const handleInput =(e) =>{
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-        <MenuItem onClick={handleClose}>Profile</MenuItem>
+      
         <MenuItem onClick={()=>setIsAuth(false)}>Logout</MenuItem>
       </Menu>
         </Toolbar>
@@ -310,100 +243,106 @@ const handleInput =(e) =>{
         }}
         open={open}
       >
-        <div className={classes.toolbarIcon} style={{backgroundColor: 'rgb(37,37,94)', color:'white'}}>
+        <div className={classes.toolbarIcon} style={{backgroundColor: '#0E1372', color:'white'}}>
           <IconButton onClick={handleDrawerClose} style={{color:'white'}}>
             <ChevronLeftIcon />
           </IconButton>
         </div>
         <Divider />
-        <List style={{backgroundColor: 'rgb(37,37,94)', color:'white'}}>{mainListItems}</List>
-        
+        <List style={{backgroundColor: '#0E1372', color:'white'}}>{DpListItems}</List>
         <Divider />
-        <List style={{backgroundColor: 'rgb(37,37,94)', color:'red'}}>{Logout}</List>
+        <List style={{backgroundColor: '#0E1372', color:'red'}}>{Logout}</List>
         <Divider />
       </Drawer>
       </div>
       <main className={classes.content}>
         <div className={classes.appBarSpacer} />
         <Container maxWidth="lg" className={classes.container}>
-          <Grid container spacing={18}>
+          <Grid container spacing={3}>
         
             
             
 
             {/* Recent Orders */}
-            <Grid item xs={11} direction="row"  >
+            <Grid item xs={10} style={styles.pack} >
             
   
             <div >
               <Paper className={classes.paper}>
-              <Typography component="h1" variant="h6" color="inherit"  align="center" width="100%" noWrap className={classes.title}>
-              <strong>UPDATE GIFT DETAILS</strong>
+              <Typography component="h1" variant="h6" color="inherit"  width="100%" noWrap className={classes.title}>
+              <strong>ADD RETURNED ITEM DETAILS</strong>
             </Typography><br/>
 
-            
-            <Form>
-
-<Form.Group as={Row} controlId="formHorizontalName">
-     <Form.Label column lg={2} >
-      Gift Name :
-     </Form.Label>
-     <Col >
-       <Form.Control type="text" 
-      defaultValue={newName}
-      onChange={(event)=> {
-        setNewName(event.target.value);
-      }}
-       />
-     </Col>
-   </Form.Group><br/>
-
-   <Form.Group as={Row} controlId="formHorizontalPrice">
-     <Form.Label column lg={2} >
-     Points :
-     </Form.Label>
-     <Col >
-       <Form.Control type="text" defaultValue={newPrice}
-       onChange={(event)=> {
-         setNewPrice(event.target.value);
-       }}
-       />
-     </Col>
-   </Form.Group><br/>
+                 <Form >
+                    <div className = "info">
   
-   
-<Form.Group as={Row} controlId="formHorizontalFile" className="mb-3">
-     <Form.Label column lg={2}>
-      Gift Image :</Form.Label>
-     <Col >
-       <Form.Control type="file" name="img" defaultValue={newProduct_img}   className={classes.imageInput}
-      onChange={handleInput}
-       />
-     </Col>
-     </Form.Group>  
-    
 
-   
+
+                    <Form.Group as={Row} controlId="formHorizontalOrder_id">
+                      <Form.Label column lg={2}>
+                        Order ID :
+                      </Form.Label>
+                      <Col sm={10}>
+                        <Form.Control type="text" placeholder="Order ID" 
+                        onChange={(event)=> {
+                          setOrder_id(event.target.value);
+                        }}
+                        />
+                      </Col>
+                    </Form.Group><br/>
+
+
+                    <Form.Group as={Row} controlId="formHorizontalProduct_id">
+                      <Form.Label column lg={2}>
+                        Product ID :
+                      </Form.Label>
+                      <Col sm={10}>
+                        <Form.Control type="text" placeholder="Product ID" 
+                        onChange={(event)=> {
+                          setProduct_id(event.target.value);
+                        }}
+                        />
+                      </Col>
+                    </Form.Group><br/>
+
+
+                    <Form.Group as={Row} controlId="formHorizontalReturn_date">
+                      <Form.Label column lg={2}>
+                        Return Date :
+                      </Form.Label>
+                      <Col sm={10}>
+                        <Form.Control type="date" placeholder="Return Date" 
+                        onChange={(event)=> {
+                          setReturn_date(event.target.value);
+                        }}/>
+                      </Col>
+                    </Form.Group><br/>
+
+                    <Form.Group as={Row} controlId="formHorizontalReason">
+
+                      <Form.Label column lg={2}>
+                        Reason :
+                      </Form.Label>
+                      <Col sm={10}>
+                        <Form.Control type="text" placeholder="Reason" 
+                        onChange={(event)=> {
+                          setReason(event.target.value);
+                        }}/>
+                      </Col>
+                    </Form.Group><br/>
+
+                          </div>
   
-   <Form.Group as={Row} controlId="formHorizontalQuantity">
-     <Form.Label column lg={2} >
-     Quantity :
-     </Form.Label>
-     <Col >
-       <Form.Control type="text" defaultValue={newQuantity}
-       onChange={(event)=> {
-         setNewQuantity(event.target.value);
-       }}
-       />
-     </Col>
-   </Form.Group><br/>
-   
-       <div align="center">
-       <Button  type="submit"   style={{fontSize:'20px',width:'200px'}} onClick={() => {updateGift(Dt.product_id)}}>Update</Button>
-       </div>
-      
+                  
 
-</Form>
+                    
+                        <div     align='center' style={styles.button_style}>
+                        <Button  type="submit" size='lg' href= '/AddReturnedItem' >View Return Item</Button>
+
+                        <Button  type="submit" size='lg' onClick={addReturnItem}>Add Returned Items</Button>
+                         
+                     </div>
+                </Form>
             
               </Paper>
               </div>
