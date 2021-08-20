@@ -21,11 +21,12 @@ import Paper from '@material-ui/core/Paper';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import NotificationsIcon from '@material-ui/icons/Notifications';
-// import AccountCircleIcon from '@material-ui/icons/AccountCircle';
-// import Menu from '@material-ui/core/Menu';
-// import MenuItem from '@material-ui/core/MenuItem';
-// import {Redirect} from "react-router-dom";
- import {Link} from 'react-router-dom';
+
+import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+import {Redirect} from "react-router-dom";
+import {Link} from 'react-router-dom';
 import ViewStreamIcon from '@material-ui/icons/ViewStream';
 import {Button} from 'react-bootstrap';
 import {Card} from 'react-bootstrap';
@@ -153,34 +154,16 @@ const styles = {
   
 };
 
+const dateOnly = (d) => {
+  const date = new Date(d);
+  const year = date.getFullYear();
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+  return `${year} - ${month} - ${day}`;
+};
+
 export default function AssignDelivers() {
   const classes = useStyles();
-  const [open, setOpen] = React.useState(true);
-  const handleDrawerOpen = () => {
-    setOpen(true);
-  };
-  const handleDrawerClose = () => {
-    setOpen(false);
-  };
-
-  // const [anchorEl, setAnchorEl] = React.useState(null);
-
-  // const handleClick = (event) => {
-  //   setAnchorEl(event.currentTarget);
-  // };
-
-  // const handleClose = () => {
-  //   setAnchorEl(null);
-  // };
-
- 
-
-  // const[isAuth,setIsAuth]=useState(true);
-
-  // if(!isAuth){
-  //   return <Redirect to="" />
-  // }
-
 
   const [statusList, setstatusList] = useState([]);
 
@@ -189,6 +172,35 @@ export default function AssignDelivers() {
       setstatusList(response.data)
     })
   }
+
+  const [open, setOpen] = React.useState(true);
+  const handleDrawerOpen = () => {
+    setOpen(true);
+  };
+  const handleDrawerClose = () => {
+    setOpen(false);
+  };
+
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+ 
+
+  const[isAuth,setIsAuth]=useState(true);
+
+  if(!isAuth){
+    return <Redirect to="" />
+  }
+
+
+  
 
   return (
     <div className={classes.root}>
@@ -213,14 +225,14 @@ export default function AssignDelivers() {
             </Badge>
           </IconButton>
 
-          {/* <IconButton color="inherit" fontSize="inherit">
+          <IconButton color="inherit" fontSize="inherit">
            <AccountCircleIcon onClick={handleClick}  />
           </IconButton>
 
           <Menu id="simple-menu" anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={handleClose}>
             <MenuItem onClick={handleClose}><Link to='/dManager/pages/ManageProfile' style={{textDecoration:'none',color:'black'}}>Profile</Link></MenuItem>
             <MenuItem onClick={()=>setIsAuth(false)}>Logout</MenuItem>
-          </Menu> */}
+          </Menu>
           
         </Toolbar>
       </AppBar>
@@ -262,6 +274,7 @@ export default function AssignDelivers() {
                   <div align="right"> 
                   <Button onClick={getStatus} type="submit" size='lg'><ViewStreamIcon/> Pending</Button>
                   </div>
+                  <br></br>
                   <div  style={styles.card}>
                   {statusList.map((val, key) => {
                     return (
@@ -271,6 +284,8 @@ export default function AssignDelivers() {
                           <Card.Header>DELIVER ID : {val.employee_id}</Card.Header>
                           <Card.Body>
                           <Card.Text>Name : {val.e_name}</Card.Text>
+                          <Card.Text>Shipping Address : {val.c_address}</Card.Text>
+                          <Card.Text>Delivery Date : {dateOnly(val.order_last_date)}</Card.Text>
                           <Card.Text>Scheduled : {val.pending}</Card.Text>
                           
                         </Card.Body>

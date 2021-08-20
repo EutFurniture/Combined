@@ -26,7 +26,7 @@ import {Redirect} from "react-router-dom";
 import {Link} from 'react-router-dom';
 
 import { mainListItems, Logout, Profile } from './listItems';
-import Chart from './Chart';
+import Charts from './Charts';
 import Orders from './Orders';
 import ViewTotalCash from './ViewTotalCash';
 
@@ -230,7 +230,7 @@ export default function Dashboard() {
             {/* Chart */}
             <Grid item xs={12} md={8} lg={9}>
               <Paper className={fixedHeightPaper}>
-                <Chart />
+                <Charts />
               </Paper>
             </Grid>
             {/* Recent Deposits */}

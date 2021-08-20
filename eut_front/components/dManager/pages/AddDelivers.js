@@ -18,10 +18,14 @@ import Badge from '@material-ui/core/Badge';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
-import Link from '@material-ui/core/Link';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import NotificationsIcon from '@material-ui/icons/Notifications';
+import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+import {Redirect} from "react-router-dom";
+import {Link} from 'react-router-dom';
 
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -177,6 +181,8 @@ export default function AddDelivers() {
     setOpen(false);
   };
 
+
+
   const { register , handleSubmit, formState: { errors } } = useForm({
     resolver: yupResolver(schema),
   });
@@ -194,10 +200,29 @@ export default function AddDelivers() {
       }).then((response) => { 
         if(response.data.message){
           alert(response.data.message)
+          window.location.href='/dManager/pages/ManageOTP'
         }
       });
       console.log(data)
     };
+
+    const [anchorEl, setAnchorEl] = React.useState(null);
+
+    const handleClick = (event) => {
+      setAnchorEl(event.currentTarget);
+    };
+  
+    const handleClose = () => {
+      setAnchorEl(null);
+    };
+  
+   
+  
+    const[isAuth,setIsAuth]=useState(true);
+  
+    if(!isAuth){
+      return <Redirect to="" />
+    }
 
   return (
     <div className={classes.root}>
@@ -221,6 +246,16 @@ export default function AddDelivers() {
               <NotificationsIcon />
             </Badge>
           </IconButton>
+
+          <IconButton color="inherit" fontSize="inherit">
+           <AccountCircleIcon onClick={handleClick}  />
+          </IconButton>
+
+          <Menu id="simple-menu" anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={handleClose}>
+            <MenuItem onClick={handleClose}><Link to='/dManager/pages/ManageProfile' style={{textDecoration:'none',color:'black'}}>Profile</Link></MenuItem>
+            <MenuItem onClick={()=>setIsAuth(false)}>Logout</MenuItem>
+          </Menu>
+
         </Toolbar>
       </AppBar>
       <div style={styles.side}>

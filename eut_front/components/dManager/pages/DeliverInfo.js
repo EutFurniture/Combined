@@ -19,6 +19,12 @@ import NotificationsIcon from '@material-ui/icons/Notifications';
 import Grid from '@material-ui/core/Grid';
 import Divider from '@material-ui/core/Divider';
 import {useParams} from 'react-router-dom'
+import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+import {Redirect} from "react-router-dom";
+import {Link} from 'react-router-dom';
+
 
 import { mainListItems, Logout, Profile } from './listItems';
 
@@ -165,6 +171,13 @@ const styles = {
   }
 };
 
+const dateOnly = (d) => {
+  const date = new Date(d);
+  const year = date.getFullYear();
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+  return `${year} - ${month} - ${day}`;
+};
 
 export default function DeliverInfo() {
   const { employee_id } = useParams();
@@ -196,6 +209,23 @@ export default function DeliverInfo() {
     setOpen(false);
   };
 
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+ 
+
+  const[isAuth,setIsAuth]=useState(true);
+
+  if(!isAuth){
+    return <Redirect to="" />
+  }
 
   return (
     <div className={classes.root}>
@@ -219,6 +249,16 @@ export default function DeliverInfo() {
               <NotificationsIcon />
             </Badge>
           </IconButton>
+
+          <IconButton color="inherit" fontSize="inherit">
+           <AccountCircleIcon onClick={handleClick}  />
+          </IconButton>
+
+          <Menu id="simple-menu" anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={handleClose}>
+            <MenuItem onClick={handleClose}><Link to='/dManager/pages/ManageProfile' style={{textDecoration:'none',color:'black'}}>Profile</Link></MenuItem>
+            <MenuItem onClick={()=>setIsAuth(false)}>Logout</MenuItem>
+          </Menu>
+
         </Toolbar> 
       </AppBar>
       <div style={styles.side}>
@@ -277,9 +317,9 @@ export default function DeliverInfo() {
               <strong> JOB INFORMATION </strong>
             </Typography>
                 <div style={{fontSize:'20px',marginLeft:'20px'}}>
-                <br/><p>Employee ID: Emp{Dt.employee_id}</p>
+                <br/><p>Employee ID: {Dt.employee_id}</p>
                 <p>Employee Role: {Dt.e_role}</p>
-                <p>Job Start Date: {Dt.e_job_start_date}</p>
+                <p>Job Start Date: {dateOnly(Dt.e_job_start_date)}</p>
                </div>
             </div> 
             </div> 

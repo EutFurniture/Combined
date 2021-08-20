@@ -44,7 +44,7 @@ class ViewTotalCash extends Component{
                 </div>
                 </Typography>
                 <Typography color="textSecondary" flex = "1" >
-                    July 2021
+                     2021
                 </Typography>
                 <div style={{marginTop: 60 }}>
                     <Link color="primary" href="/dManager/pages/ManageCashOnDelivery">
