@@ -303,7 +303,7 @@ export default function UpdateDelivery() {
                   <Form.Control as="Select" name="id" onChange={(event) =>{setNewDeliver_id(event.target.value);}} required>
                     <option>{newDeliver_id}</option>
                     {deliverList.map((record) => {return(
-                      <option value={record.employee_id}>{record.employee_id}</option>
+                      <option value={record.employee_id} > {record.employee_id}-{record.e_name}</option>
                     )})}
                     <option>0</option>
                   </Form.Control>

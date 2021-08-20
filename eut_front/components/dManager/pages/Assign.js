@@ -90,7 +90,7 @@ export default function Assign()
                             <Form.Control as="Select" name="id" onChange={(event) =>{setDeliver_id(event.target.value);}} required>
                               <option>Select Deliver</option>
                               {deliverList.map((record) => {return(
-                                <option value={record.employee_id}>{record.employee_id}</option>
+                                <option value={record.employee_id}>{record.employee_id}-{record.e_name}</option>
                               )})}
                             </Form.Control>
                         </Col>
