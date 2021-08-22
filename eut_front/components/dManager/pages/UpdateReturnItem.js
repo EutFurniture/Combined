@@ -2,6 +2,12 @@ import React, { useState, useEffect } from "react";
 import clsx from 'clsx';
 import axios from "axios";
 
+import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+import {Redirect} from "react-router-dom";
+import {Link} from 'react-router-dom';
+
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -176,6 +182,25 @@ export default function UpdateReturnItem() {
     const handleDrawerClose = () => {
       setOpen(false);
     };
+
+    const [anchorEl, setAnchorEl] = React.useState(null);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+ 
+
+  const[isAuth,setIsAuth]=useState(true);
+
+  if(!isAuth){
+    return <Redirect to="" />
+  }
+  
   
   return (
     <div className={classes.root}>
@@ -199,6 +224,16 @@ export default function UpdateReturnItem() {
               <NotificationsIcon />
             </Badge>
           </IconButton>
+
+          <IconButton color="inherit" fontSize="inherit">
+           <AccountCircleIcon onClick={handleClick}  />
+          </IconButton>
+
+          <Menu id="simple-menu" anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={handleClose}>
+            <MenuItem onClick={handleClose}><Link to='/dManager/pages/ManageProfile' style={{textDecoration:'none',color:'black'}}>Profile</Link></MenuItem>
+            <MenuItem onClick={()=>setIsAuth(false)}>Logout</MenuItem>
+          </Menu>
+          
         </Toolbar> 
       </AppBar>
       <div style={styles.side}>
@@ -261,7 +296,7 @@ export default function UpdateReturnItem() {
                     <option>Returned</option>
                     <option>Completed</option>
                     <option>Ready to deliver</option>
-                    <option>Scheduled</option>
+                    <option>R_Pending</option>
                     <option>Pending</option>
              
                   </Form.Control>

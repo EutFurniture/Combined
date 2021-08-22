@@ -1,5 +1,6 @@
 import React from 'react';
 import clsx from 'clsx';
+import axios from 'axios';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Drawer from '@material-ui/core/Drawer';
@@ -15,19 +16,30 @@ import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import  './DpDashboard.css';
 import {Redirect} from "react-router-dom";
-import { useState } from 'react';
+import { useState  , useEffect} from 'react';
 import { Link } from "react-router-dom"; 
-
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Grid from '@material-ui/core/Grid';
 import Divider from '@material-ui/core/Divider';
-
 import { DpListItems, Logout } from './dplistItems';
 import Testimonial  from './Testimonial';
-import shop1 from '../../../images/shop1.jpg'
+import {toast} from 'react-toastify'
 
-import { fontSize } from '@material-ui/system';
+
+
+function Copyright() {
+  return (
+    <Typography variant="body2" color="textSecondary" align="center">
+      {'Copyright © '}
+      <Link color="inherit" href="https://material-ui.com/">
+        Eut Furniture
+      </Link>{' '}
+      {new Date().getFullYear()}
+      {'.'}
+    </Typography>
+  );
+}
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
@@ -142,9 +154,33 @@ const styles = {
 
 
 
-export default function Dashboard() {
+toast.configure()
+const DpDashboard =()=> {
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
+
+  const [returns_count,setReturnsCount]=useState([])
+  useEffect(()=>{
+    axios.get("http://localhost:3001/CountReturnItems").then((response)=>{
+      setReturnsCount(response.data)
+    })
+  },[])
+
+  const [totalcashon_income,setTotalcashonIncome]=useState([])
+  useEffect(()=>{
+    axios.get("http://localhost:3001/TotalcashonIncome").then((response)=>{
+      setTotalcashonIncome(response.data)
+    })
+  },[])
+  
+  const [pendingcount,setPendingCount]=useState([])
+  useEffect(()=>{
+    axios.get("http://localhost:3001/PendingCount").then((response)=>{
+      setPendingCount(response.data)
+    })
+  },[])
+
+
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -256,22 +292,36 @@ if(!isAuth){
                        <div className="charts_right_cards">
                            <div className="card1">
                                <h3>Total Cash On Payments</h3>
-                               <p>Rs.125,300</p>
+                               {totalcashon_income.map((record)=>{
+                                 return(
+                                  <p style={{fontSize:'25px'}}>Rs.{record.income}</p>
+                                 )
+                               })}
                            </div>
 
                            <div className="card2">
-                               <h3>Total No of Deliveries</h3>
-                               <p>52</p>
+                           <h2>Returned Items</h2>
+                           {returns_count.map((record)=>{
+                                 return(
+                                  <p style={{fontSize:'30px'}}>{record.returncount}</p>
+                                 )
+                               })}
                            </div>
 
                            <div className="card3">
-                               <h3>Pending Deliveries</h3>
-                               <p>4</p>
+                               <h3> Total Pending Deliveries</h3>
+                               {pendingcount.map((record)=>{
+                                 return(
+                                  <p style={{fontSize:'30px'}}>{record.pendingcount}</p>
+                                 )
+                               })}
                            </div>
 
                            <div className="card4">
-                               <h3>Total Return Items </h3>
-                               <p>13</p>
+
+
+                            <h3>Total No of Deliveries</h3>
+                               <p>52</p>
                            </div>
                            <div className="card1">
                                <h3>Free Deliveries </h3>
@@ -352,9 +402,11 @@ if(!isAuth){
             
             
          </Grid>
-<Testimonial />  
+      <Testimonial />  
         </Container>
+        <Copyright />
       </main>
     </div>
   );
 }
+export default DpDashboard;

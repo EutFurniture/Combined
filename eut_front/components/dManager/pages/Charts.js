@@ -46,7 +46,7 @@ function Charts() {
             ]}
             type="line"
             width="100%"
-            height="165"
+            height="160"
           />
         </div>
       </div>

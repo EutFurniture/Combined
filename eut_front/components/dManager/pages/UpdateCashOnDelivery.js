@@ -22,6 +22,12 @@ import {useParams} from 'react-router-dom'
 import { mainListItems, Logout, Profile } from './listItems';
 import { Form, Row, Col, Button } from "react-bootstrap";
 
+import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+import {Redirect} from "react-router-dom";
+import {Link} from 'react-router-dom';
+
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
@@ -186,6 +192,24 @@ export default function UpdateCashOnDelivery() {
       setOpen(false);
     };
   
+    const [anchorEl, setAnchorEl] = React.useState(null);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+ 
+
+  const[isAuth,setIsAuth]=useState(true);
+
+  if(!isAuth){
+    return <Redirect to="" />
+  }
+
   return (
     <div className={classes.root}>
       <CssBaseline />
@@ -208,6 +232,16 @@ export default function UpdateCashOnDelivery() {
               <NotificationsIcon />
             </Badge>
           </IconButton>
+
+          <IconButton color="inherit" fontSize="inherit">
+           <AccountCircleIcon onClick={handleClick}  />
+          </IconButton>
+
+          <Menu id="simple-menu" anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={handleClose}>
+            <MenuItem onClick={handleClose}><Link to='/dManager/pages/ManageProfile' style={{textDecoration:'none',color:'black'}}>Profile</Link></MenuItem>
+            <MenuItem onClick={()=>setIsAuth(false)}>Logout</MenuItem>
+          </Menu>
+          
         </Toolbar> 
       </AppBar>
       <div style={styles.side}>
@@ -270,7 +304,7 @@ export default function UpdateCashOnDelivery() {
                     <option>Returned</option>
                     <option>Completed</option>
                     <option>Ready to deliver</option>
-                    <option>Scheduled</option>
+                    <option>R_Pending</option>
                     <option>Pending</option>
                   </Form.Control>
                   </Col>

@@ -20,6 +20,11 @@ import Grid from '@material-ui/core/Grid';
 import Divider from '@material-ui/core/Divider';
 import {useParams} from 'react-router-dom'
 import { Form,Row,Col } from "react-bootstrap";
+import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+import {Redirect} from "react-router-dom";
+import {Link} from 'react-router-dom';
 
 import { mainListItems, Logout, Profile } from './listItems';
 
@@ -174,6 +179,23 @@ export default function DeliveryInfo() {
     setOpen(false);
   };
 
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+ 
+
+  const[isAuth,setIsAuth]=useState(true);
+
+  if(!isAuth){
+    return <Redirect to="" />
+  }
 
   return (
     <div className={classes.root}>
@@ -197,6 +219,16 @@ export default function DeliveryInfo() {
               <NotificationsIcon />
             </Badge>
           </IconButton>
+
+          <IconButton color="inherit" fontSize="inherit">
+           <AccountCircleIcon onClick={handleClick}  />
+          </IconButton>
+
+          <Menu id="simple-menu" anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={handleClose}>
+            <MenuItem onClick={handleClose}><Link to='/dManager/pages/ManageProfile' style={{textDecoration:'none',color:'black'}}>Profile</Link></MenuItem>
+            <MenuItem onClick={()=>setIsAuth(false)}>Logout</MenuItem>
+          </Menu>
+          
         </Toolbar> 
       </AppBar>
       <div style={styles.side}>
