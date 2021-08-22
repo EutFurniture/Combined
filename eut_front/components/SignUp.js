@@ -1,14 +1,9 @@
 import React,{useState} from 'react';
-import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
 import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
-import Box from '@material-ui/core/Box';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
@@ -38,14 +33,18 @@ const useStyles = makeStyles((theme) => ({
  otp: {
     margin: theme.spacing(1,8),
   },
+  sign:{
+    fontWeight:'bold',
+  }
 }));
 
 export default function SignUp() {
   const classes = useStyles();
   const[fname,setFName]=useState("");
-  const[lname,setLName]=useState("");
+  const[city,setCity]=useState("");
   const[email,setEmail]=useState("");
   const[phone,setPhone]=useState("");
+  const[post,setPost]=useState("");
   const[address,setAddress]=useState("");
   const[password,setPassword]=useState("");
   const[cpassword,setCpassword]=useState("");
@@ -53,16 +52,35 @@ export default function SignUp() {
   const regist=()=>{
     Axios.post('http://localhost:3001/register',{
       fname:fname,
-      lname:lname,
       email:email,
       phone:phone,
       address:address,
       password:password,
-      cpassword:cpassword
+      cpassword:cpassword,
+      post:post,
+      city:city,
     
   }).then(() =>{
     console.log("success");
   });
+  };
+
+
+  const otpinfo = (data) => {
+  
+    Axios.post("http://localhost:3001/otpCheck", {
+     email: data.email,
+     otp: data.otp,
+      
+    }).then((response) => {
+      console.log(response)
+      if (response.data.message) {
+        setotpStatus(response.data.message);
+        alert(response.data.message)
+        
+      } 
+    }
+    );
   };
   return (
     <Fragment>
@@ -77,22 +95,60 @@ export default function SignUp() {
      
       <div className={classes.paper}>
         
-        <Typography component="h1" variant="h5">
+        <Typography component="h1" className={classes.sign} variant="h5">
           Sign up
         </Typography>
         <form className={classes.form} noValidate>
           <Grid container spacing={2}>
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} >
               <TextField
                 autoComplete="fname"
-                name="firstName"
+                name="fullname"
                 variant="outlined"
                 required
                 fullWidth
                 id="firstName"
-                label="First Name"
+                label="Full Name"
                 autoFocus
                 onChange={(event)=>{setFName(event.target.value); }}
+              />
+            </Grid>
+           
+           
+            <Grid item xs={12}>
+              <TextField
+                variant="outlined"
+                required
+                fullWidth
+                id="email"
+                label="Email Address"
+                name="email"
+                type="email"
+                autoComplete="email"
+                onChange={(event)=>{setEmail(event.target.value); }}
+              />
+            </Grid>
+            <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            color="primary"
+            className={classes.otp}
+            onSubmit={handleSubmit(otpinfo)}
+          >
+          OTP
+          </Button>
+            <Grid item xs={12}>
+              <TextField
+                variant="outlined"
+           
+                fullWidth
+                id="otp"
+                label="OTP"
+                name="otp"
+                type="otp"
+                autoComplete="otp"
+                
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -100,11 +156,11 @@ export default function SignUp() {
                 variant="outlined"
                 required
                 fullWidth
-                id="lastName"
-                label="Last Name"
-                name="lastName"
-                autoComplete="lname"
-                onChange={(event)=>{setLName(event.target.value); }}
+                id="city"
+                label="Your City"
+                name="city"
+                autoComplete="city"
+                onChange={(event)=>{setCity(event.target.value); }}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -124,48 +180,24 @@ export default function SignUp() {
                 variant="outlined"
                 required
                 fullWidth
+                id="postalcode"
+                label="Postal Code"
+                name="postalcode"
+                autoComplete="postalcode"
+                onChange={(event)=>{setPost(event.target.value); }}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                variant="outlined"
+                required
+                fullWidth
                 id="phone"
                 label="Phone no"
                 name="phone"
                 type="phone"
                 autoComplete="phone"
                 onChange={(event)=>{setPhone(event.target.value); }}
-              />
-            </Grid>
-            <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            color="primary"
-            className={classes.otp}
-            
-          >
-          OTP
-          </Button>
-            <Grid item xs={12}>
-              <TextField
-                variant="outlined"
-           
-                fullWidth
-                id="otp"
-                label="OTP"
-                name="otp"
-                type="otp"
-                autoComplete="otp"
-                
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                variant="outlined"
-                required
-                fullWidth
-                id="email"
-                label="Email Address"
-                name="email"
-                type="email"
-                autoComplete="email"
-                onChange={(event)=>{setEmail(event.target.value); }}
               />
             </Grid>
             <Grid item xs={12}>
