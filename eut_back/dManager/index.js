@@ -7,6 +7,7 @@ const { name } = require('ejs');
 const bcrypt = require('bcrypt');
 const bodyParser =  require('body-parser')
 const { response } = require('express');
+const multer = require('multer');
 const saltRounds = 10;
 
 var nodemailer = require('nodemailer')
@@ -68,7 +69,6 @@ app.post('/addDelivers',(req,res)=>{
     const fullname = req.body.fullname
     const NIC = req.body.NIC
     const email = req.body.email
-    
     const address = req.body.address
     const mobile = req.body.mobile
     const password = req.body.password
@@ -87,7 +87,7 @@ app.post('/addDelivers',(req,res)=>{
     const head = 'otp code';
     const mess = `Dear ${fullname}, 
 
-                    <strong>Your otp code is ${otp}</strong>
+                    Your otp code is ${otp}
                     Use this code to verify your Account.
 
                 With regrads,
@@ -114,12 +114,12 @@ app.post('/addDelivers',(req,res)=>{
           
                 db.query("INSERT INTO employee(e_name, e_nic, e_email, e_phone, e_job_start_date, e_address, e_role) VALUES ( ?, ?, ?, ?,NOW(), ?,'Deliver'); INSERT INTO userlogin (u_email, u_name, u_password,user_role,u_otp,u_verify) VALUES (?,?,?,'Deliver',?,'0') ;", 
                 [fullname,NIC,email ,mobile ,address,email,fullname,hash,otp],(err,result)=>{
-                 
-                     
-                 if(result){
-                     console.log(result);
-                   res.send({message:"Email has been Sent"});
-                 }
+                    if(err){
+                        console.log(err)
+                      }else{
+                        console.log(result);
+                        res.send({message:"Email has been Sent"});
+                      }
                 })
               
               })
@@ -349,8 +349,18 @@ app.get("/paymentstatus", (req, res) => {
     });
 });
 
+app.get("/delivername", (req, res) => {
+    db.query("SELECT e_name FROM employee WHERE e_role='Deliver'", (err, result, fields) => {
+        if (err) {
+            console.log(err);
+        } else{
+            res.send(result);
+        }
+    });
+});
+
 app.get("/deliverid", (req, res) => {
-    db.query("SELECT employee_id FROM employee WHERE e_role='Deliver'", (err, result, fields) => {
+    db.query("SELECT employee_id,e_name FROM employee WHERE e_role='Deliver'", (err, result, fields) => {
         if (err) {
             console.log(err);
         } else{
@@ -390,7 +400,7 @@ app.get("/Assign", (req, res) => {
 });
 
 app.get("/viewStatus", (req, res) => {
-    db.query("SELECT employee.employee_id,employee.e_name, COUNT(orders.o_status) AS pending FROM employee LEFT JOIN orders ON orders.employee_id=employee.employee_id WHERE (orders.o_status='Pending' OR orders.o_status='R_Pending' OR orders.o_status='Returned') AND employee.e_role='Deliver' GROUP BY employee.employee_id", (err, result, fields) => {
+    db.query("SELECT employee.employee_id,employee.e_name,customer.c_address,orders.order_last_date,COUNT(orders.o_status) AS pending FROM employee INNER JOIN orders ON orders.employee_id=employee.employee_id INNER JOIN customer ON customer.customer_id=orders.customer_id WHERE (orders.o_status='Pending' OR orders.o_status='R_Pending' OR orders.o_status='Returned') GROUP BY orders.order_last_date ORDER BY employee.employee_id;", (err, result, fields) => {
         if (err) {
             console.log(err);
         } else{
@@ -400,7 +410,7 @@ app.get("/viewStatus", (req, res) => {
 });
 
 app.get("/getPriority", (req, res) => {
-    db.query("SELECT orders.employee_id,orders.order_id,orders.order_last_date,orders.o_status,orders.o_priority FROM orders WHERE orders.o_status='Pending' UNION SELECT return_item.employee_id,return_item.order_id,return_item.reschedule_date,return_item.return_status, return_item.o_priority FROM return_item WHERE return_item.return_status='Scheduled' ORDER BY employee_id", (err, result, fields) => {
+    db.query("SELECT orders.employee_id,orders.order_id,orders.order_last_date,orders.o_status,orders.o_priority FROM orders WHERE orders.o_status='Pending' UNION SELECT return_item.employee_id,return_item.order_id,return_item.reschedule_date,return_item.return_status, return_item.o_priority FROM return_item WHERE return_item.return_status='R_Pending' ORDER BY employee_id", (err, result, fields) => {
         if (err) {
             console.log(err);
         } else{
@@ -594,7 +604,7 @@ app.put('/updateDeliveryStatus', (req,res) => {
     const order_id=req.body.order_id;
     const Schedule_date= req.body.Schedule_date;
 
-    db.query("UPDATE return_item SET reschedule_date=?,return_status='Scheduled' WHERE order_id=?; UPDATE orders SET order_last_date=?,o_status='Scheduled' WHERE order_id=?", 
+    db.query("UPDATE return_item SET reschedule_date=?,return_status='R_Pending' WHERE order_id=?; UPDATE orders SET order_last_date=?,o_status='R_Pending' WHERE order_id=?", 
     [Schedule_date,order_id,Schedule_date,order_id], 
     (err, result) => {
 
@@ -625,6 +635,8 @@ app.put('/updateDeliveryStatus', (req,res) => {
     );
   });
 
+
+
   app.put('/updateReturnStatus', (req,res) => {
     const order_id=req.body.order_id;
     const status = req.body.status;
@@ -649,7 +661,7 @@ app.put('/updateDeliveryStatus', (req,res) => {
     const phone = req.body.phone;
     const address = req.body.address;
 
-    db.query("UPDATE employee SET e_name=?,e_email=?,e_phone=?,e_address=? WHERE employee_id = ?;", 
+    db.query("UPDATE employee SET e_name=?,e_email=?,e_phone=?,e_address=? WHERE employee_id = ?; ", 
     [name,email,phone,address,employee_id], 
     (err, result) => {
 
@@ -661,6 +673,7 @@ app.put('/updateDeliveryStatus', (req,res) => {
        }
     );
   });
+  //UPDATE userlogin SET u_name,u_email WHERE u_email=?
 
   app.get("/viewDeliverySchedule", (req, res) => {
     db.query("SELECT order_id, employee_id, o_date, order_last_date FROM orders ORDER BY order_last_date DESC", (err, result, fields) => {
@@ -726,6 +739,132 @@ app.get("/delivervsorder", (req, res) => {
         }
     });
 });
+
+//image add 
+
+const storage = multer.diskStorage({
+    destination(req,file,cb){
+      cb(null,'../eut_front/public/')
+    },
+    filename(req,file,cb){
+      cb(
+        null,
+        `${file.originalname.split('.')[0]}.jpg`
+      )
+    }
+  })
+  
+  const upload = multer({
+    storage,
+    limits:{
+      fileSize: 5000000
+    },
+    fileFilter(req,file,cb){
+      if(!file.originalname.match(/\.(jpeg|jpg|png)$/i)){
+        return  cb(new Error('pleaseupload image with type of jpg or jpeg'))
+    }
+    cb(undefined,true)
+  }
+  })
+  
+  app.post("/imageUpload",upload.single('file'),(req,res)=> {
+     
+  })
+
+
+//cashpaymentactive
+app.get('/cashPaymentnotifyCount',(req,res)=>{
+    db.query('SELECT COUNT(order_id) AS count FROM payment WHERE payment_method="cash on delivery" AND active=1',(err,result,fields)=>{
+        if(!err)
+        res.send(result);
+        else
+        console.log(err);
+    })
+  })
+
+    //cash payment set deactive
+app.get('/cashpaymentnotifyDeactive', (req,res) => {
+    db.query("UPDATE payment SET active=0 WHERE payment_method ='cash on delivery' AND active=1", 
+    (err, result) => {
+        if (err) {
+            console.log(err);
+        } else {
+            res.send(result);
+        }
+       }
+    );
+  });
+
+  app.get('/paymentnotifymess',(req,res)=>{
+    db.query('SELECT COUNT(order_id) AS count FROM payment WHERE payment_status="Advance Paid" AND pBill_image <>" "',(err,result,fields)=>{
+        if(!err)
+        res.send(result);
+        else
+        console.log(err);
+    })
+  })
+
+  app.get('/returnnotifyCount',(req,res)=>{
+    db.query('SELECT COUNT(order_id) AS r_count FROM orders WHERE o_status="R_Pending" AND active=1',(err,result,fields)=>{
+        if(!err)
+        res.send(result);
+        else
+        console.log(err);
+    })
+  })
+
+  app.get('/returnnotifyDeactive', (req,res) => {
+    db.query("UPDATE orders SET active=0 WHERE o_status ='R_Pending' AND active=1", 
+    (err, result) => {
+        if (err) {
+            console.log(err);
+        } else {
+            res.send(result);
+        }
+       }
+    );
+  });
+
+  app.get('/returnnotifymess',(req,res)=>{
+    db.query('SELECT COUNT(order_id) AS r_count FROM orders WHERE o_status="R_Pending" AND Bill_image <>" "',(err,result,fields)=>{
+        if(!err)
+        res.send(result);
+        else
+        console.log(err);
+    })
+  })
+
+  app.get('/ordernotifyCount',(req,res)=>{
+    db.query('SELECT COUNT(order_id) AS o_count FROM orders WHERE o_status="Pending" AND active=1',(err,result,fields)=>{
+        if(!err)
+        res.send(result);
+        else
+        console.log(err);
+    })
+  })
+
+  app.get('/ordernotifyDeactive', (req,res) => {
+    db.query("UPDATE orders SET active=0 WHERE o_status ='Pending' AND active=1", 
+    (err, result) => {
+        if (err) {
+            console.log(err);
+        } else {
+            res.send(result);
+        }
+       }
+    );
+  });
+
+  app.get('/ordernotifymess',(req,res)=>{
+    db.query('SELECT COUNT(order_id) AS o_count FROM orders WHERE o_status="Pending" AND Bill_image <>" "',(err,result,fields)=>{
+        if(!err)
+        res.send(result);
+        else
+        console.log(err);
+    })
+  })
+
+
 
 app.listen(3001, () => {
     console.log("yay your server is running on port 3001");
