@@ -1,4 +1,5 @@
-import React,{useState,useEffect} from 'react';
+import React,{useState} from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import clsx from 'clsx';
 
 import { makeStyles } from '@material-ui/core/styles';
@@ -15,7 +16,6 @@ import Badge from '@material-ui/core/Badge';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
-
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import NotificationsIcon from '@material-ui/icons/Notifications';
@@ -25,15 +25,8 @@ import MenuItem from '@material-ui/core/MenuItem';
 import {Redirect} from "react-router-dom";
 import {Link} from 'react-router-dom';
 
-import Axios from 'axios';
-import {toast} from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'
-import {Button} from 'react-bootstrap';
 import { mainListItems, Logout, Profile } from './listItems';
-import Charts from './Charts';
-import Orders from './Orders';
-import ViewTotalCash from './ViewTotalCash';
-
+import View_Notification_Payment from './View_Notification_Payment';
 
 
 function Copyright() {
@@ -114,16 +107,23 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
     height: '100vh',
     overflow: 'auto',
+    backgroundColor:'#ede7f6'
   },
   container: {
     paddingTop: theme.spacing(4),
     paddingBottom: theme.spacing(4),
+    alignContent:'center',
+    align:'center',
+    
   },
   paper: {
+    position:'relative',
+    align:'center',
     padding: theme.spacing(2),
     display: 'flex',
     overflow: 'auto',
     flexDirection: 'column',
+   
   },
   fixedHeight: {
     height: 240,
@@ -134,173 +134,20 @@ const useStyles = makeStyles((theme) => ({
 const styles = {
   side:{
     backgroundColor:'rgb(37,37,94)',
-  }
+  },
+  pack:{
+    justifyContent:'flex-around',
+    marginLeft:'20px'
+  }  ,
+  
 };
 
 
-toast.configure()
 
-export default function Dashboard() {
+
+export default function Notification_payment() {
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
-
-  const [paymentNotifyCount,setpaymentNotifyCount]=useState([])
-  useEffect(()=>{
-    Axios.get("http://localhost:3001/cashPaymentnotifyCount").then((response)=>{
-      setpaymentNotifyCount(response.data)
-      
-    })
-  },[])
-
-  const paymentcount=paymentNotifyCount.map(record=>record.count);
-  console.log(paymentcount);
-
-
-  const [returnNotifyCount,setreturnNotifyCount]=useState([])
-  useEffect(()=>{
-    Axios.get("http://localhost:3001/returnnotifyCount").then((response)=>{
-      setreturnNotifyCount(response.data)
-      
-    })
-  },[])
-
-  const returncount=returnNotifyCount.map(record=>record.r_count);
-  console.log(returncount);
-
-  const [orderNotifyCount,setorderNotifyCount]=useState([])
-  useEffect(()=>{
-    Axios.get("http://localhost:3001/ordernotifyCount").then((response)=>{
-      setorderNotifyCount(response.data)
-      
-    })
-  },[])
-
-  const ordercount=orderNotifyCount.map(record=>record.o_count);
-  console.log(ordercount);
-
-  const [returnNotifymess,setreturnNotifymess]=useState([])
-  useEffect(()=>{
-    Axios.get("http://localhost:3001/returnnotifymess").then((response)=>{
-      setreturnNotifymess(response.data)
-      
-    })
-  },[])
-  const returnmesscount=returnNotifymess.map(record=>record.r_count);
-
-  const [paymentNotifymess,setpaymentNotifymess]=useState([])
-  useEffect(()=>{
-    Axios.get("http://localhost:3001/paymentnotifymess").then((response)=>{
-      setpaymentNotifymess(response.data)
-      
-    })
-  },[])
-  const paymentmesscount=paymentNotifymess.map(record=>record.count);
- 
-
-  const [orderNotifymess,setorderNotifymess]=useState([])
-  useEffect(()=>{
-    Axios.get("http://localhost:3001/ordernotifymess").then((response)=>{
-      setorderNotifymess(response.data)
-      
-    })
-  },[])
-  const ordermesscount=orderNotifymess.map(record=>record.o_count);
-
-
-  const total = Number(paymentcount) + Number(returncount) + Number(ordercount)
-
-  const NotificationClick = async () => {
-     const response = await Axios.get('http://localhost:3001/cashpaymentnotifyDeactive', {
-     });
-    
-     const responses = await Axios.get('http://localhost:3001/returnnotifyDeactive', {
-    });
-
-    const responsee = await Axios.get('http://localhost:3001/ordernotifyDeactive', {
-    });
-
-    if(paymentmesscount>0)
-    {
-      const customToast=()=>{
-        return(
-          <div style={{fontSize:'15px'}}>
-            You have {paymentmesscount} New Payment Confirmations from Deliver Person! <br></br><br></br>
-            <Button variant="light" onClick={Notification_page_payment}>View</Button>
-          </div>
-        )
-      }
-
-      const notify=()=>{
-       
-        toast.info(customToast,{position:toast.POSITION.TOP_RIGHT,autoClose:false})
-          }
-          notify();
-          
-
-    }
-
-    
-
-      if(returnmesscount>0)
-      {
-        const customToasts=()=>{
-          return(
-            <div style={{fontSize:'15px'}}>
-              You have {returnmesscount} New Return Delivery Confirmations from Deliver Person! <br></br><br></br>
-              <Button variant="light" onClick={Notification_page_return}>View</Button>
-            </div>
-          )
-        }
-
-        const notifye=()=>{
-       
-          toast.info(customToasts,{position:toast.POSITION.TOP_RIGHT,autoClose:false})
-        
-        
-            }
-        notifye();
-      }
-
-      if(ordermesscount>0)
-      {
-        const customToastse=()=>{
-          return(
-            <div style={{fontSize:'15px'}}>
-              You have New {ordermesscount} Delivery Confirmations from Deliver Person! <br></br><br></br>
-              <Button variant="light" onClick={Notification_page_order}>View</Button>
-            </div>
-          )
-        }
-
-        const notifyee=()=>{
-       
-          toast.info(customToastse,{position:toast.POSITION.TOP_RIGHT,autoClose:false})
-        
-        
-            }
-        notifyee();
-      }
-
-
-    
-      
-      const Notification_page_payment=()=>{
-      window.location.href='/dManager/pages/Notification_payment'
-      }
-      
-      const Notification_page_return=()=>{
-        window.location.href='/dManager/pages/Notification_return'
-        }
-
-        const Notification_page_order=()=>{
-          window.location.href='/dManager/pages/Notification_order'
-          }
-  }
-
-
-
-
-
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -308,8 +155,8 @@ export default function Dashboard() {
     setOpen(false);
   };
 
-
   
+
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   const handleClick = (event) => {
@@ -325,8 +172,6 @@ export default function Dashboard() {
   if(!isAuth){
     return <Redirect to="" />
   }
-
-  const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
   return (
     <div className={classes.root}>
@@ -345,13 +190,13 @@ export default function Dashboard() {
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
             <strong>DELIVERY MANAGER</strong>
           </Typography>
-
           <IconButton color="inherit">
-            <Badge badgeContent={total} color="secondary">
-              <NotificationsIcon onClick={NotificationClick}/>
+            <Badge badgeContent={4} color="secondary">
+              <NotificationsIcon />
             </Badge>
           </IconButton>
 
+           
           <IconButton color="inherit" fontSize="inherit">
            <AccountCircleIcon onClick={handleClick}  />
           </IconButton>
@@ -360,7 +205,7 @@ export default function Dashboard() {
             <MenuItem onClick={handleClose}><Link to='/dManager/pages/ManageProfile' style={{textDecoration:'none',color:'black'}}>Profile</Link></MenuItem>
             <MenuItem onClick={()=>setIsAuth(false)}>Logout</MenuItem>
           </Menu>
-
+          
         </Toolbar>
       </AppBar>
       <div style={styles.side}>
@@ -382,35 +227,34 @@ export default function Dashboard() {
         <List style={{backgroundColor: 'rgb(37,37,94)', color:'white'}}>{Profile}</List>
         <Divider />
         <Divider />
-        <Divider />
-        <List style={{backgroundColor: 'rgb(37,37,94)' , color:'white'}}>{Logout}</List>
+        <List style={{backgroundColor: 'rgb(37,37,94)', color:'white'}}>{Logout}</List>
         <Divider />
       </Drawer>
       </div>
-      
       <main className={classes.content}>
         <div className={classes.appBarSpacer} />
         <Container maxWidth="lg" className={classes.container}>
           <Grid container spacing={3}>
-            {/* Chart */}
-            <Grid item xs={12} md={8} lg={9}>
-              <Paper className={fixedHeightPaper}>
-                <Charts />
-              </Paper>
-            </Grid>
-            {/* Recent Deposits */}
-            <Grid item xs={12} md={4} lg={3}>
-              <Paper className={fixedHeightPaper}>
-                <ViewTotalCash />
-              </Paper>
-            </Grid>
+        
+            
+              <Typography component="h1" variant="h6" color="inherit" align="center" width="100%" noWrap className={classes.title}>
+                    <strong> PAYMENT NOTIFICATIONS</strong>
+              </Typography>
+
             {/* Recent Orders */}
-            <Grid item xs={12}>
+            <Grid item xs={12}  direction="row"  >
+            
+  
+            <div >
+              
               <Paper className={classes.paper}>
-                <Orders />
+                <View_Notification_Payment/>
               </Paper>
+              </div>
             </Grid>
+ 
           </Grid>
+          
           <Box pt={4}>
             <Copyright />
           </Box>
@@ -419,3 +263,4 @@ export default function Dashboard() {
     </div>
   );
 }
+
