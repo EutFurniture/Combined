@@ -154,39 +154,37 @@ const styles = {
 
 
 
-export default function UpdateConDelivery() {
+export default function UpdateCashOnDeliveryBill() {
 
 
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
-  const {order_id} = useParams();
-  const [state,setState]=useState({file:'',Bill_image:'',message:'',success:false})
-   const[newActive,setNewActive]=useState();
-  const[newBill_image,setNewBill_image]=useState();
+  const {payment_id} = useParams();
+  const [state,setState]=useState({file:'',pBill_image:'',message:'',success:false})
+  const [newActive,setNewActive]=useState();
+  const [newPBill_image,setNewPBill_image]=useState();
   const [Dt, setDt] = useState([])
   const [ReturnList, setReturnList] = useState([]);
 
-
-
   useEffect(() => {
     const fetchData = async () => {
-        const response = await axios.get('http://localhost:3001/ConfirmDeliveryFetch', {
+        const response = await axios.get('http://localhost:3001/ConfirmCashonFetch', {
             params: {
-               order_id: order_id,
+               payment_id: payment_id,
                 
             }
         });
   
         setDt(response.data[0]);
-        setNewActive(response.data[0].active)
-        setNewBill_image (response.data[0].Bill_image)
+        
+       
         console.log(response.data[0]);
     };
     fetchData();
-  }, [order_id]);
+  }, [payment_id]);
 
     
-  const UpdateConDelivery = (order_id) => {
+  const UpdateCashOnDeliveryBill = (payment_id) => {
       if(state.file)
       {
         let formData=new FormData();
@@ -195,19 +193,17 @@ export default function UpdateConDelivery() {
             'content-Type':'multipart/form-data',
           })
     
-          axios.put(`http://localhost:3001/confirmdelivery/${order_id}`, { active:newActive, Bill_image:state.file.name, order_id:order_id}).then(
+          axios.put(`http://localhost:3001/confirmcashondelivery/${payment_id}`, { active:newActive, pBill_image:state.file.name, payment_id:payment_id}).then(
             (response) => {
               setReturnList(Dt.map((record) => {
-                return record.id === order_id ? {order_id: record.order_id, active:record.active, Bill_image:record.Bill_image, active:newActive, Bill_image:newBill_image} : record
+                return record.id === payment_id ? {payment_id: record.payment_id, active:record.active, pBill_image:record.pBill_image, active:newActive, pBill_image:newPBill_image} : record
                 
               }))
            }
           )
-          alert("Delivery is Confirmed")  
+          alert("Payment is Confirmed")  
         }
-      
-   
-      
+        
     };
 
     const handleInput =(e) =>{
@@ -217,7 +213,7 @@ export default function UpdateConDelivery() {
         setState({
           ...state,
           file:file,
-          Bill_image:reader.result,
+          pBill_image:reader.result,
           message:""
         })
        
@@ -265,7 +261,7 @@ export default function UpdateConDelivery() {
             <MenuIcon />
           </IconButton>
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-            <strong>ADMIN</strong>
+            <strong>DELIVERY PERSON</strong>
           </Typography>
 
           <IconButton color="inherit" fontSize="inherit">
@@ -320,11 +316,10 @@ export default function UpdateConDelivery() {
             <div >
               <Paper className={classes.paper}>
               <Typography component="h1" variant="h6" color="inherit"  align="center" width="100%" noWrap className={classes.title}>
-              <strong>UPDATE PRODUCT DETAILS</strong>
+              <strong>CONFIRM PAYMENT DETAILS</strong>
             </Typography><br/>
             <Form >
-
-   <Form.Group as={Row} controlId="formHorizontalName">
+            <Form.Group as={Row} controlId="formHorizontalName">
      <Form.Label column lg={2} >
      Order Id :
      </Form.Label>
@@ -354,7 +349,7 @@ export default function UpdateConDelivery() {
      <Form.Label column lg={2}>
       Bill Image :</Form.Label>
      <Col >
-     <Form.Control type="file"  defaultValue={newBill_image} className={classes.imageInput}
+     <Form.Control type="file"  defaultValue={newPBill_image} className={classes.imageInput}
       onChange={handleInput}
      />                  
      </Col>
@@ -362,12 +357,12 @@ export default function UpdateConDelivery() {
     
      {state.message && <h6 className={classes.mess}>{state.message}</h6>}            
      <div style={{marginLeft:'227px'}}>
-   {state.Bill_image && (<img src={state.Bill_image}  width="20%" height="20%"  alt="preview" />)}
+   {state.pBill_image && (<img src={state.pBill_image}  width="20%" height="20%"  alt="preview" />)}
    </div><br/>
 
    
        <div align="center">
-       <Button  style={{fontSize:'20px',width:'200px'}} type="submit" onClick={() => {UpdateConDelivery(Dt.order_id)}} >Update</Button>
+       <Button  style={{fontSize:'20px',width:'200px'}} type="submit" onClick={() => {UpdateCashOnDeliveryBill(Dt.payment_id)}} >Update</Button>
        </div>
       
 

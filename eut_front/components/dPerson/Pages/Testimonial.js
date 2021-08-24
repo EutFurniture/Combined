@@ -18,7 +18,8 @@ export default class Testimonials extends Component {
         <div>
          
           <div className="myCarousel">
-            <h3>Shirley Jonh</h3>
+            <h3>Rishab John</h3>
+            <img src="/image/rish.png" />
             <h4>Customer</h4>
             <p>
             Excellent and professional service. Have used twice and highly recommend –
@@ -31,6 +32,7 @@ export default class Testimonials extends Component {
    
           <div className="myCarousel">
             <h3>Daniel Josheph</h3>
+            <img src="/image/theo.png" />  
             <h4>Customer</h4>
             <p>
             Great service, picked up on time, keep me informed at each stage and delivered securely and on time.
@@ -39,6 +41,7 @@ export default class Testimonials extends Component {
           </div>
         </div>
         <div className="myCarousel">
+        <img src="/image/sweta.png" />
             <h3>Swetha Ratnam</h3>
             <h4>Customer</h4>
             <p>
@@ -46,10 +49,7 @@ export default class Testimonials extends Component {
            Polite, friendly and accommodating in difficult times, and very reasonably priced.
             </p>
           </div>
-        <div>
-         
-
-        </div>
+        
       </Carousel>
     );
   }

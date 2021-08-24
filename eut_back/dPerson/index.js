@@ -6,9 +6,12 @@ const bodyParser = require("body-parser");
 const { response } = require('express');
 const saltRounds = 10
 const { name } = require('ejs');
+const multer = require('multer');
 const bcrypt = require('bcrypt');
 const cookieParser=require('cookie-parser');
 const session = require('express-session');
+
+
 
 app.use(cors({
     origin:["http://localhost:3000"],
@@ -124,11 +127,11 @@ app.post('/create', (req, res) => {
   app.put('/confirmdelivery/:order_id', (req,res) => {
 
     const order_id = req.params.order_id;
-    const o_status = req.body.o_status;
-
-    const sqlUpdates = "UPDATE orders  SET o_status =?  WHERE order_id = ?";
+    const Bill_image =  req.body.Bill_image;
+    const active =  req.body.active;
+    const sqlUpdates = "UPDATE orders SET Bill_image=?, active=? WHERE order_id=? ";
   
-    db.query(sqlUpdates,[o_status,order_id],(err,result)=>{
+    db.query(sqlUpdates,[Bill_image, active, order_id],(err,result)=>{
       if(err) console.log(err);
     })
   });
@@ -179,7 +182,7 @@ app.get("/viewcashOnDelivery", (req, res) => {
 
         // VIEW AVAILABLE DELIVERIES
  app.get("/viewAvailableDelivery", (req, res) => {
-        const sql_View = "SELECT orders.order_id, orders.employee_id, orders.order_last_date,customer.address,customer.fname, customer.phone  FROM orders LEFT JOIN customer ON orders.customer_id=customer.customer_id    ";
+        const sql_View = "SELECT orders.order_id, orders.employee_id, orders.order_last_date,customer.address,customer.fname, customer.phone  FROM orders LEFT JOIN customer ON orders.customer_id=customer.customer_id     ";
         db.query(sql_View, (err, result,fields) => {
             res.send(result);
         } 
@@ -188,7 +191,7 @@ app.get("/viewcashOnDelivery", (req, res) => {
 
        // VIEW  DELIVERY TO CONFIRM
 app.get("/viewConfirmDelivery", (req, res) => {
-            const sql_condelivery = " SELECT order_id, o_status FROM orders  ";
+            const sql_condelivery = " SELECT order_id, o_status, active, Bill_image FROM orders  ";
             db.query(sql_condelivery, (err, result) => {
              res.send(result);
              } 
@@ -280,6 +283,17 @@ app.delete("/deleteReturnitem/:order_id",(req,res)=>{
     });
   });
   
+
+  app.get('/PendingCount',(req,res) => {
+    db.query('SELECT COUNT(order_id) AS pendingcount FROM orders WHERE o_status = "pending"', (err, result) => {
+        if(err) {
+            console.log(err)
+        }else {
+            res.send(result);
+           
+        }
+    });
+  });
 
 
 
@@ -706,6 +720,16 @@ app.get('/loadEmployee',(req,res)=>{
   })
 })
 
+
+app.get('/loadProduct',(req,res)=>{
+  db.query('SELECT * FROM product ;',(err,results,fields)=>{
+     if(err) throw err;
+     res.send(results);
+  })
+})
+
+
+
 app.get('/GetAdmin',(req,res) => {
     db.query('SELECT * FROM employee WHERE role="admin"', (err, result) => {
         if(err) {
@@ -731,8 +755,8 @@ app.get('/GetAdmin',(req,res) => {
   app.post('/addProducts',(req,res)=>{
   
     console.log(req.body)
-  const product_img =req.body.image;
-  const product_name = req.body.name;
+  const product_img =req.body.product_img;
+  const product_name = req.body.product_name;
   const price = req.body.price;
   const material = req.body.material;
   const quantity = req.body.quantity;
@@ -740,7 +764,7 @@ app.get('/GetAdmin',(req,res) => {
   const description=req.body.description;
   
   db.query(
-    "INSERT INTO products(product_name,price,product_img,material,quantity,category_id,description) VALUES (?,?,?,?,?,?,?)",[product_name,price,product_img,material,quantity,category_id,description],
+    "INSERT INTO product (product_name,price,product_img,material,quantity,category_id,description) VALUES (?,?,?,?,?,?,?)",[product_name,price,product_img,material,quantity,category_id,description],
     (err,result)=>{
       if(err){
         console.log(err)
@@ -749,6 +773,43 @@ app.get('/GetAdmin',(req,res) => {
       }
     }
   );
+  })
+
+  app.get('/loadCategoryTypes',(req,res)=>{
+    db.query('SELECT * FROM category ',(err,results,fields)=>{
+       if(err) throw err;
+       res.send(results);
+    })
+  })
+
+  const storage = multer.diskStorage({
+    destination(req,file,cb){
+      cb(null,'../eut_front/public/')
+    },
+    filename(req,file,cb){
+      cb(
+        null,
+        `${file.originalname.split('.')[0]}.jpg`
+      )
+    }
+  })
+  
+
+  const upload = multer({
+    storage,
+    limits:{
+      fileSize: 5000000
+    },
+    fileFilter(req,file,cb){
+      if(!file.originalname.match(/\.(jpeg|jpg|png)$/i)){
+        return  cb(new Error('please upload image with type of jpg or jpeg'))
+    }
+    cb(undefined,true)
+  }
+  })
+
+  app.post("/imageUpload",upload.single('file'),(req,res)=> {
+     
   })
 
 app.listen(3001,  () => {
