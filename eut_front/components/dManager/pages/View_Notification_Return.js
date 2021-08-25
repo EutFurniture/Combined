@@ -81,6 +81,28 @@ function View_Notification_Return() {
 
                             <Form.Group as={Row} controlId="formHorizontalName">
                                 <Form.Label column lg={2} >
+                                Payment Method  :
+                                </Form.Label>
+                                <Col >
+                                <Form.Label column lg={2} >
+                                {val.payment_method}
+                                </Form.Label>
+                                </Col>
+                            </Form.Group><br/>
+
+                            <Form.Group as={Row} controlId="formHorizontalName">
+                                <Form.Label column lg={2} >
+                                Payment Status  :
+                                </Form.Label>
+                                <Col >
+                                <Form.Label column lg={2} >
+                                {val.payment_status}
+                                </Form.Label>
+                                </Col>
+                            </Form.Group><br/>
+
+                            <Form.Group as={Row} controlId="formHorizontalName">
+                                <Form.Label column lg={2} >
                                 Bill Image  :
                                 </Form.Label>
                                 <Col >
