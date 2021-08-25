@@ -618,8 +618,8 @@ const Cuspage=()=>{
                     <tr>
                   
                     <th><img src={`/${record.product_img}`} style={{height:'50px',width:'50px',marginLeft:'40px'}}/></th>
-                    <th >{record.name}</th>
-                    <th>{record.total_price}</th>
+                    <th >{record.product_name}</th>
+                    <th>Rs.{record.total_price}</th>
                     </tr>
                                   )
                                 })}

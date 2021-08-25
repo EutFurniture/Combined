@@ -265,7 +265,7 @@ export default function UpdateConDelivery() {
             <MenuIcon />
           </IconButton>
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-            <strong>ADMIN</strong>
+            <strong>DELIVERY PERSON</strong>
           </Typography>
 
           <IconButton color="inherit" fontSize="inherit">
@@ -335,18 +335,7 @@ export default function UpdateConDelivery() {
       </Col>
    </Form.Group><br/>
   
-   <Form.Group as={Row} controlproduct_id="formHorizontalQuantity">
-     <Form.Label column lg={2} >
-     Active :
-     </Form.Label>
-     <Col >
-       <Form.Control type="text" defaultValue={newActive}
-       onChange={(event)=> {
-         setNewActive(event.target.value);
-       }}
-       />
-     </Col>
-   </Form.Group><br/>
+ 
   
    
 
