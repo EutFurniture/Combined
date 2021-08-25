@@ -185,7 +185,7 @@ const MovingItems=()=> {
   const {fromdate}=useParams();
   const {id}=useParams();
   const [Dt, setDt] = useState([])
-  const[month,setMonth]=useState("");
+  const[currentmonth,setMonth]=useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -209,7 +209,7 @@ const MovingItems=()=> {
     const Moving = async () => {
         const response = await axios.get('http://localhost:3001/MovingItems', {
             params: {
-                month:month,  
+               month:currentmonth,  
             }
             
         });
@@ -340,7 +340,7 @@ const count=moving.map(record=>record.count);
                <Grid >
               <Paper style={{height:'70px'}}>
                   <div style={{display:'flex'}}>
-                  <h4 style={{color:'red',marginLeft:'10px',paddingTop:'10px',marginTop:'10px'}}>Enter current Month</h4>
+                  <h4 style={{color:'red',marginLeft:'10px',paddingTop:'10px',marginTop:'10px'}}>Enter Month</h4>
                   <input type='number' style={{width:'200px',border:'none',backgroundColor:'aliceblue',paddingLeft:'20px',marginTop:'10px',marginLeft:'20px',borderRadius:'10px'}} placeholder='month no' 
                    onChange={(event)=> {
                     setMonth(event.target.value);
@@ -427,7 +427,7 @@ const count=moving.map(record=>record.count);
               <Paper style={{align:'center',marginLeft:'20px',backgroundColor: '#045de9',backgroundImage:'linear-gradient(315deg, #045de9 0%, #09c6f9 74%)',height:'230px',borderRadius:'20px'}}>
                   <h4 style={{color:'white',marginLeft:'50px',marginTop:'50px',paddingTop:'20px'}}>Fast Moving Item</h4>
              <TrendingUpIcon style={{marginLeft:'100px',width:'100px',height:'120px',color:'white'}}/>
-             <h6 style={{marginLeft:'120px'}}>Sofa Set</h6>
+             <h6 style={{marginLeft:'120px'}}>Bed Set</h6>
               </Paper><br/>
               <Paper style={{align:'center',marginLeft:'20px',backgroundColor: '#045de9',backgroundImage:'linear-gradient(315deg, #045de9 0%, #09c6f9 74%)',height:'230px',borderRadius:'20px'}}>
                   <h4 style={{color:'white',marginLeft:'50px',paddingTop:'20px'}}>Slow Moving Item</h4>
