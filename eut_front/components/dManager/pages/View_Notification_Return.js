@@ -29,19 +29,19 @@ const styles = {
       },
 }
 
-function View_Notification_Payment() {
+function View_Notification_Return() {
 
-    const [paymentList,setPaymentList]=useState([])
+    const [returnList,setreturnList]=useState([])
   useEffect(()=>{
-    axios.get("http://localhost:3001/viewpaymentNotification").then((response)=>{
-      setPaymentList(response.data)
+    axios.get("http://localhost:3001/viewreturnNotification").then((response)=>{
+      setreturnList(response.data)
     })
   },[])
 
 
     return (
         <div>
-            {paymentList.map((val, key) => {
+            {returnList.map((val, key) => {
                     return (
                         <div>
                         <Card border="primary" >
@@ -118,7 +118,7 @@ function View_Notification_Payment() {
                             
                             <div align='right'>
                                 
-                                <Link style={styles.confirmbtn} to={location=> `/UpdateCashOnDeliveryRoute/${val.order_id}`} >Confirm</Link>
+                                <Link style={styles.confirmbtn} to={location=> `/UpdateReturnItemRoute/${val.order_id}`} >Confirm</Link>
                                 
                             </div>
                             </Card.Footer>
@@ -134,4 +134,4 @@ function View_Notification_Payment() {
     )
 }
 
-export default View_Notification_Payment;
+export default View_Notification_Return;
