@@ -161,7 +161,7 @@ export default function UpdateCashOnDeliveryBill() {
   const [open, setOpen] = React.useState(true);
   const {payment_id} = useParams();
   const [state,setState]=useState({file:'',pBill_image:'',message:'',success:false})
-  const [newActive,setNewActive]=useState();
+
   const [newPBill_image,setNewPBill_image]=useState();
   const [Dt, setDt] = useState([])
   const [ReturnList, setReturnList] = useState([]);
@@ -193,10 +193,10 @@ export default function UpdateCashOnDeliveryBill() {
             'content-Type':'multipart/form-data',
           })
     
-          axios.put(`http://localhost:3001/confirmcashondelivery/${payment_id}`, { active:newActive, pBill_image:state.file.name, payment_id:payment_id}).then(
+          axios.put(`http://localhost:3001/confirmcashondelivery/${payment_id}`, { pBill_image:state.file.name, payment_id:payment_id}).then(
             (response) => {
               setReturnList(Dt.map((record) => {
-                return record.id === payment_id ? {payment_id: record.payment_id, active:record.active, pBill_image:record.pBill_image, active:newActive, pBill_image:newPBill_image} : record
+                return record.id === payment_id ? {payment_id: record.payment_id, pBill_image:record.pBill_image,  pBill_image:newPBill_image} : record
                 
               }))
            }
@@ -329,19 +329,8 @@ export default function UpdateCashOnDeliveryBill() {
      </Form.Label>
       </Col>
    </Form.Group><br/>
-  
-   <Form.Group as={Row} controlproduct_id="formHorizontalQuantity">
-     <Form.Label column lg={2} >
-     Active :
-     </Form.Label>
-     <Col >
-       <Form.Control type="text" defaultValue={newActive}
-       onChange={(event)=> {
-         setNewActive(event.target.value);
-       }}
-       />
-     </Col>
-   </Form.Group><br/>
+
+
   
    
 
