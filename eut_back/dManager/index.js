@@ -875,7 +875,7 @@ app.get('/cashpaymentnotifyDeactive', (req,res) => {
 });
 
    app.get("/viewreturnNotification", (req, res) => {
-     db.query("SELECT orders.order_id,orders.employee_id,orders.order_last_date, customer.c_name,customer.c_nic,orders.Bill_image FROM orders INNER JOIN customer ON orders.customer_id=customer.customer_id  WHERE orders.o_status='R_Pending'  AND Bill_image<>'';", (err, result, fields) => {
+     db.query("SELECT orders.order_id,orders.employee_id,orders.order_last_date,payment.payment_method,payment.payment_status, customer.c_name,customer.c_nic,orders.Bill_image FROM orders INNER JOIN customer ON orders.customer_id=customer.customer_id INNER JOIN payment ON payment.order_id=orders.order_id WHERE orders.o_status='R_Pending'  AND Bill_image<>'';", (err, result, fields) => {
          if (err) {
              console.log(err);
          } else{
@@ -885,7 +885,7 @@ app.get('/cashpaymentnotifyDeactive', (req,res) => {
  });
 
  app.get("/vieworderNotification", (req, res) => {
-    db.query("SELECT orders.order_id,orders.employee_id,orders.order_last_date, customer.c_name,customer.c_nic,orders.Bill_image FROM orders INNER JOIN customer ON orders.customer_id=customer.customer_id  WHERE orders.o_status='Pending'  AND Bill_image<>'';", (err, result, fields) => {
+    db.query("SELECT orders.order_id,orders.employee_id,orders.order_last_date, customer.c_name,customer.c_nic, payment.payment_method,payment.payment_status, orders.Bill_image FROM orders INNER JOIN customer ON orders.customer_id=customer.customer_id INNER JOIN payment ON payment.order_id=orders.order_id WHERE orders.o_status='Pending'  AND Bill_image<>'';", (err, result, fields) => {
         if (err) {
             console.log(err);
         } else{
