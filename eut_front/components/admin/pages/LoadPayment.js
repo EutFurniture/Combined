@@ -26,7 +26,7 @@ export default function LoadPayment() {
         <thead className="tableheading">
           <tr>
             <th scope="col">Payment ID</th>
-            <th scope="col">Product Name</th>
+            <th scope="col">Customer Name</th>
             <th scope='col'>Method</th>
             <th scope='col'>Total Price</th>
             <th scope='col'>Advanced Price</th>  
@@ -51,7 +51,7 @@ export default function LoadPayment() {
                        return(  
               <tr>
               <th scope="row">{record.payment_id}</th>
-              <td>{record.product_name}</td>
+              <td>{record.fname}</td>
               <td>{record.payment_method}</td>
               <td>{record.total_price}</td>
               <td>{record.advance_price}</td>
