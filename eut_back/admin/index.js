@@ -879,7 +879,7 @@ app.get('/Cus_OrderChart',(req,res) => {
 //customer analytics
 //customized order pie chart
 app.get('/CustomerCount',(req,res) => {
-  db.query('SELECT EXTRACT(MONTH FROM date) AS month, COUNT(customer_id) AS count FROM customer GROUP BY month', (err, result) => {
+  db.query('SELECT date, COUNT(customer_id) AS count FROM customer GROUP BY date', (err, result) => {
       if(err) {
           console.log(err)
       }else {
@@ -892,7 +892,7 @@ app.get('/CustomerCount',(req,res) => {
 
 //return items
 app.get('/ReturnCount',(req,res) => {
-  db.query('SELECT category.name,COUNT(return_item.returned_id) AS count FROM ((products INNER JOIN category ON products.category_id=category.category_id) INNER JOIN return_item ON products.product_id=return_item.product_id) GROUP BY (category.category_id)', (err, result) => {
+  db.query('SELECT category.name,COUNT(return_item.return_id) AS count FROM ((orderitem INNER JOIN (orders INNER JOIN return_item ON orders.order_id=return_item.order_id) ON orderitem.order_id=orders.order_id) INNER JOIN (products INNER JOIN category ON products.category_id=category.category_id) ON orderitem.product_id=products.product_id) WHERE EXTRACT(MONTH FROM return_item.return_date) = MONTH(CURRENT_TIMESTAMP) GROUP BY (category.category_id)', (err, result) => {
       if(err) {
           console.log(err)
       }else {
@@ -920,6 +920,32 @@ app.get('/MovingItems',(req,res) => {
 //Order Analytics
 app.get('/OrderAnalyze',(req,res) => {
   db.query('SELECT EXTRACT(MONTH FROM o_date) AS month, COUNT(order_id) AS count FROM orders GROUP BY month', (err, result) => {
+      if(err) {
+          console.log(err)
+      }else {
+          res.send(result);
+          // console.log(result);
+          
+      }
+  });
+});
+
+//OrderChart
+app.get('/OrderChart',(req,res) => {
+  db.query('SELECT orders.o_date, SUM(orderitem.quantity) AS count FROM orderitem INNER JOIN orders ON orderitem.order_id=orders.order_id GROUP BY orders.o_date', (err, result) => {
+      if(err) {
+          console.log(err)
+      }else {
+          res.send(result);
+          // console.log(result);
+          
+      }
+  });
+});
+
+//OrderChart
+app.get('/ReturnItemReport',(req,res) => {
+  db.query('SELECT products.product_name,return_item.reason,return_item.return_id,return_item.return_date,return_item.reschedule_date,return_item.return_status FROM ((orderitem INNER JOIN (orders INNER JOIN return_item ON orders.order_id=return_item.order_id)ON orderitem.order_id=orders.order_id)INNER JOIN products ON orderitem.product_id=products.product_id) WHERE EXTRACT(MONTH FROM return_date) = MONTH(CURRENT_TIMESTAMP)', (err, result) => {
       if(err) {
           console.log(err)
       }else {
@@ -991,9 +1017,21 @@ app.get('/CategoryCount',(req,res) => {
   });
 });
 
+//
+app.get('/CustomizedReport',(req,res) => {
+  db.query('SELECT customized_products.cus_product_id,customized_products.design,customized_products.product_name,customer.fname FROM customized_products INNER JOIN customer ON customized_products.customer_id=customer.customer_id', (err, result) => {
+      if(err) {
+          console.log(err)
+      }else {
+          res.send(result);
+         
+      }
+  });
+});
+
 //returnCount
 app.get('/ReturnItemCount',(req,res) => {
-  db.query('SELECT COUNT(returned_id) AS returncount FROM return_item', (err, result) => {
+  db.query('SELECT COUNT(return_id) AS returncount FROM return_item', (err, result) => {
       if(err) {
           console.log(err)
       }else {
@@ -1014,6 +1052,43 @@ app.get('/DeliverCount',(req,res) => {
       }
   });
 });
+
+//OrderReport
+app.get('/OrderReport',(req,res) => {
+  db.query('SELECT orders.order_id,products.product_name,orders.o_date,orderitem.quantity,orders.total_price FROM ((orderitem INNER JOIN orders ON orderitem.order_id=orders.order_id) INNER JOIN products ON orderitem.product_id=products.product_id) WHERE EXTRACT(MONTH FROM o_date) = MONTH(CURRENT_TIMESTAMP)', (err, result) => {
+      if(err) {
+          console.log(err)
+      }else {
+          res.send(result);
+         
+      }
+  });
+});
+
+//CustomerReport
+app.get('/CustomerReport',(req,res) => {
+  db.query('SELECT customer_id, fname,lname,email,address,phone,points,order_frequency,date FROM customer WHERE EXTRACT(MONTH FROM date) = MONTH(CURRENT_TIMESTAMP)', (err, result) => {
+      if(err) {
+          console.log(err)
+      }else {
+          res.send(result);
+         
+      }
+  });
+});
+
+//DeliveryReport
+app.get('/DeliveryReport',(req,res) => {
+  db.query('SELECT products.product_name, orders.order_id,orders.order_last_date,orders.status FROM ((orderitem INNER JOIN orders ON orderitem.order_id=orders.order_id)INNER JOIN products ON orderitem.product_id=products.product_id) WHERE EXTRACT(MONTH FROM orders.o_date) = MONTH(CURRENT_TIMESTAMP)', (err, result) => {
+      if(err) {
+          console.log(err)
+      }else {
+          res.send(result);
+         
+      }
+  });
+});
+
 
 //income
 app.get('/TotalIncome',(req,res) => {
@@ -1044,7 +1119,7 @@ app.get('/OrderByDate',(req,res) => {
 //order details
 app.get("/OrderDetails",(req,res)=>{
   const month=req.body.month;
-  db.query('SELECT products.name,customer.name AS cus_name,orders.o_date,orders.total_price FROM ((orders INNER JOIN products ON orders.product_id=products.product_id) INNER JOIN customer ON orders.customer_id=customer.customer_id) WHERE EXTRACT(MONTH FROM orders.o_date) =?',[req.query.month],(err,result)=>{
+  db.query('SELECT products.product_name,customer.fname AS cus_name,orders.o_date,orders.total_price FROM ((orders INNER JOIN products ON orders.product_id=products.product_id) INNER JOIN customer ON orders.customer_id=customer.customer_id) WHERE EXTRACT(MONTH FROM orders.o_date) =?',[req.query.month],(err,result)=>{
     console.log(req.query.month);
     res.send(result);
   });
