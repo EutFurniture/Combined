@@ -312,8 +312,7 @@ export default function EditCategory() {
             {/* Recent Orders */}
             <Grid item xs={11} direction="row"  >
             
-            {categoryList.map((val)=>{
-            return(
+           
             <div >
               <Paper className={classes.paper}>
               <Typography component="h1" variant="h6" color="inherit"  align="center" width="100%" noWrap className={classes.title}>
@@ -336,31 +335,13 @@ export default function EditCategory() {
      </Col>
    </Form.Group><br/>
 
-   <Form.Group as={Row} controlId="formHorizontalPrice">
-     <Form.Label column lg={2} >
-     Date :
-     </Form.Label>
-     <Col >
-       <Form.Control type="text" defaultValue={newDate}  onChange={(event)=> {
-         setNewDate(event.target.value);
-       }}
-     
-       />
-     </Col>
-   </Form.Group><br/>
+   
   
    
   <div align="center">
        <Button  type="submit"   style={{fontSize:'20px',width:'200px'}} onClick={() => {updateCategories(Dt.category_id)}} >Update</Button>
        </div><br/><br/>
-       <div >
-       <div style={{marginTop:'30px'}}>
-       {/* <img src={category3} /> 
-       <img src={category4} />  */}
-       <img style={{width:'700px',height:'500px'}} src={category5} />
-       <img style={{width:'385px',height:'500px',marginLeft:'10px'}} src={category6} /> 
-       </div>
-       </div>
+      
 
 </Form>
            
@@ -368,8 +349,7 @@ export default function EditCategory() {
               </Paper>
               
               </div>
-              )
-            })}
+              
             </Grid>
  
           </Grid>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React ,{useEffect}from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import clsx from 'clsx';
 import Axios from 'axios';
@@ -21,16 +21,18 @@ import Paper from '@material-ui/core/Paper';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import NotificationsIcon from '@material-ui/icons/Notifications';
-// import AccountCircleIcon from '@material-ui/icons/AccountCircle';
-// import Menu from '@material-ui/core/Menu';
-// import MenuItem from '@material-ui/core/MenuItem';
-// import {Redirect} from "react-router-dom";
- import {Link} from 'react-router-dom';
+
+import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+import {Redirect} from "react-router-dom";
+import {Link} from 'react-router-dom';
 import ViewStreamIcon from '@material-ui/icons/ViewStream';
 import {Button} from 'react-bootstrap';
 import {Card} from 'react-bootstrap';
-//import CardColumns from 'react-bootstrap/CardColumns'
-//import CardDeck from 'react-bootstrap/CardDeck'
+import {toast} from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+
 
 import { mainListItems, Logout,Profile } from './listItems';
 import Assign from './Assign';
@@ -153,8 +155,180 @@ const styles = {
   
 };
 
+const dateOnly = (d) => {
+  const date = new Date(d);
+  const year = date.getFullYear();
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+  return `${year} - ${month} - ${day}`;
+};
+
+toast.configure()
+
 export default function AssignDelivers() {
   const classes = useStyles();
+
+  const [statusList, setstatusList] = useState([]);
+
+  const [paymentNotifyCount,setpaymentNotifyCount]=useState([])
+  useEffect(()=>{
+    Axios.get("http://localhost:3001/cashPaymentnotifyCount").then((response)=>{
+      setpaymentNotifyCount(response.data)
+      
+    })
+  },[])
+
+  const paymentcount=paymentNotifyCount.map(record=>record.count);
+  console.log(paymentcount);
+
+
+  const [returnNotifyCount,setreturnNotifyCount]=useState([])
+  useEffect(()=>{
+    Axios.get("http://localhost:3001/returnnotifyCount").then((response)=>{
+      setreturnNotifyCount(response.data)
+      
+    })
+  },[])
+
+  const returncount=returnNotifyCount.map(record=>record.r_count);
+  console.log(returncount);
+
+  const [orderNotifyCount,setorderNotifyCount]=useState([])
+  useEffect(()=>{
+    Axios.get("http://localhost:3001/ordernotifyCount").then((response)=>{
+      setorderNotifyCount(response.data)
+      
+    })
+  },[])
+
+  const ordercount=orderNotifyCount.map(record=>record.o_count);
+  console.log(ordercount);
+
+  const [returnNotifymess,setreturnNotifymess]=useState([])
+  useEffect(()=>{
+    Axios.get("http://localhost:3001/returnnotifymess").then((response)=>{
+      setreturnNotifymess(response.data)
+      
+    })
+  },[])
+  const returnmesscount=returnNotifymess.map(record=>record.r_count);
+
+  const [paymentNotifymess,setpaymentNotifymess]=useState([])
+  useEffect(()=>{
+    Axios.get("http://localhost:3001/paymentnotifymess").then((response)=>{
+      setpaymentNotifymess(response.data)
+      
+    })
+  },[])
+  const paymentmesscount=paymentNotifymess.map(record=>record.count);
+ 
+
+  const [orderNotifymess,setorderNotifymess]=useState([])
+  useEffect(()=>{
+    Axios.get("http://localhost:3001/ordernotifymess").then((response)=>{
+      setorderNotifymess(response.data)
+      
+    })
+  },[])
+  const ordermesscount=orderNotifymess.map(record=>record.o_count);
+
+
+  const total = Number(paymentcount) + Number(returncount) + Number(ordercount)
+
+  const NotificationClick = async () => {
+     const response = await Axios.get('http://localhost:3001/cashpaymentnotifyDeactive', {
+     });
+    
+     const responses = await Axios.get('http://localhost:3001/returnnotifyDeactive', {
+    });
+
+    const responsee = await Axios.get('http://localhost:3001/ordernotifyDeactive', {
+    });
+
+    if(paymentmesscount>0)
+    {
+      const customToast=()=>{
+        return(
+          <div style={{fontSize:'15px'}}>
+            You have {paymentmesscount} New Payment Confirmations from Deliver Person! <br></br><br></br>
+            <Button variant="light" onClick={Notification_page_payment}>View</Button>
+          </div>
+        )
+      }
+
+      const notify=()=>{
+       
+        toast.info(customToast,{position:toast.POSITION.TOP_RIGHT,autoClose:false})
+          }
+          notify();
+          
+
+    }
+
+    
+
+      if(returnmesscount>0)
+      {
+        const customToasts=()=>{
+          return(
+            <div style={{fontSize:'15px'}}>
+              You have {returnmesscount} New Return Delivery Confirmations from Deliver Person! <br></br><br></br>
+              <Button variant="light" onClick={Notification_page_return}>View</Button>
+            </div>
+          )
+        }
+
+        const notifye=()=>{
+       
+          toast.info(customToasts,{position:toast.POSITION.TOP_RIGHT,autoClose:false})
+        
+        
+            }
+        notifye();
+      }
+
+      if(ordermesscount>0)
+      {
+        const customToastse=()=>{
+          return(
+            <div style={{fontSize:'15px'}}>
+              You have New {ordermesscount} Delivery Confirmations from Deliver Person! <br></br><br></br>
+              <Button variant="light" onClick={Notification_page_order}>View</Button>
+            </div>
+          )
+        }
+
+        const notifyee=()=>{
+       
+          toast.info(customToastse,{position:toast.POSITION.TOP_RIGHT,autoClose:false})
+        
+        
+            }
+        notifyee();
+      }
+
+
+    
+      
+      const Notification_page_payment=()=>{
+      window.location.href='/dManager/pages/Notification_payment'
+      }
+      
+      const Notification_page_return=()=>{
+        window.location.href='/dManager/pages/Notification_return'
+        }
+
+        const Notification_page_order=()=>{
+          window.location.href='/dManager/pages/Notification_order'
+          }
+  }
+
+  const getStatus = () => {
+    Axios.get("http://localhost:3001/viewStatus").then((response) => {
+      setstatusList(response.data)
+    })
+  }
+
   const [open, setOpen] = React.useState(true);
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -163,32 +337,26 @@ export default function AssignDelivers() {
     setOpen(false);
   };
 
-  // const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorEl, setAnchorEl] = React.useState(null);
 
-  // const handleClick = (event) => {
-  //   setAnchorEl(event.currentTarget);
-  // };
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
 
-  // const handleClose = () => {
-  //   setAnchorEl(null);
-  // };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
  
 
-  // const[isAuth,setIsAuth]=useState(true);
+  const[isAuth,setIsAuth]=useState(true);
 
-  // if(!isAuth){
-  //   return <Redirect to="" />
-  // }
-
-
-  const [statusList, setstatusList] = useState([]);
-
-  const getStatus = () => {
-    Axios.get("http://localhost:3001/viewStatus").then((response) => {
-      setstatusList(response.data)
-    })
+  if(!isAuth){
+    return <Redirect to="" />
   }
+
+
+  
 
   return (
     <div className={classes.root}>
@@ -207,20 +375,21 @@ export default function AssignDelivers() {
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
             <strong>DELIVERY MANAGER</strong>
           </Typography>
+
           <IconButton color="inherit">
-            <Badge badgeContent={4} color="secondary">
-              <NotificationsIcon />
+            <Badge badgeContent={total} color="secondary">
+              <NotificationsIcon onClick={NotificationClick}/>
             </Badge>
           </IconButton>
 
-          {/* <IconButton color="inherit" fontSize="inherit">
+          <IconButton color="inherit" fontSize="inherit">
            <AccountCircleIcon onClick={handleClick}  />
           </IconButton>
 
           <Menu id="simple-menu" anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={handleClose}>
             <MenuItem onClick={handleClose}><Link to='/dManager/pages/ManageProfile' style={{textDecoration:'none',color:'black'}}>Profile</Link></MenuItem>
             <MenuItem onClick={()=>setIsAuth(false)}>Logout</MenuItem>
-          </Menu> */}
+          </Menu>
           
         </Toolbar>
       </AppBar>
@@ -262,6 +431,7 @@ export default function AssignDelivers() {
                   <div align="right"> 
                   <Button onClick={getStatus} type="submit" size='lg'><ViewStreamIcon/> Pending</Button>
                   </div>
+                  <br></br>
                   <div  style={styles.card}>
                   {statusList.map((val, key) => {
                     return (
@@ -271,6 +441,8 @@ export default function AssignDelivers() {
                           <Card.Header>DELIVER ID : {val.employee_id}</Card.Header>
                           <Card.Body>
                           <Card.Text>Name : {val.e_name}</Card.Text>
+                          <Card.Text>Shipping Address : {val.c_address}</Card.Text>
+                          <Card.Text>Delivery Date : {dateOnly(val.order_last_date)}</Card.Text>
                           <Card.Text>Scheduled : {val.pending}</Card.Text>
                           
                         </Card.Body>

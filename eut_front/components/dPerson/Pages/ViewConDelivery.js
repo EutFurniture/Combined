@@ -7,7 +7,6 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';  
 import Paper from '@material-ui/core/Paper';  
 import axios from 'axios';  
-import BootstrapSwitchButton from 'bootstrap-switch-button-react';
 import { withStyles } from '@material-ui/core/styles';
 import { Link } from "react-router-dom";
 
@@ -80,18 +79,21 @@ export class ViewConDelivery extends Component {
             <TableRow>  
               
               <StyledTableCell align="center">Order ID</StyledTableCell>  
-              <StyledTableCell align="center">Order Status</StyledTableCell>   
+              <StyledTableCell align="center">Order Status</StyledTableCell> 
+              <StyledTableCell align="center">Bill Image</StyledTableCell>
               <StyledTableCell align="center" >Action</StyledTableCell>   
             </TableRow>  
           </TableHead>  
           <TableBody>  
             {  
-              this.state.ProductData.map((p, index) => {  
+              this.state.ProductData.map((record, index) => {  
                 return <TableRow key={index}>  
-                  <TableCell align="center" component="th" scope="row">{p.order_id}</TableCell>  
-                  <TableCell align="center">{p.o_status}</TableCell>  
+                  <TableCell align="center" component="th" scope="row">{record.order_id}</TableCell>  
+                  <TableCell align="center">{record.o_status}</TableCell>  
+            
+                  <TableCell align="center"><img src={record.Bill_image} className='image'/></TableCell>  
                   <TableCell align="center">
-                  <Link style={styles.updatebtn} to={location=> `/UpdateConDeliveryRoute/${p.order_id}`}> Update </Link> 
+                  <Link style={styles.updatebtn} to={location=> `/UpdateConDeliveryRoute/${record.order_id}`}> Click to confirm </Link> 
                   </TableCell>
                 </TableRow>  
               })  

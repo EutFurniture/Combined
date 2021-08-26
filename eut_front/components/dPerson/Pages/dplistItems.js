@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import Search from '@material-ui/icons/Search';
 
@@ -15,7 +15,7 @@ import DoneOutlineSharpIcon from '@material-ui/icons/DoneOutlineSharp';
 import RoomSharpIcon from '@material-ui/icons/RoomSharp';
 import CalendarTodayIcon from '@material-ui/icons/CalendarToday';
 export const DpListItems = (
-  <div  style={{backgroundColor: '#0E1372'}}>
+  <div  style={{backgroundColor: '#25255e'}}>
     <ListItem button component={Link} to="/DpDashboard">
       <ListItemIcon style={{color:'white'}}>
         <DashboardIcon />
@@ -62,7 +62,7 @@ export const DpListItems = (
 
 
 export const Logout = (
-  <div  style={{backgroundColor: '#0E1372'}}>
+  <div  style={{backgroundColor: '#25255e'}}>
     <ListItem button component={Link} to="/">
       <ListItemIcon >
         <PowerSettingsNewIcon style= {{fontSize:25, color:"red"}}/>
