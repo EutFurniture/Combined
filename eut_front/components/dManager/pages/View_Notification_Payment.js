@@ -18,7 +18,7 @@ const styles = {
         width: '200px',
         textDecoration: 'none',
         height: '100px',
-        marginRight: '5px',
+        marginRight: '10px',
         fontSize: '17px',
         paddingLeft: '15px',
         paddingRight: '15px',
@@ -85,7 +85,7 @@ function View_Notification_Payment() {
                                 </Form.Label>
                                 <Col >
                                 <Form.Label column lg={2} >
-                                image
+                                <img style={{height:'400px' , width:'300px'}} src={`/${val.pBill_image}`} />
                                 </Form.Label>
                                 </Col>
                             </Form.Group><br/>
@@ -112,16 +112,17 @@ function View_Notification_Payment() {
                                 </Form.Label>
                                 </Col>
                             </Form.Group><br/>
-                            </Form>
+                            
 
-                            <Card.Footer>
+                            
                             
                             <div align='right'>
                                 
                                 <Link style={styles.confirmbtn} to={location=> `/UpdateCashOnDeliveryRoute/${val.order_id}`} >Confirm</Link>
                                 
                             </div>
-                            </Card.Footer>
+                            <br></br>
+                        </Form>   
                         </Card>
                         <br></br><br></br>
                         </div>
