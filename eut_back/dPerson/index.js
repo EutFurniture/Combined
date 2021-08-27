@@ -10,6 +10,7 @@ const multer = require('multer');
 const bcrypt = require('bcrypt');
 const cookieParser=require('cookie-parser');
 const session = require('express-session');
+const { default: DoughnutChart } = require('../eut_front/src/components/charts/DoughnutChart');
 
 
 
@@ -128,10 +129,23 @@ app.post('/create', (req, res) => {
 
     const order_id = req.params.order_id;
     const Bill_image =  req.body.Bill_image;
-    const active =  req.body.active;
+    let active =  req.body.active;
     const sqlUpdates = "UPDATE orders SET Bill_image=?, active=? WHERE order_id=? ";
   
-    db.query(sqlUpdates,[Bill_image, active, order_id],(err,result)=>{
+    db.query(sqlUpdates,[Bill_image, active=1, order_id],(err,result)=>{
+      if(err) console.log(err);
+    })
+  });
+
+   //UPDATE PAYMENT STATUS
+  app.put('/confirmcashondelivery/:payment_id', (req,res) => {
+
+    const payment_id = req.params.payment_id;
+    const pBill_image =  req.body.pBill_image;
+    let active =  req.body.active;
+    const sqlUpdates = "UPDATE payment SET pBill_image=?, active =?  WHERE  payment_id=? ";
+  
+    db.query(sqlUpdates,[pBill_image, active=1, payment_id],(err,result)=>{
       if(err) console.log(err);
     })
   });
@@ -145,19 +159,14 @@ app.post('/create', (req, res) => {
     
    });
 
-
-     //UPDATE PAYMENT STATUS
- 
-
    // VIEW CASH ON  DELIVERY TO CHANGE PAYMENT_STATUS
   app.get('/ConfirmCashonFetch', (req, res) => {
-    db.query("SELECT orders.order_id, orders.total_price, orders.advance_price, payment.payment_status FROM payment LEFT JOIN orders ON orders.order_id = payment.order_id  WHERE payment_method = 'cash on delivery'",[req.query.order_id], (err, results, fields) => {
+    db.query("SELECT * FROM payment  WHERE  payment_id =? ",[req.query.payment_id], (err, results, fields) => {
        if(err) throw err;
        res.send(results);
      });
     
    });
-
 
     // VIEW RETURN ITEMS
 app.get("/returnItem", (req, res) => {
@@ -165,15 +174,13 @@ app.get("/returnItem", (req, res) => {
         db.query(sqlSelect, (err, result) => {
             res.send(result);
         } 
-       
+      
     );
     });
 
-
-
-     // VIEW CASH ON DELIVERIES TO CONFIRM
+ // VIEW CASH ON DELIVERIES TO CONFIRM
 app.get("/viewcashOnDelivery", (req, res) => {
-   const sql_Select = " SELECT orders.order_id, orders.total_price, orders.advance_price, payment.payment_status FROM orders LEFT JOIN payment ON orders.order_id = payment.order_id  WHERE payment_method = 'cash on delivery'";
+   const sql_Select = " SELECT order_id,payment_id,payment_status  FROM  payment   WHERE payment_method = 'cash on delivery'";
    db.query(sql_Select, (err, result) => {
     res.send(result);
     } 
@@ -191,7 +198,7 @@ app.get("/viewcashOnDelivery", (req, res) => {
 
        // VIEW  DELIVERY TO CONFIRM
 app.get("/viewConfirmDelivery", (req, res) => {
-            const sql_condelivery = " SELECT order_id, o_status, active, Bill_image FROM orders  ";
+            const sql_condelivery = " SELECT order_id, o_status, active, product_id FROM orders  ";
             db.query(sql_condelivery, (err, result) => {
              res.send(result);
              } 
@@ -295,9 +302,19 @@ app.delete("/deleteReturnitem/:order_id",(req,res)=>{
     });
   });
 
+  
+      //VIEW PRODUCT DETAILS FOR DELOIVERY PERSON
+  app.get("/viewproductFordeliver", (req, res) => {
+    db.query("SELECT * FROM product  ", (err, result, fields) => {
+        if (err) {
+            console.log(err);
+        } else{
+            res.send(result);
+        }
+    });
+});
 
-
-//DELIVERY MANAGER
+//DELIVERY MANAGER BACKEND
 
 app.get("/", (req, res) => {
     db.query("SELECT * FROM employee WHERE role='Delivery Person' ", (err, result, fields) => {
@@ -461,10 +478,41 @@ db.query("SELECT orders.order_id,orders.employee_id,orders.order_last_date, orde
   
 });
 
+app.get("/pricevsdate", (req, res) => {
+  db.query("SELECT order_last_date,SUM(total_price) AS total FROM orders GROUP BY order_last_date;", (err, result, fields) => {
+      if (err) {
+          console.log(err);
+      } else{
+          res.send(result);
+          console.log(result);
+      }
+  });
+});
 
 
+app.get("/totalcashOnDelivery", (req, res) => {
+  db.query("SELECT SUM(orders.total_price) AS total, SUM(orders.advance_price) AS advance FROM orders INNER JOIN payment ON orders.order_id = payment.order_id WHERE payment.payment_method = 'cash on delivery' AND payment.payment_status='Paid'", (err, result, fields) => {
+      if (err) {
+          console.log(err);
+      } else{
+          res.send(result);
+      }
+  });
+});
 
-//CUSTOMER
+ //Payment DoughnutChart
+app.get("/paymentdonut", (req, res) => {
+  db.query("SELECT COUNT(order_id) AS count,payment_status FROM payment WHERE payment_method='cash on delivery' GROUP BY payment_status", (err, result, fields) => {
+      if (err) {
+          console.log(err);
+      } else{
+          res.send(result);
+          console.log(result);
+      }
+  });
+});
+
+//CUSTOMER BACKEND
 app.get('/customer', (req, res) => {
     db.query("SELECT * FROM customer WHERE customer_id=?",[req.query.customer_id], (err, results, fields) => {
        if(err) throw err;
@@ -540,7 +588,7 @@ app.post("/register",(req,res) => {
         });
 
 
- //ADMIN 
+ //ADMIN BACKEND
 
 
  app.get('/recentOrders',(req,res)=>{
@@ -553,27 +601,9 @@ app.post("/register",(req,res) => {
 })
 
 //Notification Count
-app.get('/CustomizedOrderCount',(req,res)=>{
-  db.query('SELECT COUNT(cus_product_id) AS count FROM customized_products WHERE status="Pending" AND active=1',(err,result,fields)=>{
-      if(!err)
-      res.send(result);
-      else
-      console.log(err);
-  })
-})
 
-app.get('/NoficationActive', (req,res) => {
-  
-  db.query("UPDATE customized_products SET active=0 WHERE status ='Pending' ", 
-  (err, result) => {
-      if (err) {
-          console.log(err);
-      } else {
-          res.send(result);
-      }
-     }
-  );
-});
+
+
 
 //Charts
 app.get('/CategoryNoChart',(req,res) => {
@@ -688,7 +718,7 @@ app.get('/TotalIncome',(req,res) => {
 
 //order analytics
 app.get('/Order',(req,res) => {
-  db.query('SELECT products.product_name,customer.fname AS cus_name,orders.o_date,orders.total_price FROM ((orders INNER JOIN product ON orders.product_id=product.product_id) INNER JOIN customer ON orders.customer_id=customer.customer_id)', (err, result) => {
+  db.query('SELECT product.product_name,customer.fname AS cus_name,orders.o_date,orders.total_price FROM ((orders INNER JOIN product ON orders.product_id=product.product_id) INNER JOIN customer ON orders.customer_id=customer.customer_id)', (err, result) => {
       if(err) {
           console.log(err)
       }else {
@@ -812,6 +842,12 @@ app.get('/GetAdmin',(req,res) => {
      
   })
 
+
+
+
+
+
+  
 app.listen(3001,  () => {
     console.log("Hi Your Server is connected!");
 

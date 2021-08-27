@@ -42,9 +42,7 @@ import {Bar, Pie, Doughnut,Line} from 'react-chartjs-2'
 import {userData} from "../../charts/dummydata"
 import { mainListItems, Logout } from './listItems';
 import '../css/Dashboard.css'
-// import Chart from '../../charts/Chart'
-import ShoppingBasket from '@material-ui/icons/ShoppingBasket';
-import { array } from 'yup/lib/locale';
+import CustomizeOrder from './CustomizeOrder'
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
@@ -201,23 +199,10 @@ const GenerateReport=()=> {
     })
   },[])
 
-  const [returnList,setReturnList]=useState([])
-  useEffect(()=>{
-    axios.get("http://localhost:3001/ReturnCount").then((response)=>{
-      setReturnList(response.data)
-      console.log(response)
-    })
-  },[])
+  
   
 
-  const [cusorderList,setCusOrderList]=useState([])
-  useEffect(()=>{
-    axios.get("http://localhost:3001/Cus_OrderChart").then((response)=>{
-      setCusOrderList(response.data)
-      console.log(response)
-    })
-  },[])
-
+  
   const [customercount,setCustomerCount]=useState([])
   useEffect(()=>{
     axios.get("http://localhost:3001/CustomerCount").then((response)=>{
@@ -240,6 +225,7 @@ const GenerateReport=()=> {
       setOrderAnalyze(response.data)
     })
   },[])
+
   
   const orderdata={orderanalyze};
   console.log(orderdata);
@@ -247,11 +233,9 @@ const GenerateReport=()=> {
 const arr=quantityList.map(record=>record.quantity);
 const cat=quantityList.map(record=>record.name);
 
-const item=returnList.map(record=>record.name);
-const value=returnList.map(record=>record.count);
 
-const cus_quantity=cusorderList.map(record=>record.quantity);
-const cus_cat=cusorderList.map(record=>record.category_name);
+
+
 
 const month=customercount.map(record=>record.month);
 const count=customercount.map(record=>record.count);
@@ -259,6 +243,22 @@ const count=customercount.map(record=>record.count);
   // console.log(quantityList);
   // const arr = Object.values(quantityList);
   // console.log(arr)
+
+  const [orderdate,setOrderDate]=useState([])
+  const[currentmonth,setMonth]=useState("");
+  const OrderDate = async () => {
+      const response = await axios.get('http://localhost:3001/OrderDetails', {
+          params: {
+           
+            month:currentmonth,  
+          }
+          
+      });
+ 
+      setOrderDate(response.data);
+         console.log(response.data[0]);
+ 
+  }
   
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -361,8 +361,15 @@ const count=customercount.map(record=>record.count);
                <h1><b>SYSTEM ANALYTICS</b></h1>
                </Grid> 
 
+               <Grid item xs={12} style={{marginTop:'10px'}}>
+              <Paper className={fixedHeightPaper} >
+              
+              <CustomizeOrder/>
+              </Paper>
+              </Grid>
+
                <div style={{display:'flex'}}>
-               <Grid item xs={8} >
+               {/* <Grid item xs={8} >
                           <Paper>
                       <br/>
                        <h2 style={{marginLeft:'20px'}}><b>Customer Analytics-2021</b></h2>
@@ -431,75 +438,20 @@ const count=customercount.map(record=>record.count);
 
       </Bar>     
               </Paper>
-            </Grid>
-            <Grid item xs={8} style={{marginLeft:'20px'}}>
-              <Paper  style={{width:'390px',height:'470px'}} >
-              <h2 style={{marginLeft:'20px'}}><b>Returned Items</b></h2>
-               <Doughnut 
-               
-               data = {{
-                labels: item,
-                datasets: [{
-                  data: value,
-                  backgroundColor: [
-                  '#FF6384',
-                  '#36A2EB',
-                  '#FFCE56',
-                  'green'
-                  ],
-                  hoverBackgroundColor: [
-                  '#FF6384',
-                  '#36A2EB',
-                  '#FFCE56',
-                  'green'
-                  ]
-                }]
-                } }
-               >
-
-               </Doughnut>
-               <br/>
-             
-              </Paper>
-            </Grid>
+            </Grid> */}
+            
     </div>
 
-            <Grid item xs={12} style={{marginTop:'10px'}}>
-              <Paper className={fixedHeightPaper} >
-              <h2 style={{marginLeft:'20px'}}><b>Recent Orders</b></h2>
-            
-             
-                     <Table style={{width:'1200px'}} striped bordered hover responsive>
-                         <thead className="tableheading">
-                         <th>Order Item</th>
-                         <th>Customer Name</th>
-                         <th>Date</th>
-                         <th>Price</th>
-                         </thead>
-                         <tbody align='center' className="tablebody">
-                         {order.map((record)=>{
-                                 return(
-                         <tr>
-                             <td>{record.name}</td>
-                             <td>{record.cus_name}</td>
-                             <td>{dateOnly(record.o_date)}</td>
-                             <td>{record.total_price}</td>
-                         </tr>
-                        
-                                 )
-                         })}
-                         </tbody>
-                     </Table>
-               
-              </Paper>
-            </Grid>
+           
             
         
-            <Grid item xs={12}  >
-              <Paper className={fixedHeightPaper}>
-                  <div className={classes.piechart}  display='flex'>
-                      <div className={classes.pieleft}>
-                          <h2 align='center'><b>Categories</b></h2>
+            
+            </Grid>
+            <div style={{display:'flex',marginTop:'10px'}}>
+            <Grid item xs={6} >
+           
+              <Paper style={{height:'430px'}} >
+              <h2 style={{marginLeft:'20px',paddingTop:'10px'}}><b>Categories</b></h2>
                           
                           <Chart 
             options={{
@@ -525,56 +477,6 @@ const count=customercount.map(record=>record.count);
             width={500}
              />
      
-      </div>
-      <div className={classes.pieright}>
-      <h2 align='center'><b>Customized Orders</b></h2>
-              {/* <Pie style={{width:'200px'}}
-      data={{
-        labels:cus_cat,
-        datasets:[{
-          data:cus_quantity,
-          backgroundColor:['red','orange','purple','blue','green'],
-        },
-        ]
-      }
-      }
-      >
-
-      </Pie> */}
-      <Chart 
-            options={{
-                chart: {
-                    width: 300,
-                    type: 'pie',
-                  },
-                  labels: cus_cat,
-                  responsive: [{
-                    breakpoint: 480,
-                    options: {
-                      chart: {
-                        width: 150
-                      },
-                      legend: {
-                        position: 'bottom'
-                      }
-                    }
-                  }] }
-        }
-            series={cus_quantity} 
-            type="pie"
-            width={500}
-             />
-      </div>
-      </div>
-              </Paper>
-            </Grid>
-            </Grid>
-            <div style={{display:'flex',marginTop:'10px'}}>
-            <Grid item xs={6} >
-           
-              <Paper style={{height:'430px'}} >
-              <h2 style={{marginLeft:'20px',paddingTop:'10px'}}><b>Order Analytics Per Month</b></h2>
-                <ApexChart />
               </Paper>
             </Grid>
             

@@ -11,6 +11,11 @@ import ReactNotification from 'react-notifications-component'
 import {store} from "react-notifications-component"
 import "animate.css"
 import "react-notifications-component/dist/theme.css"
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -269,6 +274,7 @@ const {cus_product_id}=useParams();
         console.log(response.data[0]);
 
  }
+ const name=orderview.map(record=>record.fname);
 
  const deleteOrder = async (cus_product_id) => {
    await axios.put('http://localhost:3001/DeleteCustomizedOrder', {
@@ -282,20 +288,17 @@ const {cus_product_id}=useParams();
 
 
 const statusUpdate = async (cus_product_id) => {
-  const response = await axios.get('http://localhost:3001/OrderStatus', {
+  const response = await axios.get('http://localhost:3001/OrderStatusReject', {
       params: {
           cus_product_id:cus_product_id,  
       }
       
   });
 alert("Order Removed from list");
+window.location.href='/admin/pages/CustomizedOrders'
 }
 
-const [newdelivery_date,setDate] = useState(0);
-const [newtotal_payment,setTotal] = useState(0);
-const [newadvanced_payment,setAdvanced] = useState(0);
-const {customer_id}=useParams();
-const [Dt, setDt] = useState([])
+
 
 
 //   const orderData = async (customer_id) => {
@@ -377,6 +380,15 @@ const [Dt, setDt] = useState([])
     document.body.classList.remove('active-modal')
   }
 
+  const [open1, setOpen1] = React.useState(false);
+
+  const handleClickOpen = () => {
+    setOpen1(true);
+  };
+
+  const handleClose = () => {
+    setOpen1(false);
+  };
 
   return (
     <div className={classes.root}>
@@ -461,7 +473,7 @@ const [Dt, setDt] = useState([])
                    <Table striped bordered hover responsive style={{width:'590px',marginLeft:'10px',backgroundColor:'white'}}>
         <thead className="tableheading">
           <tr>
-            <th scope="col">ID</th>
+            <th scope="col">Customer ID</th>
             <th scope="col">Product Name</th>
             <th align="center">Action</th>
             
@@ -477,8 +489,8 @@ const [Dt, setDt] = useState([])
                         <td align="center">
                           
                           <Link onClick={()=>{viewOrder(record.cus_product_id)}} className="viewbtn" > View </Link>
-                         <Link onClick={()=>{deleteOrder(record.cus_product_id)}} 
-                         style={{marginLeft:'20px'}} className="deletebtn" onClick={()=>{statusUpdate(record.cus_product_id)}}>Remove</Link>
+                         {/* <Link onClick={()=>{deleteOrder(record.cus_product_id)}} 
+                         style={{marginLeft:'20px'}} className="deletebtn" onClick={()=>{statusUpdate(record.cus_product_id)}}>Remove</Link> */}
                         
                             
                         </td>
@@ -504,11 +516,11 @@ const [Dt, setDt] = useState([])
                          
                         
                            
-                           <p><b>Customer Name:</b> {record.name}</p>
+                           <p><b>Customer Name:</b> {record.fname}</p>
                            <p><b>Customer ID:</b>{record.customer_id}</p>
                            <p><b>Product Name:</b>{record.product_name}</p>
                            <p><b>Product Design:</b></p>
-                           <img src={record.design} className={classes.furimg}/>
+                           <img src={`/${record.design}`} className='image' alt='/No image'/><br/>
                            <p><b>Description:</b> {record.description}</p>
                            <p><b>Measurement:</b> {record.measurement}</p>
                            <p><b>Material:</b> {record.material}</p>
@@ -517,9 +529,29 @@ const [Dt, setDt] = useState([])
                       
                           </Box>
                           <div display='flex'>
-                            
-                          <Link to={location=> `/Customize/${record.cus_product_id}`}  className={classes.accept}  >Accept</Link>
-                          <Link className={classes.reject} onClick={toggleReject}>Reject</Link>
+                           
+                          <Link to={location=> `/Customize/${record.customer_id}/${record.cus_product_id}`}  className={classes.accept}  >Accept</Link>
+                          <Link className={classes.reject} onClick={handleClickOpen}>Reject</Link>
+                          <Dialog open={open1} onClose={handleClose} aria-labelledby="form-dialog-title">
+        <DialogTitle id="form-dialog-title" align='center'><b>ORDER REJECT</b></DialogTitle>
+      
+        <p style={{marginLeft:'20px',fontSize:'18px',color:'red'}}>Dear {name},</p>
+       
+        <p style={{marginLeft:'20px',fontSize:'18px'}}>Sorry, Your Order has been rejected. We couldn't make the order that you are requested.</p>
+        <DialogContent >
+   <DialogActions >
+          <Button type='submit' color="primary" onClick={()=>{deleteOrder(record.cus_product_id)}} style={{marginLeft:'1px'}} onClick={()=>{statusUpdate(record.cus_product_id)}} >
+           Send
+          </Button>
+          <Button onClick={handleClose} style={{color:'white',backgroundColor:'red',border:'none'}}>
+            Cancel
+          </Button>
+        </DialogActions>
+ 
+        </DialogContent>
+      
+      </Dialog>
+                       
                           </div>
                            <br/>
                       </Box>

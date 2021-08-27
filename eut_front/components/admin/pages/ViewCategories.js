@@ -9,6 +9,15 @@ import axios from "axios";
 import "../css/manageEmployee.css";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {Table} from 'react-bootstrap';
+import TextField from '@material-ui/core/TextField';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import Form from 'react-bootstrap/Form';
+import { Row } from 'react-bootstrap';
+import { Col } from 'react-bootstrap';
 
 export default function Categories() {
 
@@ -28,6 +37,16 @@ export default function Categories() {
    })
  },[])
 
+ 
+  
+
+
+ 
+
+ 
+  
+  
+
   const [name,setName] = useState("");
   const [date,setDate] = useState("");
 
@@ -35,7 +54,7 @@ export default function Categories() {
     console.log(name);
      axios.post('http://localhost:3001/AddCategory',{
        name:name,
-      date:date,
+     
        
   
       }).then(()=>{
@@ -75,6 +94,16 @@ export default function Categories() {
       });
   }
 
+  const [open, setOpen] = React.useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
     return(
       <div ><br/>
                 <div className='box-main'><br/><br/>
@@ -82,8 +111,38 @@ export default function Categories() {
                    <input type="text"  placeholder="Search" onChange={(e)=>{setSearchTerm(e.target.value);}} />
                    <SearchIcon  className='searchicon'/>
                 </div>
-                <Link className="Addbtn" to="/admin/pages/AddCategory"><AddCircleIcon style={{marginTop:'0px'}}/> Add New</Link>
-               
+                <div>
+                <Link className="Addbtn" onClick={handleClickOpen}><AddCircleIcon style={{marginTop:'0px'}}/> Add New</Link>
+                <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+        <DialogTitle id="form-dialog-title" align='center'><b>ADD NEW CATEGORY</b></DialogTitle>
+        <DialogContent >
+        
+        <Form  onSubmit={addCategory} >
+
+<Form.Group as={Row} controlId="formHorizontalName" style={{marginLeft:'0px'}}>
+     <Form.Label column lg={3} style={{marginLeft:'1px'}} >
+       Category :
+     </Form.Label>
+     <Col >
+       <Form.Control style={{marginLeft:'5px'}} type="text" placeholder="chair,table and etc" 
+      onChange={(event)=>{setName(event.target.value);}} required
+       />
+     </Col>
+   </Form.Group>
+
+   <DialogActions >
+          <Button type='submit' color="primary" style={{marginLeft:'1px'}}>
+           Submit
+          </Button>
+          <Button onClick={handleClose} style={{color:'white',backgroundColor:'red',border:'none'}}>
+            Cancel
+          </Button>
+        </DialogActions>
+   </Form>
+        </DialogContent>
+      
+      </Dialog>
+               </div>
                 </div><br/>
         <Table striped bordered hover responsive>
         <thead className="tableheading">

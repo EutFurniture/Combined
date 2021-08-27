@@ -33,7 +33,7 @@ export default function ViewGifts() {
           <tr>
             <th scope="col">ID</th>
             <th scope="col">Gift Name</th>
-            <th scope='col'>Price</th>
+            <th scope='col'>Gift Points</th>
             <th scope='col'>Image</th>
             <th scope='col'>Quantity</th>
             <th >Action</th>
@@ -44,21 +44,21 @@ export default function ViewGifts() {
        {giftList.filter(val=>{if(searchTerm===""){
                        return val;
                      }else if(
-                       val.name.toLowerCase().includes(searchTerm.toLowerCase())) 
+                       val.product_name.toLowerCase().includes(searchTerm.toLowerCase())) 
                      {
                        return val
                      }
                     }).map((record)=>{
                        return(
               <tr  align='center'>
-              <th scope="row">{record.ID}</th>
-              <td>{record.name}</td>
+              <th scope="row">{record.product_id}</th>
+              <td>{record.product_name}</td>
               <td>{record.price}</td>
-              <td><img src={record.gift_img} className='image' alt='/gift'/></td>
+              <td><img src={record.product_img} className='image' alt='/gift'/></td>
               <td>{record.quantity}</td>
               <td align="center">
-              <Link to={location=> `/Gift/${record.ID}`}  className="viewbtn" >View</Link>
-                <Link to={location=> `/GiftEdit/${record.ID}`}  className="updatebtn"> Edit</Link>
+              <Link to={location=> `/Gift/${record.product_id}`}  className="viewbtn" >View</Link>
+                <Link to={location=> `/GiftEdit/${record.product_id}`}  className="updatebtn"> Edit</Link>
                 <Link 
                   className="deletebtn"
                  >
