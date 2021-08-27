@@ -139,9 +139,10 @@ const styles = {
 };
 
 
-export default function Categories() {
+const ViewAvailableDelivery = (userData) => {
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
+
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -199,7 +200,7 @@ export default function Categories() {
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-      
+         <MenuItem component={Link} to="/employee/DpProfile">Profile</MenuItem>
         <MenuItem onClick={()=>setIsAuth(false)}>Logout</MenuItem>
         <MenuItem component={Link} to="/Calender">Calendar</MenuItem>
       </Menu>
@@ -256,3 +257,4 @@ export default function Categories() {
     </div>
   );
 }
+export default ViewAvailableDelivery;
