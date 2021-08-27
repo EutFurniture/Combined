@@ -28,6 +28,11 @@ import {useParams} from 'react-router-dom'
 import { mainListItems, Logout, Profile } from './listItems';
 import { Form, Row, Col, Button } from "react-bootstrap";
 
+import {toast} from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+import Axios from 'axios';
+
+
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
@@ -128,6 +133,7 @@ const useStyles = makeStyles((theme) => ({
     }
   };
 
+  toast.configure()
 
 export default function UpdateReturnItem() {
 
@@ -136,6 +142,160 @@ export default function UpdateReturnItem() {
     const {order_id} = useParams();
     const [Dt, setDt] = useState([])
     const [newStatus, setNewStatus] = useState();
+
+    const [paymentNotifyCount,setpaymentNotifyCount]=useState([])
+  useEffect(()=>{
+    Axios.get("http://localhost:3001/cashPaymentnotifyCount").then((response)=>{
+      setpaymentNotifyCount(response.data)
+      
+    })
+  },[])
+
+  const paymentcount=paymentNotifyCount.map(record=>record.count);
+  console.log(paymentcount);
+
+
+  const [returnNotifyCount,setreturnNotifyCount]=useState([])
+  useEffect(()=>{
+    Axios.get("http://localhost:3001/returnnotifyCount").then((response)=>{
+      setreturnNotifyCount(response.data)
+      
+    })
+  },[])
+
+  const returncount=returnNotifyCount.map(record=>record.r_count);
+  console.log(returncount);
+
+  const [orderNotifyCount,setorderNotifyCount]=useState([])
+  useEffect(()=>{
+    Axios.get("http://localhost:3001/ordernotifyCount").then((response)=>{
+      setorderNotifyCount(response.data)
+      
+    })
+  },[])
+
+  const ordercount=orderNotifyCount.map(record=>record.o_count);
+  console.log(ordercount);
+
+  const [returnNotifymess,setreturnNotifymess]=useState([])
+  useEffect(()=>{
+    Axios.get("http://localhost:3001/returnnotifymess").then((response)=>{
+      setreturnNotifymess(response.data)
+      
+    })
+  },[])
+  const returnmesscount=returnNotifymess.map(record=>record.r_count);
+
+  const [paymentNotifymess,setpaymentNotifymess]=useState([])
+  useEffect(()=>{
+    Axios.get("http://localhost:3001/paymentnotifymess").then((response)=>{
+      setpaymentNotifymess(response.data)
+      
+    })
+  },[])
+  const paymentmesscount=paymentNotifymess.map(record=>record.count);
+ 
+
+  const [orderNotifymess,setorderNotifymess]=useState([])
+  useEffect(()=>{
+    Axios.get("http://localhost:3001/ordernotifymess").then((response)=>{
+      setorderNotifymess(response.data)
+      
+    })
+  },[])
+  const ordermesscount=orderNotifymess.map(record=>record.o_count);
+
+
+  const total = Number(paymentcount) + Number(returncount) + Number(ordercount)
+
+  const NotificationClick = async () => {
+     const response = await Axios.get('http://localhost:3001/cashpaymentnotifyDeactive', {
+     });
+    
+     const responses = await Axios.get('http://localhost:3001/returnnotifyDeactive', {
+    });
+
+    const responsee = await Axios.get('http://localhost:3001/ordernotifyDeactive', {
+    });
+
+    if(paymentmesscount>0)
+    {
+      const customToast=()=>{
+        return(
+          <div style={{fontSize:'15px'}}>
+            You have {paymentmesscount} New Payment Confirmations from Deliver Person! <br></br><br></br>
+            <Button variant="light" onClick={Notification_page_payment}>View</Button>
+          </div>
+        )
+      }
+
+      const notify=()=>{
+       
+        toast.info(customToast,{position:toast.POSITION.TOP_RIGHT,autoClose:false})
+          }
+          notify();
+          
+
+    }
+
+    
+
+      if(returnmesscount>0)
+      {
+        const customToasts=()=>{
+          return(
+            <div style={{fontSize:'15px'}}>
+              You have {returnmesscount} New Return Delivery Confirmations from Deliver Person! <br></br><br></br>
+              <Button variant="light" onClick={Notification_page_return}>View</Button>
+            </div>
+          )
+        }
+
+        const notifye=()=>{
+       
+          toast.info(customToasts,{position:toast.POSITION.TOP_RIGHT,autoClose:false})
+        
+        
+            }
+        notifye();
+      }
+
+      if(ordermesscount>0)
+      {
+        const customToastse=()=>{
+          return(
+            <div style={{fontSize:'15px'}}>
+              You have New {ordermesscount} Delivery Confirmations from Deliver Person! <br></br><br></br>
+              <Button variant="light" onClick={Notification_page_order}>View</Button>
+            </div>
+          )
+        }
+
+        const notifyee=()=>{
+       
+          toast.info(customToastse,{position:toast.POSITION.TOP_RIGHT,autoClose:false})
+        
+        
+            }
+        notifyee();
+      }
+
+
+    
+      
+      const Notification_page_payment=()=>{
+      window.location.href='/dManager/pages/Notification_payment'
+      }
+      
+      const Notification_page_return=()=>{
+        window.location.href='/dManager/pages/Notification_return'
+        }
+
+        const Notification_page_order=()=>{
+          window.location.href='/dManager/pages/Notification_order'
+          }
+  }
+
   
     const [typeList,setTypeList]=useState([])
     useEffect(()=>{
@@ -219,9 +379,10 @@ export default function UpdateReturnItem() {
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
             <strong>DELIVERY MANAGER</strong>
           </Typography>
+
           <IconButton color="inherit">
-            <Badge badgeContent={4} color="secondary">
-              <NotificationsIcon />
+            <Badge badgeContent={total} color="secondary">
+              <NotificationsIcon onClick={NotificationClick}/>
             </Badge>
           </IconButton>
 

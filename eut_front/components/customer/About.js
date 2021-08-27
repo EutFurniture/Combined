@@ -1,8 +1,41 @@
-import React,{Component,Fragment} from 'react';
+import React,{Fragment} from 'react';
 import Logo from '../../images/home.jpg'
-import  './about.css';
 import Footer from './Footer';
 import Blog from './blog/Blog';
+import { makeStyles } from '@material-ui/core/styles';
+const useStyles = makeStyles((theme) => ({
+  logo:{
+    width:'95vw',
+    height: '70vh',
+    alignItems: 'center',
+    position: 'relative',
+    left:'2%',
+},
+p1:{
+    textAlign: 'center',
+    Color: 'rgb(17, 83, 170)',
+    textShadow: '0 10px 100px rgb(20, 19, 19)',
+    fontSize:'30px',
+    marginTop: '10px',
+    fontWeight: 'bold',
+    padding: '10px',
+},
+ab:{
+    
+  fontWeight: '20px',
+},
+
+ser:{
+    liststyletype:'circle',
+    
+},
+
+about:{
+    fontSize: '15px',
+},
+  
+
+}));
 //import { Map, GoogleApiWrapper } from 'google-maps-react';
 const mapStyles = {
    width: '80%',
@@ -10,16 +43,16 @@ const mapStyles = {
 
  };
  
-class About extends Component {
-   
-    render(){
+function About(){
+  const classes = useStyles();
+  
     return (
       <Fragment>
       
-           <div class="about">
-          <img src={Logo} class="logo" />
-          <h2 class="p1">WELCOME TO EUT FURNITURE ONLINE STORE!</h2>
-          <p id="ab">The place where you meet your furniture expectations with the combination of world class designed and manufactured furniture.EUT Furniture online store makes sure that you will find the perfect match for your every furniture need.
+           <div className={classes.about} >
+          <img src={Logo} className={classes.logo}  />
+          <h2 className={classes.p1}>WELCOME TO EUT FURNITURE ONLINE STORE!</h2>
+          <p className={classes.ab}>The place where you meet your furniture expectations with the combination of world class designed and manufactured furniture.EUT Furniture online store makes sure that you will find the perfect match for your every furniture need.
 We also  provides customization services. Here you can simply select the design, colour, size and view the furniture image. Also they can select
 the type of wood they would like to have for the furniture. you can choose what design they prefer and submit it to us.We will check and confirm  your order .Also we have planned to include  loyalty with you. Here,you will be
 given ‘points’ as long as they continue to buy furniture for a certain period of time. These furniture you buy need to be of a certain price range.you can view your points in
@@ -28,8 +61,8 @@ created for this process. In this page, small gifts within a certain price range
 you  can choose what you needs to buy from this list.we will deliver that gift with your purchased furniture.
 </p><br />
 
-<h5 class="serv">Service options: </h5>
-<ul class="ser">
+<h5 className={classes.serv}>Service options: </h5>
+<ul className={classes.ser}>
    <li>In-store shopping </li>
    <li>In-store pick-up </li> 
    <li>Delivery</li>
@@ -75,7 +108,7 @@ Email :srieut@gmail.com
        </Fragment>
     );
 }
-}
+
  
 {/*export default GoogleApiWrapper({
    apiKey: 'AIzaSyCaAPmnObVzSqtR1EW_Hut0FX0s1PTtsn8'

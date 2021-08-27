@@ -772,7 +772,7 @@ const storage = multer.diskStorage({
   })
 
 
-//cashpaymentactive
+//Notifications
 app.get('/cashPaymentnotifyCount',(req,res)=>{
     db.query('SELECT COUNT(order_id) AS count FROM payment WHERE payment_method="cash on delivery" AND active=1',(err,result,fields)=>{
         if(!err)
@@ -864,7 +864,35 @@ app.get('/cashpaymentnotifyDeactive', (req,res) => {
     })
   })
 
+  app.get("/viewpaymentNotification", (req, res) => {
+    db.query("SELECT orders.order_id,orders.employee_id,orders.order_last_date, customer.c_name,customer.c_nic,payment.pBill_image FROM orders INNER JOIN customer ON orders.customer_id=customer.customer_id INNER JOIN payment ON payment.order_id=orders.order_id WHERE (orders.o_status='Pending'  OR orders.o_status='R_Pending') AND payment.payment_status='Advance Paid' AND pBill_image<>'';", (err, result, fields) => {
+        if (err) {
+            console.log(err);
+        } else{
+            res.send(result);
+        }
+    });
+});
 
+   app.get("/viewreturnNotification", (req, res) => {
+     db.query("SELECT orders.order_id,orders.employee_id,orders.order_last_date,payment.payment_method,payment.payment_status, customer.c_name,customer.c_nic,orders.Bill_image FROM orders INNER JOIN customer ON orders.customer_id=customer.customer_id INNER JOIN payment ON payment.order_id=orders.order_id WHERE orders.o_status='R_Pending'  AND Bill_image<>'';", (err, result, fields) => {
+         if (err) {
+             console.log(err);
+         } else{
+           res.send(result);
+         }
+     });
+ });
+
+ app.get("/vieworderNotification", (req, res) => {
+    db.query("SELECT orders.order_id,orders.employee_id,orders.order_last_date, customer.c_name,customer.c_nic, payment.payment_method,payment.payment_status, orders.Bill_image FROM orders INNER JOIN customer ON orders.customer_id=customer.customer_id INNER JOIN payment ON payment.order_id=orders.order_id WHERE orders.o_status='Pending'  AND Bill_image<>'';", (err, result, fields) => {
+        if (err) {
+            console.log(err);
+        } else{
+          res.send(result);
+        }
+    });
+});
 
 app.listen(3001, () => {
     console.log("yay your server is running on port 3001");

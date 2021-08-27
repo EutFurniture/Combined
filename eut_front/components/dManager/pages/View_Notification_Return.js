@@ -29,19 +29,19 @@ const styles = {
       },
 }
 
-function View_Notification_Payment() {
+function View_Notification_Return() {
 
-    const [paymentList,setPaymentList]=useState([])
+    const [returnList,setreturnList]=useState([])
   useEffect(()=>{
-    axios.get("http://localhost:3001/viewpaymentNotification").then((response)=>{
-      setPaymentList(response.data)
+    axios.get("http://localhost:3001/viewreturnNotification").then((response)=>{
+      setreturnList(response.data)
     })
   },[])
 
 
     return (
         <div>
-            {paymentList.map((val, key) => {
+            {returnList.map((val, key) => {
                     return (
                         <div>
                         <Card border="primary" >
@@ -81,11 +81,33 @@ function View_Notification_Payment() {
 
                             <Form.Group as={Row} controlId="formHorizontalName">
                                 <Form.Label column lg={2} >
+                                Payment Method  :
+                                </Form.Label>
+                                <Col >
+                                <Form.Label column lg={2} >
+                                {val.payment_method}
+                                </Form.Label>
+                                </Col>
+                            </Form.Group><br/>
+
+                            <Form.Group as={Row} controlId="formHorizontalName">
+                                <Form.Label column lg={2} >
+                                Payment Status  :
+                                </Form.Label>
+                                <Col >
+                                <Form.Label column lg={2} >
+                                {val.payment_status}
+                                </Form.Label>
+                                </Col>
+                            </Form.Group><br/>
+
+                            <Form.Group as={Row} controlId="formHorizontalName">
+                                <Form.Label column lg={2} >
                                 Bill Image  :
                                 </Form.Label>
                                 <Col >
                                 <Form.Label column lg={2} >
-                                <img style={{height:'400px' , width:'300px'}} src={`/${val.pBill_image}`} />
+                                <img style={{height:'400px' , width:'300px'}} src={`/${val.Bill_image}`} />
                                 </Form.Label>
                                 </Col>
                             </Form.Group><br/>
@@ -113,16 +135,17 @@ function View_Notification_Payment() {
                                 </Col>
                             </Form.Group><br/>
                             
-
                             
                             
                             <div align='right'>
                                 
-                                <Link style={styles.confirmbtn} to={location=> `/UpdateCashOnDeliveryRoute/${val.order_id}`} >Confirm</Link>
+                                <Link style={styles.confirmbtn} to={location=> `/UpdateReturnItemRoute/${val.order_id}`} >Confirm</Link>
                                 
                             </div>
                             <br></br>
-                        </Form>   
+
+                        </Form>
+  
                         </Card>
                         <br></br><br></br>
                         </div>
@@ -135,4 +158,4 @@ function View_Notification_Payment() {
     )
 }
 
-export default View_Notification_Payment;
+export default View_Notification_Return;
