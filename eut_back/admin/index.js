@@ -176,6 +176,8 @@ app.post('/AddCategory',(req,res)=>{
   
 });
 
+
+
 app.post('/AddCustomizedOrder',(req,res)=>{
  customer_id=req.body.customer_id;
   const total_payment = req.body.total_payment;

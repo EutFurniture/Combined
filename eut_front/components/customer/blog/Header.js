@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{useState,useEffect} from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles,withStyles } from '@material-ui/core/styles';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -18,10 +18,14 @@ import ListAlt from '@material-ui/icons/ListAlt';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import ExitToApp from '@material-ui/icons/ExitToApp';
 import Modal from '@material-ui/core/Modal';
-
+import NotificationsIcon from '@material-ui/icons/Notifications';
 import Pay from '../Products/Pay'
 import {Redirect} from 'react-router-dom';
-
+import Badge from '@material-ui/core/Badge';
+import axios from 'axios';
+import {toast} from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+import NotificationUI from '../NotificationUI';
 function rand() {
   return Math.round(Math.random() * 20) - 10;
 }
@@ -120,12 +124,14 @@ const StyledMenuItem = withStyles((theme) => ({
 
 export default function Header(props) {
   const classes = useStyles();
-  const { sections, title } = props;
+  const { sections, title,cust } = props;
   
-  const [anchorEl, setAnchorEl] = React.useState(null );
-  const [isAuth, setIsAuth]= React.useState(true);
-   const [modalStyle] = React.useState(getModalStyle);
-  const [open, setOpen] = React.useState(false);
+  const [anchorEl, setAnchorEl] = useState(null );
+  const [isAuth, setIsAuth]= useState(true);
+   const [modalStyle] =useState(getModalStyle);
+  const [open, setOpen] = useState(false);
+  const [cusorderCount,setCusOrderCount]=useState([])
+  const [cartCount,setCartCount]=useState([])
   
   const  logout = (req,res) => {
     req.session.destroy((err) =>{
@@ -139,19 +145,64 @@ if(!isAuth){
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
+  toast.configure()
+  const a=cust.customer_id
 
+   const response1= axios.get("http://localhost:3001/CustomizedOrderCount").then((response)=>{
+      setCusOrderCount(response.data)
+      
+    })
+    const response2= axios.get("http://localhost:3001/cartCount",{
+      params:{
+        customer_id:a,
+      }
+    }).then((response)=>{
+      setCartCount(response.data)
+      
+    })
+  
   const handleClose = () => {
     setAnchorEl(null);
   };
-  
-
   const handleOpen = () => {
     setOpen(true);
   };
+ 
 
   const handleCloses= () => {
     setOpen(false);
   };
+  
+  const NotificationClick = async () => {
+    const response = await axios.get('http://localhost:3001/NoficationActive', {
+       
+        
+    });
+    notify();
+  }
+  const notify=()=>{
+   
+    toast.info(customToast,{position:toast.POSITION.TOP_CENTER,autoClose:false})
+  
+  
+      }
+
+      const customToast=()=>{
+        return(
+          <div>
+            Hello,
+            Your customized Order has confirmed.
+            Pay the advance payment for this product.
+            <button style={{marginLeft:'10px',border:'none',backgroundColor:'white',padding:'5px 10px',borderRadius:'5px'}} onClick={Cuspage}>PAY</button>
+          </div>
+        )
+      }
+      const Cuspage=()=>{
+        window.location.href='/customer/notification'
+      }
+     const customizedcount=cusorderCount.map(record=>record.count);
+     const cardcount=cartCount.map(record=>record.count);
+     console.log(customizedcount);
 
   const body = (
     <div style={modalStyle} className={classes.paper}  onClose={handleCloses}>
@@ -294,10 +345,17 @@ if(!isAuth){
             href='/customer/cart'
             className={classes.toolbarLink}
           >
+          <Badge badgeContent={cardcount} color="secondary">
            <AddShoppingCart />
+           </Badge>
           </Link>
 
-       
+          <IconButton color="inherit">
+            <Badge badgeContent={customizedcount} color="secondary">
+              <NotificationsIcon onClick={NotificationClick}/>
+            </Badge>
+          </IconButton>
+           
       </Toolbar>
     </React.Fragment>
   );

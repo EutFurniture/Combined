@@ -1,6 +1,7 @@
 import React from 'react';
 import clsx from 'clsx';
 import axios from 'axios';
+import {Table} from 'react-bootstrap';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Drawer from '@material-ui/core/Drawer';
@@ -25,6 +26,7 @@ import Divider from '@material-ui/core/Divider';
 import { DpListItems, Logout } from './dplistItems';
 import Testimonial  from './Testimonial';
 import {toast} from 'react-toastify'
+import { ViewProductDeliver } from './ViewProductDeliver';
 
 
 
@@ -180,6 +182,13 @@ const DpDashboard =()=> {
     })
   },[])
 
+  
+  const [Rorder,setRorder]=useState([])
+  useEffect(()=>{
+    axios.get("http://localhost:3001/recentOrders").then((response)=>{
+      setRorder(response.data)
+    })
+  },[])
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -334,75 +343,36 @@ if(!isAuth){
                            </div>
                        </div>
                        </div>
-                  <div className="charts_left">
-                     
-                     <h1> Order Details</h1>
-                     <table>
-                         <thead>
-                         <th>Month</th>
-                         <th>Deliveries</th>
-                         <th>Total Distance</th>
-                        
-                         </thead>
-                         
-                         <tbody>
-                         
-                         <tr>
-                             <td>january</td>
-                             <td>4</td>
-                             <td>128Km</td>
-                             
-                         </tr>
-                         <tr>
-                             <td>February</td>
-                             <td>8</td>
-                             <td>240Km</td>
-                             
-                         </tr>
-                         <tr>
-                             <td>March</td>
-                             <td>6</td>
-                             <td>210Km</td>
-                             
-                         </tr>
-                         <tr>
-                             <td>April</td>
-                             <td>11</td>
-                             <td>420Km</td>
-                           
-                         </tr>
-                         <tr>
-                             <td>May</td>
-                             <td>5</td>
-                             <td>223Km</td>
-                             
-                         </tr>
-                         <tr>
-                             <td>June</td>
-                             <td>8</td>
-                             <td>400Km</td>
-                             
-                         </tr>
-                         <tr>
-                             <td>July</td>
-                             <td>6</td>
-                             <td>350Km</td>
-                             
-                         </tr>
-                         
-                         </tbody>
-                      
-                     </table>
-               
-               
-           </div>  
+                       <Grid style={{marginTop:'10px',marginLeft:'20px'}} item xs={6} >
+            <Paper >
+        
+              <div style={{marginLeft:'20px', marginTop:'70px'}}>
+             
+               <h2><b>RECENT FIVE ORDERS</b></h2>
+               </div><br/>
+               <Table striped bordered hover responsive>   
+                  <tbody>
+                  {Rorder.map((record)=>{
+                                 return(
+                    <tr>
+                  
+                    <th><img src={`/${record.product_img}`} style={{height:'50px',width:'50px',marginLeft:'40px'}}/></th>
+                    <th >{record.product_name}</th>
+                    <th>{record.total_price}</th>
+                    </tr>
+                                  )
+                                })}
+                  </tbody>
+              </Table>
+               </Paper>
+            </Grid>
                        </div>
               </Paper>
             </Grid>
-            
-            
+           <ViewProductDeliver />
+
          </Grid>
-      <Testimonial />  
+       <Testimonial />  
         </Container>
         <Copyright />
       </main>

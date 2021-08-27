@@ -23,7 +23,18 @@ import { Link } from "react-router-dom";
 import ViewConDelivery from './ViewConDelivery'
 import { DpListItems, Logout } from './dplistItems';
 
-
+function Copyright() {
+  return (
+    <Typography variant="body2" color="textSecondary" align="center">
+      {'Copyright © '}
+      <Link color="inherit" href="https://material-ui.com/">
+        Eut Furniture
+      </Link>{' '}
+      {new Date().getFullYear()}
+      {'.'}
+    </Typography>
+  );
+}
 
 const drawerWidth = 240;
 
@@ -197,6 +208,7 @@ export default function Categories() {
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
+        <MenuItem component={Link} to="/employee/DpProfile">Profile</MenuItem>
       <MenuItem component={Link} to="/Calender">Calendar</MenuItem>
         <MenuItem onClick={()=>setIsAuth(false)}>Logout</MenuItem>
       </Menu>
@@ -250,6 +262,7 @@ export default function Categories() {
 
       </Grid>
         </Container>
+        <Copyright/>
       </main>
     </div>
   );

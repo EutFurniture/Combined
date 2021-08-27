@@ -199,8 +199,9 @@ export default function Categories() {
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-        <MenuItem component={Link} to="/Calender">Calendar</MenuItem>
+        <MenuItem component={Link} to="/employee/DpProfile">Profile</MenuItem>
         <MenuItem onClick={()=>setIsAuth(false)}>Logout</MenuItem>
+        <MenuItem component={Link} to="/Calender">Calendar</MenuItem>
       </Menu>
 
  
@@ -241,7 +242,7 @@ export default function Categories() {
            <Paper className={classes.paper}>
                
                 <Typography  component="h1" variant="h6" color="inherit" align="center" width="100%" noWrap className={classes.title}>
-                  <h4>RETURN ITEMS DETAILS</h4>
+                  <h4>RETURN ITEMS </h4>
                 </Typography>
                
                 <Returnview/>

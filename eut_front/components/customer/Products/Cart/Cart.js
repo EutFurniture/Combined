@@ -1,14 +1,10 @@
-import React, { Component, useState, useEffect } from 'react';
-import Title from '../Title';
+import React, { useState, useEffect } from 'react';
 import CartColumns from './CartColumns';
 import EmptyCart from './EmptyCart';
-import CartList from './CartList';
-import CartTotals from './CartTotals'
 import axios from 'axios'
 import { useParams, Link } from "react-router-dom";
 import { Fragment } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { TiShoppingCart } from 'react-icons/ti';
 import Footer from '../../Footer'
 const useStyles = makeStyles((theme) => ({
     container2: {
@@ -28,6 +24,7 @@ export default function Cart(userData) {
     const [cart, setCartdata] = useState([])
     const { customer_id } = useParams();
     const classes = useStyles();
+    const [cartCount,setCartCount]=useState([])
 
 
     const id = userData.userData.customer_id
@@ -40,9 +37,21 @@ export default function Cart(userData) {
             });
 
             setCartdata(response.data);
+            const response2=await axios.get("http://localhost:3001/cartCount",{
+                params:{
+                  customer_id:id,
+                }
+              })
+               
+              setCartCount(response2.data[0].count)
+                
+               
         };
+
+       
         fetchData();
     }, []);
+    
     const increaseQuantity = async (customer_id, product_id, price) => {
         const response = await axios.get('http://localhost:3001/qut', {
             params: {
@@ -180,9 +189,11 @@ export default function Cart(userData) {
 
     }
 
-    return (
+    return ( 
+  <Fragment>
+      {cartCount == 0 ? <EmptyCart /> :
         <Fragment>
-
+       
             <CartColumns />
 
             <div className="container-fluid">
@@ -190,7 +201,7 @@ export default function Cart(userData) {
                     cart.map(item => (
                         <div className="row my-2 text-capitalize text-center" key={item.cart_id}>
                             <div className="col-10 mx-auto col-lg-2">
-                                <img src={item.product_img} style={{ width: '5rem', height: '5rem' }}
+                               <img src={item.product_img} style={{ width: '5rem', height: '5rem' }}
                                     className="img-fluid" alt="product" />
                             </div>
                             <div className="col-10 mx-auto col-lg-2">
@@ -264,10 +275,13 @@ export default function Cart(userData) {
                     </div>
                 </div>
             </div>
-            <Footer />
+           
         </Fragment>
+}
+<Footer />
+        </Fragment>  
       
-
+      
     );
 }
 
