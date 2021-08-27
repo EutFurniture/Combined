@@ -36,6 +36,10 @@ import Donutchart from './Donutchart';
 import GenerateReport from './GenerateReport';
 import Radial from './Radial';
 import Mychart from './Mychart';
+import MonthlyDeliveryReport from './MonthlyDeliveryReport';
+import MonthlyCashOnDeliveryReport from './MonthlyCashOnDeliveryReport';
+import MonthlyReturnReport from './MonthlyReturnReport';
+import MonthlyDeliverReport from './MonthlyDeliverReport';
 
 function Copyright() {
   return (
@@ -412,11 +416,15 @@ export default function ManageReports() {
               
               <Paper className={classes.paper}>
                 <GenerateReport/>
-                <ViewReports/>
+                {/* <ViewReports/> */}
                 <Linechart/>
                 <Donutchart/>
                 <Radial/>
                 <Mychart/>
+                <MonthlyDeliveryReport/>
+                <MonthlyCashOnDeliveryReport/>
+                <MonthlyReturnReport/>
+                <MonthlyDeliverReport/>
               </Paper>
               </div>
             </Grid>
