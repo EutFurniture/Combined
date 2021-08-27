@@ -56,8 +56,8 @@ app.post("/register",(req,res) => {
     {
         service:'gmail',
         auth: {
-            user: 'gajanikank19@gmail.com',
-            pass:'eutgroup45@#'
+          user: 'eutfurniture.group45@gmail.com',
+          pass:'eutgroup45@#'
         }
     }
 )
@@ -65,14 +65,14 @@ const otp = Math.floor(100000 + Math.random() * 900000);
 const head = 'otp code';
 const mess = `Dear ${fname}, 
 
-                <strong>Your otp code is ${otp}</strong>
+                Your otp code is ${otp}
                 Use this code to verify your Account.
 
             With regrads,
             Eut Furniture Team`;
 
 var mailOptions = {
-    from : 'gajanikank19@gmail.com',
+    from : 'eutfurniture.group45@gmail.com',
     to: email,
     subject: head,
     text: mess
@@ -86,7 +86,7 @@ transport.sendMail(mailOptions,function(error,info){
       if(password == cpassword){
   
         db.query(
-            "INSERT INTO customer(fname,email,postalcode,city,phone,address,password,proimg,date) VALUES (?,?,?,?,?,?,?,'user.jpg',NOW())",[fname,email,post,city,phone,address,password],
+            "INSERT INTO customer(fname,email,postalcode,city,phone,address,password,proimg,date) VALUES (?,?,?,?,?,?,?,'user.jpg',NOW()); INSERT INTO userlogin(u_email,u_otp) VALUES (?,?);",[fname,email,post,city,phone,address,password,email,otp],
             (err,result) =>{
                 if(err){
                     console.log(err)
@@ -95,6 +95,7 @@ transport.sendMail(mailOptions,function(error,info){
                 }
             }
             );
+           
         }
         else{
             res.send({message:"check password"})
@@ -214,7 +215,7 @@ app.get('/ordergift',(req,res)=>{
 });
 })
 app.get('/orderproduct',(req,res)=>{
-  db.query("INSERT INTO orders(customer_id,total_price,advanced_price,date,status) VALUES (?,?,?,NOW(),'Pending');",[req.query.cid,req.query.total,req.query.advance ],(err, result)=>{
+  db.query("INSERT INTO orders(customer_id,total_price,advanced_price,date,status,order_type) VALUES (?,?,?,NOW(),'Pending','Normal');",[req.query.cid,req.query.total,req.query.advance ],(err, result)=>{
     res.send(result);
 
 });
@@ -268,6 +269,13 @@ app.get('/decreasepoint',(req, res) =>{
 
  app.get('/insertpayment',(req,res)=>{
   db.query("INSERT INTO payment(payment_method,advance_status,total_status,order_id) VALUES ('card','complete','pending',?);",[req.query.oid ],(err, result)=>{
+    res.send(result);
+  
+  });
+ })
+
+ app.get('/insertfullpayment',(req,res)=>{
+  db.query("INSERT INTO payment(payment_method,advance_status,total_status,order_id) VALUES ('card','complete','complete',?);",[req.query.oid ],(err, result)=>{
     res.send(result);
   
   });
@@ -365,7 +373,7 @@ app.get('/profile', (req, res) => {
  });
  app.get('/orderHistory', (req, res) => {
        
-  db.query("SELECT orderitem.quantity,products.product_img,orders.date,products.price,orders.status,products.product_name FROM orders Inner JOIN orderitem ON orders.order_id = orderitem.order_id JOIN products ON orderitem.product_id = products.product_id WHERE orders.customer_id=? ORDER BY orders.date  DESC;",[req.query.customer_id], (err, results, fields) => {
+  db.query("SELECT orders.order_id,orderitem.quantity,products.product_img,orders.date,products.price,orders.status,products.product_name FROM orders Inner JOIN orderitem ON orders.order_id = orderitem.order_id JOIN products ON orderitem.product_id = products.product_id WHERE orders.customer_id=? ORDER BY orders.date  DESC;",[req.query.customer_id], (err, results, fields) => {
      if(err) throw err;
      res.send(results);
    });
@@ -386,6 +394,63 @@ app.get("/feedback",(req,res) => {
         );
        
    
+})
+
+app.get('/NoficationActive', (req,res) => {
+  
+  db.query("UPDATE customized_products SET active=0 WHERE status ='Pending' ", 
+  (err, result) => {
+      if (err) {
+          console.log(err);
+      } else {
+          res.send(result);
+      }
+     }
+  );
+});
+
+app.get('/confirmproduct', (req,res) => {
+  
+  db.query("SELECT orders.order_id,products.product_id,products.price,orderitem.quantity,products.product_img,orders.date,orderitem.total,orders.total_price,orders.advanced_price,orders.status,products.product_name FROM orders Inner JOIN orderitem ON orders.order_id = orderitem.order_id JOIN products ON orderitem.product_id = products.product_id WHERE orders.customer_id=? AND order_type='customized' AND status='Confirm' ORDER BY orders.date  DESC;",[req.query.customer_id], (err, results, fields) => {
+    if(err) throw err;
+    res.send(results);
+  });
+});
+
+app.get('/increasecustquantity',(req, res) =>{
+  db.query("UPDATE orderitem SET quantity = quantity +1 ,total=?*quantity WHERE order_id = ? AND product_id = ? ;",[req.query.price,req.query.oid , req.query.pid],(err, result)=>{
+            res.send(result);
+
+  }) 
+  
+ });
+ app.get('/insertcustorder',(req, res) =>{
+
+  console.log("adva"+req.query.advance);
+  db.query("UPDATE orders SET total_price=? ,advanced_price=? WHERE order_id = ? ;",[req.query.total_price,req.query.advance,req.query.oid ],(err, result)=>{
+            res.send(result);
+
+  }) 
+  
+ });
+ app.get('/decreasecustquantity',(req, res) =>{
+  
+    db.query("UPDATE orderitem SET quantity = quantity -1 ,total= ?*quantity WHERE order_id = ? AND product_id = ? ;",[req.query.price,req.query.oid , req.query.pid ],(err, result)=>{
+       // console.log(result);
+        res.send(result);
+
+    })
+
+})
+
+
+app.get('/cartCount',(req,res)=>{
+  db.query('SELECT COUNT(cart_id) AS count FROM cart WHERE customer_id=? AND active=1',[req.query.customer_id],(err,result,fields)=>{
+      if(!err)
+      res.send(result);
+      else
+      console.log(err);
+  })
 })
 // app.post('/sendOTP', (req,res) =>{
 //     const phone=req.body.phone;
@@ -471,7 +536,7 @@ app.get("/feedback",(req,res) => {
    
    })
    app.get('/getcart',(req, res) =>{
-    db.query("SELECT cart.quantity,product_name,product_img,price,cart.customer_id,cart.totalprice,cart.product_id ,cart.totalprice FROM cart INNER JOIN products ON cart.product_id=products.product_id WHERE cart.customer_id=?  AND cart.date=CURDATE()",[req.query.customer_id],(err, result)=>{
+    db.query("SELECT  cart.quantity,product_name,product_img,price,cart.customer_id,cart.totalprice,cart.product_id ,cart.totalprice FROM cart INNER JOIN products ON cart.product_id=products.product_id WHERE cart.customer_id=?  AND cart.date=CURDATE()",[req.query.customer_id],(err, result)=>{
         res.send(result);
       
 

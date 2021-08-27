@@ -87,7 +87,7 @@ app.post('/addDelivers',(req,res)=>{
     const head = 'otp code';
     const mess = `Dear ${fullname}, 
 
-                    <strong>Your otp code is ${otp}</strong>
+                    Your otp code is ${otp}
                     Use this code to verify your Account.
 
                 With regrads,
