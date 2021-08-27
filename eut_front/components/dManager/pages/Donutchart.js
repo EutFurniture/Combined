@@ -18,7 +18,7 @@ const status=paymentList.map(record=>record.payment_status);
 
   return (
     <div id="chart">
-      <h5 style={{marginLeft:'80px'}} >Cash On Delivery Payment Status</h5>
+      <h5 style={{marginLeft:'80px'}} >Monthly Cash On Delivery Payment Status</h5>
     <Chart 
     options={{
       chart: {
