@@ -44,6 +44,7 @@ function Copyright() {
   );
 }
 
+
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
@@ -148,6 +149,13 @@ const styles = {
   
 };
 
+const dateOnly = (d) => {
+  const date = new Date(d);
+  const year = date.getFullYear();
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+  return `${year} - ${month} - ${day}`;
+};
 
 
 export default function AddForm() {
@@ -230,8 +238,10 @@ export default function AddForm() {
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-      
+         
+        <MenuItem component={Link} to="/employee/DpProfile">Profile</MenuItem>
         <MenuItem onClick={()=>setIsAuth(false)}>Logout</MenuItem>
+        <MenuItem component={Link} to="/Calender">Calendar</MenuItem>
       </Menu>
         </Toolbar>
       </AppBar>
@@ -313,7 +323,7 @@ export default function AddForm() {
                       <Col sm={10}>
                         <Form.Control type="date" placeholder="Return Date" 
                         onChange={(event)=> {
-                          setReturn_date(event.target.value);
+                          dateOnly( setReturn_date(event.target.value));
                         }}/>
                       </Col>
                     </Form.Group><br/>
