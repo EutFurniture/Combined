@@ -122,7 +122,7 @@ export default function Checkout(userData) {
   products.map(function (a) { return totalitems += 100 * a.quantity }, 0);
   products.map(function (a) { return total = totalprice + totalitems }, 0);
   products.map(function (a) { return advance = total * 0.2 }, 0);
-
+  var roundadvance=Math.round(advance);
   const onSucess = async () => {
     const response = await Axios.get('http://localhost:3001/ordergift_id', {
       params: {
@@ -131,12 +131,20 @@ export default function Checkout(userData) {
       }
     });
     const o_id = response.data[0].order_id;
+    const total=response.data[0].total_price;
+    const custpoint=Math.round(total*0.05);
     Axios.get('http://localhost:3001/insertpayment', {
       params: {
         oid: o_id,
 
       }
     });
+    const response2= await Axios.get('http://localhost:3001/increasepoint', {
+      params: {
+          cid:userData.userData.customer_id,
+          price:custpoint,
+      }
+  })
 
     products.map(function (a) {
 
@@ -206,7 +214,7 @@ export default function Checkout(userData) {
             <ListItem className={classes.listItem}>
               <ListItemText primary=" Now you should pay" />
               <Typography variant="subtitle1" className={classes.total}>
-                Rs. {advance}
+                Rs. {roundadvance}
 
               </Typography>
             </ListItem>
