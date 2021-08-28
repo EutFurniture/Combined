@@ -23,7 +23,7 @@ import Caresoul from '../Caresoul'
 import { FaBorderNone } from 'react-icons/fa';
 const useStyles = makeStyles((theme) => ({
   mainGrid: {
-    marginTop: theme.spacing(3),
+    marginTop: theme.spacing(1),
   },
   post:{
     textDecoration:"none",
@@ -75,7 +75,7 @@ export default function Home() {
     <React.Fragment>
       
       <CssBaseline />
-      <Container maxWidth="lg">
+      <Container maxWidth="xxl"  minWidth='360px'>
         
         <main>
           <MainFeaturedPost post={mainFeaturedPost} />

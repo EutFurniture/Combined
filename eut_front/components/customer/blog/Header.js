@@ -25,7 +25,7 @@ import Badge from '@material-ui/core/Badge';
 import axios from 'axios';
 import {toast} from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
-import NotificationUI from '../NotificationUI';
+
 function rand() {
   return Math.round(Math.random() * 20) - 10;
 }
@@ -43,28 +43,26 @@ function rand() {
 
 const useStyles = makeStyles((theme) => ({
  
-  paper: {
-    position: 'absolute',
-    width: 400,
-    backgroundColor: theme.palette.background.paper,
-    border: '2px solid #000',
-    borderRadius:'7px',
-    boxShadow: theme.shadows[5],
-    padding: theme.spacing(2, 4, 3),
-
-  },
+ 
   toolbarSecondary: {
-    justifyContent: 'space-between',
-    overflowX: 'auto',
+    justifyContent:"space-between",
+    //overflowX: 'auto',
     backgroundColor:'rgb(226, 226, 230)',
-    color:'black',
-    marginTop:theme.spacing(3),
-    padding:"1%",
+    color:'black',  
+    
+       padding:"1%",
+    boxShadow: theme.shadows[5],
   },
   toolbarTitle:{
     fontWeight:'bold',
+    
+ justifyContent:'flex-start',
+    display:'grid',
   },
   toolbarLink: {
+    justifyContent:'flex-end',
+    display:'grid',
+    fontWeight:'bold',
     padding: theme.spacing(1),
     flexShrink: 0,
     textDecoration:'none',
@@ -174,7 +172,7 @@ if(!isAuth){
   };
   
   const NotificationClick = async () => {
-    const response = await axios.get('http://localhost:3001/NoficationActive', {
+    const response = await axios.get('http://localhost:3001/customerNoficationActive', {
        
         
     });
@@ -216,8 +214,8 @@ if(!isAuth){
 
   return (
     <React.Fragment>
-    
-      <Toolbar component="nav" variant="dense" className={classes.toolbarSecondary}>
+   
+      <Toolbar component="nav"  className={classes.toolbarSecondary}>
       <Typography
           component="h2"
           variant="h5"
@@ -233,6 +231,7 @@ if(!isAuth){
             noWrap
             variant="body2"
             href='/customer/dashboard'
+           
             className={classes.toolbarLink}
           >
             Home
@@ -357,6 +356,7 @@ if(!isAuth){
           </IconButton>
            
       </Toolbar>
+     
     </React.Fragment>
   );
 }

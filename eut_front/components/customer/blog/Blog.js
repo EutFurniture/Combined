@@ -12,24 +12,24 @@ import FeaturedPost from './FeaturedPost';
 import Main from './Main';
 import Img1 from '../../../images/din.jpg';
 import Image from '../../../images/home1.jpeg';
-const useStyles = makeStyles((theme) => ({
-  mainGrid: {
-    marginTop: theme.spacing(1),
-  },
-}));
+// const useStyles = makeStyles((theme) => ({
+//   mainGrid: {
+//     marginTop: theme.spacing(1),
+//   },
+// }));
 
 
 
 
 
-export default function Blog() {
-  const classes = useStyles();
+export default function Blog(userData) {
+  //const classes = useStyles();
 
   return (
     <React.Fragment>
       <CssBaseline />
-      <Container maxWidth="lg">
-        <Header title="EUT FURNITURE"  />
+      <Container maxWidth="xxl" minWidth="360px">
+        <Header title="EUT FURNITURE" cust={userData.userData} />
         
       </Container>
      
