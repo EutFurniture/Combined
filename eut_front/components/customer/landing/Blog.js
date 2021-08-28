@@ -25,7 +25,7 @@ export default function Blog() {
   return (
     <React.Fragment>
       <CssBaseline />
-      <Container maxWidth="lg">
+      <Container maxWidth="xxl"  minWidth='360px'>
         <Landing title="EUT FURNITURE"  />
         
       </Container>

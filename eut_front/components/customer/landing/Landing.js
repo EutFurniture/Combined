@@ -16,7 +16,6 @@ const useStyles = makeStyles((theme) => ({
     overflowX: 'auto',
     backgroundColor:'rgb(226, 226, 230)',
     color:'black',
-    marginTop:theme.spacing(2),
     height:'70px',
     
     borderBottom: `1px solid ${theme.palette.divider}`,
@@ -26,6 +25,7 @@ const useStyles = makeStyles((theme) => ({
     fontWeight:'bold',
   },
   toolbarLink: {
+    fontWeight:'bold',
     padding: theme.spacing(1),
     flexShrink: 0,
     textDecoration:'none',
@@ -40,7 +40,32 @@ const useStyles = makeStyles((theme) => ({
      textDecoration:'none',
     }
   },
-
+login:{
+  textDecoration:'none',
+  '&:focus':{
+   textDecoration:'none',
+   
+  },
+  '&:hover':{ 
+   textDecoration:'none',
+  }
+},
+logbut:{
+  fontWeight:'bold',
+  backgroundColor:'black',
+  color:'white',
+  '&:focus':{
+    backgroundColor:'black',
+    color:'white',
+    textDecoration:'none'
+    
+   },
+   '&:hover':{ 
+    backgroundColor:'black',
+  color:'white',
+  textDecoration:'none',
+   }
+}
   
 }));
 
@@ -136,7 +161,7 @@ export default function Header(props) {
            Product
           </Link>
 
-        <Button variant="outlined" size="small"><Link color="inherit" href='/signin' >
+        <Button className={classes.logbut} size="small"><Link color="inherit" className={classes.login} href='/signin' >
          LogIn
           </Link>
         </Button>
