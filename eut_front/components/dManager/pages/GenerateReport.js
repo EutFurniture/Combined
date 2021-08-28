@@ -1,7 +1,20 @@
-import React, { Component } from "react";
+import React, {useEffect,useState} from "react";
 import Chart from "react-apexcharts";
+import axios from 'axios';
 
 function GenerateReport() {
+
+  const [orderList,setorderList]=useState([]);
+  useEffect(()=>{
+    axios.get('http://localhost:3001/delivervsorder').then((response)=>{
+      setorderList(response.data);
+      console.log(response);
+    })
+  },[])
+
+  const orders=orderList.map(record=>record.count);
+  const deliver=orderList.map(record=>record.e_name);
+
     return (
         <div className="app">
         <div className="row">
@@ -31,16 +44,7 @@ function GenerateReport() {
                 },
                 
                 xaxis: {
-                  categories: [
-                    ['John', 'Doe'],
-                    ['Joe', 'Smith'],
-                    ['Jake', 'Williams'],
-                    'Amber',
-                    ['Peter', 'Brown'],
-                    ['Mary', 'Evans'],
-                    ['David', 'Wilson'],
-                    ['Lily', 'Roberts'], 
-                  ],
+                  categories: deliver,
                   labels: {
                     style: {
                       
@@ -51,8 +55,8 @@ function GenerateReport() {
               }}
               series={[
                 {
-                  name: "series-1",
-                  data: [21, 22, 10, 28, 16, 21, 13, 30]
+                  name: "Orders",
+                  data: orders
                 }
               ]}
               type="bar"

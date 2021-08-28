@@ -1,8 +1,7 @@
-import React from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import React,{Fragment,useEffect,useState} from 'react';
+import  './dpprofile.css';
 import Axios from 'axios';
-import clsx from 'clsx';
-import { useState } from 'react';
+import { useParams ,Link} from "react-router-dom";
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Drawer from '@material-ui/core/Drawer';
@@ -15,18 +14,13 @@ import List from '@material-ui/core/List';
 import IconButton from '@material-ui/core/IconButton';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
-import Paper from '@material-ui/core/Paper';
-import Link from '@material-ui/core/Link';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import {Redirect} from "react-router-dom";
-import Form from 'react-bootstrap/Form';
-import { Button } from 'react-bootstrap';
-import { Row } from 'react-bootstrap';
-import { Col } from 'react-bootstrap';
+import clsx from 'clsx';
 
 import { DpListItems, Logout } from './dplistItems';
 
@@ -43,7 +37,6 @@ function Copyright() {
     </Typography>
   );
 }
-
 
 const drawerWidth = 240;
 
@@ -157,8 +150,7 @@ const dateOnly = (d) => {
   return `${year} - ${month} - ${day}`;
 };
 
-
-export default function AddForm() {
+export default function Profile(userData) {
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
   const handleDrawerOpen = () => {
@@ -168,27 +160,41 @@ export default function AddForm() {
     setOpen(false);
   };
 
-
-   const [product_id, setProduct_id]= useState("");
-   const [order_id, setOrder_id]= useState("");
-   const [return_date, setReturn_date]= useState("");
-   const [reason, setReason]= useState("");
+  const [user,setUser]=useState([])
+  const { employee_id } = useParams();
   
-  
-
-
-    const addReturnItem = () => {
-      Axios.post('http://localhost:3001/create', {
+ 
+  useEffect(() => {
+    const fetchData = async () => {
+        const response = await Axios.get('http://localhost:3001/dpprofile', {
+            params: {
+              employee_id:userData.userData.employee_id,
+                
+            }
+        });
        
-        product_id: product_id,
-        order_id: order_id,
-        return_date: return_date,
-        reason: reason,
-     
-      }).then(() => { 
-        alert("Details added success");
-      });
+        setUser(response.data[0]);
+       
+         
     };
+    fetchData();
+  }, [employee_id]);
+ 
+  
+  
+  // const handleInput =(e) =>{
+  //   let reader =new FileReader();
+  //   let file=e.target.files[0]
+  //   reader.onloadend =() =>{
+  //     setState({
+  //       ...state,
+  //       file:file,
+  //       userImage:reader.result,
+  //       message:""
+  //     })
+  //   }
+    
+  // }
 
   const [anchorEl, setAnchorEl] = React.useState(null);
 
@@ -209,9 +215,8 @@ export default function AddForm() {
   }
 
 
-
-  return (
-    <div className={classes.root}>
+    return (
+      <div className={classes.root}>
       <CssBaseline />
       <AppBar position="absolute" className={clsx(classes.appBar, open && classes.appBarShift)}>
         <Toolbar className={classes.toolbar} style={{backgroundColor: '#0E1372'}}>
@@ -238,7 +243,6 @@ export default function AddForm() {
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-         
         <MenuItem component={Link} to="/employee/DpProfile">Profile</MenuItem>
         <MenuItem onClick={()=>setIsAuth(false)}>Logout</MenuItem>
         <MenuItem component={Link} to="/Calender">Calendar</MenuItem>
@@ -276,96 +280,98 @@ export default function AddForm() {
             {/* Recent Orders */}
             <Grid item xs={10} style={styles.pack} >
             
-  
-            <div >
-              <Paper className={classes.paper}>
-              <Typography component="h1" variant="h6" color="inherit"  width="100%" noWrap className={classes.title}>
-              <strong>ADD RETURNED ITEM DETAILS</strong>
-            </Typography><br/>
-
-                 <Form >
-                    <div className = "info">
-  
-
-
-                    <Form.Group as={Row} controlId="formHorizontalOrder_id">
-                      <Form.Label column lg={2}>
-                        Order ID :
-                      </Form.Label>
-                      <Col sm={10}>
-                        <Form.Control type="text" placeholder="Order ID" 
-                        onChange={(event)=> {
-                          setOrder_id(event.target.value);
-                        }}
-                        />
-                      </Col>
-                    </Form.Group><br/>
-
-
-                    <Form.Group as={Row} controlId="formHorizontalProduct_id">
-                      <Form.Label column lg={2}>
-                        Product ID :
-                      </Form.Label>
-                      <Col sm={10}>
-                        <Form.Control type="text" placeholder="Product ID" 
-                        onChange={(event)=> {
-                          setProduct_id(event.target.value);
-                        }}
-                        />
-                      </Col>
-                    </Form.Group><br/>
-
-
-                    <Form.Group as={Row} controlId="formHorizontalReturn_date">
-                      <Form.Label column lg={2}>
-                        Return Date :
-                      </Form.Label>
-                      <Col sm={10}>
-                        <Form.Control type="date" placeholder="Return Date" 
-                        onChange={(event)=> {
-                          dateOnly( setReturn_date(event.target.value));
-                        }}/>
-                      </Col>
-                    </Form.Group><br/>
-
-                    <Form.Group as={Row} controlId="formHorizontalReason">
-
-                      <Form.Label column lg={2}>
-                        Reason :
-                      </Form.Label>
-                      <Col sm={10}>
-                        <Form.Control type="text" placeholder="Reason" 
-                        onChange={(event)=> {
-                          setReason(event.target.value);
-                        }}/>
-                      </Col>
-                    </Form.Group><br/>
-
-                          </div>
-  
-                  
-
-                    
-                        <div     align='center' style={styles.button_style}>
-                        <Button  type="submit" size='lg' href= '/AddReturnedItem' >View Return Item</Button>
-
-                        <Button  type="submit" size='lg' onClick={addReturnItem}>Add Returned Items</Button>
-                         
-                     </div>
-                </Form>
-            
-              </Paper>
+      <Fragment>
+       
+   
+       
+        <div className="contain">
+           <div class="row gutters-sm">
+            <div class="col-md-4 mb-3">
+              <div class="card">
+                <div class="card-body">
+                  <div class="d-flex flex-column align-items-center text-center">
+                 
+                    <img src={`/${user.e_image}`} alt="myprofile"  width="200" height="200" />
+                    <div class="mt-3">
+                      <h4>{user.e_name}</h4>
+                     
+                     
+                      
+                    </div>
+                  </div>
+                </div>
               </div>
-            </Grid>
+            </div>
+            </div>
+            
+            <div class="col-md-8">
+              <div class="card mb-3">
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-sm-3">
+                      <h6 class="mb-0"> Name</h6>
+                    </div>
+                    <div class="col-sm-9 text-secondary">
+                    {user.e_name}
+                    </div>
+                  </div>
+                  <hr/>
+                  <div class="row">
+                    <div class="col-sm-3">
+                      <h6 class="mb-0">Email</h6>
+                    </div>
+                    <div class="col-sm-9 text-secondary">
+                     {user.email}
+                    </div>
+                  </div>
+                  <hr/>
+                  <div class="row">
+                    <div class="col-sm-3">
+                      <h6 class="mb-0">Phone</h6>
+                    </div>
+                    <div class="col-sm-9 text-secondary">
+                     {user.e_phone}
+                    </div>
+                  </div>
+                  <hr/>
+                  <div class="row">
+                    <div class="col-sm-3">
+                      <h6 class="mb-0">Address</h6>
+                    </div>
+                    <div class="col-sm-9 text-secondary">
+                     {user.e_address}
+                    </div>
+                  </div>
+                  <hr/>
+                  <div class="row">
+                    <div class="col-sm-3">
+                      <h6 class="mb-0">Job start Date</h6>
+                    </div>
+                    <div class="col-sm-9 text-secondary">
+                     {dateOnly(user.e_job_start_date)}
+
+                     
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+        </div>
+    
+    </div>   
+   
+    </Fragment>
+    </Grid>
  
-          </Grid>
-          
-          <Box pt={4}>
-            <Copyright />
-          </Box>
-        </Container>
-      </main>
-    </div>
-  );
+ </Grid>
+ 
+ <Box pt={4}>
+   <Copyright />
+ </Box>
+</Container>
+</main>
+</div>
+);
 }
 

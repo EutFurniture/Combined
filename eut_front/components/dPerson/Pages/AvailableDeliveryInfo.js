@@ -19,7 +19,9 @@ import Grid from '@material-ui/core/Grid';
 import Divider from '@material-ui/core/Divider';
 import {useParams} from 'react-router-dom'
 import { Form,Row,Col } from "react-bootstrap";
-
+import MenuItem from '@material-ui/core/MenuItem';
+import { Link } from "react-router-dom";
+import {Redirect} from "react-router-dom";
 import { DpListItems, Logout } from './dplistItems';
 
 
@@ -145,7 +147,9 @@ const dateOnly = (d) => {
 export default function AvailableDeliveryInfo() {
   const { order_id } = useParams();
   const [Dt, setDt] = useState([])
- 
+  
+
+
  useEffect(() => {
   const fetchData = async () => {
       const response = await axios.get('http://localhost:3001/DeliveryDetails', {
@@ -173,6 +177,12 @@ export default function AvailableDeliveryInfo() {
     setOpen(false);
   };
 
+  const[isAuth,setIsAuth]=useState(true);
+
+  if(!isAuth){
+    return <Redirect to="" />
+  }
+
 
   return (
     <div className={classes.root}>
@@ -186,6 +196,9 @@ export default function AvailableDeliveryInfo() {
             onClick={handleDrawerOpen}
             className={clsx(classes.menuButton, open && classes.menuButtonHidden)}
           >
+         <MenuItem component={Link} to="/employee/DpProfile">Profile</MenuItem>
+        <MenuItem onClick={()=>setIsAuth(false)}>Logout</MenuItem>
+        <MenuItem component={Link} to="/Calender">Calendar</MenuItem>
             <MenuIcon />
           </IconButton>
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
@@ -215,7 +228,7 @@ export default function AvailableDeliveryInfo() {
       </Drawer>
       </div>
      
-      <main className={classes.content}>
+      <main className={classes.content} >
         <div className={classes.appBarSpacer} />
         <Container maxWidth="lg" className={classes.container}>
           <Grid container spacing={3}>
@@ -223,14 +236,14 @@ export default function AvailableDeliveryInfo() {
            
           <Grid item xs={10} style={styles.pack} >
             <div >
-              <Paper className={classes.paper}>
+              <Paper className={classes.paper}  >
               <Typography component="h1" variant="h6" color="inherit" align="center" width="100%" noWrap className={classes.title}>
                     <strong>DELIVERY DETAILED INFORMATION</strong>
               </Typography>
               <br></br>
               <div>
 
-              <Form.Group as={Row} controlId="formHorizontalName">
+              <Form.Group as={Row} controlId="formHorizontalName"  >
                   <Form.Label column lg={2} >
                    Order Id :
                   </Form.Label>
@@ -240,16 +253,30 @@ export default function AvailableDeliveryInfo() {
                   </Form.Label>
                   </Col>
               </Form.Group><br/>
+
+
               <Form.Group as={Row} controlId="formHorizontalName">
                   <Form.Label column lg={2} >
-                   Employee Id :
+                   Customer Name :
                   </Form.Label>
                   <Col >
                   <Form.Label column lg={2} >
-                  {Dt.employee_id}
+                  {Dt.fname}
                   </Form.Label>
                   </Col>
               </Form.Group><br/>
+              
+              <Form.Group as={Row} controlId="formHorizontalName">
+                  <Form.Label column lg={2} >
+                   Product Id :
+                  </Form.Label>
+                  <Col >
+                  <Form.Label column lg={2} >
+                  {Dt.product_id}
+                  </Form.Label>
+                  </Col>
+              </Form.Group><br/>
+              
              
               <Form.Group as={Row} controlId="formHorizontalName">
                   <Form.Label column lg={2} >
