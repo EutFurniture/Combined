@@ -108,6 +108,20 @@ app.post("/customerRegister",(req,res) => {
 app.post("/insertotpcode",(req,res) => {
   const fname=req.body.fname;
   const email=req.body.email;
+
+  db.query
+  ("SELECT * FROM userlogin WHERE u_email = ? ;", 
+  [email], 
+  (err, result)=> {
+
+      if(err){
+          res.send({err: err})
+      }
+      if(result){
+          console.log(result);
+          if (result.length > 0) {
+            res.send({message:"You already have an account"});
+          }else{
   
   var transport = nodemailer.createTransport(
     {
@@ -158,10 +172,10 @@ transport.sendMail(mailOptions,function(error,info){
       
   }
 })    
-
+ }}
+})
  
 });
-
 
 
 app.get("/login",(req,res)=>{
@@ -319,7 +333,7 @@ app.get('/decreasepoint',(req, res) =>{
          });
         
        });
- 
+      
       
 const storage=multer.diskStorage({
     destination(req,file,cb){
