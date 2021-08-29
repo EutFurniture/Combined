@@ -41,9 +41,14 @@ const db=mysql.createConnection({
   host:"localhost",
   password:"",
   database:"eut_furniture",
+  multipleStatements:true
 });
 
-app.post("/register",(req,res) => {
+
+//Customer BackEnd
+
+
+app.post("/customerRegister",(req,res) => {
   const fname=req.body.fname;
   const email=req.body.email;
   const phone=req.body.phone;
@@ -52,6 +57,58 @@ app.post("/register",(req,res) => {
   const cpassword=req.body.cpassword;
   const post=req.body.post;
   const city=req.body.city;
+  const otp=req.body.otp;
+
+  db.query
+  ("SELECT * FROM userlogin WHERE u_email = ? AND u_otp = ?;", 
+  [email,otp], 
+  (err, result)=> {
+
+      if(err){
+          res.send({err: err})
+      }
+      if(result){
+          console.log(result);
+          if (result.length > 0) {
+            if(password == cpassword){
+  
+              db.query(
+                  "UPDATE customer SET postalcode=?,city=?,phone=?,address=?,password=? WHERE email=?;UPDATE userlogin SET u_verify=1 ,u_password=? WHERE u_email = ? AND u_otp = ?",[post,city,phone,address,password,email,password,email,otp],
+                  (err,result) =>{
+                      if(err){
+                          console.log(err)
+                      }else{
+                          res.send({message:"values sended"});
+                      }
+                  }
+                  );
+                 
+              }
+              else{
+                  res.send({message:"check password"})
+              }
+              
+              
+              
+          }else{
+              res.send({message:"Wrong otp code"});
+          }
+
+          
+      }}
+  );
+  
+      
+    
+    
+
+ 
+});
+
+app.post("/insertotpcode",(req,res) => {
+  const fname=req.body.fname;
+  const email=req.body.email;
+  
   var transport = nodemailer.createTransport(
     {
         service:'gmail',
@@ -83,10 +140,10 @@ transport.sendMail(mailOptions,function(error,info){
   }
   else{
       console.log('Email sent' + info.response)
-      if(password == cpassword){
+     
   
         db.query(
-            "INSERT INTO customer(fname,email,postalcode,city,phone,address,password,proimg,date) VALUES (?,?,?,?,?,?,?,'user.jpg',NOW()); INSERT INTO userlogin(u_email,u_otp) VALUES (?,?);",[fname,email,post,city,phone,address,password,email,otp],
+            "INSERT INTO customer(fname,email,proimg,date,points) VALUES (?,?,'user.jpg',NOW(),0); INSERT INTO userlogin(u_email,u_otp,u_name,user_role) VALUES (?,?,?,'customer');",[fname,email,email,otp,fname],
             (err,result) =>{
                 if(err){
                     console.log(err)
@@ -96,10 +153,7 @@ transport.sendMail(mailOptions,function(error,info){
             }
             );
            
-        }
-        else{
-            res.send({message:"check password"})
-        }
+      
           
       
   }
@@ -109,45 +163,6 @@ transport.sendMail(mailOptions,function(error,info){
 });
 
 
-app.post('/otpCheck', (req, res) => {
-
-  const email = req.body.email
-  const otp = req.body.otp
-
-  console.log(email)
-  console.log(otp)
-  db.query
-  ("SELECT * FROM userlogin WHERE u_email = ? AND u_otp = ?;", 
-  [email,otp], 
-  (err, result)=> {
-
-      if(err){
-          res.send({err: err})
-      }
-      if(result){
-          console.log(result);
-          if (result.length > 0) {
-              
-              db.query("UPDATE userlogin SET u_verify=? WHERE u_email = ? AND u_otp = ?", 
-              [1,email,otp], 
-              (err, result) => {
-
-                  if (err) {
-                      console.log(err);
-                  } else {
-                      res.send({message:"OTP code verified Successfully"});
-                  }
-              }
-              );
-              
-          }else{
-              res.send({message:"Wrong otp code"});
-          }
-
-          
-      }}
-  );
-});
 
 app.get("/login",(req,res)=>{
  if(req.session.user){
@@ -308,7 +323,7 @@ app.get('/decreasepoint',(req, res) =>{
       
 const storage=multer.diskStorage({
     destination(req,file,cb){
-        cb(null,'../eutfurniture/public')
+        cb(null,'../client/public')
     },
     filename(req,file,cb) {
        console.log(file)
@@ -317,10 +332,14 @@ const storage=multer.diskStorage({
             )
     }
 })
-const upload=multer({storage,
+const upload=multer({
+  storage,
+  limits:{
+    fileSize: 5000000
+  },
    fileFilter(req,file,cb){
     if(!file.originalname.match(/\.(jpeg|jpg|png)$/i)){
-      return  cb(new Error('pleaseupload image with type of'))
+      return  cb(new Error('pleaseupload image with type of jpg ,png or jpeg'))
     }
     cb(undefined,true)
 }
@@ -334,9 +353,10 @@ app.post("/customization",(req,res)=> {
     const measurement=req.body.measurement;
     const color =req.body.color;
     const material=req.body.material; 
-    
+    const customer_id=req.body.customer_id; 
+    console.log("custom"+customer_id);
       db.query(
-        "INSERT INTO customized_products(description,color,product_name,measurement,material,design,status,customer_id) VALUES (?,?,?,?,?,?,'Pending',?)",[description,color,name,measurement,material,image,req.query.customer_id],
+        "INSERT INTO customized_products(description,color,product_name,measurement,material,design,status,customer_id) VALUES (?,?,?,?,?,?,'Pending',?)",[description,color,name,measurement,material,image,customer_id],
         (err,result) =>{
             if(err){
                 console.log(err)
@@ -350,7 +370,7 @@ app.post("/customization",(req,res)=> {
       
     })
 
-app.post("/upload",upload.single('file'),(req,res)=> {
+app.post("/imageUpload",upload.single('file'),(req,res)=> {
    
 })
 app.get("/gift",(req,res) =>{
@@ -396,7 +416,7 @@ app.get("/feedback",(req,res) => {
    
 })
 
-app.get('/NoficationActive', (req,res) => {
+app.get('/customerNoficationActive', (req,res) => {
   
   db.query("UPDATE customized_products SET active=0 WHERE status ='Pending' ", 
   (err, result) => {
@@ -445,7 +465,7 @@ app.get('/increasecustquantity',(req, res) =>{
 
 
 app.get('/cartCount',(req,res)=>{
-  db.query('SELECT COUNT(cart_id) AS count FROM cart WHERE customer_id=? AND active=1',[req.query.customer_id],(err,result,fields)=>{
+  db.query('SELECT COUNT(cart_id) AS count FROM cart WHERE customer_id=? AND active=1 AND date=CURDATE()',[req.query.customer_id],(err,result,fields)=>{
       if(!err)
       res.send(result);
       else
@@ -587,7 +607,7 @@ app.get('/clearcart',(req, res) =>{
 });
 
 
-   app.put('/updateEmployee', (req,res) => {
+   app.put('/updatecustomerimage', (req,res) => {
     const id=req.body.customer_id;
     const name = req.body.fname;
 
@@ -630,7 +650,9 @@ app.get('/clearcart',(req, res) =>{
     );
   });
   
-    
+
+ 
+
 app.listen(3001,() => {
-    console.log("running sever");
+    console.log("Your server is running on port 3001");
 });
