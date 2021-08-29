@@ -26,6 +26,13 @@ import axios from 'axios';
 import {toast} from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
+import Dialog from '@material-ui/core/Dialog';
+import MuiDialogTitle from '@material-ui/core/DialogTitle';
+import MuiDialogContent from '@material-ui/core/DialogContent';
+import MuiDialogActions from '@material-ui/core/DialogActions';
+
+import CloseIcon from '@material-ui/icons/Close';
+
 function rand() {
   return Math.round(Math.random() * 20) - 10;
 }
@@ -82,7 +89,18 @@ const useStyles = makeStyles((theme) => ({
     color:'grey',
 
   },
-
+  check:{
+    backgroundColor:'grey',
+    fontWeight:'bold',
+  },
+  ass:{
+    textDecoration:'none',
+    color:"white",
+    '&:hover':{
+      textDecoration:'none',
+      color:'white',
+    }
+  }
   
 }));
 
@@ -118,6 +136,58 @@ const StyledMenuItem = withStyles((theme) => ({
   },
 }))(MenuItem);
 
+const styles = (theme) => ({
+  root: {
+    margin: 0,
+    padding: theme.spacing(2),
+  },
+  closeButton: {
+    position: 'absolute',
+    right: theme.spacing(1),
+    top: theme.spacing(1),
+    color: theme.palette.grey[500],
+  },
+
+  gift:{
+    padding:"20px",
+    position:"relative",
+    right:"20%",
+    marginTop:'80%',
+    backgroundCloor:"black",
+    color:'white',
+  },
+  
+ 
+});
+
+
+
+const DialogTitle = withStyles(styles)((props) => {
+  const { children, classes, onClose, ...other } = props;
+  return (
+    <MuiDialogTitle disableTypography className={classes.root} {...other}>
+      <Typography variant="h6">{children}</Typography>
+      {onClose ? (
+        <IconButton aria-label="close" className={classes.closeButton} onClick={onClose}>
+          <CloseIcon />
+        </IconButton>
+      ) : null}
+    </MuiDialogTitle>
+  );
+});
+
+const DialogContent = withStyles((theme) => ({
+  root: {
+    padding: theme.spacing(2),
+  },
+}))(MuiDialogContent);
+
+const DialogActions = withStyles((theme) => ({
+  root: {
+    margin: 0,
+    padding: theme.spacing(1),
+  },
+}))(MuiDialogActions);
 
 
 export default function Header(props) {
@@ -128,8 +198,10 @@ export default function Header(props) {
   const [isAuth, setIsAuth]= useState(true);
    const [modalStyle] =useState(getModalStyle);
   const [open, setOpen] = useState(false);
+  const [openpop, setOpenpop] = useState(false);
   const [cusorderCount,setCusOrderCount]=useState([])
   const [cartCount,setCartCount]=useState([])
+  const [customer,setCustomer]=useState([])
   
   const  logout = (req,res) => {
     req.session.destroy((err) =>{
@@ -158,7 +230,10 @@ if(!isAuth){
       setCartCount(response.data)
       
     })
-  
+    const response3= axios.get("http://localhost:3001/customer").then((response)=>{
+      setCustomer(response.data)
+      
+    })
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -203,13 +278,38 @@ if(!isAuth){
      console.log(customizedcount);
 
   const body = (
-    <div style={modalStyle} className={classes.paper}  onClose={handleCloses}>
-      <h2 id="simple-modal-title" className={classes.head}> Gift Data</h2>
-      <p id="simple-modal-description">
-      You can get your gift based on your point.check below...
-      </p>
-      <Pay   />
-    </div>
+    <div className="shap"> 
+   
+   
+   <Dialog onClose={handleCloses} aria-labelledby="customized-dialog-title" open={open}>
+     <DialogTitle id="customized-dialog-title" onClose={handleCloses}>
+     <h3 className="gitt"> Surprise gift !</h3>
+     </DialogTitle>
+     <DialogContent dividers>
+       <Typography gutterBottom>
+        <img src="../../images/giftt.jpg" className="giftt" />
+       </Typography>
+       <Typography gutterBottom>
+         You got 15 points
+         so we  give small gift for you.
+       </Typography>
+       <Typography gutterBottom>
+        So you can order gift below 15 points.
+       </Typography>
+     </DialogContent>
+     <DialogActions>
+       <Button autoFocus onClick={handleCloses} class='btn btn-primary'>
+           <Link href='/customer/gift' className={classes.ass}>
+         Select gift
+         </Link>
+       </Button>
+     </DialogActions>
+   </Dialog>
+   </div>
+      
+  
+   
+     
   );
 
   return (
