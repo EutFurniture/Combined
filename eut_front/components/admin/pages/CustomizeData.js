@@ -46,7 +46,7 @@ class CustomizeData extends React.Component {
       return (
           <div style={{display:'flex'}}>
               <div style={{width:'700px'}}>
-        <table  className="table">
+        <table style={{backgroundColor:'#f2f3f4'}} className="table">
           <thead>
               <tr>
                 <th>ID</th>
