@@ -3,19 +3,13 @@ import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Grid from '@material-ui/core/Grid';
 import Container from '@material-ui/core/Container';
-import GitHubIcon from '@material-ui/icons/GitHub';
-import FacebookIcon from '@material-ui/icons/Facebook';
-import TwitterIcon from '@material-ui/icons/Twitter';
-import Landing from './Landing';
 import Button from '@material-ui/core/Button';
 import MainFeaturedPost from '../blog/MainFeaturedPost';
 import FeaturedPost from '../blog/FeaturedPost';
-import Main from '../blog/Main';
 import Blog from './Blog';
 import Footer from'../Footer'
 import Image from '../../../images/home1.jpeg';
 import '../Footer.css'
-import Divider from '@material-ui/core/Divider';
 import Caresoul from '../Caresoul'
 import Img1 from '../../../images/din.jpg';
 import Img2 from '../../../images/add.jpg';
@@ -76,7 +70,7 @@ export default function Home() {
     <React.Fragment>
             <Blog />
       <CssBaseline />
-      <Container maxWidth="lg">
+      <Container maxWidth="xxl"  minWidth='360px'>
         
         <main>
           <MainFeaturedPost post={mainFeaturedPost} />

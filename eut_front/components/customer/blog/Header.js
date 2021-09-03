@@ -1,10 +1,9 @@
-import React,{useState,useEffect} from 'react';
+import React,{useState} from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles,withStyles } from '@material-ui/core/styles';
 import Toolbar from '@material-ui/core/Toolbar';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
-import SearchIcon from '@material-ui/icons/Search';
 import AddShoppingCart from '@material-ui/icons/AddShoppingCart';
 import Typography from '@material-ui/core/Typography';
 import Link from '@material-ui/core/Link';
@@ -19,34 +18,22 @@ import AccountCircle from '@material-ui/icons/AccountCircle';
 import ExitToApp from '@material-ui/icons/ExitToApp';
 import Modal from '@material-ui/core/Modal';
 import NotificationsIcon from '@material-ui/icons/Notifications';
-import Pay from '../Products/Pay'
 import {Redirect} from 'react-router-dom';
 import Badge from '@material-ui/core/Badge';
 import axios from 'axios';
 import {toast} from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
-
 import Dialog from '@material-ui/core/Dialog';
 import MuiDialogTitle from '@material-ui/core/DialogTitle';
 import MuiDialogContent from '@material-ui/core/DialogContent';
 import MuiDialogActions from '@material-ui/core/DialogActions';
-
 import CloseIcon from '@material-ui/icons/Close';
+import { useParams } from "react-router-dom";
 
 function rand() {
   return Math.round(Math.random() * 20) - 10;
 }
 
- function getModalStyle() {
-   const top = 50 + rand();
-  const left = 50 + rand();
-
-   return {
-     top: `${top}%`,
-     left: `${left}%`,
-     transform: `translate(-${top}%, -${left}%)`,
-   };
-}
 
 const useStyles = makeStyles((theme) => ({
  
@@ -193,12 +180,10 @@ const DialogActions = withStyles((theme) => ({
 export default function Header(props) {
   const classes = useStyles();
   const { sections, title,cust } = props;
-  
+  const { customer_id } = useParams();
   const [anchorEl, setAnchorEl] = useState(null );
   const [isAuth, setIsAuth]= useState(true);
-   const [modalStyle] =useState(getModalStyle);
   const [open, setOpen] = useState(false);
-  const [openpop, setOpenpop] = useState(false);
   const [cusorderCount,setCusOrderCount]=useState([])
   const [cartCount,setCartCount]=useState([])
   const [customer,setCustomer]=useState([])
@@ -218,7 +203,11 @@ if(!isAuth){
   toast.configure()
   const a=cust.customer_id
 
-   const response1= axios.get("http://localhost:3001/CustomizedOrderCount").then((response)=>{
+   const response1= axios.get("http://localhost:3001/CRcustorder",{
+    params:{
+      customer_id:a,
+    }
+   }).then((response)=>{
       setCusOrderCount(response.data)
       
     })
@@ -228,12 +217,22 @@ if(!isAuth){
       }
     }).then((response)=>{
       setCartCount(response.data)
+     
       
     })
-    const response3= axios.get("http://localhost:3001/customer").then((response)=>{
+    const response3= axios.get("http://localhost:3001/customer",{
+      params:{
+        customer_id:a,
+      }
+    }).then((response)=>{
       setCustomer(response.data)
       
     })
+    
+   const point=customer.map(record=>record.points)
+  
+     
+    
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -255,7 +254,7 @@ if(!isAuth){
   }
   const notify=()=>{
    
-    toast.info(customToast,{position:toast.POSITION.TOP_CENTER,autoClose:false})
+    toast.info(customToast,{position:toast.POSITION.TOP_RIGHT,autoClose:false})
   
   
       }
@@ -276,10 +275,37 @@ if(!isAuth){
      const customizedcount=cusorderCount.map(record=>record.count);
      const cardcount=cartCount.map(record=>record.count);
      console.log(customizedcount);
-
+     const emptybody = (
+      <div className="shap"> 
+     
+     
+     <Dialog onClose={handleCloses} aria-labelledby="customized-dialog-title" open={open}>
+      
+       <DialogContent dividers>
+         
+         <Typography gutterBottom>
+           Sorry,This service is not available for you.
+         </Typography>
+         
+       </DialogContent>
+       <DialogActions>
+         <Button autoFocus onClick={handleCloses} class='btn btn-primary'>
+             
+          Close
+          
+         </Button>
+       </DialogActions>
+     </Dialog>
+     </div>
+        
+    
+     
+       
+    );
   const body = (
+    
     <div className="shap"> 
-   
+ 
    
    <Dialog onClose={handleCloses} aria-labelledby="customized-dialog-title" open={open}>
      <DialogTitle id="customized-dialog-title" onClose={handleCloses}>
@@ -290,11 +316,11 @@ if(!isAuth){
         <img src="../../images/giftt.jpg" className="giftt" />
        </Typography>
        <Typography gutterBottom>
-         You got 15 points
+         You got {point} points
          so we  give small gift for you.
        </Typography>
        <Typography gutterBottom>
-        So you can order gift below 15 points.
+        So you can order gift below Rs.{point} .
        </Typography>
      </DialogContent>
      <DialogActions>
@@ -306,11 +332,14 @@ if(!isAuth){
      </DialogActions>
    </Dialog>
    </div>
-      
+    
   
-   
+ 
      
   );
+
+   
+
 
   return (
     <React.Fragment>
@@ -423,7 +452,8 @@ if(!isAuth){
         aria-labelledby="simple-modal-title"
         aria-describedby="simple-modal-description"
       >
-        {body}
+       {body}
+     
       </Modal>
      
         </StyledMenuItem>

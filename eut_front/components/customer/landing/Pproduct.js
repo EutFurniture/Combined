@@ -1,10 +1,9 @@
 import React from 'react';
-import { Theme, makeStyles, createStyles } from '@material-ui/core/styles';
+import { makeStyles, createStyles } from '@material-ui/core/styles';
 import ButtonBase from '@material-ui/core/ButtonBase';
 import Typography from '@material-ui/core/Typography';
-import Grid from '@material-ui/core/Grid';
+
 import Link from '@material-ui/core/Link';
-import Blog from './Blog';
 
 const images = [
 

@@ -3,24 +3,15 @@ import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Grid from '@material-ui/core/Grid';
 import Container from '@material-ui/core/Container';
-import GitHubIcon from '@material-ui/icons/GitHub';
-import FacebookIcon from '@material-ui/icons/Facebook';
-import TwitterIcon from '@material-ui/icons/Twitter';
-import Header from './Header';
 import Button from '@material-ui/core/Button';
 import MainFeaturedPost from './MainFeaturedPost';
 import FeaturedPost from './FeaturedPost';
-import Main from './Main';
-import Blog  from './Blog';
 import Footer from '../Footer';
 import Img1 from '../../../images/din.jpg';
 import Img2 from '../../../images/add.jpg';
 import Image from '../../../images/home1.jpeg';
-
 import '../Footer.css'
-
 import Caresoul from '../Caresoul'
-import { FaBorderNone } from 'react-icons/fa';
 const useStyles = makeStyles((theme) => ({
   mainGrid: {
     marginTop: theme.spacing(1),
