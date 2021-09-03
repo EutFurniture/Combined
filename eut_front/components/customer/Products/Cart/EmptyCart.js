@@ -4,8 +4,9 @@ import { makeStyles } from '@material-ui/core/styles';
 const useStyles = makeStyles((theme) => ({
     container: {
        
-        marginBottom: '18%',
-        marginTop: "5%",
+        marginBottom: '19%',
+        marginTop: "6%",
+        fontWeight:'bold',
     },
   
 

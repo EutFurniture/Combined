@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Route, Switch, Link, useParams } from "react-router-dom";
+import { Route, Switch } from "react-router-dom";
 import ProInfo from './ProInfo'
 const Employee=()=>{
     return(

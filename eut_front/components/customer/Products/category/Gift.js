@@ -1,17 +1,14 @@
-import React, { Component, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Title from '../Title';
 import styled from 'styled-components';
 import axios from 'axios';
 import { useParams } from "react-router-dom";
-import Pproduct from "../../Pproduct";
 import Footer from '../../Footer'
 export default function Gift(userData) {
     const { customer_id } = useParams();
 
-    const [product, setDt] = useState([])
-    const [customer, setcustomer] = useState([])
-    const [custpoint, setcustpoint] = useState([])
+    const [product, setDt] = useState([]);
     useEffect(() => {
         const fetchData = async () => {
             const response = await axios.get('http://localhost:3001/gift', {

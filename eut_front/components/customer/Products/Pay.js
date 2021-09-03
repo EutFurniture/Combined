@@ -1,4 +1,4 @@
-import React,{Fragment,useMemo,useState,useEffect} from 'react'
+import React,{Fragment,useState} from 'react'
 import { Link ,useParams} from 'react-router-dom';
 import { withStyles,makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
@@ -9,9 +9,7 @@ import MuiDialogActions from '@material-ui/core/DialogActions';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
-import Axios from'axios';
-
-import './product.css'
+//import './product.css'
 const useStyles = makeStyles((theme) => ({
   check:{
     backgroundColor:'grey',
@@ -90,32 +88,11 @@ export default function Pay(userData) {
   const handleClose = () => {
     setOpen(false);
   }; 
-
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //       const response = await Axios.get('http://localhost:3001/profile', {
-  //           params: {
-  //             customer_id:userData.userData.customer_id,
-                
-  //           }
-  //       });
-       
-  //       setUser(response.data[0]);
-       
-         
-  //   };
-  //   fetchData();
-  // }, [customer_id]);
  
     return (
         <Fragment>
          
-          <div className="shap">
-        
-      <Button  className={classes.check}   onClick={handleClickOpen}>
-       Check
-      </Button>
-  
+          <div className="shap"> 
    
       <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open}>
         <DialogTitle id="customized-dialog-title" onClose={handleClose}>
