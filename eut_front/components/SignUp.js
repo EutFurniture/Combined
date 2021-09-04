@@ -40,17 +40,18 @@ const useStyles = makeStyles((theme) => ({
 
 export default function SignUp() {
   const classes = useStyles();
-  const[fname,setFName]=useState("");
+  const[fname,setFName]=useState();
   const[city,setCity]=useState("");
-  const[email,setEmail]=useState("");
+  const[email,setEmail]=useState();
   const[phone,setPhone]=useState("");
   const[post,setPost]=useState("");
   const[address,setAddress]=useState("");
   const[password,setPassword]=useState("");
   const[cpassword,setCpassword]=useState("");
+  const[otp,setOtp]=useState("");
   Axios.defaults.withCredentials=true;
   const regist=()=>{
-    Axios.post('http://localhost:3001/register',{
+    Axios.post('http://localhost:3001/customerRegister',{
       fname:fname,
       email:email,
       phone:phone,
@@ -59,29 +60,32 @@ export default function SignUp() {
       cpassword:cpassword,
       post:post,
       city:city,
+      otp:otp,
     
-  }).then(() =>{
-    console.log("success");
+  }).then((response) => { 
+    if(response.data.message){
+      alert(response.data.message)
+    
+    }
   });
   };
 
-
-  const otpinfo = (data) => {
-  
-    Axios.post("http://localhost:3001/otpCheck", {
-     email: data.email,
-     otp: data.otp,
-      
-    }).then((response) => {
-      console.log(response)
-      if (response.data.message) {
-        setotpStatus(response.data.message);
-        alert(response.data.message)
-        
-      } 
+  const otpinfo=()=>{
+    Axios.post('http://localhost:3001/insertotpcode',{
+      fname:fname,
+      email:email,
+     
+    
+  }).then((response) => { 
+    if(response.data.message){
+      alert(response.data.message)
+    
     }
-    );
-  };
+  });
+
+  }
+
+  
   return (
     <Fragment>
     <div className="cont">
@@ -110,7 +114,9 @@ export default function SignUp() {
                 id="firstName"
                 label="Full Name"
                 autoFocus
+                defaultValue={fname}
                 onChange={(event)=>{setFName(event.target.value); }}
+                
               />
             </Grid>
            
@@ -125,7 +131,9 @@ export default function SignUp() {
                 name="email"
                 type="email"
                 autoComplete="email"
+                defaultValue={email}
                 onChange={(event)=>{setEmail(event.target.value); }}
+               
               />
             </Grid>
             <Button
@@ -134,21 +142,22 @@ export default function SignUp() {
             variant="contained"
             color="primary"
             className={classes.otp}
-            onSubmit={handleSubmit(otpinfo)}
+            onClick={otpinfo}
+           
           >
           OTP
           </Button>
             <Grid item xs={12}>
               <TextField
                 variant="outlined"
-           
+                required
                 fullWidth
                 id="otp"
                 label="OTP"
                 name="otp"
                 type="otp"
                 autoComplete="otp"
-                
+                onChange={(event)=>{setOtp(event.target.value); }}
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -235,6 +244,7 @@ export default function SignUp() {
             color="primary"
             className={classes.submit}
             onClick={regist}
+           
           >
             Sign Up
           </Button>

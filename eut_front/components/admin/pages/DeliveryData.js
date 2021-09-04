@@ -36,7 +36,7 @@ class DeliveryData extends React.Component {
 
     render() {
       return (
-        <table  className="table">
+        <table style={{backgroundColor:'#f2f3f4'}} className="table">
           <thead>
               <tr>
                 <th>Order ID</th>

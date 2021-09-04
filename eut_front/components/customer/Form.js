@@ -1,51 +1,33 @@
 import React ,{Fragment}from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Axios from 'axios';
-
-import clsx from 'clsx';
+import { useParams } from "react-router-dom";
 import { useState } from 'react';
 import Footer from './Footer';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography';
-import Badge from '@material-ui/core/Badge';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
-import Link from '@material-ui/core/Link';
-import Blog from './blog/Blog';
-
+//import Blog from './blog/Blog';
 import Form from 'react-bootstrap/Form';
 import { Button } from 'react-bootstrap';
 import { Row } from 'react-bootstrap';
 import { Col } from 'react-bootstrap';
-import axios from 'axios';
+
 
 
 //import { mainListItems, Logout } from './listItems';
 
-
-
-function Copyright() {
-  return (
-    <Typography variant="body2" color="textSecondary" align="center">
-      {'Copyright © '}
-      <Link color="inherit" href="https://material-ui.com/">
-        Eut Furniture
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
 
  const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
-    marginTop:'2%',
+    marginTop:'0%',
     marginLeft:'15%',
   },
   toolbar: {
@@ -81,6 +63,7 @@ const useStyles = makeStyles((theme) => ({
   },
   title: {
     flexGrow: 1,
+    fontSize:'25px',
   },
   drawerPaper: {
     position: 'relative',
@@ -153,9 +136,7 @@ const styles = {
   
 };
 
-
-
-export default function AddDelivers() {
+export default function Customization(userData) {
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
   const [state,setState]=useState({file:'',name:'',description:'',userImage:"",message:"",success:false})
@@ -164,9 +145,8 @@ export default function AddDelivers() {
   const[measurement,setMeasurement]=useState("");
   const[material,setMaterial]=useState("");
   const[color,setColor]=useState("");
-  const[image,setImage]=useState("");
-  
-
+  const { customer_id } = useParams();
+const id=userData.userData.customer_id;
   const submitForm =(e) =>{
     e.preventDefault();
       
@@ -176,7 +156,7 @@ export default function AddDelivers() {
       formData.append('file',state.file)
      
 
-     Axios.post('http://localhost:3001/upload', formData,{
+     Axios.post('http://localhost:3001/imageUpload', formData,{
      
     'content-Type':'multipart/form-data',
     
@@ -192,6 +172,7 @@ export default function AddDelivers() {
             measurement:measurement,
             color:color,
             material:material,
+            customer_id:id,
             
           })
 

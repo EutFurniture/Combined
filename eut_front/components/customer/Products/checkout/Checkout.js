@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Fragment } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import AppBar from '@material-ui/core/AppBar';
@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme) => ({
   paper: {
     marginTop: theme.spacing(3),
     marginBottom: theme.spacing(3),
-    fontWeight:'bold',
+    fontWeight: 'bold',
     padding: theme.spacing(2),
     [theme.breakpoints.up(600 + theme.spacing(3) * 2)]: {
       marginTop: theme.spacing(6),
@@ -38,7 +38,7 @@ const useStyles = makeStyles((theme) => ({
       padding: theme.spacing(3),
     },
   },
-  
+
   buttons: {
     display: 'flex',
     justifyContent: 'flex-end',
@@ -55,19 +55,19 @@ const useStyles = makeStyles((theme) => ({
   },
   title: {
     marginTop: theme.spacing(2),
-    fontWeight:'bold',
-    fontSize:'20px',
+    fontWeight: 'bold',
+    fontSize: '20px',
   },
-  order:{
-    fontWeight:'bold',
-    fontSize:'20px',
+  order: {
+    fontWeight: 'bold',
+    fontSize: '20px',
   },
-  hhr:{
-    border:'1px solid black',
+  hhr: {
+    border: '1px solid black',
   },
-  head:{
-    fontWeight:'bold',
-    fontSize:'35px',
+  head: {
+    fontWeight: 'bold',
+    fontSize: '35px',
   }
 }));
 
@@ -78,6 +78,14 @@ export default function Checkout(userData) {
   const [subqut, setsubqut] = useState([])
   const { customer_id } = useParams();
   const [user, setUser] = useState([])
+  const [activeStep, setActiveStep] = React.useState('');
+  const handleNext = () => {
+    setActiveStep("full");
+  };
+
+  const handleBack = () => {
+    setActiveStep('advance');
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -122,7 +130,7 @@ export default function Checkout(userData) {
   products.map(function (a) { return totalitems += 100 * a.quantity }, 0);
   products.map(function (a) { return total = totalprice + totalitems }, 0);
   products.map(function (a) { return advance = total * 0.2 }, 0);
-
+  var roundadvance = Math.round(advance);
   const onSucess = async () => {
     const response = await Axios.get('http://localhost:3001/ordergift_id', {
       params: {
@@ -131,12 +139,20 @@ export default function Checkout(userData) {
       }
     });
     const o_id = response.data[0].order_id;
+    const total = response.data[0].total_price;
+    const custpoint = Math.round(total * 0.05);
     Axios.get('http://localhost:3001/insertpayment', {
       params: {
         oid: o_id,
 
       }
     });
+    const response2 = await Axios.get('http://localhost:3001/increasepoint', {
+      params: {
+        cid: userData.userData.customer_id,
+        price: custpoint,
+      }
+    })
 
     products.map(function (a) {
 
@@ -153,7 +169,16 @@ export default function Checkout(userData) {
 
 
   }
+  
+  const OnfullSuccess = async (id) => {
+    Axios.get('http://localhost:3001/insertfullpayment', {
+      params: {
+        oid: id,
 
+      }
+    });
+  }
+  const OnDismissed = () => alert('onDismissed');
   const onDismissed = () => alert('onDismissed');
   return (
     <React.Fragment>
@@ -164,7 +189,7 @@ export default function Checkout(userData) {
       </AppBar>
       <main className={classes.layout}>
         <Paper className={classes.paper}>
-          <Typography  className={classes.head} align="center">
+          <Typography className={classes.head} align="center">
             Checkout
           </Typography>
 
@@ -177,11 +202,11 @@ export default function Checkout(userData) {
               <ListItem className={classes.listItem} key={product.product_id}>
                 <ListItemText primary={product.product_name} secondary={product.quantity} />
                 <Typography variant="body2">Rs.{product.total}.00</Typography>
-               
+
               </ListItem>
-           
+
             ))}
-             <hr  className={classes.hhr} />
+            <hr className={classes.hhr} />
             <ListItem className={classes.listItem}>
               <ListItemText primary="Sub Total" />
               <Typography variant="subtitle1" className={classes.total}>
@@ -197,7 +222,7 @@ export default function Checkout(userData) {
             <ListItem className={classes.listItem}>
               <ListItemText primary="Total" />
               <Typography variant="subtitle1" className={classes.total}>
-                <hr  className={classes.hhr} />
+                <hr className={classes.hhr} />
                 Rs. {total}.00
                 <hr className={classes.hhr} />
 
@@ -206,85 +231,143 @@ export default function Checkout(userData) {
             <ListItem className={classes.listItem}>
               <ListItemText primary=" Now you should pay" />
               <Typography variant="subtitle1" className={classes.total}>
-                Rs. {advance}
+                Rs. {roundadvance}
 
               </Typography>
             </ListItem>
           </List>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
-              <Typography  className={classes.title}>
+              <Typography className={classes.title}>
                 Shipping
               </Typography>
 
               <Typography gutterBottom>
-              <ListItem className={classes.listItem}>
-              <ListItemText primary="Name :-" />
-              <Typography variant="subtitle1" className={classes.total}>
-              {user.fname}
+                <ListItem className={classes.listItem}>
+                  <ListItemText primary="Name :-" />
+                  <Typography variant="subtitle1" className={classes.total}>
+                    {user.fname}
+                  </Typography>
+                </ListItem>
+                <ListItem className={classes.listItem}>
+                  <ListItemText primary="Address :-" />
+                  <Typography variant="subtitle1" className={classes.total}>
+                    {user.address},
+                  </Typography>
+
+                  <Typography variant="subtitle1" className={classes.total}>
+                    {user.city}
+                  </Typography>
+                </ListItem>
+                <ListItem className={classes.listItem}>
+                  <ListItemText primary="Postal Code :-" />
+                  <Typography variant="subtitle1" className={classes.total}>
+                    {user.postalcode}
+                  </Typography>
+                </ListItem>
+                <ListItem className={classes.listItem}>
+                  <ListItemText primary="Phone no :-" />
+                  <Typography variant="subtitle1" className={classes.total}>
+                    {user.phone}
+                  </Typography>
+                </ListItem>
+
               </Typography>
-            </ListItem>
-            <ListItem className={classes.listItem}>
-              <ListItemText primary="Address :-" />
-              <Typography variant="subtitle1" className={classes.total}>
-              {user.address},
-              </Typography>
-             
-              <Typography variant="subtitle1" className={classes.total}>
-              {user.city}
-              </Typography>
-            </ListItem>
-            <ListItem className={classes.listItem}>
-              <ListItemText primary="Postal Code :-" />
-              <Typography variant="subtitle1" className={classes.total}>
-              {user.postalcode}
-              </Typography>
-            </ListItem>
-            <ListItem className={classes.listItem}>
-              <ListItemText primary="Phone no :-" />
-              <Typography variant="subtitle1" className={classes.total}>
-              {user.phone}
-              </Typography>
-            </ListItem>
-                
-            </Typography>
-              
+
 
             </Grid>
 
           </Grid>
 
-          <div className={classes.buttons}>
+         
 
-            <PayHereButton
-              sandbox={true}
-              merchant_id={'1218334'}
-              onCompleted={onSucess}
-              onDismissed={onDismissed}
-              // onError={onError}
-              order_id={order.order_id}
-              items={products.map(product => product.product_name)}
-              amount={advance}
-              currency={'LKR'}
-              full_name={user.fname}
-              email={user.email}
-              phone={user.phone}
-              address={user.address}
-              city={user.city}
-              country={'Sri Lanka'}
-              options={{
-                delivery_address: 'No. 123, Galle road, Colombo 03',
-                delivery_city: 'Kollupitiya',
-                delivery_country: 'Sri Lanka',
-                custom_1: '',
-                custom_2: '',
-                return_url: 'http://sample.com/return',
-                cancel_url: 'http://sample.com/cancel',
-                notify_url: 'http://sample.com/notify',
-              }}
-            />
 
-          </div>
+
+
+            <p>Select your payment method</p>
+            <span> <input type="radio" value="Full" name="method" onClick={handleNext} />Full payment</span><br />
+            <span><input type="radio" value="Advance" name="method" onClick={handleBack} />Advance Payment</span><br />
+            {activeStep === 'full' ?
+              <Fragment>
+                <p> Now you need to pay full ammount Rs.{total}</p>
+                <div className={classes.buttons}>
+
+                  <PayHereButton
+                    sandbox={true}
+                    merchant_id={'1218334'}
+                    onCompleted={OnfullSuccess(order.order_id)}
+                    onDismissed={OnDismissed}
+                    //onError={onError}
+                    order_id={order.order_id}
+                    // items={custproduct.product_name}
+                    amount={total}
+
+                    currency={'LKR'}
+                    full_name={user.fname}
+                    email={user.email}
+                    phone={user.phone}
+                    address={user.address}
+                    city={user.city}
+                    country={'Sri Lanka'}
+                    options={{
+                      delivery_address: 'No. 123, Galle road, Colombo 03',
+                      delivery_city: 'Kollupitiya',
+                      delivery_country: 'Sri Lanka',
+                      custom_1: '',
+                      custom_2: '',
+                      return_url: 'http://sample.com/return',
+                      cancel_url: 'http://sample.com/cancel',
+                      notify_url: 'http://sample.com/notify',
+                    }}
+                  />
+
+                </div>
+              </Fragment> :
+              <Fragment>
+                <p> Now you need to pay advance ammount Rs.{advance}</p>
+                <div className={classes.buttons}>
+
+
+
+                  <PayHereButton
+                    sandbox={true}
+                    merchant_id={'1218334'}
+                    onCompleted={onSucess}
+                    onDismissed={onDismissed}
+                    // onError={onError}
+                    order_id={order.order_id}
+                    items={products.map(product => product.product_name)}
+                    amount={advance}
+                    currency={'LKR'}
+                    full_name={user.fname}
+                    email={user.email}
+                    phone={user.phone}
+                    address={user.address}
+                    city={user.city}
+                    country={'Sri Lanka'}
+                    options={{
+                      delivery_address: 'No. 123, Galle road, Colombo 03',
+                      delivery_city: 'Kollupitiya',
+                      delivery_country: 'Sri Lanka',
+                      custom_1: '',
+                      custom_2: '',
+                      return_url: 'http://sample.com/return',
+                      cancel_url: 'http://sample.com/cancel',
+                      notify_url: 'http://sample.com/notify',
+                    }}
+                  />
+
+                </div>
+              </Fragment>
+            }
+
+
+
+
+
+
+
+       
 
 
 

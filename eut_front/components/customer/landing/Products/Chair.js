@@ -1,17 +1,13 @@
-import React, { Component, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Title from './Title';
 import styled from 'styled-components';
 import axios from 'axios';
-import { useParams } from "react-router-dom";
 import Pproduct from "../Pproduct";
 import Footer from '../../Footer'
 import Blog from '../Blog'
 export default function ProductList(userData) {
-    const { customer_id } = useParams();
-
     const [product, setDt] = useState([])
-    const [customerid, setcustomerid] = useState([])
     useEffect(() => {
         const fetchData = async () => {
             const response = await axios.get('http://localhost:3001/chair', {
@@ -23,11 +19,6 @@ export default function ProductList(userData) {
         };
         fetchData();
     }, []);
-
-
-
-
-
 
 
 
@@ -67,13 +58,13 @@ export default function ProductList(userData) {
                                                 <span>{item.currency}</span>
                                                 <h6>{item.price}.00</h6>
                                             </div>
-                                            <hr  className="new" />
+                                            <hr className="new" />
                                             <div className="cta_group">
                                                 {item.quantity > 0 ?
                                                     <div>
                                                         <Link className="button-atc" to="/signin"
-                                                           
-                                                      >Order Now</Link>
+
+                                                        >Order Now</Link>
 
                                                     </div> :
                                                     <p className="text"> product is out of stock </p>
@@ -82,25 +73,7 @@ export default function ProductList(userData) {
                                             </div>
                                         </div>
 
-                                        {/*                                         
-                                        <div className="card-footer  ">
-                                            <p className="align-self-center mb-0 font-weight-bold">
-                                                {item.product_name}
-                                            </p>
-                                            <h5 className="text-blue font-italic  mb-0">
-                                                <span className="mr-1">Rs.</span>
-                                                {item.price}
-                                            </h5>
-                                          
-                                        </div>
-                                        { item.quantity > 0 ?
-                                        <div>
-                                            <button className="button-atc"onClick={() => {
-                                      addToCart(item.product_id,item.price)}}>Add to cart</button>
-                                         
-                                        </div> : 
-                                        <p className="text-danger"> product is out of stock </p>
-                                     } */}
+
 
                                     </div>
 
@@ -118,7 +91,7 @@ export default function ProductList(userData) {
                     </div>
                 </div>
             </div>
-<Footer />
+            <Footer />
         </React.Fragment>
         // <Product />
 

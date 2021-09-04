@@ -1,9 +1,6 @@
-import React, {Component,useState,useEffect} from 'react';
-import { ProductConsumer } from '../../../context';
+import React, {useState,useEffect} from 'react';
 import {Link, useParams} from 'react-router-dom';
 import {ButtonContainer} from './Button';
-import Blog from '../blog/Blog'
-import Cart from './Cart'
 import axios from 'axios';
 import Footer from '../Footer'
 export default function ProInfo (){

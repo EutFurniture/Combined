@@ -1,10 +1,9 @@
-import React,{useState,useEffect} from 'react';
+import React,{useState} from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles,withStyles } from '@material-ui/core/styles';
 import Toolbar from '@material-ui/core/Toolbar';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
-import SearchIcon from '@material-ui/icons/Search';
 import AddShoppingCart from '@material-ui/icons/AddShoppingCart';
 import Typography from '@material-ui/core/Typography';
 import Link from '@material-ui/core/Link';
@@ -19,52 +18,45 @@ import AccountCircle from '@material-ui/icons/AccountCircle';
 import ExitToApp from '@material-ui/icons/ExitToApp';
 import Modal from '@material-ui/core/Modal';
 import NotificationsIcon from '@material-ui/icons/Notifications';
-import Pay from '../Products/Pay'
 import {Redirect} from 'react-router-dom';
 import Badge from '@material-ui/core/Badge';
 import axios from 'axios';
 import {toast} from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
-import NotificationUI from '../NotificationUI';
+import Dialog from '@material-ui/core/Dialog';
+import MuiDialogTitle from '@material-ui/core/DialogTitle';
+import MuiDialogContent from '@material-ui/core/DialogContent';
+import MuiDialogActions from '@material-ui/core/DialogActions';
+import CloseIcon from '@material-ui/icons/Close';
+import { useParams } from "react-router-dom";
+
 function rand() {
   return Math.round(Math.random() * 20) - 10;
 }
 
- function getModalStyle() {
-   const top = 50 + rand();
-  const left = 50 + rand();
-
-   return {
-     top: `${top}%`,
-     left: `${left}%`,
-     transform: `translate(-${top}%, -${left}%)`,
-   };
-}
 
 const useStyles = makeStyles((theme) => ({
  
-  paper: {
-    position: 'absolute',
-    width: 400,
-    backgroundColor: theme.palette.background.paper,
-    border: '2px solid #000',
-    borderRadius:'7px',
-    boxShadow: theme.shadows[5],
-    padding: theme.spacing(2, 4, 3),
-
-  },
+ 
   toolbarSecondary: {
-    justifyContent: 'space-between',
-    overflowX: 'auto',
+    justifyContent:"space-between",
+    //overflowX: 'auto',
     backgroundColor:'rgb(226, 226, 230)',
-    color:'black',
-    marginTop:theme.spacing(3),
-    padding:"1%",
+    color:'black',  
+    
+       padding:"1%",
+    boxShadow: theme.shadows[5],
   },
   toolbarTitle:{
     fontWeight:'bold',
+    
+ justifyContent:'flex-start',
+    display:'grid',
   },
   toolbarLink: {
+    justifyContent:'flex-end',
+    display:'grid',
+    fontWeight:'bold',
     padding: theme.spacing(1),
     flexShrink: 0,
     textDecoration:'none',
@@ -84,7 +76,18 @@ const useStyles = makeStyles((theme) => ({
     color:'grey',
 
   },
-
+  check:{
+    backgroundColor:'grey',
+    fontWeight:'bold',
+  },
+  ass:{
+    textDecoration:'none',
+    color:"white",
+    '&:hover':{
+      textDecoration:'none',
+      color:'white',
+    }
+  }
   
 }));
 
@@ -120,18 +123,70 @@ const StyledMenuItem = withStyles((theme) => ({
   },
 }))(MenuItem);
 
+const styles = (theme) => ({
+  root: {
+    margin: 0,
+    padding: theme.spacing(2),
+  },
+  closeButton: {
+    position: 'absolute',
+    right: theme.spacing(1),
+    top: theme.spacing(1),
+    color: theme.palette.grey[500],
+  },
+
+  gift:{
+    padding:"20px",
+    position:"relative",
+    right:"20%",
+    marginTop:'80%',
+    backgroundCloor:"black",
+    color:'white',
+  },
+  
+ 
+});
+
+
+
+const DialogTitle = withStyles(styles)((props) => {
+  const { children, classes, onClose, ...other } = props;
+  return (
+    <MuiDialogTitle disableTypography className={classes.root} {...other}>
+      <Typography variant="h6">{children}</Typography>
+      {onClose ? (
+        <IconButton aria-label="close" className={classes.closeButton} onClick={onClose}>
+          <CloseIcon />
+        </IconButton>
+      ) : null}
+    </MuiDialogTitle>
+  );
+});
+
+const DialogContent = withStyles((theme) => ({
+  root: {
+    padding: theme.spacing(2),
+  },
+}))(MuiDialogContent);
+
+const DialogActions = withStyles((theme) => ({
+  root: {
+    margin: 0,
+    padding: theme.spacing(1),
+  },
+}))(MuiDialogActions);
 
 
 export default function Header(props) {
   const classes = useStyles();
   const { sections, title,cust } = props;
-  
+  const { customer_id } = useParams();
   const [anchorEl, setAnchorEl] = useState(null );
   const [isAuth, setIsAuth]= useState(true);
-   const [modalStyle] =useState(getModalStyle);
   const [open, setOpen] = useState(false);
   const [cusorderCount,setCusOrderCount]=useState([])
   const [cartCount,setCartCount]=useState([])
+  const [customer,setCustomer]=useState([])
   
   const  logout = (req,res) => {
     req.session.destroy((err) =>{
@@ -148,7 +203,11 @@ if(!isAuth){
   toast.configure()
   const a=cust.customer_id
 
-   const response1= axios.get("http://localhost:3001/CustomizedOrderCount").then((response)=>{
+   const response1= axios.get("http://localhost:3001/CRcustorder",{
+    params:{
+      customer_id:a,
+    }
+   }).then((response)=>{
       setCusOrderCount(response.data)
       
     })
@@ -158,9 +217,22 @@ if(!isAuth){
       }
     }).then((response)=>{
       setCartCount(response.data)
+     
       
     })
+    const response3= axios.get("http://localhost:3001/customer",{
+      params:{
+        customer_id:a,
+      }
+    }).then((response)=>{
+      setCustomer(response.data)
+      
+    })
+    
+   const point=customer.map(record=>record.points)
   
+     
+    
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -174,7 +246,7 @@ if(!isAuth){
   };
   
   const NotificationClick = async () => {
-    const response = await axios.get('http://localhost:3001/NoficationActive', {
+    const response = await axios.get('http://localhost:3001/customerNoficationActive', {
        
         
     });
@@ -182,7 +254,7 @@ if(!isAuth){
   }
   const notify=()=>{
    
-    toast.info(customToast,{position:toast.POSITION.TOP_CENTER,autoClose:false})
+    toast.info(customToast,{position:toast.POSITION.TOP_RIGHT,autoClose:false})
   
   
       }
@@ -203,21 +275,76 @@ if(!isAuth){
      const customizedcount=cusorderCount.map(record=>record.count);
      const cardcount=cartCount.map(record=>record.count);
      console.log(customizedcount);
-
+     const emptybody = (
+      <div className="shap"> 
+     
+     
+     <Dialog onClose={handleCloses} aria-labelledby="customized-dialog-title" open={open}>
+      
+       <DialogContent dividers>
+         
+         <Typography gutterBottom>
+           Sorry,This service is not available for you.
+         </Typography>
+         
+       </DialogContent>
+       <DialogActions>
+         <Button autoFocus onClick={handleCloses} class='btn btn-primary'>
+             
+          Close
+          
+         </Button>
+       </DialogActions>
+     </Dialog>
+     </div>
+        
+    
+     
+       
+    );
   const body = (
-    <div style={modalStyle} className={classes.paper}  onClose={handleCloses}>
-      <h2 id="simple-modal-title" className={classes.head}> Gift Data</h2>
-      <p id="simple-modal-description">
-      You can get your gift based on your point.check below...
-      </p>
-      <Pay   />
-    </div>
+    
+    <div className="shap"> 
+ 
+   
+   <Dialog onClose={handleCloses} aria-labelledby="customized-dialog-title" open={open}>
+     <DialogTitle id="customized-dialog-title" onClose={handleCloses}>
+     <h3 className="gitt"> Surprise gift !</h3>
+     </DialogTitle>
+     <DialogContent dividers>
+       <Typography gutterBottom>
+        <img src="../../images/giftt.jpg" className="giftt" />
+       </Typography>
+       <Typography gutterBottom>
+         You got {point} points
+         so we  give small gift for you.
+       </Typography>
+       <Typography gutterBottom>
+        So you can order gift below Rs.{point} .
+       </Typography>
+     </DialogContent>
+     <DialogActions>
+       <Button autoFocus onClick={handleCloses} class='btn btn-primary'>
+           <Link href='/customer/gift' className={classes.ass}>
+         Select gift
+         </Link>
+       </Button>
+     </DialogActions>
+   </Dialog>
+   </div>
+    
+  
+ 
+     
   );
+
+   
+
 
   return (
     <React.Fragment>
-    
-      <Toolbar component="nav" variant="dense" className={classes.toolbarSecondary}>
+   
+      <Toolbar component="nav"  className={classes.toolbarSecondary}>
       <Typography
           component="h2"
           variant="h5"
@@ -233,6 +360,7 @@ if(!isAuth){
             noWrap
             variant="body2"
             href='/customer/dashboard'
+           
             className={classes.toolbarLink}
           >
             Home
@@ -324,7 +452,8 @@ if(!isAuth){
         aria-labelledby="simple-modal-title"
         aria-describedby="simple-modal-description"
       >
-        {body}
+       {body}
+     
       </Modal>
      
         </StyledMenuItem>
@@ -357,6 +486,7 @@ if(!isAuth){
           </IconButton>
            
       </Toolbar>
+     
     </React.Fragment>
   );
 }

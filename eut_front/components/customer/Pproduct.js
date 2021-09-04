@@ -2,7 +2,6 @@ import React from 'react';
 import { makeStyles, createStyles } from '@material-ui/core/styles';
 import ButtonBase from '@material-ui/core/ButtonBase';
 import Typography from '@material-ui/core/Typography';
-
 import Link from '@material-ui/core/Link';
 
 const images = [
@@ -11,32 +10,32 @@ const images = [
     url: '/images/s5.jpg',
     title: 'Dining sets',
     width: '20%',
-    path:'/dining',
+    path:'/customer/dining',
   },
   {
     url: '/images/s4.jpg',
     title: 'Chairs',
     width: '20%',
-    path:'/chair',
+    path:'/customer/chair',
     
   },
   {
     url: '/images/s1.jpg',
     title: 'Sofa',
     width: '20%',
-    path:'/sofa',
+    path:'/customer/sofa',
   },
   {
     url: '/images/s2.jpg',
     title: 'Tables',
     width: '20%',
-    path:'/table',
+    path:'/customer/table',
   },
   {
     url: '/images/s3.jpg',
     title: 'Bed',
     width: '20%',
-    path:'/bed',
+    path:'/customer/bed',
   },
   
  
@@ -163,7 +162,7 @@ export default function ButtonBases() {
               color="inherit"
               className={classes.imageTitle}
             >
-              <Link href={image.path}  className={classes.route} color="inherit">
+              <Link href={image.path} className={classes.route} color="inherit">
               {image.title}
               </Link>
               <span className={classes.imageMarked} />

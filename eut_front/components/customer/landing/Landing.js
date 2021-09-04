@@ -1,12 +1,10 @@
-import React,{useState} from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-import { makeStyles,withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import Toolbar from '@material-ui/core/Toolbar';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import Link from '@material-ui/core/Link';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
 
 const useStyles = makeStyles((theme) => ({
   
@@ -16,7 +14,6 @@ const useStyles = makeStyles((theme) => ({
     overflowX: 'auto',
     backgroundColor:'rgb(226, 226, 230)',
     color:'black',
-    marginTop:theme.spacing(2),
     height:'70px',
     
     borderBottom: `1px solid ${theme.palette.divider}`,
@@ -26,6 +23,7 @@ const useStyles = makeStyles((theme) => ({
     fontWeight:'bold',
   },
   toolbarLink: {
+    fontWeight:'bold',
     padding: theme.spacing(1),
     flexShrink: 0,
     textDecoration:'none',
@@ -40,55 +38,43 @@ const useStyles = makeStyles((theme) => ({
      textDecoration:'none',
     }
   },
-
+login:{
+  textDecoration:'none',
+  '&:focus':{
+   textDecoration:'none',
+   
+  },
+  '&:hover':{ 
+   textDecoration:'none',
+  }
+},
+logbut:{
+  fontWeight:'bold',
+  backgroundColor:'black',
+  color:'white',
+  '&:focus':{
+    backgroundColor:'black',
+    color:'white',
+    textDecoration:'none'
+    
+   },
+   '&:hover':{ 
+    backgroundColor:'black',
+  color:'white',
+  textDecoration:'none',
+   }
+}
   
 }));
-
-const StyledMenu = withStyles({
-  paper: {
-    border: '1px solid #d3d4d5',
-  },
-})((props) => (
-  <Menu
-    elevation={0}
-    getContentAnchorEl={null}
-    anchorOrigin={{
-      vertical: 'bottom',
-      horizontal: 'center',
-    }}
-    transformOrigin={{
-      vertical: 'top',
-      horizontal: 'center',
-    }}
-    {...props}
-  />
-));
-
-const StyledMenuItem = withStyles((theme) => ({
-  root: {
-    '&:focus': {
-      backgroundColor: theme.palette.primary.main,
-      '& .MuiListItemIcon-root, & .MuiListItemText-primary': {
-        color: theme.palette.common.white,
-      },
-    },
-  },
-}))(MenuItem);
 
 
 
 export default function Header(props) {
   const classes = useStyles();
-  const { sections, title } = props;
-  const [anchorEl, setAnchorEl] = React.useState(null );
+  const { title } = props;
+ 
 
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
+  
 
   
 
@@ -136,7 +122,7 @@ export default function Header(props) {
            Product
           </Link>
 
-        <Button variant="outlined" size="small"><Link color="inherit" href='/signin' >
+        <Button className={classes.logbut} size="small"><Link color="inherit" className={classes.login} href='/signin' >
          LogIn
           </Link>
         </Button>

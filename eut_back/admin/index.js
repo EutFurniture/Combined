@@ -829,6 +829,27 @@ app.put('/updateProduct', (req,res) => {
   );
 });
 
+//update Profile
+app.put('/updateProfile', (req,res) => {
+  const id=req.body.id;
+  const name = req.body.name;
+  const email = req.body.email;
+  const emp_img = req.body.emp_img;
+  const phone_no = req.body.phone_no;
+  const address = req.body.address;
+ 
+  db.query("UPDATE employee SET name = ?,email=?,emp_img=?,phone_no=?,address=? WHERE role = 'admin'", 
+  [name,email,emp_img,phone_no,address], 
+  (err, result) => {
+      if (err) {
+          console.log(err);
+      } else {
+          res.send(result);
+      }
+     }
+  );
+});
+
 //update Employee
 app.put('/updateEmployee', (req,res) => {
   const id=req.body.id;
@@ -1046,6 +1067,18 @@ app.get('/ReturnItemCount',(req,res) => {
 //deliverCount
 app.get('/DeliverCount',(req,res) => {
   db.query('SELECT COUNT(id) AS deliver_count FROM employee WHERE role="Delivery Person"', (err, result) => {
+      if(err) {
+          console.log(err)
+      }else {
+          res.send(result);
+         
+      }
+  });
+});
+
+//deliverCount
+app.get('/DeliveryStatus',(req,res) => {
+  db.query('SELECT COUNT(status) AS count FROM orders WHERE status="Completed"', (err, result) => {
       if(err) {
           console.log(err)
       }else {

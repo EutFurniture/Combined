@@ -1,4 +1,4 @@
-import React, { Component, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Title from '../Title';
 import styled from 'styled-components';
@@ -8,9 +8,7 @@ import Pproduct from "../../Pproduct";
 import Footer from '../../Footer'
 export default function ProductList(userData) {
     const { customer_id } = useParams();
-
     const [product, setDt] = useState([])
-    const [customerid, setcustomerid] = useState([])
     useEffect(() => {
         const fetchData = async () => {
             const response = await axios.get('http://localhost:3001/dining', {
@@ -27,7 +25,7 @@ export default function ProductList(userData) {
         const custid = userData.userData.customer_id;
         console.log(custid)
         console.log(id)
-        
+
         axios.get('http://localhost:3001/checkproduct', {
             params: {
                 cid: custid,
@@ -35,7 +33,7 @@ export default function ProductList(userData) {
                 price: price
             }
         });
-
+       
     }
 
     return (
@@ -47,12 +45,12 @@ export default function ProductList(userData) {
                 <div className="container">
 
 
-                    <div className="row">
+                    <div className="row ">
 
                         {
                             product.map(item => (
 
-                                <ProductWrapper className="col-9 mx-auto col-md-6 col-lg-3 my-3">
+                                <ProductWrapper className="col-8 mr-auto  col-md-6 col-lg-3 my-2 ">
                                     <div className="card" key={item.product_id}>
 
 
@@ -73,22 +71,25 @@ export default function ProductList(userData) {
                                                 <span>{item.currency}</span>
                                                 <h6>{item.price}.00</h6>
                                             </div>
-                                            <hr  className="new" />
+                                            <hr className="new" />
                                             <div className="cta_group">
                                                 {item.quantity > 0 ?
                                                     <div>
                                                         <Link className="button-atc" onClick={() => {
                                                             addToCart(item.product_id, item.price)
-                                                        }}>Add to cart</Link>
-
-                                                    </div> :
+                                                        }}>ADD to cart </Link>
+                                                         
+                                                    </div>
+                                                   
+                                                    
+                                                    :
                                                     <p className="text"> product is out of stock </p>
                                                 }
 
                                             </div>
                                         </div>
 
-                                       
+
 
                                     </div>
 
@@ -106,7 +107,7 @@ export default function ProductList(userData) {
                     </div>
                 </div>
             </div>
-<Footer />
+            <Footer />
         </React.Fragment>
         // <Product />
 

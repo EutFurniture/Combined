@@ -138,15 +138,17 @@ export default function Cart(userData) {
     cart.map(function (a) { return totalitems += 100 * a.quantity }, 0);
     cart.map(function (a) { return total = totalprice + totalitems }, 0);
     cart.map(function (a) { return advance = total * 0.2 }, 0);
-    var custpoint= totalprice*0.05;
+
+    var roundadvance=Math.round(advance);
+    
     //console.log(custpoint);
-    const insertorder = async (customer_id,total,advance) => {
+    const insertorder = async (customer_id,total) => {
 
         axios.get('http://localhost:3001/orderproduct', {
             params: {
                 cid: customer_id,
                 total:total,
-                advance:advance,
+                advance:roundadvance,
 
 
             }
@@ -177,12 +179,7 @@ export default function Cart(userData) {
         
         });
        
-            const response2= await axios.get('http://localhost:3001/increasepoint', {
-                params: {
-                    cid:customer_id,
-                    price:custpoint,
-                }
-            })
+            
 
         clearCart(customer_id)
 
@@ -271,7 +268,7 @@ export default function Cart(userData) {
                             </span>
                             <strong>Rs{total}</strong>
                         </h5>
-                        <button id="cart-to" onClick={() => insertorder(userData.userData.customer_id,total,advance)} className="btn btn-primary text-uppercase mb-2 px-3 mr-2"> <Link to={location =>`/customer/checkout/${userData.userData.customer_id}`} className="payment">Payhere</Link></button>
+                        <button id="cart-to" onClick={() => insertorder(userData.userData.customer_id,total)} className="btn btn-primary text-uppercase mb-2 px-3 mr-2"> <Link to={location =>`/customer/checkout/${userData.userData.customer_id}`} className="payment">Payhere</Link></button>
                     </div>
                 </div>
             </div>

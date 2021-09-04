@@ -1,26 +1,14 @@
-import React, {Component,useState,useEffect} from 'react';
+import React, {useState,useEffect} from 'react';
 import { Link } from 'react-router-dom';
 import Title from '../Title';
-import Product from './Product';
-//import {storeProducts} from '../../../../data';
-import { ProductConsumer } from '../../../../context';
-// import PropTypes from 'prop-types';
-// import Modal from '../Modal';
-// import Cart from '../Cart'
-// import Blog from '../../blog/Blog'
-//import { Navbar } from 'react-bootstrap';
-import Navbar from '../Navbar';
 import styled from 'styled-components';
-import AddShoppingCart from '@material-ui/icons/AddShoppingCart';
 import axios from 'axios';
 import {  useParams } from "react-router-dom";
 import Pproduct from "../../Pproduct";
 import Footer from '../../Footer'
 export default function ProductList (userData){
     const { customer_id } = useParams();
-
     const [product, setDt] = useState([])
-    const [customerid, setcustomerid] = useState([])
     useEffect(() => {
         const fetchData = async () => {
             const response = await axios.get('http://localhost:3001/chair', {
