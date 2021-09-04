@@ -8,35 +8,35 @@ import Table from 'react-bootstrap/Table';
 
 function CustomerIU() {
 
-  const [name, setName] = useState("");
-  const [phone, setPhone] = useState(0);
-  const [address, setAddress] = useState("");
-  const [orders, setOrders] = useState("");
-  const [loyalty, setLoyalty] = useState(0);
+  const [customer_id, setCustomer_id] = useState(0);
+  const [o_date, setDate] = useState("");
+  const [order_last_date, setDue_date] = useState("");
+  const [order_description, setOrder_description] = useState("");
+  const [total_price, setTotal_price] = useState(0);
 
-  const [newName, setNewName] = useState("");
-  const [newAddress, setNewAddress] = useState("");
-  const [newPhone, setNewPhone] = useState(0);
+  const [newDue_date, setNewDue_date] = useState("");
+  //const [newAddress, setNewAddress] = useState("");
+  //const [newPhone, setNewPhone] = useState(0);
 
-  const [customerList, setCustomerList] = useState([]);
+  const [orderList, setOrderList] = useState([]);
   
 
-  const addCustomer = () => {
-    Axios.post('http://localhost:3001/create', {
-      name: name, 
-      phone: phone, 
-      address: address, 
-      orders: orders, 
-      loyalty: loyalty
+  const addOrder = () => {
+    Axios.post('http://localhost:3001/create_order', {
+      customer_id: customer_id, 
+      o_date: o_date, 
+      order_last_date: order_last_date, 
+      order_description: order_description, 
+      total_price: total_price
     }).then(() => {
-      setCustomerList([
-        ...customerList,
+      setOrderList([
+        ...orderList,
         {
-          name: name, 
-          phone: phone, 
-          address: address, 
-          orders: orders, 
-          loyalty: loyalty,
+          customer_id: customer_id, 
+          o_date: o_date, 
+          order_last_date: order_last_date, 
+          order_description: order_description, 
+          total_price: total_price,
         },
       ]);
     });
@@ -46,90 +46,59 @@ function CustomerIU() {
     console.log(name + age + address + orders + loyalty);
   };*/
 
-  const getCustomers = () => {
-    Axios.get('http://localhost:3001/customers').then((response) => {
-      setCustomerList(response.data);
+  const getOrders = () => {
+    Axios.get('http://localhost:3001/order_check').then((response) => {
+      setOrderList(response.data);
     });
   };
 
-  const updateCustomerName = (id) => {
-    Axios.put("http://localhost:3001/updateName", {name: newName,  id: id}).then(
+  const updateDate = (order_id) => {
+    Axios.put("http://localhost:3001/updateDate", {order_last_date: newDue_date,  order_id: order_id}).then(
       (response) => {
-        setCustomerList(customerList.map((val) => {
-          return val.id === id ? {id: val.id, name: newName, phone: val.phone, address: val.address, orders: val.orders, loyalty: val.loyalty} : val
+        setOrderList(orderList.map((val) => {
+          return val.order_id === order_id ? {order_id: val.order_id, order_last_date: val.due_date} : val
         }))
      }
     );
   };
 
   
-  const updateCustomerAddress = (id) => {
-    Axios.put("http://localhost:3001/updateAddress", {address: newAddress,  id: id}).then(
-      (response) => {
-        setCustomerList(customerList.map((val) => {
-          return val.id === id ? {id: val.id, name: val.name, phone: val.phone, address: newAddress, orders: val.orders, loyalty: val.loyalty} : val
-        }))
-     }
-    );
-  };
-
-
-  const updateCustomerPhone = (id) => {
-    Axios.put("http://localhost:3001/updatePhone", {phone: newPhone,  id: id}).then(
-      (response) => {
-        setCustomerList(customerList.map((val) => {
-          return val.id === id ? {id: val.id, name: val.name, phone: newPhone, address: val.address, orders: val.orders, loyalty: val.loyalty} : val
-        }))
-     }
-    );
-  };
-
-
-
-  const deleteCustomer = (id) => {
-    Axios.delete(`http://localhost:3001/delete/${id}`).then((response) => {
-    setCustomerList(customerList.filter((val) => {
-      return val.id !== id
-    }))
-  })
-  };
-
-
-
-
-
   return (
     <div className="App">
        <div className="information">
-          <label>Name</label>
+          <label>Customer ID</label>
           <input type="text" className="pro_inp"
            onChange={(event) => {
-            setName(event.target.value);
+            setCustomer_id(event.target.value);
           }}
           />
-          <label>Phone</label> 
-          <input type="number" className="pro_inp"
+          <label>Date</label> 
+          <input type="date" className="pro_inp"
            onChange={(event) => {
-            setPhone(event.target.value);
+            setDate(event.target.value);
           }}
           />
-          <label>Address</label> 
+          <label>Due Date</label> 
+          <input type="date" className="pro_inp"
+           onChange={(event) => {
+            setDue_date(event.target.value);
+          }}
+          />
+          <label>Order description</label> 
           <input type="text" className="pro_inp"
            onChange={(event) => {
-            setAddress(event.target.value);
+            setOrder_description(event.target.value);
           }}
           />
-          <label>Orders</label> 
+          <label>Total Price</label> 
           <input type="text" className="pro_inp"
            onChange={(event) => {
-            setOrders(event.target.value);
+            setTotal_price(event.target.value);
           }}
           />
-          <label>Loyalty (year)</label> 
-          <input type="number" className="pro_inp"/>
             <br/>
 
-          <Button variant="warning"  onClick={addCustomer}>Add Customer</Button>
+          <Button variant="warning"  onClick={addOrder}>Add Order</Button>
          
        </div>
        <div>
@@ -140,38 +109,40 @@ function CustomerIU() {
      
        <div className="customers">
 
-       <Button variant="warning"  onClick={getCustomers}>Show Customer List</Button>
+       <Button variant="warning"  onClick={getOrders}>Show Order List</Button>
 
        <br/>
 
-       {customerList.map((val,key) => {
+       {orderList.map((val,key) => {
          return <div>
           <div className="customer_list">
           <Table striped bordered hover>
            <thead>
             <tr>
-                  <th>#</th>
-                  <th>Name</th>
-                  <th>Phone</th>
-                  <th>Address</th>
-                  <th>Order</th>
-                  <th>Points</th>
+                  <th>ID</th>
+                  <th>Customer ID</th>
+                  <th>Date</th>
+                  <th>Due Date</th>
+                  <th>order_description</th>
+                  <th>Total_price</th>
               </tr>
           </thead>
           <tbody>
            <tr>
-           <td>{val.id}</td>
-           <td>{val.name}</td>
-           <td>{val.phone}</td>
-           <td>{val.address}</td>
-           <td>{val.orders}</td>
-           <td>{val.loyalty}</td>
+           <td>{val.order_id}</td>
+           <td>{val.customer_id}</td>
+           <td>{val.o_date}</td>
+           <td>{val.order_last_date}</td>
+           <td>{val.order_description}</td>
+           <td>{val.total_price}</td>
            </tr>
-           <tr>
+           
+           {/*<tr>
           <td colSpan="6" align="right">
             <Button variant="danger" onClick={() => {deleteCustomer(val.id)}}>Delete</Button>
             </td>
-          </tr>
+           </tr>*/}
+
           </tbody>
           </Table>
         </div>
@@ -182,43 +153,14 @@ function CustomerIU() {
           <tr>
            <td colSpan="4">
             {" "}
-             <input type="text" placeholder="name"  
+             <input type="date"   
               onChange={(event) => {
-                setNewName(event.target.value);
+                setNewDue_date(event.target.value);
             }}
             />
             </td>
             <td colSpan="2" align="right">
-            <Button variant="success" onClick={() => {updateCustomerName(val.id)}}>Update</Button>
-            </td>
-           
-          </tr>
-
-          <tr>
-           <td colSpan="4">
-            {" "}
-             <input type="text" placeholder="phone"  
-              onChange={(event) => {
-                setNewPhone(event.target.value);
-            }}
-            />
-            </td>
-            <td colSpan="2" align="right">
-            <Button variant="success" onClick={() => {updateCustomerPhone(val.id)}}>Update</Button>
-            </td>
-          </tr>
-
-          <tr>
-           <td colSpan="4">
-            {" "}
-             <input type="text" placeholder="address"  
-              onChange={(event) => {
-                setNewAddress(event.target.value);
-            }}
-            />
-            </td>
-            <td colSpan="2" align="right">
-            <Button variant="success" onClick={() => {updateCustomerAddress(val.id)}}>Update</Button>
+            <Button variant="success" onClick={() => {updateDate(val.order_id)}}>Update</Button>
             </td>
           </tr>
 
