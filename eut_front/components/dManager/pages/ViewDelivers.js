@@ -95,16 +95,16 @@ class ViewDelivers extends Component{
                  {this.state.records.map((record)=>{
                    return(
                     <tr>
-                    <th scope="row">{record.employee_id}</th>
-                    <td>{record.e_name}</td>
-                    <td>{record.e_nic}</td>
-                    <td>{record.e_phone}</td>
-                    <td>{record.e_email}</td>
+                    <th scope="row">{record.id}</th>
+                    <td>{record.name}</td>
+                    <td>{record.NIC}</td>
+                    <td>{record.phone_no}</td>
+                    <td>{record.email}</td>
                     
                     <td>
-                    <Link style={styles.viewbtn} to={location=> `/DeliverInfoRoute/${record.employee_id}`}> View </Link>
-                    <Link style={styles.editbtn} to={location=> `/EditDeliversRoute/${record.employee_id}`}> Edit </Link>
-                    <Link style={styles.deletebtn} onClick={()=>{deleteDeliverPerson(record.employee_id)}}>Delete</Link>
+                    <Link style={styles.viewbtn} to={location=> `/DeliverInfoRoute/${record.id}`}> View </Link>
+                    <Link style={styles.editbtn} to={location=> `/EditDeliversRoute/${record.id}`}> Edit </Link>
+                    <Link style={styles.deletebtn} onClick={()=>{deleteDeliverPerson(record.id)}}>Delete</Link>
                     </td>
                   </tr>
                    )

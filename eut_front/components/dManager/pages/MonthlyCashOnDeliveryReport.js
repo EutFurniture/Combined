@@ -41,7 +41,7 @@ export default function MonthlyCashOnDeliveryReport(){
         <th scope="row">{record.order_id}</th>
         <td>{record.total_price - record.advance_price }</td>
         <td>{record.payment_status}</td>
-        <td>{record.c_name}</td>
+        <td>{record.fname}</td>
         <td>{dateOnly(record.order_last_date)}</td>    
       </tr>
        )

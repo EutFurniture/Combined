@@ -14,12 +14,12 @@ export default function Mychart()
 
         
         const orders=statusList.map(record=>record.count);
-        const status=statusList.map(record=>record.o_status);
+        const status=statusList.map(record=>record.status);
 
         return (
 
             <div id="chart">
-                <h5 style={{marginLeft:'80px'}} >Delivery Status</h5>
+                
             <Chart 
             options={{
                 chart: {

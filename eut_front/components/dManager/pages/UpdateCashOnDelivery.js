@@ -318,7 +318,7 @@ export default function UpdateCashOnDelivery() {
               }
           });
           setDt(response.data[0]);
-          setNewStatus(response.data[0].o_status)
+          setNewStatus(response.data[0].status)
           setNewPayment(response.data[0].payment_status)
              console.log(response.data[0]);
       };
@@ -336,7 +336,7 @@ export default function UpdateCashOnDelivery() {
       axios.put("http://localhost:3001/updateCashStatus", {status: newStatus,Payment: newPayment,order_id: order_id}).then(
         (response) => {
           setCashList(Dt.map((val) => {
-            return val.order_id === order_id ? {order_id: val.order_id, status: val.o_status,Payment: val.payment_status, status: newStatus,Payment:newPayment} : val  
+            return val.order_id === order_id ? {order_id: val.order_id, status: val.status,Payment: val.payment_status, status: newStatus,Payment:newPayment} : val  
           }))
        }
       )

@@ -88,7 +88,7 @@ class ViewCashOnDelivery extends Component{
                     <td>{record.employee_id}</td>
                     <td>{record.total_price - record.advance_price}</td>
                     <td>{record.payment_status === "Paid" ? <Alert variant="success">Paid</Alert> : <Alert variant="secondary">Advance Paid</Alert>}</td>
-                    <td>{record.o_status === "Completed" ? <Alert variant="success">Completed</Alert> : record.o_status === "Returned" ? <Alert variant="danger">Returned</Alert> : record.o_status === "Pending" ? <Alert variant="secondary">Pending</Alert> : record.o_status}</td>                    
+                    <td>{record.status === "Completed" ? <Alert variant="success">Completed</Alert> : record.status === "Returned" ? <Alert variant="danger">Returned</Alert> : record.status === "Pending" ? <Alert variant="secondary">Pending</Alert> : record.status}</td>                    
                     <td>
                     <Link style={styles.viewbtn} to={location=> `/CashOnDeliveryInfoRoute/${record.order_id}`}> View </Link>
                     <Link style={styles.updatebtn} to={location=> `/UpdateCashOnDeliveryRoute/${record.order_id}`}> Update </Link>

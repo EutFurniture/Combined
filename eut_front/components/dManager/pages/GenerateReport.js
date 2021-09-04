@@ -13,7 +13,7 @@ function GenerateReport() {
   },[])
 
   const orders=orderList.map(record=>record.count);
-  const deliver=orderList.map(record=>record.e_name);
+  const deliver=orderList.map(record=>record.name);
 
     return (
         <div className="app">

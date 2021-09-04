@@ -28,7 +28,6 @@ function Line() {
       <div className="app">
       <div className="row">
         <div className="mixed-chart">
-        <h5 style={{marginLeft:'80px'}} >Monthly Delivery Overview</h5>
           <Chart
             options={{
               chart: {
