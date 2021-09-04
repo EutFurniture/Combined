@@ -73,8 +73,8 @@ class ViewDelivers extends Component{
   
 
     render(){
-      const deleteDeliverPerson =(employee_id)=>{
-        Axios.delete(`http://localhost:3001/deleteDeliver/${employee_id}`);
+      const deleteDeliverPerson =(email)=>{
+        Axios.delete(`http://localhost:3001/deleteDeliver/${email}`);
       }
       
      return(
@@ -104,7 +104,7 @@ class ViewDelivers extends Component{
                     <td>
                     <Link style={styles.viewbtn} to={location=> `/DeliverInfoRoute/${record.id}`}> View </Link>
                     <Link style={styles.editbtn} to={location=> `/EditDeliversRoute/${record.id}`}> Edit </Link>
-                    <Link style={styles.deletebtn} onClick={()=>{deleteDeliverPerson(record.id)}}>Delete</Link>
+                    <Link style={styles.deletebtn} onClick={()=>{deleteDeliverPerson(record.email)}}>Delete</Link>
                     </td>
                   </tr>
                    )
