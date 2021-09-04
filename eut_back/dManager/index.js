@@ -112,7 +112,7 @@ app.post('/addDelivers',(req,res)=>{
                     console.log(err);
                 }
           
-                db.query("INSERT INTO employee(e_name, e_nic, e_email, e_phone, e_job_start_date, e_address, e_role) VALUES ( ?, ?, ?, ?,NOW(), ?,'Deliver'); INSERT INTO userlogin (u_email, u_name, u_password,user_role,u_otp,u_verify) VALUES (?,?,?,'Deliver',?,'0') ;", 
+                db.query("INSERT INTO employee(name, NIC, email, phone_no, job_start_date, address, role) VALUES ( ?, ?, ?, ?,NOW(), ?,'Deliver'); INSERT INTO userlogin (u_email, u_name, u_password,user_role,u_otp,u_verify) VALUES (?,?,?,'Deliver',?,'0') ;", 
                 [fullname,NIC,email ,mobile ,address,email,fullname,hash,otp],(err,result)=>{
                     if(err){
                         console.log(err)
@@ -320,7 +320,7 @@ app.post('/ResetPassword', (req,res) => {
 
 
 app.get("/delivers", (req, res) => {
-    db.query("SELECT * FROM employee WHERE e_role='Deliver' ", (err, result, fields) => {
+    db.query("SELECT * FROM employee WHERE role='Deliver' ", (err, result, fields) => {
         if (err) {
             console.log(err);
         } else{
@@ -330,7 +330,7 @@ app.get("/delivers", (req, res) => {
 });
 
 app.get("/orderstatus", (req, res) => {
-    db.query("SELECT DISTINCT o_status FROM orders WHERE NOT o_status ='Processing'", (err, result, fields) => {
+    db.query("SELECT DISTINCT status FROM orders WHERE NOT status ='Processing'", (err, result, fields) => {
         if (err) {
             console.log(err);
         } else{
@@ -350,7 +350,7 @@ app.get("/paymentstatus", (req, res) => {
 });
 
 app.get("/delivername", (req, res) => {
-    db.query("SELECT e_name FROM employee WHERE e_role='Deliver'", (err, result, fields) => {
+    db.query("SELECT name FROM employee WHERE role='Deliver'", (err, result, fields) => {
         if (err) {
             console.log(err);
         } else{
@@ -360,7 +360,7 @@ app.get("/delivername", (req, res) => {
 });
 
 app.get("/deliverid", (req, res) => {
-    db.query("SELECT employee_id,e_name FROM employee WHERE e_role='Deliver'", (err, result, fields) => {
+    db.query("SELECT id,name FROM employee WHERE role='Deliver'", (err, result, fields) => {
         if (err) {
             console.log(err);
         } else{
@@ -370,7 +370,7 @@ app.get("/deliverid", (req, res) => {
 });
 
 app.get("/delivery", (req, res) => {
-    db.query("SELECT orders.order_id,orders.employee_id,orders.order_last_date, orders.o_status,customer.c_name,customer.c_address,payment.payment_method FROM orders INNER JOIN customer ON orders.customer_id=customer.customer_id INNER JOIN payment ON payment.order_id=orders.order_id WHERE orders.o_status='Ready to deliver' OR orders.o_status='Completed' OR orders.o_status='Returned' OR orders.o_status='Pending' OR orders.o_status='R_Pending' ORDER BY orders.order_id DESC;", (err, result, fields) => {
+    db.query("SELECT orders.order_id,orders.employee_id,orders.order_last_date, orders.status,customer.fname,customer.address,payment.payment_method FROM orders INNER JOIN customer ON orders.customer_id=customer.customer_id INNER JOIN payment ON payment.order_id=orders.order_id WHERE orders.status='Ready to deliver' OR orders.status='Completed' OR orders.status='Returned' OR orders.status='Pending' OR orders.status='R_Pending' ORDER BY orders.order_id DESC;", (err, result, fields) => {
         if (err) {
             console.log(err);
         } else{
@@ -380,7 +380,7 @@ app.get("/delivery", (req, res) => {
 });
 
 app.get("/deliverys", (req, res) => {
-    db.query("SELECT orders.order_id,orders.employee_id,orders.order_last_date, orders.o_status,customer.c_name,customer.c_address FROM orders INNER JOIN customer ON orders.customer_id=customer.customer_id WHERE  orders.o_status='Completed' OR  orders.o_status='Returned' OR orders.o_status='Scheduled' ORDER BY orders.order_id DESC LIMIT 8", (err, result, fields) => {
+    db.query("SELECT orders.order_id,orders.employee_id,orders.order_last_date, orders.status,customer.fname,customer.address FROM orders INNER JOIN customer ON orders.customer_id=customer.customer_id WHERE  orders.status='Completed' OR  orders.status='Returned'  ORDER BY orders.order_id DESC LIMIT 8", (err, result, fields) => {
         if (err) {
             console.log(err);
         } else{
@@ -390,7 +390,7 @@ app.get("/deliverys", (req, res) => {
 });
 
 app.get("/Assign", (req, res) => {
-    db.query("SELECT orders.order_id,orders.employee_id,orders.order_last_date,customer.c_address FROM orders INNER JOIN customer ON orders.customer_id=customer.customer_id WHERE orders.employee_id=0 ", (err, result, fields) => {
+    db.query("SELECT orders.order_id,orders.employee_id,orders.order_last_date,customer.address FROM orders INNER JOIN customer ON orders.customer_id=customer.customer_id WHERE orders.employee_id=0 ", (err, result, fields) => {
         if (err) {
             console.log(err);
         } else{
@@ -400,7 +400,7 @@ app.get("/Assign", (req, res) => {
 });
 
 app.get("/viewStatus", (req, res) => {
-    db.query("SELECT employee.employee_id,employee.e_name,customer.c_address,orders.order_last_date,COUNT(orders.o_status) AS pending FROM employee INNER JOIN orders ON orders.employee_id=employee.employee_id INNER JOIN customer ON customer.customer_id=orders.customer_id WHERE (orders.o_status='Pending' OR orders.o_status='R_Pending' OR orders.o_status='Returned') GROUP BY orders.order_last_date ORDER BY employee.employee_id;", (err, result, fields) => {
+    db.query("SELECT employee.id,employee.name,customer.address,orders.order_last_date,COUNT(orders.status) AS pending FROM employee INNER JOIN orders ON orders.employee_id=employee.id INNER JOIN customer ON customer.customer_id=orders.customer_id WHERE (orders.status='Pending' OR orders.status='R_Pending') GROUP BY orders.order_last_date ORDER BY employee.id;", (err, result, fields) => {
         if (err) {
             console.log(err);
         } else{
@@ -410,7 +410,7 @@ app.get("/viewStatus", (req, res) => {
 });
 
 app.get("/getPriority", (req, res) => {
-    db.query("SELECT orders.employee_id,orders.order_id,orders.order_last_date,orders.o_status,orders.o_priority FROM orders WHERE orders.o_status='Pending' UNION SELECT return_item.employee_id,return_item.order_id,return_item.reschedule_date,return_item.return_status, return_item.o_priority FROM return_item WHERE return_item.return_status='R_Pending' ORDER BY employee_id", (err, result, fields) => {
+    db.query("SELECT orders.employee_id,orders.order_id,orders.order_last_date,orders.status,orders.o_priority FROM orders WHERE orders.status='Pending' UNION SELECT return_item.employee_id,return_item.order_id,return_item.reschedule_date,return_item.return_status, return_item.o_priority FROM return_item WHERE return_item.return_status='R_Pending' ORDER BY employee_id", (err, result, fields) => {
         if (err) {
             console.log(err);
         } else{
@@ -430,7 +430,7 @@ app.get("/viewReturn", (req, res) => {
 });
 
 app.get("/cashOnDelivery", (req, res) => {
-    db.query("SELECT orders.order_id,orders.employee_id,orders.total_price,orders.advance_price,payment.payment_status,orders.o_status FROM orders INNER JOIN payment ON orders.order_id=payment.order_id WHERE payment.payment_method='cash on delivery' ORDER BY orders.order_id DESC", (err, result, fields) => {
+    db.query("SELECT orders.order_id,orders.employee_id,orders.total_price,orders.advance_price,payment.payment_status,orders.status FROM orders INNER JOIN payment ON orders.order_id=payment.order_id WHERE payment.payment_method='cash on delivery' ORDER BY orders.order_id DESC", (err, result, fields) => {
         if (err) {
             console.log(err);
         } else{
@@ -469,11 +469,11 @@ app.post('/create', (req, res) => {
 });
 
 
-app.delete("/deleteDeliver/:employee_id",(req,res)=>{
-    const employee_id = req.params.employee_id;
-    const sqlDelete="DELETE FROM employee WHERE employee_id=?";
+app.delete("/deleteDeliver/:id",(req,res)=>{
+    const id = req.params.id;
+    const sqlDelete="DELETE FROM employee WHERE id=?";
 
-    db.query(sqlDelete,employee_id,(err,result)=>{
+    db.query(sqlDelete,id,(err,result)=>{
       if(err) {
           console.log(err);
       }
@@ -482,16 +482,16 @@ app.delete("/deleteDeliver/:employee_id",(req,res)=>{
 
 
 app.get("/viewAvailableDelivery", (req, res) => {
-    const sql_View = "SELECT orders.order_id,orders.order_last_date,customer.c_address,customer.c_name, customer.c_phone_no FROM orders LEFT JOIN customer ON orders.customer_id=customer.customer_id ";
+    const sql_View = "SELECT orders.order_id,orders.order_last_date,customer.address,customer.fname, customer.phone FROM orders LEFT JOIN customer ON orders.customer_id=customer.customer_id ";
         db.query(sql_View, (err, result) => {
             res.send(result);
         });      
     });
 
     app.get("/viewDeliver",(req,res)=>{
-        employee_id=req.params.employee_id;
-        db.query("SELECT * FROM employee WHERE employee_id=?",[req.query.employee_id],(err,result)=>{
-          console.log(req.query.employee_id);
+        id=req.params.id;
+        db.query("SELECT * FROM employee WHERE id=?",[req.query.id],(err,result)=>{
+          console.log(req.query.id);
           res.send(result);
         });
         
@@ -500,7 +500,7 @@ app.get("/viewAvailableDelivery", (req, res) => {
 app.get("/viewDeliveryDetails",(req,res)=>{
     order_id=req.params.order_id;
     
-    db.query("SELECT orders.order_id,orders.employee_id,orders.order_last_date, orders.o_description,orders.o_d_date,orders.o_status,orders.o_date,customer.c_name,customer.c_address,customer.c_email,customer.c_phone_no FROM orders INNER JOIN customer ON orders.customer_id=customer.customer_id WHERE orders.order_id=?",[req.query.order_id],(err,result)=>{
+    db.query("SELECT orders.order_id,orders.employee_id,orders.order_last_date, orders.order_description,orders.o_d_date,orders.status,orders.o_date,customer.fname,customer.address,customer.email,customer.phone FROM orders INNER JOIN customer ON orders.customer_id=customer.customer_id WHERE orders.order_id=?",[req.query.order_id],(err,result)=>{
         console.log(req.query.order_id);
         res.send(result);
     });
@@ -526,10 +526,10 @@ app.get("/viewPriorityDetails",(req,res)=>{
 });
 
 app.get("/viewDeliveryManager",(req,res)=>{
-    employee_id=req.params.employee_id;
+    id=req.params.id;
 
-    db.query("SELECT * FROM employee WHERE e_role='DeliveryManager'",[req.query.employee_id],(err,result)=>{
-        console.log(req.query.employee_id);
+    db.query("SELECT * FROM employee WHERE role='DeliveryManager'",[req.query.id],(err,result)=>{
+        console.log(req.query.id);
         res.send(result);
     });
         
@@ -538,7 +538,7 @@ app.get("/viewDeliveryManager",(req,res)=>{
 
 app.get("/CashOnDeliveryDetails",(req,res)=>{
     order_id=req.params.order_id;
-    db.query("SELECT orders.order_id,orders.employee_id,orders.order_last_date,orders.customer_id,orders.total_price,orders.advance_price,payment.payment_status,orders.o_status FROM orders INNER JOIN payment ON orders.order_id=payment.order_id WHERE orders.order_id=?",[req.query.order_id],(err,result)=>{
+    db.query("SELECT orders.order_id,orders.employee_id,orders.order_last_date,orders.customer_id,orders.total_price,orders.advance_price,payment.payment_status,orders.status FROM orders INNER JOIN payment ON orders.order_id=payment.order_id WHERE orders.order_id=?",[req.query.order_id],(err,result)=>{
         console.log(req.query.order_id);
         res.send(result);
     });
@@ -550,7 +550,7 @@ app.put('/updateDeliveryStatus', (req,res) => {
     const status = req.body.status;
     const Deliver_id= req.body.Deliver_id;
 
-    db.query("UPDATE orders SET o_status=?, employee_id=? WHERE order_id = ?", 
+    db.query("UPDATE orders SET status=?, employee_id=? WHERE order_id = ?", 
     [status,Deliver_id,order_id], 
     (err, result) => {
 
@@ -568,7 +568,7 @@ app.put('/updateDeliveryStatus', (req,res) => {
     const Deliver_id= req.body.Deliver_id;
     
 
-    db.query("UPDATE orders SET  employee_id=?, o_status='Pending'  WHERE order_id = ?", 
+    db.query("UPDATE orders SET  employee_id=?, status='Pending'  WHERE order_id = ?", 
     [Deliver_id,order_id], 
     (err, result) => {
 
@@ -604,7 +604,7 @@ app.put('/updateDeliveryStatus', (req,res) => {
     const order_id=req.body.order_id;
     const Schedule_date= req.body.Schedule_date;
 
-    db.query("UPDATE return_item SET reschedule_date=?,return_status='R_Pending' WHERE order_id=?; UPDATE orders SET order_last_date=?,o_status='R_Pending' WHERE order_id=?", 
+    db.query("UPDATE return_item SET reschedule_date=?,return_status='R_Pending' WHERE order_id=?; UPDATE orders SET order_last_date=?,status='R_Pending' WHERE order_id=?", 
     [Schedule_date,order_id,Schedule_date,order_id], 
     (err, result) => {
 
@@ -622,7 +622,7 @@ app.put('/updateDeliveryStatus', (req,res) => {
     const status = req.body.status;
     const Payment= req.body.Payment;
 
-    db.query("UPDATE payment SET payment_status=? WHERE order_id = ?; UPDATE orders SET o_status=? WHERE order_id = ?", 
+    db.query("UPDATE payment SET payment_status=? WHERE order_id = ?; UPDATE orders SET status=? WHERE order_id = ?", 
     [Payment,order_id,status,order_id], 
     (err, result) => {
 
@@ -641,7 +641,7 @@ app.put('/updateDeliveryStatus', (req,res) => {
     const order_id=req.body.order_id;
     const status = req.body.status;
 
-    db.query("UPDATE orders SET o_status=? WHERE order_id = ?; UPDATE return_item SET return_status=? WHERE order_id=?", 
+    db.query("UPDATE orders SET status=? WHERE order_id = ?; UPDATE return_item SET return_status=? WHERE order_id=?", 
     [status,order_id,status,order_id], 
     (err, result) => {
 
@@ -655,14 +655,14 @@ app.put('/updateDeliveryStatus', (req,res) => {
   });
 
   app.put('/UpdateDelivers', (req,res) => {
-    const employee_id=req.body.employee_id;
+    const id=req.body.id;
     const name = req.body.name;
     const email = req.body.email;
     const phone = req.body.phone;
     const address = req.body.address;
 
-    db.query("UPDATE employee SET e_name=?,e_email=?,e_phone=?,e_address=? WHERE employee_id = ?; ", 
-    [name,email,phone,address,employee_id], 
+    db.query("UPDATE employee SET name=?,email=?,phone_no=?,address=? WHERE id = ?; ", 
+    [name,email,phone,address,id], 
     (err, result) => {
 
         if (err) {
@@ -686,7 +686,29 @@ app.put('/updateDeliveryStatus', (req,res) => {
 });
 
 app.get("/orderstatuscount", (req, res) => {
-    db.query("SELECT COUNT(order_id) AS count,o_status FROM orders WHERE NOT o_status='Processing' GROUP BY o_status ORDER BY o_status", (err, result, fields) => {
+    db.query("SELECT COUNT(order_id) AS count,status FROM orders WHERE NOT status='Processing'  AND EXTRACT(MONTH FROM order_last_date) = MONTH(CURRENT_TIMESTAMP) GROUP BY status ORDER BY status", (err, result, fields) => {
+        if (err) {
+            console.log(err);
+        } else{
+            res.send(result);
+            console.log(result);
+        }
+    });
+});
+
+app.get("/totalordercnt", (req, res) => {
+    db.query("SELECT COUNT(orders.order_id) AS t_count  FROM orders  WHERE  EXTRACT(MONTH FROM order_last_date) = MONTH(CURRENT_TIMESTAMP)", (err, result, fields) => {
+        if (err) {
+            console.log(err);
+        } else{
+            res.send(result);
+            console.log(result);
+        }
+    });
+});
+
+app.get("/returnordercnt", (req, res) => {
+    db.query("SELECT COUNT(orders.order_id) AS r_count FROM orders INNER JOIN return_item ON orders.order_id = return_item.order_id WHERE EXTRACT(MONTH FROM return_date) = MONTH(CURRENT_TIMESTAMP);", (err, result, fields) => {
         if (err) {
             console.log(err);
         } else{
@@ -697,7 +719,7 @@ app.get("/orderstatuscount", (req, res) => {
 });
 
 app.get("/ordervsdate", (req, res) => {
-    db.query("SELECT COUNT(order_id) AS count,order_last_date FROM orders GROUP BY order_last_date", (err, result, fields) => {
+    db.query("SELECT COUNT(order_id) AS count,order_last_date FROM orders WHERE EXTRACT(MONTH FROM order_last_date) = MONTH(CURRENT_TIMESTAMP) GROUP BY order_last_date", (err, result, fields) => {
         if (err) {
             console.log(err);
         } else{
@@ -719,7 +741,7 @@ app.get("/pricevsdate", (req, res) => {
 });
   
 app.get("/paymentdonut", (req, res) => {
-    db.query("SELECT COUNT(order_id) AS count,payment_status FROM payment WHERE payment_method='cash on delivery' GROUP BY payment_status", (err, result, fields) => {
+    db.query("SELECT COUNT(payment.order_id) AS count,payment.payment_status,orders.order_last_date FROM payment INNER JOIN orders ON payment.order_id = orders.order_id WHERE payment_method='cash on delivery' AND EXTRACT(MONTH FROM order_last_date) = MONTH(CURRENT_TIMESTAMP) GROUP BY payment_status", (err, result, fields) => {
         if (err) {
             console.log(err);
         } else{
@@ -730,7 +752,7 @@ app.get("/paymentdonut", (req, res) => {
 });
 
 app.get("/delivervsorder", (req, res) => {
-    db.query("SELECT employee.e_name,COUNT(orders.order_id) AS count FROM employee LEFT JOIN orders ON employee.employee_id=orders.employee_id WHERE employee.e_role = 'Deliver' GROUP BY employee.e_name", (err, result, fields) => {
+    db.query("SELECT employee.name,COUNT(orders.order_id) AS count FROM employee LEFT JOIN orders ON employee.id=orders.employee_id WHERE employee.role = 'Deliver'  AND EXTRACT(MONTH FROM order_last_date) = MONTH(CURRENT_TIMESTAMP) GROUP BY employee.name", (err, result, fields) => {
         if (err) {
             console.log(err);
         } else{
@@ -805,7 +827,7 @@ app.get('/cashpaymentnotifyDeactive', (req,res) => {
   })
 
   app.get('/returnnotifyCount',(req,res)=>{
-    db.query('SELECT COUNT(order_id) AS r_count FROM orders WHERE o_status="R_Pending" AND active=1',(err,result,fields)=>{
+    db.query('SELECT COUNT(order_id) AS r_count FROM orders WHERE status="R_Pending" AND active=1',(err,result,fields)=>{
         if(!err)
         res.send(result);
         else
@@ -814,7 +836,7 @@ app.get('/cashpaymentnotifyDeactive', (req,res) => {
   })
 
   app.get('/returnnotifyDeactive', (req,res) => {
-    db.query("UPDATE orders SET active=0 WHERE o_status ='R_Pending' AND active=1", 
+    db.query("UPDATE orders SET active=0 WHERE status ='R_Pending' AND active=1", 
     (err, result) => {
         if (err) {
             console.log(err);
@@ -826,7 +848,7 @@ app.get('/cashpaymentnotifyDeactive', (req,res) => {
   });
 
   app.get('/returnnotifymess',(req,res)=>{
-    db.query('SELECT COUNT(order_id) AS r_count FROM orders WHERE o_status="R_Pending" AND Bill_image <>" "',(err,result,fields)=>{
+    db.query('SELECT COUNT(order_id) AS r_count FROM orders WHERE status="R_Pending" AND Bill_image <>" "',(err,result,fields)=>{
         if(!err)
         res.send(result);
         else
@@ -835,7 +857,7 @@ app.get('/cashpaymentnotifyDeactive', (req,res) => {
   })
 
   app.get('/ordernotifyCount',(req,res)=>{
-    db.query('SELECT COUNT(order_id) AS o_count FROM orders WHERE o_status="Pending" AND active=1',(err,result,fields)=>{
+    db.query('SELECT COUNT(order_id) AS o_count FROM orders WHERE status="Pending" AND active=1',(err,result,fields)=>{
         if(!err)
         res.send(result);
         else
@@ -844,7 +866,7 @@ app.get('/cashpaymentnotifyDeactive', (req,res) => {
   })
 
   app.get('/ordernotifyDeactive', (req,res) => {
-    db.query("UPDATE orders SET active=0 WHERE o_status ='Pending' AND active=1", 
+    db.query("UPDATE orders SET active=0 WHERE status ='Pending' AND active=1", 
     (err, result) => {
         if (err) {
             console.log(err);
@@ -856,7 +878,7 @@ app.get('/cashpaymentnotifyDeactive', (req,res) => {
   });
 
   app.get('/ordernotifymess',(req,res)=>{
-    db.query('SELECT COUNT(order_id) AS o_count FROM orders WHERE o_status="Pending" AND Bill_image <>" "',(err,result,fields)=>{
+    db.query('SELECT COUNT(order_id) AS o_count FROM orders WHERE status="Pending" AND Bill_image <>" "',(err,result,fields)=>{
         if(!err)
         res.send(result);
         else
@@ -865,7 +887,7 @@ app.get('/cashpaymentnotifyDeactive', (req,res) => {
   })
 
   app.get("/viewpaymentNotification", (req, res) => {
-    db.query("SELECT orders.order_id,orders.employee_id,orders.order_last_date, customer.c_name,customer.c_nic,payment.pBill_image FROM orders INNER JOIN customer ON orders.customer_id=customer.customer_id INNER JOIN payment ON payment.order_id=orders.order_id WHERE (orders.o_status='Pending'  OR orders.o_status='R_Pending') AND payment.payment_status='Advance Paid' AND pBill_image<>'';", (err, result, fields) => {
+    db.query("SELECT orders.order_id,orders.employee_id,orders.order_last_date, customer.fname,customer.NIC,payment.pBill_image FROM orders INNER JOIN customer ON orders.customer_id=customer.customer_id INNER JOIN payment ON payment.order_id=orders.order_id WHERE (orders.status='Pending'  OR orders.status='R_Pending') AND payment.payment_status='Advance Paid' AND pBill_image<>'';", (err, result, fields) => {
         if (err) {
             console.log(err);
         } else{
@@ -875,7 +897,7 @@ app.get('/cashpaymentnotifyDeactive', (req,res) => {
 });
 
    app.get("/viewreturnNotification", (req, res) => {
-     db.query("SELECT orders.order_id,orders.employee_id,orders.order_last_date,payment.payment_method,payment.payment_status, customer.c_name,customer.c_nic,orders.Bill_image FROM orders INNER JOIN customer ON orders.customer_id=customer.customer_id INNER JOIN payment ON payment.order_id=orders.order_id WHERE orders.o_status='R_Pending'  AND Bill_image<>'';", (err, result, fields) => {
+     db.query("SELECT orders.order_id,orders.employee_id,orders.order_last_date,payment.payment_method,payment.payment_status, customer.fname,customer.NIC,orders.Bill_image FROM orders INNER JOIN customer ON orders.customer_id=customer.customer_id INNER JOIN payment ON payment.order_id=orders.order_id WHERE orders.status='R_Pending'  AND Bill_image<>'';", (err, result, fields) => {
          if (err) {
              console.log(err);
          } else{
@@ -885,11 +907,54 @@ app.get('/cashpaymentnotifyDeactive', (req,res) => {
  });
 
  app.get("/vieworderNotification", (req, res) => {
-    db.query("SELECT orders.order_id,orders.employee_id,orders.order_last_date, customer.c_name,customer.c_nic, payment.payment_method,payment.payment_status, orders.Bill_image FROM orders INNER JOIN customer ON orders.customer_id=customer.customer_id INNER JOIN payment ON payment.order_id=orders.order_id WHERE orders.o_status='Pending'  AND Bill_image<>'';", (err, result, fields) => {
+    db.query("SELECT orders.order_id,orders.employee_id,orders.order_last_date, customer.fname,customer.NIC, payment.payment_method,payment.payment_status, orders.Bill_image FROM orders INNER JOIN customer ON orders.customer_id=customer.customer_id INNER JOIN payment ON payment.order_id=orders.order_id WHERE orders.status='Pending'  AND Bill_image<>'';", (err, result, fields) => {
         if (err) {
             console.log(err);
         } else{
           res.send(result);
+        }
+    });
+});
+
+app.get("/deliveryReport", (req, res) => {
+    db.query("SELECT orders.order_id,orders.employee_id,orders.order_last_date, orders.status,customer.fname,customer.address,payment.payment_method FROM orders INNER JOIN customer ON orders.customer_id=customer.customer_id INNER JOIN payment ON payment.order_id=orders.order_id WHERE (orders.status='Ready to deliver' OR orders.status='Completed' OR orders.status='Returned' OR orders.status='Pending' OR orders.status='R_Pending') AND EXTRACT(MONTH FROM order_last_date) = MONTH(CURRENT_TIMESTAMP) ORDER BY orders.order_id DESC;", (err, result, fields) => {
+        if (err) {
+            console.log(err);
+        } else{
+            res.send(result);
+        }
+    });
+});
+
+app.get("/CashOnDeliveryReport", (req, res) => {
+    db.query("SELECT payment.order_id,payment.payment_status, orders.order_last_date,orders.total_price,orders.advance_price,customer.fname FROM orders INNER JOIN payment ON payment.order_id=orders.order_id INNER JOIN customer ON orders.customer_id = customer.customer_id WHERE payment.payment_method='cash on delivery' AND EXTRACT(MONTH FROM order_last_date) = MONTH(CURRENT_TIMESTAMP) ORDER BY orders.order_id DESC", (err, result, fields) => {
+        if (err) {
+            console.log(err);
+        } else{
+            console.log(result)
+            res.send(result);
+        }
+    });
+});
+
+app.get("/ReturnReport", (req, res) => {
+    db.query("SELECT order_id, return_date,reason, return_status FROM return_item WHERE EXTRACT(MONTH FROM return_date) = MONTH(CURRENT_TIMESTAMP) ORDER BY order_id DESC", (err, result, fields) => {
+        if (err) {
+            console.log(err);
+        } else{
+            console.log(result)
+            res.send(result);
+        }
+    });
+});
+
+app.get("/DeliverReport", (req, res) => {
+    db.query("SELECT employee.name,COUNT(orders.order_id) AS count FROM employee LEFT JOIN orders ON employee.id=orders.employee_id WHERE employee.role = 'Deliver' AND EXTRACT(MONTH FROM order_last_date) = MONTH(CURRENT_TIMESTAMP) GROUP BY employee.id", (err, result, fields) => {
+        if (err) {
+            console.log(err);
+        } else{
+            res.send(result);
+            console.log(result);
         }
     });
 });
