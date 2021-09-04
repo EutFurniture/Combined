@@ -31,13 +31,13 @@ import {Button} from 'react-bootstrap';
 
 import { mainListItems, Logout, Profile } from './listItems';
 import ViewReports from './ViewReports';
-import Linechart from './Linechart';
-import Donutchart from './Donutchart';
+
+
 import GenerateReport from './GenerateReport';
 import Radial from './Radial';
 import Mychart from './Mychart';
 import MonthlyDeliveryReport from './MonthlyDeliveryReport';
-import MonthlyCashOnDeliveryReport from './MonthlyCashOnDeliveryReport';
+
 import MonthlyReturnReport from './MonthlyReturnReport';
 import MonthlyDeliverReport from './MonthlyDeliverReport';
 
@@ -410,21 +410,11 @@ export default function ManageReports() {
 
             {/* Recent Orders */}
             <Grid item xs={12}  direction="row"  >
-            
-  
             <div >
-              
               <Paper className={classes.paper}>
+                <MonthlyDeliveryReport/>
                 <GenerateReport/>
                 {/* <ViewReports/> */}
-                <Linechart/>
-                <Donutchart/>
-                <Radial/>
-                <Mychart/>
-                <MonthlyDeliveryReport/>
-                <MonthlyCashOnDeliveryReport/>
-                <MonthlyReturnReport/>
-                <MonthlyDeliverReport/>
               </Paper>
               </div>
             </Grid>

@@ -1,53 +1,116 @@
 import React, { Component } from 'react';
-import ReactMapGl, {NavigationControl, Marker} from 'react-map-gl'
-import 'mapbox-gl/dist/mapbox-gl.css';
-import './Map.css';
+import {Map, Marker, GoogleApiWrapper} from 'google-maps-react';
+import PlacesAutocomplete, {
+  geocodeByAddress,
+  getLatLng,
+} from 'react-places-autocomplete';
 
-
-const mapboxToken = 'pk.eyJ1Ijoic3ViYXN0aGkiLCJhIjoiY2tyYTB3Y21mMDFkbTJ2bmlxZ3U4d200ayJ9.wE8uEd7KkMt8ZJ8qp9ezQg'
-class Maps extends Component {
-  constructor() {
-    super()
+export class Maps extends Component {
+  constructor(props) {
+    super(props);
     this.state = {
-      viewport: {
-        width: '100vw',
-        height: '100vh',
-        latitude: 9.66845,
-        longitude: 80.00742,
-        zoom: 11
+      // for google map places autocomplete
+      address: '',
+
+      showingInfoWindow: false,
+      activeMarker: {},
+      selectedPlace: {},
+     
+      mapCenter: {
+        lat: 9.745074467051726,
+        lng: 80.02787138179072
       }
-    }
-    this.handleViewportChange = this.handleViewportChange.bind(this)
+    };
   }
-  handleViewportChange(viewport) {
-    this.setState(prevState => ({
-      viewport: {...prevState.viewport, ...viewport}
-    }))
-  }
+
+  handleChange = address => {
+    this.setState({ address });
+  };
+ 
+  handleSelect = address => {
+    this.setState({ address });
+    geocodeByAddress(address)
+      .then(results => getLatLng(results[0]))
+      .then(latLng => {
+        console.log('Success', latLng);
+
+        // update center state
+        this.setState({ mapCenter: latLng });
+      })
+      .catch(error => console.error('Error', error));
+  };
+ 
   render() {
-    const navStyle = {
-      position: 'absolute',
-      top: 0,
-      left: 0,
-      padding: '10px'
-      };
     return (
-      <ReactMapGl
-        {...this.state.viewport}
-        onViewportChange={viewport => this.setState({viewport})}
-        mapboxApiAccessToken={mapboxToken}
-        mapStyle="mapbox://styles/mapbox/streets-v10"
-        
-      >
-        <Marker latitude={9.75} longitude={80.1667 } offsetLeft={-20} offsetTop={-10}>
-        <div className= "mark">You are here </div>
-      </Marker>
-        <div className="nav" style={navStyle}>
-          <NavigationControl onViewportChange={(viewport) => this.setState({viewport})}/>
-        </div>
-        </ReactMapGl>
+    
+      <div id='googleMaps'>
+        <br/>
+        <PlacesAutocomplete
+          value={this.state.address}
+          onChange={this.handleChange}
+          onSelect={this.handleSelect}
+        >
+
+          {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
+            <div >
+              <input
+                {...getInputProps({
+                  placeholder: 'Search Places ...',
+                  className: 'location-search-input',
+                })}
+              
+              />
+            
+              <div className="autocomplete-dropdown-container">
+                {loading && <div>Loading...</div>}
+                {suggestions.map(suggestion => {
+                  const className = suggestion.active
+                    ? 'suggestion-item--active'
+                    : 'suggestion-item';
+                  // inline style for demonstration purpose
+                  const style = suggestion.active
+                    ? { backgroundColor: '#fafafa', cursor: 'pointer' }
+                    : { backgroundColor: '#ffffff', cursor: 'pointer' };
+                  return (
+                    <div
+                      {...getSuggestionItemProps(suggestion, {
+                        className,
+                        style,
+                      })}
+                    >
+                      <span>{suggestion.description}</span>
+                    </div>
+                  );
+                })}
+              </div>
+              <br/>
+    
+            </div>
+          )}
+        </PlacesAutocomplete>
+
+        <Map 
+          google={this.props.google}
+          initialCenter={{
+            lat: this.state.mapCenter.lat,
+            lng: this.state.mapCenter.lng
+          }}
+          center={{
+            lat: this.state.mapCenter.lat,
+            lng: this.state.mapCenter.lng
+          }}
+        >
+          <Marker 
+            position={{
+              lat: this.state.mapCenter.lat,
+              lng: this.state.mapCenter.lng
+            }} />
+        </Map>
+      </div>
     )
   }
 }
 
-export default Maps;
+export default GoogleApiWrapper({
+  apiKey: ('AIzaSyBdaYp-FVpEqZASGxbydD9N2VVtY-sjeL8')
+})(Maps)

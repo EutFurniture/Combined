@@ -63,7 +63,7 @@ function View_Notification_Return() {
                                 </Form.Label>
                                 <Col >
                                 <Form.Label column lg={2} >
-                                {val.c_name}
+                                {val.fname}
                                 </Form.Label>
                                 </Col>
                             </Form.Group><br/>
@@ -74,7 +74,7 @@ function View_Notification_Return() {
                                 </Form.Label>
                                 <Col >
                                 <Form.Label column lg={2} >
-                                {val.c_nic}
+                                {val.NIC}
                                 </Form.Label>
                                 </Col>
                             </Form.Group><br/>

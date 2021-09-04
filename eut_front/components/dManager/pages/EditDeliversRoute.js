@@ -5,7 +5,7 @@ const EditDeliversRoute=()=>{
     return(
         <div>
             <Switch>
-                <Route path="/EditDeliversRoute/:employee_id">
+                <Route path="/EditDeliversRoute/:id">
                     <EditDelivers/>
                 </Route>
             </Switch>

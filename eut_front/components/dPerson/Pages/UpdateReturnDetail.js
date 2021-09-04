@@ -1,7 +1,7 @@
 import React, { useState,useEffect } from "react";
 import clsx from 'clsx';
 import axios from "axios";
-
+import { Link} from "react-router-dom";
 import Form from 'react-bootstrap/Form';
 import { Button } from 'react-bootstrap';
 import { Row } from 'react-bootstrap';
@@ -204,7 +204,7 @@ export default function UpdateReturnDetail() {
   
  const {order_id} = useParams();
  const [Dt, setDt] = useState([])
- const [newProduct_id, setNewProduct_id] = useState(0);
+ const {product_id} = useParams();
  const [newReturn_date, setNewReturn_date] = useState(0);
  const [newReason,setNewReason]=useState(0);
  
@@ -222,17 +222,17 @@ export default function UpdateReturnDetail() {
         });
   
         setDt(response.data[0]);
-           console.log(response.data[0]);
+        console.log(response.data[0]);
     };
     fetchData();
   }, [order_id]);
 
   const UpdateReturnDetail = (order_id) => {
-    axios.put(`http://localhost:3001/UpdateReturn/${order_id}`, {product_id: newProduct_id, return_date:newReturn_date,reason:newReason ,order_id:order_id}).then(
+    axios.put(`http://localhost:3001/UpdateReturn/${order_id}`, { return_date:newReturn_date,reason:newReason ,order_id:order_id}).then(
       (response) => {
         setReturnList(Dt.map((record) => {
-          return record.id === order_id ? {order_id: record.order_id, product_id: record.product_id, return_date: record.return_date,reason:record.reason, 
-            product_id: newProduct_id,return_date:newReturn_date, reason: newReason} : record
+          return record.id === order_id ? {order_id: record.order_id,  return_date: record.return_date,reason:record.reason, 
+            return_date:newReturn_date, reason: newReason} : record
           
         }))
      }
@@ -294,7 +294,9 @@ export default function UpdateReturnDetail() {
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
+         <MenuItem component={Link} to="/employee/DpProfile">Profile</MenuItem>
         <MenuItem onClick={()=>setIsAuth(false)}>Logout</MenuItem>
+        <MenuItem component={Link} to="/Calender">Calendar</MenuItem>
       </Menu>
 
         </Toolbar>
@@ -348,18 +350,16 @@ export default function UpdateReturnDetail() {
                   </Col>
               </Form.Group><br/>
 
-
-                <Form.Group as={Row} controlId="formHorizontalProduct_id">
+              <Form.Group as={Row} controlId="formHorizontalName">
                   <Form.Label column lg={2} >
-                    Product ID :
+                   Product Id :
                   </Form.Label>
                   <Col >
-                    <Form.Control type="text"  defaultValue={Dt.product_id}
-       onChange={(event)=> {
-         setNewProduct_id(event.target.value);
-       }}  required />                     
+                  <Form.Label column lg={2} >
+                   {Dt.product_id}
+                  </Form.Label>
                   </Col>
-                </Form.Group><br/>
+              </Form.Group><br/>
 
                 <Form.Group as={Row} controlId="formHorizontalReturnDate">
                   <Form.Label column lg={2} >

@@ -507,7 +507,7 @@ export default function DeliveryInfo() {
                   </Form.Label>
                   <Col >
                   <Form.Label column lg={2} >
-                  {Dt.o_status}
+                  {Dt.status}
                   </Form.Label>
                   </Col>
               </Form.Group><br/>

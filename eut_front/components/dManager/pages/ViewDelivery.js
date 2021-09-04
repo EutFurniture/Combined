@@ -102,7 +102,7 @@ export default function ViewDelivery(){
          return val;
        }
        else if(
-         val.c_name.toLowerCase().includes(searchTerm.toLocaleLowerCase()) || val.o_status.toLocaleLowerCase().includes(searchTerm.toLocaleLowerCase()) || val.payment_method.toLocaleLowerCase().includes(searchTerm.toLocaleLowerCase())  )
+         val.fname.toLowerCase().includes(searchTerm.toLocaleLowerCase()) || val.status.toLocaleLowerCase().includes(searchTerm.toLocaleLowerCase()) || val.payment_method.toLocaleLowerCase().includes(searchTerm.toLocaleLowerCase())  )
          {
            return val
          }
@@ -111,10 +111,10 @@ export default function ViewDelivery(){
         <tr>
         <th scope="row">{record.order_id}</th>
         <td>{dateOnly(record.order_last_date)}</td>
-        <td>{record.c_name}</td>
+        <td>{record.fname}</td>
         {/*<td>{record.c_address}</td>*/}
         <td>{record.payment_method}</td>
-        <td>{record.o_status === "Completed" ? <Alert size = "small" variant="success">Completed</Alert> : record.o_status === "Returned" ? <Alert variant="danger">Returned</Alert> : record.o_status === "Pending" ? <Alert variant="secondary">Pending</Alert> : record.o_status === "R_Pending" ? <Alert variant="secondary">R_Pending</Alert> : record.o_status}</td>
+        <td>{record.status === "Completed" ? <Alert size = "small" variant="success">Completed</Alert> : record.status === "Returned" ? <Alert variant="danger">Returned</Alert> : record.status === "Pending" ? <Alert variant="secondary">Pending</Alert> : record.status === "R_Pending" ? <Alert variant="secondary">R_Pending</Alert> : record.status}</td>
         <td>{record.employee_id === 0 ? <Alert variant="warning">Not Assign</Alert> : record.employee_id}</td>
         
         <td>

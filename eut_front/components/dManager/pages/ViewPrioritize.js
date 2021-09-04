@@ -83,7 +83,7 @@ export default function ViewPrioritize()
                    return(
                   <tr>
                     <th scope="row">{record.employee_id}</th>
-                    <td>{record.o_status}</td>
+                    <td>{record.status}</td>
                     <td>{record.order_id}</td>
                     <td>{dateOnly(record.order_last_date)}</td>
                     <td>{record.o_priority === 0 ?

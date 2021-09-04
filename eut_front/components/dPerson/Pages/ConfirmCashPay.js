@@ -23,6 +23,18 @@ import { Link } from "react-router-dom";
 import ViewCashon from './ViewCashon'
 import { DpListItems, Logout } from './dplistItems';
 
+function Copyright() {
+  return (
+    <Typography variant="body2" color="textSecondary" align="center">
+      {'Copyright © '}
+      <Link color="inherit" href="https://material-ui.com/">
+        Eut Furniture
+      </Link>{' '}
+      {new Date().getFullYear()}
+      {'.'}
+    </Typography>
+  );
+}
 
 
 const drawerWidth = 240;
@@ -138,7 +150,7 @@ const styles = {
 };
 
 
-export default function Categories() {
+export default function ConfirmCashPay(userData) {
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
   const handleDrawerOpen = () => {
@@ -196,8 +208,9 @@ export default function Categories() {
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-      <MenuItem component={Link} to="/Calender">Calendar</MenuItem>
+         <MenuItem component={Link} to="/employee/DpProfile">Profile</MenuItem>
         <MenuItem onClick={()=>setIsAuth(false)}>Logout</MenuItem>
+        <MenuItem component={Link} to="/Calender">Calendar</MenuItem>
       </Menu>
         </Toolbar>
         
@@ -218,7 +231,7 @@ export default function Categories() {
         <Divider/>
         <List style={{backgroundColor: 'rgb(37, 37, 94)', color:'white'}}>{DpListItems}</List>
         <Divider/>
-        <List style={{backgroundColor: 'rgb(37, 37, 94)', color:'red'}}>{Logout}</List>
+        <List style={{backgroundColor: 'rgb(37, 37, 94)', color:'white'}}>{Logout}</List>
         <Divider/>
       </Drawer>
       </div>
@@ -247,6 +260,7 @@ export default function Categories() {
 
       </Grid>
         </Container>
+        <Copyright />
       </main>
     </div>
   );

@@ -329,7 +329,7 @@ export default function UpdateReturnItem() {
       axios.put("http://localhost:3001/updateReturnStatus", {status: newStatus ,order_id: order_id}).then(
         (response) => {
           setReturnList(Dt.map((val) => {
-            return val.order_id === order_id ? {order_id: val.order_id, status: val.o_status, status: newStatus} : val  
+            return val.order_id === order_id ? {order_id: val.order_id, status: val.status, status: newStatus} : val  
           }))
        }
       )

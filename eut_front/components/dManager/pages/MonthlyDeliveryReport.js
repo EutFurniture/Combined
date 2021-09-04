@@ -3,6 +3,13 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import {Table} from 'react-bootstrap';
 import axios from "axios";
 
+import MonthlyCashOnDeliveryReport from "./MonthlyCashOnDeliveryReport";
+import Linechart from './Linechart';
+import Donutchart from './Donutchart';
+import MonthlyReturnReport from "./MonthlyReturnReport";
+import Radial from "./Radial";
+import MonthlyDeliverReport from "./MonthlyDeliverReport";
+import Mychart from "./Mychart";
 
 const dateOnly = (d) => {
   const date = new Date(d);
@@ -23,6 +30,7 @@ export default function MonthlyDeliveryReport(){
 
   return(
     <div>
+    <h2 style={{marginLeft:'20px'}}><b>Monthly Delivery Details</b></h2>
     <Table striped bordered hover responsive>
       <thead >
         <tr>
@@ -40,9 +48,9 @@ export default function MonthlyDeliveryReport(){
       return(
         <tr>
         <th scope="row">{record.order_id}</th>
-        <td>{record.c_name}</td>
-        <td>{record.o_status}</td>
-        <td>{record.c_address}</td>
+        <td>{record.fname}</td>
+        <td>{record.status}</td>
+        <td>{record.address}</td>
         <td>{dateOnly(record.order_last_date)}</td>   
       </tr>
        )
@@ -50,6 +58,16 @@ export default function MonthlyDeliveryReport(){
         
       </tbody> 
     </Table>
+    <Mychart/>
+    <Linechart/>
+    <h2 style={{marginLeft:'20px'}}><b>Monthly Cash On Delivery Details</b></h2>
+    <MonthlyCashOnDeliveryReport/>
+    <Donutchart/>
+    <h2 style={{marginLeft:'20px'}}><b>Monthly Return Delivery Details</b></h2>
+    <MonthlyReturnReport/>
+    <Radial/>
+    <h2 style={{marginLeft:'20px'}}><b>Monthly Deliver Details</b></h2>
+    <MonthlyDeliverReport/>
     </div>
   
 )

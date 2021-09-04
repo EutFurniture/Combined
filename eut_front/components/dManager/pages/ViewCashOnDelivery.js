@@ -1,8 +1,10 @@
-import React from 'react';
+import React ,{useState,useEffect} from 'react';
 import { Component } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {Table,Alert} from 'react-bootstrap';
 import { Link} from "react-router-dom";
+import SearchIcon from '@material-ui/icons/Search';
+import axios from "axios";
 
 const styles = {
   viewbtn:{
@@ -33,40 +35,44 @@ updatebtn:{
   color: 'white',
   borderRadius: '7px',
 },
+
+searchbar:{
+  display: 'flex', 
+  width: '1200px',
+  height: '40px',
+  boxShadow: '0px 0px 12px -5px rgba(0, 0, 0, 0.75)',
+},
+
+input:{
+  border:'none',
+  fontSize:'18px',
+  paddingLeft:'10px',
+},
+
+icon:{
+  marginTop:'7px',
+  marginLeft:'120px',
+  color:'grey',
+},
+
 }
 
-class ViewCashOnDelivery extends Component{
-  constructor(props) {
-    super(props);
-    this.state = {
-      records: [],
-      isLoaded: false,
-    };
-  }
-
-  componentDidMount() {
-    fetch('http://localhost:3001/cashOnDelivery')
-      .then(res => res.json())
-      .then(result => {
-        this.setState({
-          isLoaded: true,
-          records: result,
-        });
-      });
-      
-  }
-
-    render(){
-      // const viewCash =(order_id)=>{
-      //   console.log(order_id);
-      //   Axios.get(`http://localhost:3001/CashOnDeliveryInfo/${order_id}`);
-      //   if(order_id){
-      //     window.location.href='/dManager/pages/CashOnDeliveryInfo'
-      //   }
-      // }
-
-      //const { records } = this.state;
+export default function ViewCashOnDelivery(){
+  const [searchTerm, setSearchTerm] = useState("");
+  const [cashList,setcashList]=useState([])
+  useEffect(()=>{
+    axios.get("http://localhost:3001/cashOnDelivery").then((response)=>{
+      setcashList(response.data)
+    })
+  },[])
+       
      return(  
+          <div>
+            <div style={styles.searchbar}>
+            <input type="text" onChange={(e)=>{setSearchTerm(e.target.value);}} placeholder="Search" style={styles.input}/>
+            <SearchIcon  className='searchicon' style={styles.icon}/>
+            </div>
+            <br></br>
   
               <Table striped bordered hover responsive>
               <thead >
@@ -81,14 +87,22 @@ class ViewCashOnDelivery extends Component{
               </thead>
 
              <tbody>
-                 {this.state.records.map((record)=>{
+             {cashList.filter(val=>{if(searchTerm == ""){
+                 return val;
+                }
+                else if(
+                  val.status.toLowerCase().includes(searchTerm.toLocaleLowerCase()) || val.payment_status.toLocaleLowerCase().includes(searchTerm.toLocaleLowerCase())   )
+                  {
+                    return val
+                  }
+              }).map((record) => {
                    return(
                     <tr>
                     <th scope="row">{record.order_id}</th>
                     <td>{record.employee_id}</td>
                     <td>{record.total_price - record.advance_price}</td>
                     <td>{record.payment_status === "Paid" ? <Alert variant="success">Paid</Alert> : <Alert variant="secondary">Advance Paid</Alert>}</td>
-                    <td>{record.o_status === "Completed" ? <Alert variant="success">Completed</Alert> : record.o_status === "Returned" ? <Alert variant="danger">Returned</Alert> : record.o_status === "Pending" ? <Alert variant="secondary">Pending</Alert> : record.o_status}</td>                    
+                    <td>{record.status === "Completed" ? <Alert variant="success">Completed</Alert> : record.status === "Returned" ? <Alert variant="danger">Returned</Alert> : record.status === "Pending" ? <Alert variant="secondary">Pending</Alert> : record.status}</td>                    
                     <td>
                     <Link style={styles.viewbtn} to={location=> `/CashOnDeliveryInfoRoute/${record.order_id}`}> View </Link>
                     <Link style={styles.updatebtn} to={location=> `/UpdateCashOnDeliveryRoute/${record.order_id}`}> Update </Link>
@@ -99,10 +113,10 @@ class ViewCashOnDelivery extends Component{
                  })}
               </tbody> 
             </Table>
+
+          </div>
            
     
      )
     }
-}
 
-export default ViewCashOnDelivery;

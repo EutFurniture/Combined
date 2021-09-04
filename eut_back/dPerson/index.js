@@ -178,37 +178,39 @@ app.get("/returnItem", (req, res) => {
     );
     });
 
+  
  // VIEW CASH ON DELIVERIES TO CONFIRM
 app.get("/viewcashOnDelivery", (req, res) => {
-   const sql_Select = " SELECT order_id,payment_id,payment_status  FROM  payment   WHERE payment_method = 'cash on delivery'";
-   db.query(sql_Select, (err, result) => {
+  const sql_views = " SELECT payment.order_id,payment.payment_id,payment.payment_status  FROM  payment  JOIN orders ON  payment.order_id=orders.order_id WHERE payment.payment_method='cash on delivery'";
+  db.query(sql_views, (err, result) => { 
     res.send(result);
     } 
     );      
     });
 
+
         // VIEW AVAILABLE DELIVERIES
- app.get("/viewAvailableDelivery", (req, res) => {
-        const sql_View = "SELECT orders.order_id, orders.employee_id, orders.order_last_date,customer.address,customer.fname, customer.phone  FROM orders LEFT JOIN customer ON orders.customer_id=customer.customer_id     ";
-        db.query(sql_View, (err, result,fields) => {
-            res.send(result);
-        } 
-        );      
-        });
+
+app.get('/viewAvailableDelivery', (req, res) => {
+ const sql_view ='  SELECT orders.order_id,customer.fname, customer.address, customer.phone  FROM orders  JOIN customer ON orders.customer_id=customer.customer_id JOIN employee ON orders.employee_id=employee.employee_id' ; 
+    db.query(sql_view, (err, result) => {
+      res.send(result);
+      } 
+      );      
+      });
 
        // VIEW  DELIVERY TO CONFIRM
-app.get("/viewConfirmDelivery", (req, res) => {
-            const sql_condelivery = " SELECT order_id, o_status, active, product_id FROM orders  ";
-            db.query(sql_condelivery, (err, result) => {
-             res.send(result);
-             } 
-             );      
-             });
-
-
-        
+	  
+app.get('/viewConfirmDelivery',(req, res) =>{
+        db.query("SELECT order_id, status  FROM orders  WHERE employee_id=? ", [req.query.employee_id],(err, res)=>
+      { 
+         res.send(res);
+        })
+    
+    })
+    
    //VIEW RETURN ITEMS INFO
-  app.get('/ReturnItemview', (req, res) => {
+app.get('/ReturnItemview', (req, res) => {
     db.query("SELECT * FROM return_item WHERE order_id=?",[req.query.order_id], (err, results, fields) => {
        if(err) throw err;
        res.send(results);
@@ -228,14 +230,51 @@ app.get("/viewConfirmDelivery", (req, res) => {
 
 
 
-app.get('/dpprofile/:employee_id', (req, res) => {
-    employee_id=req.params.employee_id;
+
+   app.get('/dpprofile', (req, res) => {
+       
     db.query("SELECT * FROM employee WHERE employee_id=? ",[req.query.employee_id], (err, results, fields) => {
        if(err) throw err;
        res.send(results);
      });
-   console.log(req.query.employee_id);
+   
    });
+
+
+    //UPDATE EMPLOYEE PROFILE
+app.put('/updateEmployeeProfile', (req,res) => {
+    const employee_id=req.body.employee_id;
+    const e_name = req.body.e_name;
+    const e_address=req.body.e_address;
+    const e_image =  req.body.e_image;
+    const e_phone=req.body.e_phone;
+
+ db.query("UPDATE employee SET e_name=?, e_address=?, e_image=?, e_phone=?, WHERE employee_id=?", 
+      [e_name ,e_address,e_image,e_phone,employee_id], 
+      (err, result) => {
+          if (err) {
+              console.log(err);
+          } else {
+              res.send(result);
+          }
+         }
+      );
+    });
+    
+      
+
+
+   app.get('/profile', (req, res) => {
+       
+    db.query("SELECT * FROM customer WHERE customer_id=? ",[req.query.customer_id], (err, results, fields) => {
+       if(err) throw err;
+       res.send(results);
+     });
+   
+   });
+
+
+ 
 
    //       VIEW RETURN ITEM DETAILS
    app.get("/ReturnedDetails",(req,res)=>{
@@ -250,7 +289,7 @@ app.get('/dpprofile/:employee_id', (req, res) => {
     //VIEW DELIVERY DETAILS
 app.get("/DeliveryDetails",(req,res)=>{
     order_id=req.params.order_id;
-    db.query("SELECT *  FROM orders    WHERE order_id=? ",[req.query.order_id],(err,result)=>{
+    db.query("SELECT *  FROM orders  INNER JOIN customer ON orders.customer_id=customer.customer_id  JOIN orderitem ON orders.order_id = orderitem.order_id WHERE orders.order_id=?  ",[req.query.order_id],(err,result)=>{
         console.log(req.query.order_id);
         res.send(result);
     });
@@ -292,7 +331,7 @@ app.delete("/deleteReturnitem/:order_id",(req,res)=>{
   
 
   app.get('/PendingCount',(req,res) => {
-    db.query('SELECT COUNT(order_id) AS pendingcount FROM orders WHERE o_status = "pending"', (err, result) => {
+    db.query('SELECT COUNT(order_id) AS pendingcount FROM orders WHERE status = "pending"', (err, result) => {
         if(err) {
             console.log(err)
         }else {
@@ -303,9 +342,9 @@ app.delete("/deleteReturnitem/:order_id",(req,res)=>{
   });
 
   
-      //VIEW PRODUCT DETAILS FOR DELOIVERY PERSON
+      //VIEW PRODUCT DETAILS FOR DELIVERY PERSON
   app.get("/viewproductFordeliver", (req, res) => {
-    db.query("SELECT * FROM product  ", (err, result, fields) => {
+    db.query("SELECT * FROM products  ", (err, result, fields) => {
         if (err) {
             console.log(err);
         } else{
@@ -313,6 +352,18 @@ app.delete("/deleteReturnitem/:order_id",(req,res)=>{
         }
     });
 });
+
+
+
+
+app.get('/recentLastOrders',(req,res)=>{
+  db.query('SELECT  orderitem.product_id,products.product_name, orders.total_price, orders.order_last_date  FROM orderitem INNER JOIN orders ON orders.order_id = orderitem.order_id   JOIN products ON orderitem.product_id = products.product_id ORDER BY orders.order_last_date DESC LIMIT 5 ',(err,result,fields)=>{
+      if(!err)
+      res.send(result);
+      else
+      console.log(err);
+  })
+})
 
 //DELIVERY MANAGER BACKEND
 
@@ -592,7 +643,7 @@ app.post("/register",(req,res) => {
 
 
  app.get('/recentOrders',(req,res)=>{
-  db.query('SELECT product.product_name,product.product_img,orders.total_price FROM orders INNER JOIN product ON orders.product_id=product.product_id ORDER BY orders.order_last_date DESC LIMIT 5 ',(err,result,fields)=>{
+  db.query('SELECT product.product_name,product.product_img,orders.total_price,  FROM orders INNER JOIN product ON orders.product_id=product.product_id ORDER BY orders.order_last_date DESC LIMIT 5 ',(err,result,fields)=>{
       if(!err)
       res.send(result);
       else
@@ -607,7 +658,7 @@ app.post("/register",(req,res) => {
 
 //Charts
 app.get('/CategoryNoChart',(req,res) => {
-  db.query('SELECT SUM(product.quantity) AS quantity, category.c_name FROM product INNER JOIN category ON product.category_id=category.category_id GROUP BY product.category_id', (err, result) => {
+  db.query('SELECT SUM(product.quantity) AS quantity, category.name FROM product INNER JOIN category ON product.category_id=category.category_id GROUP BY product.category_id', (err, result) => {
       if(err) {
           console.log(err)
       }else {
@@ -658,7 +709,7 @@ app.get('/OrderCount',(req,res) => {
 
 //productCount
 app.get('/ProductCount',(req,res) => {
-  db.query('SELECT COUNT(product_id) AS procount FROM product', (err, result) => {
+  db.query('SELECT COUNT(product_id) AS procount FROM products', (err, result) => {
       if(err) {
           console.log(err)
       }else {
@@ -718,7 +769,7 @@ app.get('/TotalIncome',(req,res) => {
 
 //order analytics
 app.get('/Order',(req,res) => {
-  db.query('SELECT product.product_name,customer.fname AS cus_name,orders.o_date,orders.total_price FROM ((orders INNER JOIN product ON orders.product_id=product.product_id) INNER JOIN customer ON orders.customer_id=customer.customer_id)', (err, result) => {
+  db.query('SELECT products.product_name,customer.fname AS cus_name,orders.o_date,orders.total_price FROM ((orders INNER JOIN products ON orders.product_id=products.product_id) INNER JOIN customer ON orders.customer_id=customer.customer_id)', (err, result) => {
       if(err) {
           console.log(err)
       }else {
@@ -752,7 +803,7 @@ app.get('/loadEmployee',(req,res)=>{
 
 
 app.get('/loadProduct',(req,res)=>{
-  db.query('SELECT * FROM product ;',(err,results,fields)=>{
+  db.query('SELECT * FROM products ;',(err,results,fields)=>{
      if(err) throw err;
      res.send(results);
   })
@@ -794,7 +845,7 @@ app.get('/GetAdmin',(req,res) => {
   const description=req.body.description;
   
   db.query(
-    "INSERT INTO product (product_name,price,product_img,material,quantity,category_id,description) VALUES (?,?,?,?,?,?,?)",[product_name,price,product_img,material,quantity,category_id,description],
+    "INSERT INTO products (product_name,price,product_img,material,quantity,category_id,description) VALUES (?,?,?,?,?,?,?)",[product_name,price,product_img,material,quantity,category_id,description],
     (err,result)=>{
       if(err){
         console.log(err)
@@ -841,8 +892,6 @@ app.get('/GetAdmin',(req,res) => {
   app.post("/imageUpload",upload.single('file'),(req,res)=> {
      
   })
-
-
 
 
 

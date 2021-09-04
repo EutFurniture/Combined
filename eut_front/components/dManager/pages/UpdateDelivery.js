@@ -320,7 +320,7 @@ export default function UpdateDelivery() {
               }
           });
           setDt(response.data[0]);
-          setNewStatus(response.data[0].o_status)
+          setNewStatus(response.data[0].status)
           setNewDeliver_id(response.data[0].employee_id)
              console.log(response.data[0]);
       };
@@ -338,7 +338,7 @@ export default function UpdateDelivery() {
       axios.put("http://localhost:3001/updateDeliveryStatus", {status: newStatus,Deliver_id:newDeliver_id,order_id: order_id}).then(
         (response) => {
           setDeliveryList(Dt.map((val) => {
-            return val.order_id === order_id ? {order_id: val.order_id, status: val.o_status, Deliver_id: val.employee_id,  status: newStatus,Deliver_id:newDeliver_id} : val  
+            return val.order_id === order_id ? {order_id: val.order_id, status: val.status, Deliver_id: val.employee_id,  status: newStatus,Deliver_id:newDeliver_id} : val  
           }))
        }
       )
@@ -463,7 +463,7 @@ export default function UpdateDelivery() {
                   <Form.Control as="Select" name="id" onChange={(event) =>{setNewDeliver_id(event.target.value);}} required>
                     <option>{newDeliver_id}</option>
                     {deliverList.map((record) => {return(
-                      <option value={record.employee_id} > {record.employee_id}-{record.e_name}</option>
+                      <option value={record.id} > {record.id}-{record.name}</option>
                     )})}
                     <option>0</option>
                   </Form.Control>

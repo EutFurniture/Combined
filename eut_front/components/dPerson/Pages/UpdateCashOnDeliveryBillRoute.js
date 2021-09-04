@@ -5,7 +5,7 @@ const UpdateCashOnDeliveryBillRoute=()=>{
     return(
         <div>
             <Switch>
-                <Route path="/UpdateCashOnDeliveryBillRoute/:payment_id">
+                <Route path="/employee/UpdateCashOnDeliveryBillRoute/:payment_id">
                     <UpdateCashOnDeliveryBill />
                 </Route>
             </Switch>

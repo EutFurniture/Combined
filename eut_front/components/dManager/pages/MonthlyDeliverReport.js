@@ -35,7 +35,7 @@ export default function MonthlyDeliverReport(){
      {cashList.map((record)=>{
       return(
         <tr>
-        <th scope="row">{record.e_name}</th>
+        <th scope="row">{record.name}</th>
         <td>{record.count}</td>
       </tr>
        )

@@ -6,7 +6,7 @@ const DeliverInfoRoute=()=>{
     return(
         <div>
             <Switch>
-                <Route path="/DeliverInfoRoute/:employee_id">
+                <Route path="/DeliverInfoRoute/:id">
                     <DeliverInfo/>
                 </Route>
             </Switch>

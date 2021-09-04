@@ -224,7 +224,7 @@ const ViewAvailableDelivery = (userData) => {
         <Divider/>
         <List style={{backgroundColor: 'rgb(37, 37, 94)', color:'white'}}>{DpListItems}</List>
         <Divider/>
-        <List style={{backgroundColor: 'rgb(37, 37, 94)', color:'red'}}>{Logout}</List>
+        <List style={{backgroundColor: 'rgb(37, 37, 94)', color:'white'}}>{Logout}</List>
         <Divider/>
       </Drawer>
       </div>

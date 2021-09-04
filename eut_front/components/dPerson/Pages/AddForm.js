@@ -136,7 +136,7 @@ const useStyles = makeStyles((theme) => ({
 
 const styles = {
   side:{
-    backgroundColor:'#0E1372',
+    backgroundColor:'rgb(37, 37, 94)',
   },
   pack:{
     justifyContent:'flex-around',
@@ -214,7 +214,7 @@ export default function AddForm() {
     <div className={classes.root}>
       <CssBaseline />
       <AppBar position="absolute" className={clsx(classes.appBar, open && classes.appBarShift)}>
-        <Toolbar className={classes.toolbar} style={{backgroundColor: '#0E1372'}}>
+        <Toolbar className={classes.toolbar} style={{backgroundColor: 'rgb(37, 37, 94)'}}>
           <IconButton
             edge="start"
             color="inherit"
@@ -253,15 +253,15 @@ export default function AddForm() {
         }}
         open={open}
       >
-        <div className={classes.toolbarIcon} style={{backgroundColor: '#0E1372', color:'white'}}>
+        <div className={classes.toolbarIcon} style={{backgroundColor: 'rgb(37, 37, 94)', color:'white'}}>
           <IconButton onClick={handleDrawerClose} style={{color:'white'}}>
             <ChevronLeftIcon />
           </IconButton>
         </div>
         <Divider />
-        <List style={{backgroundColor: '#0E1372', color:'white'}}>{DpListItems}</List>
+        <List style={{backgroundColor: 'rgb(37, 37, 94)', color:'white'}}>{DpListItems}</List>
         <Divider />
-        <List style={{backgroundColor: '#0E1372', color:'red'}}>{Logout}</List>
+        <List style={{backgroundColor: 'rgb(37, 37, 94)', color:'red'}}>{Logout}</List>
         <Divider />
       </Drawer>
       </div>
@@ -347,7 +347,7 @@ export default function AddForm() {
 
                     
                         <div     align='center' style={styles.button_style}>
-                        <Button  type="submit" size='lg' href= '/AddReturnedItem' >View Return Item</Button>
+                        <Button  type="submit" size='lg' href= '/employee/AddReturnedItem' >View Return Item</Button>
 
                         <Button  type="submit" size='lg' onClick={addReturnItem}>Add Returned Items</Button>
                          

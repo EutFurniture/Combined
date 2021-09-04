@@ -138,7 +138,7 @@ const styles = {
 };
 
 
-export default function Categories() {
+export default function AddReturnedItem(userData) {
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
   const handleDrawerOpen = () => {
@@ -224,7 +224,7 @@ export default function Categories() {
         <Divider/>
         <List style={{backgroundColor: 'rgb(37, 37, 94)', color:'white'}}>{DpListItems}</List>
         <Divider/>
-        <List style={{backgroundColor: 'rgb(37, 37, 94)', color:'red'}}>{Logout}</List>
+        <List style={{backgroundColor: 'rgb(37, 37, 94)', color:'white'}}>{Logout}</List>
         <Divider/>
       </Drawer>
       </div>
@@ -242,7 +242,7 @@ export default function Categories() {
            <Paper className={classes.paper}>
                
                 <Typography  component="h1" variant="h6" color="inherit" align="center" width="100%" noWrap className={classes.title}>
-                  <h4>RETURN ITEMS </h4>
+                  <h3>RETURNED ITEMS  </h3>
                 </Typography>
                
                 <Returnview/>

@@ -63,9 +63,9 @@ class Orders extends Component{
                     <tr>
                     <th scope="row">{record.order_id}</th>
                     <td>{dateOnly(record.order_last_date)}</td>
-                    <td>{record.c_name}</td>
-                    <td>{record.c_address}</td>
-                    <td>{record.o_status}</td>
+                    <td>{record.fname}</td>
+                    <td>{record.address}</td>
+                    <td>{record.status}</td>
                     <td>{record.employee_id}</td>
                   </tr>
                    )

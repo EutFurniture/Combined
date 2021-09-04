@@ -1,7 +1,31 @@
-import React, { Component } from "react";
+import React,{useEffect,useState} from "react";
 import Chart from "react-apexcharts";
+import axios from 'axios';
 
 function Radial()
+{
+  
+const [totalList,settotalList]=useState([]);
+useEffect(()=>{
+  axios.get('http://localhost:3001/totalordercnt').then((response)=>{
+    settotalList(response.data);
+    console.log(response);
+  })
+},[])
+
+const [returnList,setreturnList]=useState([]);
+useEffect(()=>{
+  axios.get('http://localhost:3001/returnordercnt').then((response)=>{
+    setreturnList(response.data);
+    console.log(response);
+  })
+},[])
+
+
+const t_count=totalList.map(record=>record.t_count);
+const r_count=returnList.map(record=>record.r_count);
+
+const returncount = (r_count/t_count) * 100 
 
  {
   return (
@@ -83,9 +107,9 @@ function Radial()
     stroke: {
       lineCap: 'round'
     },
-    labels: ['Percent'],
+    labels: ['Return Percentage'],
   }} 
-    series={[75]} 
+    series={[returncount] } 
     type="radialBar" 
     height={350} 
     width={500}
@@ -93,5 +117,7 @@ function Radial()
     </div>
     </div>
   )}
+
+}
   export default Radial;
 

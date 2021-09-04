@@ -98,7 +98,7 @@ export default function ViewProfile() {
                   </Form.Label>
                   <Col >
                   <Form.Label column lg={2} >
-                   {Dt.employee_id}
+                   {Dt.id}
                   </Form.Label>
                   </Col>
               </Form.Group><br/>
@@ -108,7 +108,7 @@ export default function ViewProfile() {
                   </Form.Label>
                   <Col >
                   <Form.Label column lg={2} >
-                  {Dt.e_name}
+                  {Dt.name}
                   </Form.Label>
                   </Col>
               </Form.Group><br/>
@@ -118,7 +118,7 @@ export default function ViewProfile() {
                   </Form.Label>
                   <Col >
                   <Form.Label column lg={2} >
-                  {Dt.e_nic}
+                  {Dt.NIC}
                   </Form.Label>
                   </Col>
               </Form.Group><br/>
@@ -128,7 +128,7 @@ export default function ViewProfile() {
                   </Form.Label>
                   <Col >
                   <Form.Label column lg={2} >
-                  {Dt.e_email} 
+                  {Dt.email} 
                   </Form.Label>
                   </Col>
               </Form.Group><br/>
@@ -138,7 +138,7 @@ export default function ViewProfile() {
                   </Form.Label>
                   <Col >
                   <Form.Label column lg={2} >
-                   {Dt.e_phone} 
+                   {Dt.phone_no} 
                   </Form.Label>
                   </Col>
               </Form.Group><br/>
@@ -148,7 +148,7 @@ export default function ViewProfile() {
                   </Form.Label>
                   <Col >
                   <Form.Label column lg={2} >
-                    {Dt.e_address} 
+                    {Dt.address} 
                   </Form.Label>
                   </Col>
               </Form.Group><br/>
@@ -159,7 +159,7 @@ export default function ViewProfile() {
                   </Form.Label>
                   <Col >
                   <Form.Label column lg={2} >
-                  {dateOnly(Dt.e_job_start_date)}
+                  {dateOnly(Dt.job_start_date)}
                   </Form.Label>
                   </Col>
               </Form.Group><br/>
