@@ -185,7 +185,7 @@ const DpDashboard =()=> {
   
   const [Rorder,setRorder]=useState([])
   useEffect(()=>{
-    axios.get("http://localhost:3001/recentOrders").then((response)=>{
+    axios.get("http://localhost:3001/recentLastOrders").then((response)=>{
       setRorder(response.data)
     })
   },[])
@@ -247,7 +247,7 @@ if(!isAuth){
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-        <MenuItem component={Link} to="/DpProfile">Profile</MenuItem>
+        <MenuItem component={Link} to="/employee/DpProfile">Profile</MenuItem>
         <MenuItem onClick={()=>setIsAuth(false)}>Logout</MenuItem>
         <MenuItem component={Link} to="/Calender">Calendar</MenuItem>
       </Menu>
@@ -271,7 +271,7 @@ if(!isAuth){
         <Divider />
         <List style={{backgroundColor: 'rgb(37, 37, 94)', color:'white'}}>{DpListItems}</List>
         <Divider />
-        <List style={{backgroundColor: 'rgb(37, 37, 94)', color:'red'}}>{Logout}</List>
+        <List style={{backgroundColor: 'rgb(37, 37, 94)', color:'white'}}>{Logout}</List>
         <Divider />
       </Drawer>
       </div>
@@ -317,19 +317,9 @@ if(!isAuth){
                                })}
                            </div>
 
-                           <div className="card3">
-                               <h3> Total Pending Deliveries</h3>
-                               {pendingcount.map((record)=>{
-                                 return(
-                                  <p style={{fontSize:'30px'}}>{record.pendingcount}</p>
-                                 )
-                               })}
-                           </div>
 
                            <div className="card4">
-
-
-                            <h3>Total No of Deliveries</h3>
+                           <h3>Total No of Deliveries</h3>
                                <p>52</p>
                            </div>
                            <div className="card1">
@@ -337,10 +327,7 @@ if(!isAuth){
                                <p>over Rs.50 000</p>
                            </div>
 
-                           <div className="card2">                      
-                               <h3>Offers During </h3>
-                               <p>Festivals and anniversaries</p>
-                           </div>
+
                        </div>
                        </div>
                        <Grid style={{marginTop:'10px',marginLeft:'20px'}} item xs={6} >
@@ -348,15 +335,16 @@ if(!isAuth){
         
               <div style={{marginLeft:'20px', marginTop:'70px'}}>
              
-               <h2><b>RECENT FIVE ORDERS</b></h2>
-               </div><br/>
+               <h3><b>RECENT FIVE ORDERS</b></h3>
+               </div>
                <Table striped bordered hover responsive>   
                   <tbody>
                   {Rorder.map((record)=>{
                                  return(
                     <tr>
                   
-                    <th><img src={`/${record.product_img}`} style={{height:'50px',width:'50px',marginLeft:'40px'}}/></th>
+             {/*}       <th><img src={`/${record.product_img}`} style={{height:'50px',width:'50px',marginLeft:'40px'}}/></th> */}
+                    <th >{record.product_id}</th>
                     <th >{record.product_name}</th>
                     <th>{record.total_price}</th>
                     </tr>
@@ -372,7 +360,7 @@ if(!isAuth){
            <ViewProductDeliver />
 
          </Grid>
-       <Testimonial />  
+      
         </Container>
         <Copyright />
       </main>

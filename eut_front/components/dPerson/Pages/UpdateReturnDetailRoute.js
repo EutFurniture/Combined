@@ -5,7 +5,7 @@ const UpdateReturnDetailRoute=()=>{
     return(
         <div>
             <Switch>
-                <Route path="/UpdateReturnDetailRoute/:order_id">
+                <Route path="/employee/UpdateReturnDetailRoute/:order_id">
                     <UpdateReturnDetail/>
                 </Route>
             </Switch>

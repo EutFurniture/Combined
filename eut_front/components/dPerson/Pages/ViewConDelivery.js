@@ -1,18 +1,25 @@
-import React, { Component } from 'react'  
-import Table from '@material-ui/core/Table';  
-import TableBody from '@material-ui/core/TableBody';  
-import TableCell from '@material-ui/core/TableCell';  
-import TableContainer from '@material-ui/core/TableContainer';  
-import TableHead from '@material-ui/core/TableHead';  
-import TableRow from '@material-ui/core/TableRow';  
-import Paper from '@material-ui/core/Paper';  
-import axios from 'axios';  
-import { withStyles } from '@material-ui/core/styles';
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import Axios from 'axios';
+import { useParams ,Link} from "react-router-dom";
+import 'bootstrap/dist/css/bootstrap.min.css';
+import {Table} from 'react-bootstrap';
+import Typography from '@material-ui/core/Typography';
 
+function Copyright() {
+  return (
+    <Typography variant="body2" color="textSecondary" align="center">
+      {'Copyright © '}
+      <Link color="inherit" href="https://material-ui.com/">
+        Eut Furniture
+      </Link>{' '}
+      {new Date().getFullYear()}
+      {'.'}
+    </Typography>
+  );
+}
 
 const styles = {
-  updatebtn:{
+    updatebtn:{
     backgroundColor: '#04B404',
     width: '200px',
     textDecoration: 'none',
@@ -25,86 +32,71 @@ const styles = {
     paddingBottom: '5px',
     color: 'white',
     borderRadius: '7px',
-  }
+  }  
 }
 
-
-const StyledTableCell = withStyles((theme) => ({
-  head: {
-    backgroundColor: theme.palette.common.black,
-    color: theme.palette.common.white,
-  },
-  body: {
-    fontSize: 14,
-  },
-}))(TableCell);
-
-const StyledTableRow = withStyles((theme) => ({
-  root: {
-    '&:nth-of-type(odd)': {
-      backgroundColor: theme.palette.action.hover,
-    },
-  },
-}))(TableRow);
-
-
-export class ViewConDelivery extends Component {  
-  constructor(props) {  
-
-    super(props);
-    this.state = {  
-    ProductData: []     
-    }  
-  }  
-  componentDidMount() {  
-    axios.get('http://localhost:3001/viewConfirmDelivery').then(response => {  
-      console.log(response.data);  
-      this.setState({  
-        ProductData: response.data  
-      });  
-    });  
-  }  
-
-
-
-  render() { 
-    
+export default function ViewConDelivery(userData) {
  
- 
-    console.log(this.state.ProductData);  
-    return (  
-      <TableContainer component={Paper}>  
-        <Table stickyHeader  aria-label="sticky table">  
-          <TableHead >  
-            <TableRow>  
+  const [user,setUser]=useState([])
+  const { employee_id } = useParams();
+   useEffect(() => {
+   
+    const fetchData = async () => {
+
+      const response = await Axios.get('http://localhost:3001/viewConfirmDelivery', {
+            params: {
+             employee_id:userData.userData.employee_id
+           }
+        });
+     
+        setUser(response.data[0]);
+      
+      
+    }
+  fetchData();
+  }, [employee_id]);
+
+
+
+
+
+    return(
+      <div ><br/>
+                <div className='box-main'>
+                           
+                </div>
+        <Table striped bordered hover responsive>
+        <thead className="tableheading">
+          <tr>
+            <th scope="col">Order ID</th>
+            <th scope="col">Order Status</th>
+             <th scope='col'>Action</th>
+          </tr>
+        </thead> 
+     
+       <tbody className="tablebody">
+       {user.map((record)=>{
+                       return(
+              <tr>
+              <th scope="row">{record.order_id}</th>
+              <td>{record.status}</td>
               
-              <StyledTableCell align="center">Order ID</StyledTableCell>  
-              <StyledTableCell align="center">Order Status</StyledTableCell> 
-              <StyledTableCell align="center">Bill Image</StyledTableCell>
-              <StyledTableCell align="center" >Action</StyledTableCell>   
-            </TableRow>  
-          </TableHead>  
-          <TableBody>  
-            {  
-              this.state.ProductData.map((record, index) => {  
-                return <TableRow key={index}>  
-                  <TableCell align="center" component="th" scope="row">{record.order_id}</TableCell>  
-                  <TableCell align="center">{record.o_status}</TableCell>  
-            
-                  <TableCell align="center"><img src={record.Bill_image} className='image'/></TableCell>  
-                  <TableCell align="center">
-                  <Link style={styles.updatebtn} to={location=> `/UpdateConDeliveryRoute/${record.order_id}`}> Click to confirm </Link> 
-                  </TableCell>
-                </TableRow>  
-              })  
+              <td align="center">
+              <Link style={styles.updatebtn} to={location=> `/employee/UpdateConDeliveryRoute/${record.order_id}`}>Click to Confirm </Link>
+              
+                  
+              </td>
+            </tr>
+          )
+        })}
 
-            }  
-          </TableBody>  
-        </Table>  
+             
+          
+        </tbody> 
+      </Table>
+    
+   </div>
+    );
+      }
 
-     </TableContainer>  
-    );  
-  }  
-}  
-
-export default ViewConDelivery; 
+    
