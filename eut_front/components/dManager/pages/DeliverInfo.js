@@ -186,7 +186,7 @@ const dateOnly = (d) => {
 toast.configure()
 
 export default function DeliverInfo() {
-  const { employee_id } = useParams();
+  const { id } = useParams();
   const [Dt, setDt] = useState([])
 
   const [paymentNotifyCount,setpaymentNotifyCount]=useState([])
@@ -348,7 +348,7 @@ export default function DeliverInfo() {
   const fetchData = async () => {
       const response = await axios.get('http://localhost:3001/viewDeliver', {
           params: {
-              employee_id: employee_id,
+              id: id,
               
           }
       });
@@ -357,7 +357,7 @@ export default function DeliverInfo() {
          console.log(response.data[0]);
   };
   fetchData();
-}, [employee_id]);
+}, [id]);
 
 
   const classes = useStyles();

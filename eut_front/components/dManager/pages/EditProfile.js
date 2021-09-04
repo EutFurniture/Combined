@@ -322,7 +322,7 @@ export default function EditProfile() {
     })
     },[])
     
-    const editDeliver = (employee_id) => {
+    const editDeliver = (id) => {
       axios.put("http://localhost:3001/UpdateDelivers", {
           name: newName,
           email: newEmail,
@@ -516,7 +516,7 @@ export default function EditProfile() {
               </Form.Group><br/>
     
               <div align="center">
-              <Button  type="submit"   style={{fontSize:'20px',width:'200px'}} onClick={() => {editDeliver(Dt.employee_id)}} >Update</Button>
+              <Button  type="submit"   style={{fontSize:'20px',width:'200px'}} onClick={() => {editDeliver(Dt.id)}} >Update</Button>
               </div><br/><br/>
             </Form>
 

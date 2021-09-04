@@ -139,7 +139,7 @@ export default function EditDelivers() {
 
     const classes = useStyles();
     const [open, setOpen] = React.useState(true);
-    const {employee_id} = useParams();
+    const {id} = useParams();
     const [Dt, setDt] = useState([])
     const [newName, setNewName] = useState();
     const [newEmail, setNewEmail] = useState();
@@ -305,7 +305,7 @@ export default function EditDelivers() {
       const fetchData = async () => {
           const response = await axios.get('http://localhost:3001/viewDeliver', {
               params: {
-                 employee_id: employee_id,
+                 id: id,
               }
           });
           setDt(response.data[0]);
@@ -316,7 +316,7 @@ export default function EditDelivers() {
              console.log(response.data[0]);
       };
       fetchData();
-    }, [employee_id]);
+    }, [id]);
   
     const [DeliverList,setDeliverList]=useState([])
     useEffect(()=>{
@@ -325,18 +325,18 @@ export default function EditDelivers() {
     })
     },[])
     
-    const editDeliver = (employee_id) => {
+    const editDeliver = (id) => {
       axios.put("http://localhost:3001/UpdateDelivers", {
           name: newName,
           email: newEmail,
           phone:newPhone,
           address:newAddress,
-          employee_id: employee_id}).then(
+          id: id}).then(
         (response) => {
           console.log(response.name)
           
           setDeliverList(Dt.map((val) => {
-            return val.employee_id === employee_id ? {employee_id: val.employee_id, name: val.name,email: val.email, phone: val.phone_no, address: val.address
+            return val.id === id ? {id: val.id, name: val.name,email: val.email, phone: val.phone_no, address: val.address
                 } : val  
           }))
        }
@@ -518,7 +518,7 @@ export default function EditDelivers() {
               </Form.Group><br/>
     
               <div align="center">
-              <Button  type="submit"   style={{fontSize:'20px',width:'200px'}} onClick={() => {editDeliver(Dt.employee_id)}} >Update</Button>
+              <Button  type="submit"   style={{fontSize:'20px',width:'200px'}} onClick={() => {editDeliver(Dt.id)}} >Update</Button>
               </div><br/><br/>
             </Form>
 

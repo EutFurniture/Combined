@@ -438,7 +438,7 @@ export default function AssignDelivers() {
                       <div>
                         
                         <Card style={{ width: '18rem' }} border="primary" >
-                          <Card.Header>DELIVER ID : {val.employee_id}</Card.Header>
+                          <Card.Header>DELIVER ID : {val.id}</Card.Header>
                           <Card.Body>
                           <Card.Text>Name : {val.name}</Card.Text>
                           <Card.Text>Shipping Address : {val.address}</Card.Text>
