@@ -81,7 +81,7 @@ export default function Assign()
                     <tr>
                     <th scope="row">{record.order_id}</th>
                     <td>{dateOnly(record.order_last_date)}</td>
-                    <td>{record.c_address}</td>
+                    <td>{record.address}</td>
           
                     <td>
                         <Form >
@@ -90,7 +90,7 @@ export default function Assign()
                             <Form.Control as="Select" name="id" onChange={(event) =>{setDeliver_id(event.target.value);}} required>
                               <option>Select Deliver</option>
                               {deliverList.map((record) => {return(
-                                <option value={record.employee_id}>{record.employee_id}-{record.e_name}</option>
+                                <option value={record.id}>{record.id}-{record.name}</option>
                               )})}
                             </Form.Control>
                         </Col>

@@ -440,8 +440,8 @@ export default function AssignDelivers() {
                         <Card style={{ width: '18rem' }} border="primary" >
                           <Card.Header>DELIVER ID : {val.employee_id}</Card.Header>
                           <Card.Body>
-                          <Card.Text>Name : {val.e_name}</Card.Text>
-                          <Card.Text>Shipping Address : {val.c_address}</Card.Text>
+                          <Card.Text>Name : {val.name}</Card.Text>
+                          <Card.Text>Shipping Address : {val.address}</Card.Text>
                           <Card.Text>Delivery Date : {dateOnly(val.order_last_date)}</Card.Text>
                           <Card.Text>Scheduled : {val.pending}</Card.Text>
                           

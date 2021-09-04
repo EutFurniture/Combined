@@ -44,7 +44,7 @@ class statusView extends Component{
                    return(
                     <tr>
                     <th scope="row">{record.employee_id}</th>
-                    <td>{record.e_name}</td>
+                    <td>{record.name}</td>
                     <td>{record.pending}</td>
                   </tr>
                    )

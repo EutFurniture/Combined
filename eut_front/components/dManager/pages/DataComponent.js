@@ -48,7 +48,7 @@ class DataComponent extends React.Component {
           {this.state.records.map((record)=>{
                    return(
               <tr>
-                <td>{record.e_name}</td>
+                <td>{record.name}</td>
                 <td>{record.count}</td>
               </tr>
                    )

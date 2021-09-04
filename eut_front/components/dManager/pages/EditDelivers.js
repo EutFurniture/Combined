@@ -309,10 +309,10 @@ export default function EditDelivers() {
               }
           });
           setDt(response.data[0]);
-          setNewName(response.data[0].e_name)
-          setNewEmail(response.data[0].e_email)
-          setNewPhone(response.data[0].e_phone)
-          setNewAddress(response.data[0].e_address)
+          setNewName(response.data[0].name)
+          setNewEmail(response.data[0].email)
+          setNewPhone(response.data[0].phone_no)
+          setNewAddress(response.data[0].address)
              console.log(response.data[0]);
       };
       fetchData();
@@ -333,10 +333,10 @@ export default function EditDelivers() {
           address:newAddress,
           employee_id: employee_id}).then(
         (response) => {
-          console.log(response.e_name)
+          console.log(response.name)
           
           setDeliverList(Dt.map((val) => {
-            return val.employee_id === employee_id ? {employee_id: val.employee_id, name: val.e_name,email: val.e_email, phone: val.e_phone, address: val.e_address
+            return val.employee_id === employee_id ? {employee_id: val.employee_id, name: val.name,email: val.email, phone: val.phone_no, address: val.address
                 } : val  
           }))
        }
@@ -453,7 +453,7 @@ export default function EditDelivers() {
                   </Form.Label>
                   <Col >
                   <Form.Label column lg={2} >
-                   {Dt.employee_id}
+                   {Dt.id}
                   </Form.Label>
                   </Col>
               </Form.Group><br/>
@@ -488,7 +488,7 @@ export default function EditDelivers() {
                   </Form.Label>
                   <Col >
                   <Form.Label column lg={2} >
-                   {Dt.e_nic}
+                   {Dt.NIC}
                   </Form.Label>
                   </Col>
               </Form.Group><br/>

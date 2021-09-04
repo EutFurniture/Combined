@@ -460,8 +460,8 @@ export default function DeliverInfo() {
                <div className={classes.twocolumn}>
                    <div className={classes.columnleft}>
                         {/*<img src={user1} className={classes.user1} align='center'></img><br/><br/>*/}
-                        <h3 align='center'>{Dt.e_name}</h3>
-                        <h2 align='center' >{Dt.e_role}</h2>
+                        <h3 align='center'>{Dt.name}</h3>
+                        <h2 align='center' >{Dt.role}</h2>
                    </div>
                    <div style={{width:'3px',backgroundColor:'rgb(63, 111, 199)',height:'auto'}}></div>
              
@@ -470,18 +470,18 @@ export default function DeliverInfo() {
               <strong> PERSONAL INFORMATION </strong>
             </Typography>
                 <div style={{fontSize:'20px',marginLeft:'20px'}}>
-                <br/><p>Full Name: {Dt.e_name}</p>
-                <p>Address: {Dt.e_address}</p>
-                <p>NIC: {Dt.e_nic}</p>
-                <p>Phone number: {Dt.e_phone}</p>
+                <br/><p>Full Name: {Dt.name}</p>
+                <p>Address: {Dt.address}</p>
+                <p>NIC: {Dt.NIC}</p>
+                <p>Phone number: {Dt.phone_no}</p>
                </div>
             <Typography style={{fontSize:'30px',marginLeft:'20px'}} color="inherit" align="left" width="100%" noWrap className={classes.title}>
               <strong> JOB INFORMATION </strong>
             </Typography>
                 <div style={{fontSize:'20px',marginLeft:'20px'}}>
-                <br/><p>Employee ID: {Dt.employee_id}</p>
-                <p>Employee Role: {Dt.e_role}</p>
-                <p>Job Start Date: {dateOnly(Dt.e_job_start_date)}</p>
+                <br/><p>Employee ID: {Dt.id}</p>
+                <p>Employee Role: {Dt.role}</p>
+                <p>Job Start Date: {dateOnly(Dt.job_start_date)}</p>
                </div>
             </div> 
             </div> 

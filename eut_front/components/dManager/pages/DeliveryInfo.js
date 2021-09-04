@@ -428,7 +428,7 @@ export default function DeliveryInfo() {
               <ListGroup style={{ width: '20rem',textAlign: 'left'}}>
                   <ListGroup.Item  active> Order Details</ListGroup.Item>
                   <ListGroup.Item >Order Id : {Dt.order_id} </ListGroup.Item>
-                  <ListGroup.Item > Order Description : {Dt.o_description} </ListGroup.Item>
+                  <ListGroup.Item > Order Description : {Dt.order_description} </ListGroup.Item>
                   <ListGroup.Item >Order Date : {dateOnly(Dt.o_date)}</ListGroup.Item>
                   <ListGroup.Item >Last Date : {dateOnly(Dt.order_last_date)}</ListGroup.Item>
 
@@ -439,10 +439,10 @@ export default function DeliveryInfo() {
                 
               <ListGroup style={{ width: '20rem',textAlign: 'left'}}>
                   <ListGroup.Item  active> Customer Details</ListGroup.Item>
-                  <ListGroup.Item >Name : {Dt.c_name} </ListGroup.Item>
-                  <ListGroup.Item > Email : {Dt.c_email} </ListGroup.Item>
-                  <ListGroup.Item >Phone Number  : {Dt.c_phone_no}</ListGroup.Item>
-                  <ListGroup.Item >Address : {Dt.c_address}</ListGroup.Item>
+                  <ListGroup.Item >Name : {Dt.fname} </ListGroup.Item>
+                  <ListGroup.Item > Email : {Dt.email} </ListGroup.Item>
+                  <ListGroup.Item >Phone Number  : {Dt.phone}</ListGroup.Item>
+                  <ListGroup.Item >Address : {Dt.address}</ListGroup.Item>
 
               </ListGroup>
               
@@ -450,9 +450,9 @@ export default function DeliveryInfo() {
                 <ListGroup style={{ width: '20rem',textAlign: 'left'}}>
                     <ListGroup.Item  active> Delivery Details</ListGroup.Item>
                     <ListGroup.Item >Deliver Id : {Dt.employee_id} </ListGroup.Item>
-                    <ListGroup.Item > Delivery Date : {dateOnly(Dt.o_d_date)} </ListGroup.Item>
-                    <ListGroup.Item >Delivery Status : {Dt.o_status}</ListGroup.Item>
-                    <ListGroup.Item>{Dt.o_status === "Completed" ? <Alert size = "small" variant="success"></Alert > : Dt.o_status === "Returned" ? <Alert  variant="danger"></Alert > : Dt.o_status === "Pending" ? <Alert  variant="secondary"></Alert > : Dt.o_status === "R_Pending" ? <Alert  variant="secondary"></Alert > : <Alert variant="primary"></Alert > }</ListGroup.Item>
+                    <ListGroup.Item > Delivery Date : {dateOnly(Dt.order_last_date)} </ListGroup.Item>
+                    <ListGroup.Item >Delivery Status : {Dt.status}</ListGroup.Item>
+                    <ListGroup.Item>{Dt.status === "Completed" ? <Alert size = "small" variant="success"></Alert > : Dt.status === "Returned" ? <Alert  variant="danger"></Alert > : Dt.status === "Pending" ? <Alert  variant="secondary"></Alert > : Dt.status === "R_Pending" ? <Alert  variant="secondary"></Alert > : <Alert variant="primary"></Alert > }</ListGroup.Item>
   
                 </ListGroup>
                 
