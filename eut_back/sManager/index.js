@@ -13,7 +13,7 @@ const db = mysql.createConnection({
     database: 'furniture',
 });
 
-app.post('/create', (req,res) => {
+app.post('/sales_create', (req,res) => {
     const id = req.body.id;
     const email = req.body.email;
     const fname = req.body.name;
@@ -32,7 +32,7 @@ app.post('/create', (req,res) => {
 });
 
 // add customers
-app.get('/customers',(req,res) => {
+app.get('/sales_customers',(req,res) => {
     db.query('SELECT * FROM customers', (err, result) => {
         if(err) {
             console.log(err)
@@ -43,7 +43,7 @@ app.get('/customers',(req,res) => {
 });
 
 //View deliverySchedule
-app.get('/DeliverySchedule',(req,res) => {
+app.get('/sales_DeliverySchedule',(req,res) => {
     db.query('SELECT order_id, DATE_FORMAT(o_date,"%d-%m-%y") AS o_date, DATE_FORMAT(order_last_date,"%d-%m-%y") AS order_last_date FROM orders', (err, result) => {
         if(err) {
             console.log(err)
@@ -54,7 +54,7 @@ app.get('/DeliverySchedule',(req,res) => {
 });
 
 //view payment
-app.get('/pposts',(req,res)=>{
+app.get('/sales_pposts',(req,res)=>{
     db.query("SELECT * FROM payment;",
     (err,results,fields)=>{
         if(err) throw err;
@@ -71,7 +71,7 @@ app.get('/OrdersUI',(req,res)=>{
     });
 });
 */
-app.get('/OrdersUI', (req, res) => {
+app.get('/sales_OrdersUI', (req, res) => {
        
     db.query('SELECT orderitem.quantity,DATE_FORMAT(orders.o_date,"%d-%m-%y") AS o_date,DATE_FORMAT(orders.order_last_date,"%d-%m-%y") AS order_last_date,orders.status,orderitem.total,orders.customer_id FROM orders INNER JOIN orderitem ON orders.order_id = orderitem.order_id ORDER BY orders.order_id  DESC;', (err, results, fields) => {
        if(err) throw err;
@@ -82,7 +82,7 @@ app.get('/OrdersUI', (req, res) => {
 
 
 
-app.get('/OrdersStatus',(req,res)=>{
+app.get('/sales_OrdersStatus',(req,res)=>{
     db.query('SELECT order_id, DATE_FORMAT(o_date,"%d-%m-%y") AS o_date, DATE_FORMAT(order_last_date,"%d-%m-%y") AS order_last_date, status, order_description FROM orders;',
     (err,results,fields)=>{
         if(err) throw err;
@@ -91,7 +91,7 @@ app.get('/OrdersStatus',(req,res)=>{
 });
 
 //view notification
-app.get('/NotificationUI',(req,res)=>{
+app.get('/sales_NotificationUI',(req,res)=>{
     db.query("SELECT * FROM notification;",
     (err,results,fields)=>{
         if(err) throw err;
@@ -105,7 +105,7 @@ app.get('/NotificationUI',(req,res)=>{
 //update
 
 //update name
-app.put('/updateName', (req,res) => {
+app.put('/sales_updateName', (req,res) => {
     const id=req.body.id;
     const name = req.body.name;
     db.query("UPDATE customers SET name = ? WHERE id = ?", 
@@ -121,7 +121,7 @@ app.put('/updateName', (req,res) => {
 });
 
 //update address
-app.put('/updateAddress', (req,res) => {
+app.put('/sales_updateAddress', (req,res) => {
     const id=req.body.id;
     const address = req.body.address;
     db.query("UPDATE customers SET address = ? WHERE id = ?", 
@@ -136,7 +136,7 @@ app.put('/updateAddress', (req,res) => {
     );
 });
 
-app.put('/updatePhone', (req,res) => {
+app.put('/sales_updatePhone', (req,res) => {
     const id=req.body.id;
     const phone = req.body.phone;
     db.query("UPDATE customers SET phone = ? WHERE id = ?", 
@@ -154,7 +154,7 @@ app.put('/updatePhone', (req,res) => {
 
 
 //delete
-app.delete('/delete/:id', (req,res) => {
+app.delete('/sales_delete/:id', (req,res) => {
     const id = req.params.id
     db.query("DELETE FROM customers WHERE id = ?", id, (err, result) => {
         if (err) {
@@ -170,7 +170,7 @@ app.listen(3001,()=>{
 });
 
 //promotions
-app.post('/create_pro', (req,res) => {
+app.post('/sales_create_pro', (req,res) => {
     const name = req.body.name;
     const price = req.body.price;
     const brand = req.body.brand;
@@ -187,7 +187,7 @@ app.post('/create_pro', (req,res) => {
     );
 });
 
-app.post("/customization",(req,res)=> {
+app.post("/sales_customization",(req,res)=> {
    
     const image=req.body.image;
     const name=req.body.name;
@@ -221,7 +221,7 @@ app.post("/customization",(req,res)=> {
 //load customer new
 
 
-app.get('/load',(req,res)=>{
+app.get('/sales_load',(req,res)=>{
     db.query('SELECT * FROM customer',(err,result,fields)=>{
         if(!err)
         res.send(result);
@@ -230,7 +230,7 @@ app.get('/load',(req,res)=>{
     })
 })
 
-app.get('/loadEmployee',(req,res)=>{
+app.get('/sales_loadEmployee',(req,res)=>{
     db.query('SELECT name FROM customer" ',(err,result,fields)=>{
         if(!err)
         res.send(result);
@@ -239,7 +239,7 @@ app.get('/loadEmployee',(req,res)=>{
     })
   })
 
-  app.get("/employeesLoad/:customer_id", (req, res) => {
+  app.get("/sales_employeesLoad/:customer_id", (req, res) => {
     db.query("SELECT * FROM customer WHERE customer_id=?", (err, result) => {
       if (err) {
         console.log(err);
@@ -249,7 +249,7 @@ app.get('/loadEmployee',(req,res)=>{
     });
   });
 
-  app.get('/employees',(req,res) => {
+  app.get('/sales_employees',(req,res) => {
     db.query('SELECT * FROM customer', (err, result) => {
         if(err) {
             console.log(err)
@@ -260,7 +260,7 @@ app.get('/loadEmployee',(req,res)=>{
 });
 
 
-app.delete("/deleteCustomer/:customer_id",(req,res)=>{
+app.delete("/sales_deleteCustomer/:customer_id",(req,res)=>{
     const customer_id = req.params.customer_id;
     const sqlDelete="DELETE FROM customer WHERE customer_id=?";
 
@@ -270,7 +270,7 @@ app.delete("/deleteCustomer/:customer_id",(req,res)=>{
   });
 
 
-  app.get('/loadEmp/:customer_id',(req,res)=>{
+  app.get('/sales_loadEmp/:customer_id',(req,res)=>{
     const customer_id = req.params.customer_id;
     db.query('SELECT * FROM customer WHERE customer_id=?',(err,result)=>{
       if(!err)
@@ -280,7 +280,7 @@ app.delete("/deleteCustomer/:customer_id",(req,res)=>{
     })
 })
 
-  app.get('/view',(req,res)=>{
+  app.get('/sales_view',(req,res)=>{
     customer_id=req.params.customer_id;
     db.query("SELECT * FROM customer WHERE customer_id=?",[req.query.customer_id],(err,result)=>{
       console.log(req.query.customer_id);
@@ -303,7 +303,7 @@ app.delete("/deleteCustomer/:customer_id",(req,res)=>{
   */
 
 //update Employee
-app.put('/updateEmployee', (req,res) => {
+app.put('/sales_updateEmployee', (req,res) => {
     const customer_id=req.body.customer_id;
     const fname = req.body.fname;
     const email=req.body.email;
@@ -322,7 +322,7 @@ app.put('/updateEmployee', (req,res) => {
   });
 
 
-  app.get("/viewEmp",(req,res)=>{
+  app.get("/sales_viewEmp",(req,res)=>{
     db.query( "SELECT *FROM customer WHERE customer_id=?",[req.params.customer_id],(err,rows,fields)=>
    {
         if(!err)
@@ -376,7 +376,7 @@ app.post('/login',(req,res)=>{
         });
 
 
-app.post('/create_order', (req,res) => {
+app.post('/sales_create_order', (req,res) => {
             const customer_id = req.body.customer_id;
             const o_date = req.body.o_date;
             const order_last_date = req.body.order_last_date;
@@ -394,7 +394,7 @@ app.post('/create_order', (req,res) => {
             );
         });
  
-  app.put('/updateDate', (req,res) => {
+  app.put('/sales_updateDate', (req,res) => {
     const order_id=req.body.order_id;
     const order_last_date = req.body.order_last_date;
     db.query("UPDATE orders SET order_last_date = ? WHERE order_id = ?", 
@@ -410,7 +410,7 @@ app.post('/create_order', (req,res) => {
 });
 
 
-app.get('/order_check',(req,res) => {
+app.get('/sales_order_check',(req,res) => {
     db.query('SELECT order_id, customer_id, DATE_FORMAT(o_date,"%d-%m-%y") AS o_date, DATE_FORMAT(order_last_date,"%d-%m-%y") AS order_last_date, order_description, total_price FROM orders ORDER BY order_id DESC', (err, result) => {
         if(err) {
             console.log(err)
@@ -426,7 +426,7 @@ app.get('/order_check',(req,res) => {
 //Report
 
 //Order Analytics
-app.get('/OrderAnalyze',(req,res) => {
+app.get('/sales_OrderAnalyze',(req,res) => {
     db.query('SELECT EXTRACT(MONTH FROM o_date) AS month, COUNT(order_id) AS count FROM orders GROUP BY month', (err, result) => {
         if(err) {
             console.log(err)
