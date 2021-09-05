@@ -57,12 +57,6 @@ export const DpListItems = (
     </ListItem>
     
 
-  <ListItem button component={Link} to="/Locate">
-      <ListItemIcon style={{color:'white'}}>
-        < MyLocationIcon />
-      </ListItemIcon>
-      <ListItemText primary="Locate Me" />
-</ListItem> 
 
    <ListItem button component={Link} to="/employee/DpProfile">
       <ListItemIcon style={{color:'white'}}>
@@ -72,13 +66,7 @@ export const DpListItems = (
     </ListItem>
     <br/>
      
-  {/*} <ListItem button component={Link} to="/CalendarEvent">
-      <ListItemIcon style={{color:'white'}}>
-        < MyLocationIcon />
-      </ListItemIcon>
-      <ListItemText primary="Events" />
-</ListItem> 
-<br/> */}
+
      
   </div>
 );
