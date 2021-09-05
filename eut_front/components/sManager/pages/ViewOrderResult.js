@@ -18,7 +18,7 @@ class ViewOrderResult extends Component{
   }
 
   componentDidMount()  {
-    fetch('http://localhost:3001/OrdersStatus')
+    fetch('http://localhost:3001/sales_OrdersStatus')
       .then(res => res.json())
       .then(result => {
         this.setState({

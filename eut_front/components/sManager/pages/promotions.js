@@ -173,7 +173,7 @@ const [promotionsList, setPromotionsList] = useState([]);
 
 
 const addPromotion = () => {
-  Axios.post('http://localhost:3001/create_pro', {
+  Axios.post('http://localhost:3001/sales_create_pro', {
     name: name,  
     price: price, 
     brand: brand,

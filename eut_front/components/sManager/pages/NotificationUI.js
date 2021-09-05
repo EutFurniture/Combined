@@ -20,7 +20,7 @@ class NotificationUI extends Component{
 
 
   componentDidMount()  {
-    fetch('http://localhost:3001/NotificationUI')
+    fetch('http://localhost:3001/sales_NotificationUI')
       .then(res => res.json())
       .then(result => {
         this.setState({

@@ -223,7 +223,7 @@ export default function AddCustomForm() {
   
   const addCustomer = (data)=>{
   
-     axios.post('http://localhost:3001/create',{
+     axios.post('http://localhost:3001/sales_create',{
        name:data.name,
        email:data.email,
        phone:data.phone,

@@ -15,25 +15,25 @@ export default function CustomView() {
   const [searchTerm,setSearchTerm]=useState("");
   const [employeeList,setEmployeeList]=useState([])
  useEffect(()=>{
-   axios.get("http://localhost:3001/load").then((response)=>{
+   axios.get("http://localhost:3001/sales_load").then((response)=>{
      setEmployeeList(response.data)
    })
  },[])
 
  const deleteCustomer =(customer_id)=>{
-  axios.delete(`http://localhost:3001/deleteCustomer/${customer_id}`);
+  axios.delete(`http://localhost:3001/sales_deleteCustomer/${customer_id}`);
 }
 
 const viewEmployee =(customer_id)=>{
   console.log(customer_id);
-  axios.get(`http://localhost:3001/view/${customer_id}`);
+  axios.get(`http://localhost:3001/sales_view/${customer_id}`);
   if(customer_id){
     window.location.href='/sManager/pages/CustomInfo'
   }
 }
 
 const updateEmployeeDetails = (customer_id) => {
-  axios.put("http://localhost:3001/updateEmployee", {fname: newName,  customer_id: customer_id}).then(
+  axios.put("http://localhost:3001/sales_updateEmployee", {fname: newName,  customer_id: customer_id}).then(
     (response) => {
       setEmployeeList(employeeList.map((val) => {
         return val.customer_id === customer_id ? {customer_id: val.customer_id, fname: val.name} : val
@@ -49,7 +49,7 @@ const updateEmployeeDetails = (customer_id) => {
 
 const updateEmployee =(customer_id)=>{
   console.log(customer_id);
-  axios.put(`http://localhost:3001/update/${customer_id}`);
+  axios.put(`http://localhost:3001/sales_update/${customer_id}`);
 
  
 };
@@ -57,7 +57,7 @@ const updateEmployee =(customer_id)=>{
 const UpdateName=(customer_id)=>{
   console.log(customer_id)
   
-  axios.put("http://localhost:3001/updateEmployee",{
+  axios.put("http://localhost:3001/sales_updateEmployee",{
     customer_id:customer_id,
     fname:newName,
   });

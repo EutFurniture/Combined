@@ -218,14 +218,14 @@ export default function UpdateCustom() {
 const [employeeList, setEmployeeList] = useState([]);
 
   useEffect(()=>{
-    axios.get("http://localhost:3001/employees").then((response)=>{
+    axios.get("http://localhost:3001/sales_employees").then((response)=>{
       setEmployeeList(response.data)
     })
   },[]);
 
   useEffect(() => {
     const fetchData = async () => {
-        const response = await axios.get('http://localhost:3001/view', {
+        const response = await axios.get('http://localhost:3001/sales_view', {
             params: {
                customer_id: customer_id,
                 
@@ -245,7 +245,7 @@ const [employeeList, setEmployeeList] = useState([]);
   }, [customer_id]);
 
   const updateEmployee = (customer_id) => {
-    axios.put("http://localhost:3001/updateEmployee", {name: newName,email:newEmail,address:newAddress,phone:newPhone,customer_id:customer_id}).then(
+    axios.put("http://localhost:3001/sales_updateEmployee", {name: newName,email:newEmail,address:newAddress,phone:newPhone,customer_id:customer_id}).then(
       (response) => {
         
         setEmployeeList(Dt.map((val) => {

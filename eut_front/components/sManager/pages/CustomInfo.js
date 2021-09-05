@@ -245,7 +245,7 @@ export default function CustomInfo() {
 
  useEffect(() => {
   const fetchData = async () => {
-      const response = await axios.get('http://localhost:3001/view', {
+      const response = await axios.get('http://localhost:3001/sales_view', {
           params: {
               id: id,
               

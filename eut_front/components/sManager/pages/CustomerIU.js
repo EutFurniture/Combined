@@ -22,7 +22,7 @@ function CustomerIU() {
   
 
   const addOrder = () => {
-    Axios.post('http://localhost:3001/create_order', {
+    Axios.post('http://localhost:3001/sales_create_order', {
       customer_id: customer_id, 
       o_date: o_date, 
       order_last_date: order_last_date, 
@@ -47,13 +47,13 @@ function CustomerIU() {
   };*/
 
   const getOrders = () => {
-    Axios.get('http://localhost:3001/order_check').then((response) => {
+    Axios.get('http://localhost:3001/sales_order_check').then((response) => {
       setOrderList(response.data);
     });
   };
 
   const updateDate = (order_id) => {
-    Axios.put("http://localhost:3001/updateDate", {order_last_date: newDue_date,  order_id: order_id}).then(
+    Axios.put("http://localhost:3001/sales_updateDate", {order_last_date: newDue_date,  order_id: order_id}).then(
       (response) => {
         setOrderList(orderList.map((val) => {
           return val.order_id === order_id ? {order_id: val.order_id, order_last_date: val.due_date} : val
