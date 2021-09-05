@@ -18,7 +18,7 @@ class PaymentUI extends Component{
   }
 
   componentDidMount()  {
-    fetch('http://localhost:3001/pposts')
+    fetch('http://localhost:3001/sales_pposts')
       .then(res => res.json())
       .then(result => {
         this.setState({
