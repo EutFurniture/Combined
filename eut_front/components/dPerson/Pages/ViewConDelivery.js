@@ -43,9 +43,12 @@ export default function ViewConDelivery(userData) {
    
     const fetchData = async () => {
 
+     const emp=userData.userData.employee_id;
+     console.log(emp);
+
       const response = await Axios.get('http://localhost:3001/viewConfirmDelivery', {
             params: {
-             employee_id:userData.userData.employee_id
+             employee_id:emp
            }
         });
      
