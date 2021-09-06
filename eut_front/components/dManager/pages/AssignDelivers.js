@@ -2,6 +2,7 @@ import React ,{useEffect}from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import clsx from 'clsx';
 import Axios from 'axios';
+import axios from 'axios';
 import { useState } from 'react';
 
 import { makeStyles } from '@material-ui/core/styles';
@@ -21,6 +22,7 @@ import Paper from '@material-ui/core/Paper';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import NotificationsIcon from '@material-ui/icons/Notifications';
+import SearchIcon from '@material-ui/icons/Search';
 
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import Menu from '@material-ui/core/Menu';
@@ -28,7 +30,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import {Redirect} from "react-router-dom";
 import {Link} from 'react-router-dom';
 import ViewStreamIcon from '@material-ui/icons/ViewStream';
-import {Button} from 'react-bootstrap';
+import { Button } from '@material-ui/core';
 import {Card} from 'react-bootstrap';
 import {toast} from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
@@ -150,8 +152,28 @@ const styles = {
   card:{
     display:"flex",
     flexDirection :"row",
-
-  }
+    justifyContent:'flex-start',
+    flexWrap: 'wrap',
+  },
+  
+  searchbar:{
+    display: 'flex', 
+    width: '1200px',
+    height: '40px',
+    boxShadow: '0px 0px 12px -5px rgba(0, 0, 0, 0.75)',
+  },
+  
+  input:{
+    border:'none',
+    fontSize:'18px',
+    paddingLeft:'10px',
+  },
+  
+  icon:{
+    marginTop:'7px',
+    marginLeft:'120px',
+    color:'grey',
+  },
   
 };
 
@@ -167,7 +189,7 @@ toast.configure()
 
 export default function AssignDelivers() {
   const classes = useStyles();
-
+  const [searchTerm, setSearchTerm] = useState("");
   const [statusList, setstatusList] = useState([]);
 
   const [paymentNotifyCount,setpaymentNotifyCount]=useState([])
@@ -251,7 +273,7 @@ export default function AssignDelivers() {
         return(
           <div style={{fontSize:'15px'}}>
             You have {paymentmesscount} New Payment Confirmations from Deliver Person! <br></br><br></br>
-            <Button variant="light" onClick={Notification_page_payment}>View</Button>
+            <Button variant="contained" onClick={Notification_page_payment}>View</Button>
           </div>
         )
       }
@@ -273,7 +295,7 @@ export default function AssignDelivers() {
           return(
             <div style={{fontSize:'15px'}}>
               You have {returnmesscount} New Return Delivery Confirmations from Deliver Person! <br></br><br></br>
-              <Button variant="light" onClick={Notification_page_return}>View</Button>
+              <Button variant="contained" onClick={Notification_page_return}>View</Button>
             </div>
           )
         }
@@ -293,7 +315,7 @@ export default function AssignDelivers() {
           return(
             <div style={{fontSize:'15px'}}>
               You have New {ordermesscount} Delivery Confirmations from Deliver Person! <br></br><br></br>
-              <Button variant="light" onClick={Notification_page_order}>View</Button>
+              <Button variant="contained" onClick={Notification_page_order}>View</Button>
             </div>
           )
         }
@@ -323,11 +345,17 @@ export default function AssignDelivers() {
           }
   }
 
-  const getStatus = () => {
-    Axios.get("http://localhost:3001/viewStatus").then((response) => {
+  // const getStatus = () => {
+  //   Axios.get("http://localhost:3001/viewStatus").then((response) => {
+  //     setstatusList(response.data)
+  //   })
+  // }
+
+  useEffect(()=>{
+    axios.get("http://localhost:3001/viewStatus").then((response)=>{
       setstatusList(response.data)
     })
-  }
+  },[])
 
   const [open, setOpen] = React.useState(true);
   const handleDrawerOpen = () => {
@@ -429,21 +457,37 @@ export default function AssignDelivers() {
                 <div >
                   <Paper className={classes.paper}>
                   <div align="right"> 
-                  <Button onClick={getStatus} type="submit" size='lg'><ViewStreamIcon/> Pending</Button>
+                  {/* <Button  variant="contained" color="primary" onClick={getStatus} type="submit" size='lg'><ViewStreamIcon/> Pending</Button> */}
                   </div>
                   <br></br>
-                  <div  style={styles.card}>
-                  {statusList.map((val, key) => {
+
+                  <div style={styles.searchbar}>
+                  <input type="text" onChange={(e)=>{setSearchTerm(e.target.value);}} placeholder="Search" style={styles.input}/>
+                  <SearchIcon  className='searchicon' style={styles.icon}/>
+                  </div>
+                  <br></br>
+
+                  <div >
+                  <div  style={styles.card} >
+                  {statusList.filter(record=>{if(searchTerm===""){
+                      return record;
+                    }
+                    else if(
+                      record.name.toLowerCase().includes(searchTerm.toLocaleLowerCase()) || record.address.toLocaleLowerCase().includes(searchTerm.toLocaleLowerCase()) || record.e_address.toLocaleLowerCase().includes(searchTerm.toLocaleLowerCase())  )
+                      {
+                        return record
+                      }
+                  }).map((record) => {
                     return (
-                      <div>
-                        
+                      <div >                    
                         <Card style={{ width: '18rem' }} border="primary" >
-                          <Card.Header>DELIVER ID : {val.id}</Card.Header>
+                          <Card.Header>DELIVER ID : {record.id}</Card.Header>
                           <Card.Body>
-                          <Card.Text>Name : {val.name}</Card.Text>
-                          <Card.Text>Shipping Address : {val.address}</Card.Text>
-                          <Card.Text>Delivery Date : {dateOnly(val.order_last_date)}</Card.Text>
-                          <Card.Text>Scheduled : {val.pending}</Card.Text>
+                          <Card.Text>Name : {record.name}</Card.Text>
+                          <Card.Text>Deliver Address : {record.e_address}</Card.Text>
+                          <Card.Text>Shipping Address : {record.address}</Card.Text>
+                          <Card.Text>Delivery Date : {dateOnly(record.order_last_date)}</Card.Text>
+                          <Card.Text>Scheduled : {record.pending}</Card.Text>
                           
                         </Card.Body>
                         </Card>
@@ -454,7 +498,7 @@ export default function AssignDelivers() {
                     )
                   })}
                   </div>
-                  
+                  </div>
                   <br/>
                     <Assign/>
                   </Paper>

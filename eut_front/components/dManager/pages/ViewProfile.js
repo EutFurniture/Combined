@@ -166,7 +166,7 @@ export default function ViewProfile() {
 
               </Form> 
             <div align="right">
-              <Link  style={styles.updatebtn} to={location=>`/EditProfileRoute/${Dt.employee_id}`} >  Edit Profile</Link>
+              <Link  style={styles.updatebtn} to={location=>`/EditProfileRoute/${Dt.id}`} >  Edit Profile</Link>
             </div>
               </div>
 

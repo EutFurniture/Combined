@@ -35,7 +35,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 
 import Form from 'react-bootstrap/Form';
-import { Button } from 'react-bootstrap';
+import { Button } from '@material-ui/core';
 import { Row } from 'react-bootstrap';
 import { Col } from 'react-bootstrap';
 
@@ -259,7 +259,7 @@ export default function AddDelivers() {
         return(
           <div style={{fontSize:'15px'}}>
             You have {paymentmesscount} New Payment Confirmations from Deliver Person! <br></br><br></br>
-            <Button variant="light" onClick={Notification_page_payment}>View</Button>
+            <Button variant="contained" onClick={Notification_page_payment}>View</Button>
           </div>
         )
       }
@@ -281,7 +281,7 @@ export default function AddDelivers() {
           return(
             <div style={{fontSize:'15px'}}>
               You have {returnmesscount} New Return Delivery Confirmations from Deliver Person! <br></br><br></br>
-              <Button variant="light" onClick={Notification_page_return}>View</Button>
+              <Button variant="contained" onClick={Notification_page_return}>View</Button>
             </div>
           )
         }
@@ -301,7 +301,7 @@ export default function AddDelivers() {
           return(
             <div style={{fontSize:'15px'}}>
               You have New {ordermesscount} Delivery Confirmations from Deliver Person! <br></br><br></br>
-              <Button variant="light" onClick={Notification_page_order}>View</Button>
+              <Button variant="contained" onClick={Notification_page_order}>View</Button>
             </div>
           )
         }
@@ -543,8 +543,8 @@ export default function AddDelivers() {
 
                     
                         <div  style={styles.button_style}>
-                        <Button  type="submit" size='lg' href='/dManager/pages/ManageDelivers'>View All</Button>
-                        <Button  type="submit" size='lg' >Add Deliver</Button>
+                        <Button variant="contained" color= "primary" type="submit" size='lg' href='/dManager/pages/ManageDelivers'>View All</Button>
+                        <Button variant="contained" color= "primary" type="submit" size='lg' >Add Deliver</Button>
                         </div>
            
                 </Form>

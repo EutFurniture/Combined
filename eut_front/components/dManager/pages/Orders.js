@@ -12,6 +12,11 @@ const dateOnly = (d) => {
   return `${year} - ${month} - ${day}`;
 };
 
+const d = new Date();
+const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+let currentMonth =  months[d.getMonth() ];
+let currentYear = d.getFullYear();
+
 class Orders extends Component{
   constructor(props) {
     super(props);
@@ -39,7 +44,7 @@ class Orders extends Component{
      return(
        
       <React.Fragment>
-      <Title>Recent Delivery Details</Title>
+      <Title>Recent Delivery Details - {currentMonth} {currentYear}</Title>
       
               <Table striped bordered hover responsive>
               <thead >

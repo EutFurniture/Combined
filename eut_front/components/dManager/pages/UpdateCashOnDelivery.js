@@ -20,8 +20,9 @@ import Grid from '@material-ui/core/Grid';
 import Divider from '@material-ui/core/Divider';
 import {useParams} from 'react-router-dom'
 import { mainListItems, Logout, Profile } from './listItems';
-import { Form, Row, Col, Button } from "react-bootstrap";
+import { Form, Row, Col} from "react-bootstrap";
 
+import {Button} from '@material-ui/core'
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -224,7 +225,7 @@ export default function UpdateCashOnDelivery() {
         return(
           <div style={{fontSize:'15px'}}>
             You have {paymentmesscount} New Payment Confirmations from Deliver Person! <br></br><br></br>
-            <Button variant="light" onClick={Notification_page_payment}>View</Button>
+            <Button variant="contained"  onClick={Notification_page_payment}>View</Button>
           </div>
         )
       }
@@ -246,7 +247,7 @@ export default function UpdateCashOnDelivery() {
           return(
             <div style={{fontSize:'15px'}}>
               You have {returnmesscount} New Return Delivery Confirmations from Deliver Person! <br></br><br></br>
-              <Button variant="light" onClick={Notification_page_return}>View</Button>
+              <Button variant="contained"  onClick={Notification_page_return}>View</Button>
             </div>
           )
         }
@@ -266,7 +267,7 @@ export default function UpdateCashOnDelivery() {
           return(
             <div style={{fontSize:'15px'}}>
               You have New {ordermesscount} Delivery Confirmations from Deliver Person! <br></br><br></br>
-              <Button variant="light" onClick={Notification_page_order}>View</Button>
+              <Button variant="contained"  onClick={Notification_page_order}>View</Button>
             </div>
           )
         }
@@ -484,7 +485,7 @@ export default function UpdateCashOnDelivery() {
               </Form.Group><br/>
     
               <div align="center">
-              <Button  type="submit"   style={{fontSize:'20px',width:'200px'}} onClick={() => {updateCashStatus(Dt.order_id)}} >Update</Button>
+              <Button  type="submit"  variant="contained" color="primary" style={{fontSize:'20px',width:'200px'}} onClick={() => {updateCashStatus(Dt.order_id)}} >Update</Button>
               </div><br/><br/>
             </Form>
 

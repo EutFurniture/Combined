@@ -5,7 +5,7 @@ const EditProfileRoute=()=>{
     return(
         <div>
             <Switch>
-                <Route path="/EditProfileRoute/:employee_id">
+                <Route path="/EditProfileRoute/:id">
                     <EditProfile/>
                 </Route>
             </Switch>
