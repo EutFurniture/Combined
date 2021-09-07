@@ -557,7 +557,7 @@ const Cuspage=()=>{
                <Chart 
             options={{
                 chart: {
-                    width: 300,
+                    width: 350,
                     type: 'pie',
                   },
                   labels: cat,
@@ -575,7 +575,7 @@ const Cuspage=()=>{
         }
             series={arr} 
             type="pie"
-            width={500}
+            width={555}
              />
                </div><br/>
                
