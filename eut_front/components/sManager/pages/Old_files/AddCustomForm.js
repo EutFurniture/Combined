@@ -1,8 +1,14 @@
-import React, { useState, useEffect } from "react";
-import Axios from 'axios';
-import { useParams ,Link} from "react-router-dom";
-import {Table} from 'react-bootstrap';
+import React, { useState } from "react";
 import clsx from 'clsx';
+import axios from "axios";
+import Box from '@material-ui/core/Box';
+import Link from '@material-ui/core/Link'
+import Form from 'react-bootstrap/Form';
+import { Button } from 'react-bootstrap';
+import { Row } from 'react-bootstrap';
+import { Col } from 'react-bootstrap';
+import {Redirect} from "react-router-dom"
+import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Drawer from '@material-ui/core/Drawer';
@@ -11,19 +17,23 @@ import Toolbar from '@material-ui/core/Toolbar';
 import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
+import Badge from '@material-ui/core/Badge';
 import Container from '@material-ui/core/Container';
 import Paper from '@material-ui/core/Paper';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
+import NotificationsIcon from '@material-ui/icons/Notifications';
 import Grid from '@material-ui/core/Grid';
 import Divider from '@material-ui/core/Divider';
+import { useForm } from "react-hook-form";
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
-import {Redirect} from "react-router-dom";
-import ViewConDelivery from './ViewConDelivery'
-import { DpListItems, Logout } from './dplistItems';
-import 'bootstrap/dist/css/bootstrap.min.css';
+ import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+
+
+import { mainListItems, Logout } from './listItems';
+
 function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
@@ -36,6 +46,7 @@ function Copyright() {
     </Typography>
   );
 }
+
 
 const drawerWidth = 240;
 
@@ -119,6 +130,7 @@ const useStyles = makeStyles((theme) => ({
     paddingTop: theme.spacing(4),
     paddingBottom: theme.spacing(4),
     marginTop:'20px',
+    marginLeft:'40px',
   },
   paper: {
     padding: theme.spacing(2),
@@ -134,11 +146,51 @@ const useStyles = makeStyles((theme) => ({
       height:'50px',
       width:'160px',
       borderRadius:'5px',
-      marginRight:'50px',
+      marginRight:'10px',
       textDecoration:'none',
       textAlign:'center',
       paddingTop:'10px'
   },
+  addcategorybox:{
+    width: '1100px',
+    height:'120px',
+    backgroundColor: '#fff',
+    marginLeft: '30px',
+    display:'flex',
+    //boxShadow:'5px 1px 2px 2px '
+    
+  },
+  categorybtn:{
+      border:0,
+      backgroundColor:'#9bddff',
+      width:'800px',
+      height:'40px',
+      marginTop:'40px',
+      marginLeft:'30px',
+      fontSize:'20px',
+      borderRadius:'5px'
+
+  },
+  addcategory:{
+    height:'40px'
+  },
+  categoryimage:{
+    height:'500px',
+    width:'1100px'
+},
+btn:{
+    color:'white',
+    fontSize:'18px',
+    width:'150px',
+    height:'40px',
+    backgroundColor:'blue',
+    border:'none',
+    borderRadius:'5px'
+},
+addproducts:{
+    display:'flex',
+},
+
   
 
 }));
@@ -146,50 +198,53 @@ const useStyles = makeStyles((theme) => ({
 const styles = {
   side:{
     backgroundColor:'rgb(37, 37, 94)',
-  },
-  updatebtn:{
-    backgroundColor: '#04B404',
-    width: '200px',
-    textDecoration: 'none',
-    height: '100px',
-    marginRight: '5px',
-    fontSize: '17px',
-    paddingLeft: '15px',
-    paddingRight: '15px',
-    paddingTop: '5px',
-    paddingBottom: '5px',
-    color: 'white',
-    borderRadius: '7px',
-  }  
+  }
 };
 
+const schema = yup.object().shape({
+  name: yup.string().required(),
+  email: yup.string().email().required(),
+  address: yup.string().required(),
+  phone: yup.string().max(10, "Must be 10 Digits.").min(10, "Must be 10 Digits.")
+})
 
-export default function ConfirmDelivery(userData) {
+
+export default function AddCustomForm() {
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
-  const [user,setUser]=useState([])
-  const { employee_id } = useParams();
-   useEffect(() => {
-   
-    const fetchData = async () => {
+ 
 
+  const { register, handleSubmit, formState: { errors } } = useForm({
+    resolver: yupResolver(schema),
+});
+
+  
+  
+  
+  const addCustomer = (data)=>{
+  
+     axios.post('http://localhost:3001/sales_create',{
+       name:data.name,
+       email:data.email,
+       phone:data.phone,
+       address:data.address,
       
-     
-      const response = await Axios.get('http://localhost:3001/viewConfirmDelivery', {
-            params: {
-          employee_id: userData.userData.id
-           }
-        });
-     
-        setUser(response.data);
+       
+  
+      }).then((response)=>{
+        if(response.data.message){
+          alert('Employee added successfully')
+          window.location.href='/sManager/pages/ManageEmployee'
+         
+      }
+       });
+       console.log(data)
+  };
+  
+  
 
-        console.log(employee_id);
-      
-    }
-  fetchData();
-  }, [employee_id]);      
-
-
+  
+  
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -197,27 +252,23 @@ export default function ConfirmDelivery(userData) {
   const handleDrawerClose = () => {
     setOpen(false);
   };
-  const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
-
-
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   const handleClick = (event) => {
-      setAnchorEl(event.currentTarget);
+    setAnchorEl(event.currentTarget);
   };
-  
+
   const handleClose = () => {
-      setAnchorEl(null);
+    setAnchorEl(null);
   };
-  
-   // const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
-  
+
+ // const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
+
   const[isAuth,setIsAuth]=useState(true);
-  
+
   if(!isAuth){
-      return <Redirect to="" />
+    return <Redirect to="" />
   }
-  
 
   return (
     <div className={classes.root}>
@@ -234,8 +285,15 @@ export default function ConfirmDelivery(userData) {
             <MenuIcon />
           </IconButton>
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-            <b>DELIVERY PERSON</b>
+            <b>Sales Manager</b>
           </Typography>
+          <IconButton color="inherit">
+            <Badge badgeContent={4} color="secondary">
+              <NotificationsIcon />
+            </Badge>
+          </IconButton>
+
+         
           <IconButton color="inherit" fontSize="inherit">
            <AccountCircleIcon   onClick={handleClick}/>
   
@@ -247,11 +305,9 @@ export default function ConfirmDelivery(userData) {
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-        <MenuItem component={Link} to="/dPerson/DpProfile">Profile</MenuItem>
-      <MenuItem component={Link} to="/Calender">Calendar</MenuItem>
+        <MenuItem onClick={handleClose}>Profile</MenuItem>
         <MenuItem onClick={()=>setIsAuth(false)}>Logout</MenuItem>
       </Menu>
-
 
         </Toolbar>
         
@@ -270,71 +326,92 @@ export default function ConfirmDelivery(userData) {
           </IconButton>
         </div>
         <Divider/>
-        <List style={{backgroundColor: 'rgb(37, 37, 94)', color:'white'}}>{DpListItems}</List>
+        <List style={{backgroundColor: 'rgb(37, 37, 94)', color:'white'}}>{mainListItems}</List>
         <Divider/>
-        <List style={{backgroundColor: 'rgb(37, 37, 94)', color:'white'}}>{Logout}</List>
+        <List style={{backgroundColor: 'rgb(37, 37, 94)', color:'red'}} onClick={()=>setIsAuth(false)}>{Logout}</List>
         <Divider/>
       </Drawer>
       </div>
      
       <main style={{backgroundColor: '#f0f8ff'}} className={classes.content}>
         <div className={classes.appBarSpacer} />
-        <Container maxWidth="lg" className={classes.container}>
+        <Container  maxWidth="lg" className={classes.container}>
         
-        <Grid container spacing={3}>
+        <Grid  container spacing={10}>
         {/* Recent Orders */}
-        <Grid item xs={12}  direction="row"  >
+        <Grid item xs={11}  direction="row"  >
         
         <div >
-        
            <Paper className={classes.paper}>
                
-                <Typography  component="h1" variant="h6" color="inherit" align="center" width="100%" noWrap className={classes.title}>
-                  <h4> DETAILS OF DELIVERIES</h4>
-                </Typography>
-               
-                <div ><br/>
-                <div className='box-main'>
-                           
-                </div>
-        <Table striped bordered hover responsive>
-        <thead className="tableheading">
-          <tr>
-             <th scope="col">Order ID</th>
-             <th scope="col">Order Status</th>
-             <th scope='col'>Action</th>
-          </tr>
-        </thead> 
-     
-       <tbody className="tablebody">
-       {user.map(item=>
-                <tr key={item.employee_id}>
-                <td align="center">{item.order_id}</td>
-                <td align="center">{item.status}</td>
-                <td align="center">
-                <Link style={styles.updatebtn} to={location=> `/dPerson/UpdateConDeliveryRoute/${item.order_id}`}>Click to Confirm </Link>
-                </td>
+           <Typography component="h1" variant="h6" color="inherit" align="center" width="100%" noWrap className={classes.title}>
+                  <strong> Add New Customer </strong>
+                </Typography><br/>
+        
+                 
+                 
+                <Form onSubmit={handleSubmit(addCustomer)}>
+                
+                    <Form.Group as={Row} controlId="formHorizontalName">
+                      <Form.Label column lg={2} >
+                        Full Name :
+                      </Form.Label>
+                      <Col >
+                        <Form.Control type="text"   {...register('name')} required />
+                        {errors.name?.message && <p className=" errormessage" >{errors.name?.message}</p>}                        
+                      </Col>
+                    </Form.Group><br/>
+                    
 
-     </tr>
- )}
-                            
-   
-        </tbody> 
-      </Table>
+                    <Form.Group as={Row} controlId="formHorizontalEmail">
+                      <Form.Label column lg={2} >
+                       Email :
+                      </Form.Label>
+                      <Col >
+                        <Form.Control type="text"   {...register('email')} required />
+                        {errors.email?.message && <p className=" errormessage" >{errors.email?.message}</p>}                        
+                      </Col>
+                    </Form.Group><br/>
+
+                    <Form.Group as={Row} controlId="formHorizontalAddress">
+                      <Form.Label column lg={2} >
+                       Address :
+                      </Form.Label>
+                      <Col >
+                        <Form.Control type="text"   {...register('address')} required />
+                        {errors.address?.message && <p className=" errormessage" >{errors.address?.message}</p>}                        
+                      </Col>
+                    </Form.Group><br/>
+
+                    <Form.Group as={Row} controlId="formHorizontalPhoneNo">
+                      <Form.Label column lg={2} >
+                       Phone No :
+                      </Form.Label>
+                      <Col >
+                        <Form.Control type="text"   {...register('phone')} required />
+                        {errors.phone?.message && <p className=" errormessage" >{errors.phone?.message}</p>}                        
+                      </Col>
+                    </Form.Group><br/>
+
+                    <div align="center">
+                     <Button  style={{fontSize:'20px',width:'200px'}} type="submit"  >Submit</Button>
+                     </div> 
+                   
+             </Form>
+
+
+  
     
-   </div>
-                     
           </Paper>
-          </div>
+         </div>
         </Grid>
 
       </Grid>
+      <Box pt={4}>
+            <Copyright />
+          </Box>
         </Container>
-        <Copyright/>
       </main>
     </div>
   );
 }
-
-
- 

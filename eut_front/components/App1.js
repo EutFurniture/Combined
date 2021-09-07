@@ -3,15 +3,11 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Axios from 'axios';
 import { useParams } from "react-router-dom";
 import ViewAvailableDelivery from './components/dPerson/pages/ViewAvailableDelivery';
-import LoginScreen from './components/Login/Pages/LoginScreen';
+import Login from './components/Login';
 import DpProfile from './components/dPerson/pages/DpProfile';
 import UpdateEprofile from './components/dPerson/pages/UpdateEprofile';
 import AddReturnedItem from './components/dPerson/pages/AddReturnedItem';
-import ConfirmCashPay from './components/dPerson/pages/ConfirmCashPay';
 import ConfirmDelivery from './components/dPerson/pages/ConfirmDelivery';
-import Maps from './components/dPerson/pages/Maps';
-import Locate from './components/dPerson/pages/Locate';
-import DpDashboard from './components/dPerson/pages/DpDashboard';
 import AvailableDeliveryInfo from './components/dPerson/pages/AvailableDeliveryInfo';
 import AvailableDeliveryInfoRoute from './components/dPerson/pages/AvailableDeliveryInfoRoute';
 import DpReturnItemInfo from './components/dPerson/pages/DpReturnItemInfo';
@@ -22,13 +18,11 @@ import UpdateCashOnDeliveryBill from './components/dPerson/pages/UpdateCashOnDel
 import UpdateCashOnDeliveryBillRoute from './components/dPerson/pages/UpdateCashOnDeliveryBillRoute';
 import UpdateConDeliveryRoute from './components/dPerson/pages/UpdateConDeliveryRoute';
 import UpdateConDelivery from './components/dPerson/pages/UpdateConDelivery';
-
-
+import ViewCashon from './components/dPerson/pages/ViewCashon';
 const App1 = () => {
     const[LoginSt, setLoginSt] = useState();
-    const[email, setEmail] = useState();
     const[user , setUser] = useState([]);
-    const { employee_id } = useParams();
+    const { email } = useParams();
   
     useEffect(() => {
   
@@ -38,83 +32,83 @@ const App1 = () => {
 
          if (response.data.loggedIn) {
 
-           const nm= response.data.user[0].employee_id;
+           const nm= response.data.user[0].u_email;
             const response1 = await Axios.get('http://localhost:3001/employee', {
               params: {
-               employee_id: nm
+               email: nm
              }
             });
-            
-               setEmail(response.data.user);
-             
+            setUser(response.data.user);
+            console.log(response1.data[0])
                const element = (
                <div>
                 
                <div>
                 <Switch>
-                <Route path='/employee/ViewAvailableDelivery'  >
+                <Route path='/dPerson/ViewAvailableDelivery'  >
                 <ViewAvailableDelivery  userData={response1.data[0]}  />
                 </Route>
               
-                <Route path='/employee/AddReturnedItem'  >
+                <Route path='/dPerson/AddReturnedItem'  >
                 < AddReturnedItem  userData={response1.data[0]}  />
                 </Route>
 
-                <Route path='/employee/ConfirmCashPay'  >
-                < ConfirmCashPay  userData={response1.data[0]}  />
+                <Route path='/dPerson/ConfirmCashPay'  >
+                < ViewCashon  userData={response1.data[0]}  />
                 </Route>
 
-                <Route path='/employee/ConfirmDelivery'  >
+                <Route path='/dPerson/ConfirmDelivery'  >
                 <ConfirmDelivery  userData={response1.data[0]}  />
                 </Route>
 
-                 <Route path='/employee/DpProfile'  >
+
+                 <Route path='/dPerson/DpProfile'  >
                 <DpProfile  userData={response1.data[0]}  />
                 </Route>
               
 
-                <Route path='/employee/updateEprofile'  >
+                <Route path='/dPerson/updateEprofile'  >
                 < UpdateEprofile userData={response1.data[0]} />
                </Route>
           
-               <Route path='/employee/AvailableDeliveryInfo'  >
+               <Route path='/dPerson/AvailableDeliveryInfo'  >
                 <AvailableDeliveryInfo userData={response1.data[0]} />
                </Route>
 
-               <Route path='/employee/AvailableDeliveryInfoRoute'  >
+               <Route path='/dPerson/AvailableDeliveryInfoRoute'  >
                 <AvailableDeliveryInfoRoute userData={response1.data[0]} />
                </Route>
                
-               <Route path='/employee/DpReturnItemInfo'  >
+               <Route path='/dPerson/DpReturnItemInfo'  >
                 <DpReturnItemInfo userData={response1.data[0]} />
                </Route>
 
-               <Route path='/employee/DpReturnItemInfoRoute'  >
+               <Route path='/dPerson/DpReturnItemInfoRoute'  >
                 <DpReturnItemInfoRoute userData={response1.data[0]} />
                </Route>
 
-               <Route path='/employee/UpdateReturnDetail'  >
+               <Route path='/dPerson/UpdateReturnDetail'  >
                 <UpdateReturnDetail userData={response1.data[0]} />
                </Route>
 
-               <Route path='/employee/UpdateReturnDetailRoute'  >
+               <Route path='/dPerson/UpdateReturnDetailRoute'  >
                 <UpdateReturnDetailRoute userData={response1.data[0]} />
                </Route>
               
-               <Route path='/employee/UpdateCashOnDeliveryBill'  >
+               <Route path='/dPerson/UpdateCashOnDeliveryBill'  >
                 <UpdateCashOnDeliveryBill userData={response1.data[0]} />
                </Route>
 
-               <Route path='/employee/UpdateCashOnDeliveryBillRoute'  >
+               <Route path='/dPerson/UpdateCashOnDeliveryBillRoute'  >
                 < UpdateCashOnDeliveryBillRoute userData={response1.data[0]} />
                </Route>
 
                
-               <Route path='/employee/UpdateConDelivery'  >
+               <Route path='/dPerson/UpdateConDelivery'  >
                 <UpdateConDelivery userData={response1.data[0]} />
                </Route>
 
-               <Route path='/employee/UpdateConDeliveryRoute'  >
+               <Route path='/dPerson/UpdateConDeliveryRoute'  >
                 <UpdateConDeliveryRoute userData={response1.data[0]} />
                </Route>
 
@@ -127,14 +121,14 @@ const App1 = () => {
                setLoginSt(element);
             }
          else{
-             const element = (<LoginScreen />);
+             const element = (<Login />);
               setLoginSt(element);
           } 
            
   
         };
         fetchData();
-    },[employee_id]);
+    },[email]);
   
     return (
         <div className="">

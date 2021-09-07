@@ -1,44 +1,55 @@
-import React from 'react';
-import clsx from 'clsx';
-
-//from customer
-import '../../../App.css';
-import { useState } from 'react';
+import React ,{Fragment}from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import Axios from 'axios';
-//
-import Button from 'react-bootstrap/Button';
-import back from "./pro.gif";
-import styled from 'styled-components';
+import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 
+import clsx from 'clsx';
+import { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import Drawer from '@material-ui/core/Drawer';
 import Box from '@material-ui/core/Box';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
-import Divider from '@material-ui/core/Divider';
-import IconButton from '@material-ui/core/IconButton';
 import Badge from '@material-ui/core/Badge';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import Link from '@material-ui/core/Link';
+import Drawer from '@material-ui/core/Drawer';
+
+import Form from 'react-bootstrap/Form';
+import { Button } from 'react-bootstrap';
+import { Row } from 'react-bootstrap';
+import { Col } from 'react-bootstrap';
+import axios from 'axios';
+
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import List from '@material-ui/core/List';
+
+import Divider from '@material-ui/core/Divider';
+import IconButton from '@material-ui/core/IconButton';
+
+
+
+
+
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 
-import { Form, FormGroup, Label, Input, FormText } from 'reactstrap';
-
+import { FormGroup, Label, Input, FormText } from 'reactstrap';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 
 
 import { mainListItems, Logout } from './listItems';
 import Chart from './Chart';
 import Deposits from './Deposits';
-import Orders from './Orders';
 
 
+
+
+//import { mainListItems, Logout } from './listItems';
 
 
 
@@ -55,15 +66,7 @@ function Copyright() {
   );
 }
 
-const drawerWidth = 240;
-
-const ModelImg = styled.img`
-    width: 100%;
-    height: 100%;
-    background: green;
-
-`
-
+ const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -128,20 +131,27 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
     height: '100vh',
     overflow: 'auto',
+    
   },
   container: {
-    paddingTop: theme.spacing(4),
+    paddingTop: theme.spacing(-2),
     paddingBottom: theme.spacing(4),
+    alignContent:'center',
+    align:'center',
+    
   },
   paper: {
+   
     padding: theme.spacing(2),
     display: 'flex',
     overflow: 'auto',
     flexDirection: 'column',
+   
   },
   fixedHeight: {
     height: 240,
   },
+ 
   
 }));
 
@@ -149,50 +159,101 @@ const styles = {
   side:{
     backgroundColor:'rgb(37,37,94)',
   }
+  
+  
 };
 
 
+
 export default function Dashboard() {
-  const classes = useStyles();
-  const [open, setOpen] = React.useState(true);
+
+  
+  
   const handleDrawerOpen = () => {
     setOpen(true);
   };
   const handleDrawerClose = () => {
     setOpen(false);
   };
-  const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
-  //fromCustomer
-const [name, setName]=useState("");
-const [price, setPrice] = useState("");
-const [brand, setBrand] = useState("");
-const [description, setDescription] = useState("");
+  const [anchorEl, setAnchorEl] = React.useState(null);
 
-const [promotionsList, setPromotionsList] = useState([]);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+  const[isAuth,setIsAuth]=React.useState(true);
 
+  const classes = useStyles();
+  const [open, setOpen] = React.useState(true);
+  const [state,setState]=useState({file:'',name:'',description:'',userImage:"",message:"",success:false})
+  const[name,setName]=useState("");
+  const[description,setDescription]=useState("");
+  const[price,setPrice]=useState("");
+  const[material,setMaterial]=useState("");
+  const[start_date,setStartdate]=useState("");
+  const[end_date,setEnddate]=useState("");
+  const[image,setImage]=useState("");
+  
 
-const addPromotion = () => {
-  Axios.post('http://localhost:3001/sales_create_pro', {
-    name: name,  
-    price: price, 
-    brand: brand,
-    description: description
-  }).then(() => {
-    setPromotionsList([
-      ...promotionsList,
-      {
-        name: name, 
-        price: price, 
-        brand: brand
-      },
-    ]);
-  });
-};//
+  const submitForm =(e) =>{
+    e.preventDefault();
+      
+    if(state.file)
+    {
+      let formData=new FormData();
+      formData.append('file',state.file)
+     
 
+    
+      Axios.post('http://localhost:3001/sales_customization', {
+     
+       
+            image:state.file.name,
+            name:name,
+            description:description,
+            price:price,
+            start_date:start_date,
+            end_date:end_date,
+            material:material,
+            
+          })
+
+    }else{
+      setState({
+        ...state,
+        message:'please select image'
+      })
+     
+    }
+
+  }
+
+  const handleInput =(e) =>{
+    let reader =new FileReader();
+    let file=e.target.files[0]
+    reader.onloadend =() =>{
+      setState({
+        ...state,
+        file:file,
+        userImage:reader.result,
+        message:""
+      })
+     
+    }
+    reader.readAsDataURL(file);
+  }
+
+  
+  
   return (
     
-    <div className={classes.root}>
+ 
+      <div className={classes.root}>
+       
+     
       <CssBaseline />
       <AppBar position="absolute" className={clsx(classes.appBar, open && classes.appBarShift)}>
         <Toolbar className={classes.toolbar} style={{backgroundColor: 'rgb(37,37,94)'}}>
@@ -208,11 +269,26 @@ const addPromotion = () => {
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
             <strong>SALES MANAGER</strong>
           </Typography>
-          <IconButton color="inherit" href="/sManager/pages/Notification">
+          <IconButton color="inherit" fontSize="inherit">
             <Badge badgeContent={4} color="secondary">
               <NotificationsIcon />
             </Badge>
           </IconButton>
+          <IconButton color="inherit" fontSize="inherit">
+           <AccountCircleIcon   onClick={handleClick}/>
+  
+          </IconButton>
+
+             <Menu
+        id="simple-menu"
+        anchorEl={anchorEl}
+        keepMounted
+        open={Boolean(anchorEl)}
+        onClose={handleClose}
+      >
+        <MenuItem onClick={handleClose}>Profile</MenuItem>
+        <MenuItem onClick={()=>setIsAuth(false)}>Logout</MenuItem>
+      </Menu>
         </Toolbar>
       </AppBar>
       <div style={styles.side}>
@@ -231,107 +307,150 @@ const addPromotion = () => {
         <Divider />
         <List style={{backgroundColor: 'rgb(37,37,94)', color:'white'}}>{mainListItems}</List>
         <Divider />
-        <List style={{backgroundColor: 'rgb(37,37,94)', color:'red'}}>{Logout}</List>
+        <List style={{backgroundColor: 'rgb(37,37,94)', color:'red'}} onClick={()=>setIsAuth(false)}>{Logout}</List>
         <Divider />
       </Drawer>
       </div>
-      <main className={classes.content}>
+      <main style={{backgroundColor: '#f0f8ff'}} className={classes.content}>
         <div className={classes.appBarSpacer} />
         <br/>
-        
-
-        <Container>
-        <h3> Promotions</h3>
-          <br/>
-          <div class="card">
-            
-            <ModelImg src={back}
-                    alt='default'/>
-            <br/>
-            <p><Button variant="warning">Add New Image</Button></p>
-          </div>
-
-          
-
-        </Container>
-
-       
-       
-       
         <Container maxWidth="lg" className={classes.container}>
-        <div className="information_pro">
-        <form>
-        <div>
-            <label>
-                Name
-            </label>
-        </div>
-
-        <div>
-            <input type="text" className="pro_inp" 
-            onChange={(event)=>{
-              setName(event.target.value);
-            }}
-            />
-        </div>
-
-        <div>
-            <label>
-                Price
-            </label>
-        </div>
-
-        <div>
-            <input type="text" className="pro_inp"
-            onChange={(event)=>{
-              setPrice(event.target.value);
-            }}
-            />
-        </div>
-
-        <div>
-            <label>
-                Brand
-            </label>
-        </div>
-
-        <div>
-            <input type="text" className="pro_inp"
-             onChange={(event)=>{
-              setBrand(event.target.value);
-            }}
-            />
-        </div>
-
-        <div>
-            <label>
-                Description
-            </label>
-        </div>
-
-        <textarea class="pro_txt"
-              onChange={(event)=>{
-              setDescription(event.target.value);
-            }}>
-        </textarea>
-
-        <br/>
-        <div>
-            <Button variant="warning" onClick={addPromotion}>Publish</Button>
-        </div>
-
-        </form>
-        </div>
-       
+          <Grid container spacing={3}>
         
-        </Container>
+            
+            
 
-        <Box pt={4}>
-            <Copyright />
+            {/* Recent Orders */}
+            <Grid item xs={10} style={styles.pack} >
+            
+  
+            <div >
+              <Paper className={classes.paper}>
+              <Typography component="h1" variant="h6" color="inherit"  width="100%" noWrap className={classes.title}>
+              <strong>Publish Promotion</strong>
+            </Typography><br/>
+
+                 <Form  onSubmit={submitForm} >
+                    <Form.Group as={Row} controlId="formHorizontalName">
+                      <Form.Label className={classes.lab} column lg={2} >
+                        Name :
+                      </Form.Label>
+                      <Col sm={10}>
+                        <Form.Control type="text" placeholder="chair,table and etc" 
+                        onChange={(event)=> {
+                          setName(event.target.value);
+                        }}
+                        />
+                      </Col>
+                    </Form.Group><br/>
+
+                    
+                    <Form.Group as={Row} controlId="formHorizontalNIC">
+                      <Form.Label className={classes.lab} column lg={2}>
+                       Price :
+                      </Form.Label>
+                      <Col sm={10}>
+                        <Form.Control type="text" placeholder="Price" 
+                        onChange={(event)=> {
+                          setPrice(event.target.value);
+                        }}
+                        />
+                      </Col>
+                    </Form.Group><br/>
+
+                    <Form.Group as={Row} controlId="formHorizontalmaterial">
+                      <Form.Label className={classes.lab} column lg={2}>
+                       Material :
+                      </Form.Label>
+                      <Col sm={10}>
+                        <Form.Control type="text" placeholder="type" 
+                        onChange={(event)=> {
+                          setMaterial(event.target.value);
+                        }}/>
+                      </Col>
+                    </Form.Group><br/>
+
+                    <Form.Group as={Row} controlId="formHorizontalNIC">
+                      <Form.Label className={classes.lab} column lg={2}>
+                       Description :
+                      </Form.Label>
+                      <Col sm={10}>
+                        <Form.Control type="text" placeholder="Description" 
+                        onChange={(event)=> {
+                          setDescription(event.target.value);
+                        }}
+                        />
+                      </Col>
+                      </Form.Group><br/>
+
+                     
+                    <Form.Group as={Row} controlId="formHorizontalFile" className="mb-3">
+                      <Form.Label className={classes.lab} column lg={2}>
+                        Image :</Form.Label>
+                      <Col sm={10}>
+                        <Form.Control type="file"  name="img"
+                        onChange={handleInput}
+                          
+                       />
+                      </Col>
+                      </Form.Group>  
+                      {state.message && <h6 className={classes.mess}>{state.message}</h6>}            
+                      <div>
+                 {state.userImage && (<img src={state.userImage}  width="10%" height="10%" alt="preview" />)}
+               </div>
+             
+                    <Form.Group as={Row} controlId="formHorizontaladdress">
+                      <Form.Label className={classes.lab} column lg={2}>
+                     From:
+                      </Form.Label>
+                      <Col sm={10}>
+                        <Form.Control type="date" placeholder="01/01/2021" 
+                        onChange={(event)=> {
+                          setStartdate(event.target.value);
+                        }}/>
+                      </Col>
+                    </Form.Group><br/>
+
+                    <Form.Group as={Row} controlId="formHorizontaladdress">
+                      <Form.Label className={classes.lab} column lg={2}>
+                     To:
+                      </Form.Label>
+                      <Col sm={10}>
+                        <Form.Control type="date" placeholder="01/01/2021" 
+                        onChange={(event)=> {
+                          setEnddate(event.target.value);
+                        }}/>
+                      </Col>
+                    </Form.Group><br/>
+
+                  
+
+                    
+
+                                   
+
+                    
+                        <div  style={styles.button_style}>
+                       
+                        <Button  type="submit"  size='lg' >Post</Button>
+                        </div>
+           
+                </Form>
+               
+              </Paper>
+              </div>
+            </Grid>
+         
+          </Grid>
+          
+          <Box pt={4}>
+           
           </Box>
-        
+        </Container>
+       
       </main>
     </div>
+    
+
   );
 }
-

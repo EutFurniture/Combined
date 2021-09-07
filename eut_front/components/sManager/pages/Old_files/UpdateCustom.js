@@ -1,13 +1,12 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import clsx from 'clsx';
 import axios from "axios";
-import Box from '@material-ui/core/Box';
-import Link from '@material-ui/core/Link'
+
 import Form from 'react-bootstrap/Form';
 import { Button } from 'react-bootstrap';
 import { Row } from 'react-bootstrap';
 import { Col } from 'react-bootstrap';
-import {Redirect} from "react-router-dom"
+import {Redirect, useParams} from "react-router-dom"
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -33,19 +32,6 @@ import * as yup from "yup";
 
 
 import { mainListItems, Logout } from './listItems';
-
-function Copyright() {
-  return (
-    <Typography variant="body2" color="textSecondary" align="center">
-      {'Copyright © '}
-      <Link color="inherit" href="https://material-ui.com/">
-        Eut Furniture
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
 
 
 const drawerWidth = 240;
@@ -201,51 +187,78 @@ const styles = {
   }
 };
 
-const schema = yup.object().shape({
-  name: yup.string().required(),
-  email: yup.string().email().required(),
-  address: yup.string().required(),
-  phone: yup.string().max(10, "Must be 10 Digits.").min(10, "Must be 10 Digits.")
-})
 
 
-export default function AddCustomForm() {
+
+export default function UpdateCustom() {
+  
+  const dateOnly = (d) => {
+    const date = new Date(d);
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    return `${year} - ${month} - ${day}`;
+  };
+
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
  
+  
+  
+ const {customer_id} = useParams();
+ const [Dt, setDt] = useState([])
+ const [newName, setNewName] = useState();
+ const [newRole, setNewRole] = useState();
+ const [newEmail,setNewEmail]=useState();
+ const [newAddress,setNewAddress]=useState();
+ const [newNIC,setNewNIC]=useState();
+ const [newPhone,setNewPhone]=useState();
+ const [newJob_start_date,setNewJob_start_date]=useState();
 
-  const { register, handleSubmit, formState: { errors } } = useForm({
-    resolver: yupResolver(schema),
-});
+const [employeeList, setEmployeeList] = useState([]);
 
-  
-  
-  
-  const addCustomer = (data)=>{
-  
-     axios.post('http://localhost:3001/sales_create',{
-       name:data.name,
-       email:data.email,
-       phone:data.phone,
-       address:data.address,
-      
-       
-  
-      }).then((response)=>{
-        if(response.data.message){
-          alert('Employee added successfully')
-          window.location.href='/sManager/pages/ManageCustom'
-         
-      }
-       });
-       console.log(data)
+  useEffect(()=>{
+    axios.get("http://localhost:3001/sales_employees").then((response)=>{
+      setEmployeeList(response.data)
+    })
+  },[]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+        const response = await axios.get('http://localhost:3001/sales_view', {
+            params: {
+               customer_id: customer_id,
+                
+            }
+        });
+  /*
+        setDt(response.data[0]);
+        setNewName(response.data[0].name)
+          setNewEmail(response.data[0].email)
+          setNewPhone(response.data[0].phone)
+          setNewAddress(response.data[0].address)
+      */
+
+           console.log(response.data[0]);
+    };
+    fetchData();
+  }, [customer_id]);
+
+  const updateEmployee = (customer_id) => {
+    axios.put("http://localhost:3001/sales_updateEmployee", {name: newName,email:newEmail,address:newAddress,phone:newPhone,customer_id:customer_id}).then(
+      (response) => {
+        
+        setEmployeeList(Dt.map((val) => {
+          return val.customer_id === customer_id ? {customer_id: val.customer_id, name: val.name, email:val.email,address:val.address,phone:val.phone,
+            name: newName, email:newEmail, address:newAddress, phone:newPhone} : val
+          
+        }))
+     }
+    )
+    alert("Employee Edited successfully")  
   };
-  
-  
 
   
-  
-
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -262,7 +275,6 @@ export default function AddCustomForm() {
     setAnchorEl(null);
   };
 
- // const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
   const[isAuth,setIsAuth]=useState(true);
 
@@ -340,76 +352,78 @@ export default function AddCustomForm() {
         <Grid  container spacing={10}>
         {/* Recent Orders */}
         <Grid item xs={11}  direction="row"  >
-        
+      
         <div >
            <Paper className={classes.paper}>
                
            <Typography component="h1" variant="h6" color="inherit" align="center" width="100%" noWrap className={classes.title}>
-                  <strong> Add New Customer </strong>
+                  <strong> Update Customer Details </strong>
                 </Typography><br/>
-        
-                 
-                 
-                <Form onSubmit={handleSubmit(addCustomer)}>
+
+                <Form >
                 
-                    <Form.Group as={Row} controlId="formHorizontalName">
-                      <Form.Label column lg={2} >
-                        Full Name :
-                      </Form.Label>
-                      <Col >
-                        <Form.Control type="text"   {...register('name')} required />
-                        {errors.name?.message && <p className=" errormessage" >{errors.name?.message}</p>}                        
-                      </Col>
-                    </Form.Group><br/>
-                    
+                <Form.Group as={Row} controlId="formHorizontalName">
+                  <Form.Label column lg={2} >
+                    Name :
+                  </Form.Label>
+                  <Col >
+                    <Form.Control type="text"  defaultValue={newName}
+       onChange={(event)=> {
+         setNewName(event.target.value);
+       }}  required />                     
+                  </Col>
+                </Form.Group><br/>
 
-                    <Form.Group as={Row} controlId="formHorizontalEmail">
-                      <Form.Label column lg={2} >
-                       Email :
-                      </Form.Label>
-                      <Col >
-                        <Form.Control type="text"   {...register('email')} required />
-                        {errors.email?.message && <p className=" errormessage" >{errors.email?.message}</p>}                        
-                      </Col>
-                    </Form.Group><br/>
+                
 
-                    <Form.Group as={Row} controlId="formHorizontalAddress">
-                      <Form.Label column lg={2} >
-                       Address :
-                      </Form.Label>
-                      <Col >
-                        <Form.Control type="text"   {...register('address')} required />
-                        {errors.address?.message && <p className=" errormessage" >{errors.address?.message}</p>}                        
-                      </Col>
-                    </Form.Group><br/>
+                <Form.Group as={Row} controlId="formHorizontalEmail">
+                  <Form.Label column lg={2} >
+                   Email :
+                  </Form.Label>
+                  <Col >
+                    <Form.Control type="text" defaultValue={newEmail}  onChange={(event)=> {
+         setNewEmail(event.target.value);
+       }} required />                     
+                  </Col>
+                </Form.Group><br/>
 
-                    <Form.Group as={Row} controlId="formHorizontalPhoneNo">
-                      <Form.Label column lg={2} >
-                       Phone No :
-                      </Form.Label>
-                      <Col >
-                        <Form.Control type="text"   {...register('phone')} required />
-                        {errors.phone?.message && <p className=" errormessage" >{errors.phone?.message}</p>}                        
-                      </Col>
-                    </Form.Group><br/>
+                <Form.Group as={Row} controlId="formHorizontalAddress">
+                  <Form.Label column lg={2} >
+                   Address :
+                  </Form.Label>
+                  <Col >
+                    <Form.Control type="text" defaultValue={newAddress}  onChange={(event)=> {
+         setNewAddress(event.target.value);
+       }} required />                   
+                  </Col>
+                </Form.Group><br/>
 
-                    <div align="center">
-                     <Button  style={{fontSize:'20px',width:'200px'}} type="submit"  >Submit</Button>
-                     </div> 
-                   
-             </Form>
+              
 
-
+                <Form.Group as={Row} controlId="formHorizontalPhoneNo">
+                  <Form.Label column lg={2} >
+                   Phone No :
+                  </Form.Label>
+                  <Col >
+                    <Form.Control type="text" defaultValue={newPhone}  onChange={(event)=> {
+         setNewPhone(event.target.value);
+       }} required />                   
+                  </Col>
+                </Form.Group><br/>
+                <div align="center">
+                 <Button  style={{fontSize:'20px',width:'200px'}} type="submit" onClick={() => {updateEmployee(Dt.customer_id)}} >Update</Button>
+                 </div> 
+               
+         </Form>
+                
   
     
           </Paper>
          </div>
+        
         </Grid>
 
       </Grid>
-      <Box pt={4}>
-            <Copyright />
-          </Box>
         </Container>
       </main>
     </div>

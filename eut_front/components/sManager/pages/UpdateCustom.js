@@ -208,13 +208,10 @@ export default function UpdateCustom() {
  const {customer_id} = useParams();
  const [Dt, setDt] = useState([])
  const [newName, setNewName] = useState();
- const [newRole, setNewRole] = useState();
  const [newEmail,setNewEmail]=useState();
  const [newAddress,setNewAddress]=useState();
- const [newNIC,setNewNIC]=useState();
  const [newPhone,setNewPhone]=useState();
- const [newJob_start_date,setNewJob_start_date]=useState();
-
+ 
 const [employeeList, setEmployeeList] = useState([]);
 
   useEffect(()=>{
@@ -231,26 +228,26 @@ const [employeeList, setEmployeeList] = useState([]);
                 
             }
         });
-  /*
+  
         setDt(response.data[0]);
-        setNewName(response.data[0].name)
+        setNewName(response.data[0].fname)
           setNewEmail(response.data[0].email)
           setNewPhone(response.data[0].phone)
           setNewAddress(response.data[0].address)
-      */
+      
 
-           console.log(response.data[0]);
+           //console.log(response.data[0]);
     };
     fetchData();
   }, [customer_id]);
 
   const updateEmployee = (customer_id) => {
-    axios.put("http://localhost:3001/sales_updateEmployee", {name: newName,email:newEmail,address:newAddress,phone:newPhone,customer_id:customer_id}).then(
+    axios.put("http://localhost:3001/sales_updateEmployee", {fname: newName,email:newEmail,address:newAddress,phone:newPhone,customer_id:customer_id}).then(
       (response) => {
         
         setEmployeeList(Dt.map((val) => {
-          return val.customer_id === customer_id ? {customer_id: val.customer_id, name: val.name, email:val.email,address:val.address,phone:val.phone,
-            name: newName, email:newEmail, address:newAddress, phone:newPhone} : val
+          return val.customer_id === customer_id ? {customer_id: val.customer_id, fname: val.fname, email:val.email,address:val.address,phone:val.phone,
+            fname: newName, email:newEmail, address:newAddress, phone:newPhone} : val
           
         }))
      }

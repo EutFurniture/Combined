@@ -202,10 +202,12 @@ const styles = {
 };
 
 const schema = yup.object().shape({
-  name: yup.string().required(),
-  email: yup.string().email().required(),
-  address: yup.string().required(),
-  phone: yup.string().max(10, "Must be 10 Digits.").min(10, "Must be 10 Digits.")
+  customer_id: yup.string().required(),
+  o_date: yup.string().required(),
+  order_last_date: yup.string().required(),
+  order_description: yup.string().required(),
+  total_price: yup.string().required(),
+  
 })
 
 
@@ -223,29 +225,23 @@ export default function AddCustomForm() {
   
   const addCustomer = (data)=>{
   
-     axios.post('http://localhost:3001/sales_create',{
-       name:data.name,
-       email:data.email,
-       phone:data.phone,
-       address:data.address,
+     axios.post('http://localhost:3001/sales_create_order',{
+       customer_id: data.customer_id, 
+       o_date: data.o_date, 
+       order_last_date: data.order_last_date, 
+       order_description: data.order_description, 
+       total_price: data.total_price
       
-       
-  
       }).then((response)=>{
         if(response.data.message){
-          alert('Employee added successfully')
-          window.location.href='/sManager/pages/ManageCustom'
+          alert('Order added successfully')
+          //window.location.href='/sManager/pages/ManageOrders'
          
       }
        });
        console.log(data)
   };
   
-  
-
-  
-  
-
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -345,7 +341,7 @@ export default function AddCustomForm() {
            <Paper className={classes.paper}>
                
            <Typography component="h1" variant="h6" color="inherit" align="center" width="100%" noWrap className={classes.title}>
-                  <strong> Add New Customer </strong>
+                  <strong> Add External Order </strong>
                 </Typography><br/>
         
                  
@@ -354,42 +350,55 @@ export default function AddCustomForm() {
                 
                     <Form.Group as={Row} controlId="formHorizontalName">
                       <Form.Label column lg={2} >
-                        Full Name :
+                        Customer ID :
                       </Form.Label>
                       <Col >
-                        <Form.Control type="text"   {...register('name')} required />
-                        {errors.name?.message && <p className=" errormessage" >{errors.name?.message}</p>}                        
+                        <Form.Control type="text"   {...register('customer_id')} required />
+                        {errors.customer_id?.message && <p className=" errormessage" >{errors.customer_id?.message}</p>}                        
                       </Col>
                     </Form.Group><br/>
                     
 
                     <Form.Group as={Row} controlId="formHorizontalEmail">
                       <Form.Label column lg={2} >
-                       Email :
+                     Date :
                       </Form.Label>
                       <Col >
-                        <Form.Control type="text"   {...register('email')} required />
-                        {errors.email?.message && <p className=" errormessage" >{errors.email?.message}</p>}                        
+                        <Form.Control type="date"   {...register('o_date')} required />
+                        {errors.o_date?.message && <p className=" errormessage" >{errors.o_date?.message}</p>}                        
                       </Col>
                     </Form.Group><br/>
 
                     <Form.Group as={Row} controlId="formHorizontalAddress">
                       <Form.Label column lg={2} >
-                       Address :
+                      Due Date :
                       </Form.Label>
                       <Col >
-                        <Form.Control type="text"   {...register('address')} required />
-                        {errors.address?.message && <p className=" errormessage" >{errors.address?.message}</p>}                        
+                        <Form.Control type="date"   {...register('order_last_date')} required />
+                        {errors.order_last_date?.message && <p className=" errormessage" >{errors.order_last_date?.message}</p>}                        
                       </Col>
                     </Form.Group><br/>
 
                     <Form.Group as={Row} controlId="formHorizontalPhoneNo">
                       <Form.Label column lg={2} >
-                       Phone No :
+                       Order Description :
                       </Form.Label>
                       <Col >
-                        <Form.Control type="text"   {...register('phone')} required />
-                        {errors.phone?.message && <p className=" errormessage" >{errors.phone?.message}</p>}                        
+                        <Form.Control type="text"   {...register('order_description')} required />
+                        {errors.order_description?.message && <p className=" errormessage" >{errors.order_description?.message}</p>}                        
+                      </Col>
+                    </Form.Group><br/>
+
+
+
+
+                    <Form.Group as={Row} controlId="formHorizontalPhoneNo">
+                      <Form.Label column lg={2} >
+                       Total Price :
+                      </Form.Label>
+                      <Col >
+                        <Form.Control type="text"   {...register('total_price')} required />
+                        {errors.total_price?.message && <p className=" errormessage" >{errors.total_price?.message}</p>}                        
                       </Col>
                     </Form.Group><br/>
 

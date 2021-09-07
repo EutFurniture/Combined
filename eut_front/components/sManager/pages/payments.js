@@ -1,6 +1,7 @@
 import React from 'react';
 import clsx from 'clsx';
-
+import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+import useState from "react";
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Drawer from '@material-ui/core/Drawer';
@@ -19,12 +20,13 @@ import Link from '@material-ui/core/Link';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import NotificationsIcon from '@material-ui/icons/Notifications';
-
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 
 import { mainListItems, Logout } from './listItems';
 import Chart from './Chart';
 import Deposits from './Deposits';
-import Orders from './Orders';
+
 
 import PaymentUI from './PaymentUI';
 
@@ -141,6 +143,17 @@ export default function Dashboard() {
   };
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const[isAuth,setIsAuth]=React.useState(true);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+
+
   return (
     <div className={classes.root}>
       <CssBaseline />
@@ -158,11 +171,25 @@ export default function Dashboard() {
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
             <strong>SALES MANAGER</strong>
           </Typography>
-          <IconButton color="inherit" href="/sManager/pages/Notification">
+          <IconButton color="inherit" fontSize="inherit">
             <Badge badgeContent={4} color="secondary">
               <NotificationsIcon />
             </Badge>
           </IconButton>
+          <IconButton color="inherit" fontSize="inherit">
+           <AccountCircleIcon   onClick={handleClick}/>
+  
+          </IconButton>
+          <Menu
+        id="simple-menu"
+        anchorEl={anchorEl}
+        keepMounted
+        open={Boolean(anchorEl)}
+        onClose={handleClose}
+      >
+        <MenuItem onClick={handleClose}>Profile</MenuItem>
+        <MenuItem onClick={()=>setIsAuth(false)}>Logout</MenuItem>
+      </Menu>
         </Toolbar>
       </AppBar>
       <div style={styles.side}>

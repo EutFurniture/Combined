@@ -1,8 +1,13 @@
-import React, { useState, useEffect } from "react";
-import Axios from 'axios';
-import { useParams ,Link} from "react-router-dom";
-import {Table} from 'react-bootstrap';
+import React, { useState,useEffect } from "react";
 import clsx from 'clsx';
+import axios from "axios";
+
+import Form from 'react-bootstrap/Form';
+import { Button } from 'react-bootstrap';
+import { Row } from 'react-bootstrap';
+import { Col } from 'react-bootstrap';
+import {Redirect, useParams} from "react-router-dom"
+import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Drawer from '@material-ui/core/Drawer';
@@ -11,31 +16,23 @@ import Toolbar from '@material-ui/core/Toolbar';
 import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
+import Badge from '@material-ui/core/Badge';
 import Container from '@material-ui/core/Container';
 import Paper from '@material-ui/core/Paper';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
+import NotificationsIcon from '@material-ui/icons/Notifications';
 import Grid from '@material-ui/core/Grid';
 import Divider from '@material-ui/core/Divider';
+import { useForm } from "react-hook-form";
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
-import {Redirect} from "react-router-dom";
-import ViewConDelivery from './ViewConDelivery'
-import { DpListItems, Logout } from './dplistItems';
-import 'bootstrap/dist/css/bootstrap.min.css';
-function Copyright() {
-  return (
-    <Typography variant="body2" color="textSecondary" align="center">
-      {'Copyright © '}
-      <Link color="inherit" href="https://material-ui.com/">
-        Eut Furniture
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
+ import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+
+
+import { mainListItems, Logout } from './listItems';
+
 
 const drawerWidth = 240;
 
@@ -119,6 +116,7 @@ const useStyles = makeStyles((theme) => ({
     paddingTop: theme.spacing(4),
     paddingBottom: theme.spacing(4),
     marginTop:'20px',
+    marginLeft:'40px',
   },
   paper: {
     padding: theme.spacing(2),
@@ -134,11 +132,51 @@ const useStyles = makeStyles((theme) => ({
       height:'50px',
       width:'160px',
       borderRadius:'5px',
-      marginRight:'50px',
+      marginRight:'10px',
       textDecoration:'none',
       textAlign:'center',
       paddingTop:'10px'
   },
+  addcategorybox:{
+    width: '1100px',
+    height:'120px',
+    backgroundColor: '#fff',
+    marginLeft: '30px',
+    display:'flex',
+    //boxShadow:'5px 1px 2px 2px '
+    
+  },
+  categorybtn:{
+      border:0,
+      backgroundColor:'#9bddff',
+      width:'800px',
+      height:'40px',
+      marginTop:'40px',
+      marginLeft:'30px',
+      fontSize:'20px',
+      borderRadius:'5px'
+
+  },
+  addcategory:{
+    height:'40px'
+  },
+  categoryimage:{
+    height:'500px',
+    width:'1100px'
+},
+btn:{
+    color:'white',
+    fontSize:'18px',
+    width:'150px',
+    height:'40px',
+    backgroundColor:'blue',
+    border:'none',
+    borderRadius:'5px'
+},
+addproducts:{
+    display:'flex',
+},
+
   
 
 }));
@@ -146,78 +184,101 @@ const useStyles = makeStyles((theme) => ({
 const styles = {
   side:{
     backgroundColor:'rgb(37, 37, 94)',
-  },
-  updatebtn:{
-    backgroundColor: '#04B404',
-    width: '200px',
-    textDecoration: 'none',
-    height: '100px',
-    marginRight: '5px',
-    fontSize: '17px',
-    paddingLeft: '15px',
-    paddingRight: '15px',
-    paddingTop: '5px',
-    paddingBottom: '5px',
-    color: 'white',
-    borderRadius: '7px',
-  }  
+  }
 };
 
 
-export default function ConfirmDelivery(userData) {
+
+
+export default function UpdateOrders() {
+  
+  const dateOnly = (d) => {
+    const date = new Date(d);
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    return `${year} - ${month} - ${day}`;
+  };
+
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
-  const [user,setUser]=useState([])
-  const { employee_id } = useParams();
-   useEffect(() => {
-   
+ 
+  
+  
+ const {order_id} = useParams();
+ const [Dt, setDt] = useState([])
+ const [newDate, setNewDate] = useState();
+ const [newName, setNewName] = useState();
+ const [newEmail,setNewEmail]=useState();
+ const [newAddress,setNewAddress]=useState();
+ const [newPhone,setNewPhone]=useState();
+
+
+ 
+const [employeeList, setEmployeeList] = useState([]);
+
+  useEffect(()=>{
+    axios.get("http://localhost:3001/sales_employeeDetail").then((response)=>{
+      setEmployeeList(response.data)
+    })
+  },[]);
+
+  useEffect(() => {
     const fetchData = async () => {
-
-      
-     
-      const response = await Axios.get('http://localhost:3001/viewConfirmDelivery', {
+        const response = await axios.get('http://localhost:3001/sales_viewOrder', {
             params: {
-          employee_id: userData.userData.id
-           }
+               order_id: order_id,
+                
+            }
         });
-     
-        setUser(response.data);
+  
+        setDt(response.data[0]);
+        setNewDate(response.data[0].order_last_date)
+       
 
-        console.log(employee_id);
-      
-    }
-  fetchData();
-  }, [employee_id]);      
+          // console.log(response.data[0]);
+    };
+    fetchData();
+  }, [order_id]);
 
+  
+  const updateEmployee = (order_id) => {
+    axios.put("http://localhost:3001/sales_updateOrderDate", {order_last_date: newDate, order_id:order_id}).then(
+      (response) => {
+        
+        setEmployeeList(Dt.map((val) => {
+          return val.order_id === order_id ? {order_id: val.order_id, order_last_date: val.order_last_date,
+          order_last_date:newDate} : val
+          
+        }))
+     }
+    )
+    alert("Date Updated successfully")  
+  };
 
-
+  
   const handleDrawerOpen = () => {
     setOpen(true);
   };
   const handleDrawerClose = () => {
     setOpen(false);
   };
-  const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
-
-
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   const handleClick = (event) => {
-      setAnchorEl(event.currentTarget);
+    setAnchorEl(event.currentTarget);
   };
-  
+
   const handleClose = () => {
-      setAnchorEl(null);
+    setAnchorEl(null);
   };
-  
-   // const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
-  
+
+
   const[isAuth,setIsAuth]=useState(true);
-  
+
   if(!isAuth){
-      return <Redirect to="" />
+    return <Redirect to="" />
   }
-  
 
   return (
     <div className={classes.root}>
@@ -234,8 +295,15 @@ export default function ConfirmDelivery(userData) {
             <MenuIcon />
           </IconButton>
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-            <b>DELIVERY PERSON</b>
+            <b>Sales Manager</b>
           </Typography>
+          <IconButton color="inherit">
+            <Badge badgeContent={4} color="secondary">
+              <NotificationsIcon />
+            </Badge>
+          </IconButton>
+
+         
           <IconButton color="inherit" fontSize="inherit">
            <AccountCircleIcon   onClick={handleClick}/>
   
@@ -247,11 +315,9 @@ export default function ConfirmDelivery(userData) {
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-        <MenuItem component={Link} to="/dPerson/DpProfile">Profile</MenuItem>
-      <MenuItem component={Link} to="/Calender">Calendar</MenuItem>
+        <MenuItem onClick={handleClose}>Profile</MenuItem>
         <MenuItem onClick={()=>setIsAuth(false)}>Logout</MenuItem>
       </Menu>
-
 
         </Toolbar>
         
@@ -270,71 +336,55 @@ export default function ConfirmDelivery(userData) {
           </IconButton>
         </div>
         <Divider/>
-        <List style={{backgroundColor: 'rgb(37, 37, 94)', color:'white'}}>{DpListItems}</List>
+        <List style={{backgroundColor: 'rgb(37, 37, 94)', color:'white'}}>{mainListItems}</List>
         <Divider/>
-        <List style={{backgroundColor: 'rgb(37, 37, 94)', color:'white'}}>{Logout}</List>
+        <List style={{backgroundColor: 'rgb(37, 37, 94)', color:'red'}} onClick={()=>setIsAuth(false)}>{Logout}</List>
         <Divider/>
       </Drawer>
       </div>
      
       <main style={{backgroundColor: '#f0f8ff'}} className={classes.content}>
         <div className={classes.appBarSpacer} />
-        <Container maxWidth="lg" className={classes.container}>
+        <Container  maxWidth="lg" className={classes.container}>
         
-        <Grid container spacing={3}>
+        <Grid  container spacing={10}>
         {/* Recent Orders */}
-        <Grid item xs={12}  direction="row"  >
-        
+        <Grid item xs={11}  direction="row"  >
+      
         <div >
-        
            <Paper className={classes.paper}>
                
-                <Typography  component="h1" variant="h6" color="inherit" align="center" width="100%" noWrap className={classes.title}>
-                  <h4> DETAILS OF DELIVERIES</h4>
-                </Typography>
-               
-                <div ><br/>
-                <div className='box-main'>
-                           
-                </div>
-        <Table striped bordered hover responsive>
-        <thead className="tableheading">
-          <tr>
-             <th scope="col">Order ID</th>
-             <th scope="col">Order Status</th>
-             <th scope='col'>Action</th>
-          </tr>
-        </thead> 
-     
-       <tbody className="tablebody">
-       {user.map(item=>
-                <tr key={item.employee_id}>
-                <td align="center">{item.order_id}</td>
-                <td align="center">{item.status}</td>
-                <td align="center">
-                <Link style={styles.updatebtn} to={location=> `/dPerson/UpdateConDeliveryRoute/${item.order_id}`}>Click to Confirm </Link>
-                </td>
+           <Typography component="h1" variant="h6" color="inherit" align="center" width="100%" noWrap className={classes.title}>
+                  <strong> Update Order Details </strong>
+                </Typography><br/>
 
-     </tr>
- )}
-                            
-   
-        </tbody> 
-      </Table>
+                <Form >
+                 <Form.Group as={Row} controlId="formHorizontalPhoneNo">
+                  <Form.Label column lg={2} >
+                   Due Date :
+                  </Form.Label>
+                  <Col >
+                    <Form.Control type="date" defaultValue={newDate}  onChange={(event)=> {
+         setNewDate(event.target.value);
+       }} required />                   
+                  </Col>
+                </Form.Group><br/>
+                <div align="center">
+                 <Button  style={{fontSize:'20px',width:'200px'}} type="submit" onClick={() => {updateEmployee(Dt.order_id)}} >Update</Button>
+                 </div> 
+               
+         </Form>
+                
+  
     
-   </div>
-                     
           </Paper>
-          </div>
+         </div>
+        
         </Grid>
 
       </Grid>
         </Container>
-        <Copyright/>
       </main>
     </div>
   );
 }
-
-
- 

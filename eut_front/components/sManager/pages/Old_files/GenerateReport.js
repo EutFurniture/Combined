@@ -5,10 +5,6 @@ import {Table} from 'react-bootstrap';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import CategoryChart from '../../charts/CategoryChart';
-import DoughnutChart from '../../charts/DoughnutChart';
-import CustomerChart from '../../charts/CustomerChart';
-
-import OrderChart from '../../charts/ApexChart';
 import Chart from "react-apexcharts";
 
 import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
@@ -45,8 +41,8 @@ import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import {Bar, Pie, Doughnut,Line} from 'react-chartjs-2'
 import {userData} from "../../charts/dummydata"
 import { mainListItems, Logout } from './listItems';
-//import '../css/Dashboard.css'
-//import CustomizeOrder from './CustomizeOrder'
+import '../css/Dashboard.css'
+import CustomizeOrder from './CustomizeOrder'
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
@@ -304,7 +300,7 @@ const count=customercount.map(record=>record.count);
             <MenuIcon />
           </IconButton>
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-            <b>Sales Manager</b>
+            <b>ADMIN</b>
           </Typography>
           <IconButton color="inherit">
             <Badge badgeContent={4} color="secondary">
@@ -368,7 +364,7 @@ const count=customercount.map(record=>record.count);
                <Grid item xs={12} style={{marginTop:'10px'}}>
               <Paper className={fixedHeightPaper} >
               
-              
+              <CustomizeOrder/>
               </Paper>
               </Grid>
 
@@ -452,10 +448,35 @@ const count=customercount.map(record=>record.count);
             
             </Grid>
             <div style={{display:'flex',marginTop:'10px'}}>
-            <Grid item xs={6} style={{marginLeft:'0px'}}>
+            <Grid item xs={6} >
+           
               <Paper style={{height:'430px'}} >
-              <h2 style={{marginLeft:'20px',paddingTop:'10px'}}><b></b></h2>
-                <DoughnutChart />
+              <h2 style={{marginLeft:'20px',paddingTop:'10px'}}><b>Categories</b></h2>
+                          
+                          <Chart 
+            options={{
+                chart: {
+                    width: 300,
+                    type: 'pie',
+                  },
+                  labels: cat,
+                  responsive: [{
+                    breakpoint: 480,
+                    options: {
+                      chart: {
+                        width: 150
+                      },
+                      legend: {
+                        position: 'bottom'
+                      }
+                    }
+                  }] }
+        }
+            series={arr} 
+            type="pie"
+            width={500}
+             />
+     
               </Paper>
             </Grid>
             
@@ -463,40 +484,12 @@ const count=customercount.map(record=>record.count);
 
           <Grid item xs={6} style={{marginLeft:'20px'}}>
               <Paper style={{height:'430px'}} >
-              <h2 style={{marginLeft:'20px',paddingTop:'10px'}}><b></b></h2>
-                <CustomerChart />
-              </Paper>
-            </Grid>
-
-
-            
-
-           
-          </div>
-
-          <div style={{display:'flex',marginTop:'10px'}}>
-           
-            
-          <Grid item xs={6} style={{marginLeft:'0px'}}>
-              <Paper style={{height:'430px'}} >
-              <h2 style={{marginLeft:'20px',paddingTop:'10px'}}><b></b></h2>
-                <DoughnutChart />
-              </Paper>
-            </Grid>
-
-          <Grid item xs={6} style={{marginLeft:'20px'}}>
-              <Paper style={{height:'430px'}} >
-              <h2 style={{marginLeft:'20px',paddingTop:'10px'}}><b></b></h2>
+              <h2 style={{marginLeft:'20px',paddingTop:'10px'}}><b>Delivery Status</b></h2>
                 <CategoryChart />
               </Paper>
             </Grid>
-
-
             
-
-           
-          </div>
-
+            </div>
 
           
             

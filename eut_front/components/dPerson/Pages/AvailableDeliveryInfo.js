@@ -196,7 +196,7 @@ export default function AvailableDeliveryInfo() {
             onClick={handleDrawerOpen}
             className={clsx(classes.menuButton, open && classes.menuButtonHidden)}
           >
-         <MenuItem component={Link} to="/employee/DpProfile">Profile</MenuItem>
+         <MenuItem component={Link} to="/dPerson/DpProfile">Profile</MenuItem>
         <MenuItem onClick={()=>setIsAuth(false)}>Logout</MenuItem>
         <MenuItem component={Link} to="/Calender">Calendar</MenuItem>
             <MenuIcon />

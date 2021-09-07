@@ -20,7 +20,7 @@ const AvailableDeliveryInfoRoute=()=>{
     return(
         <div>
             <Switch>
-                <Route path="/employee/AvailableDeliveryInfoRoute/:order_id">
+                <Route path="/dPerson/AvailableDeliveryInfoRoute/:order_id">
                     <AvailableDeliveryInfo/>
                 </Route>
             </Switch>
