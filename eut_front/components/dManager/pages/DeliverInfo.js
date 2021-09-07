@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import clsx from 'clsx';
 import axios from "axios";
-//import user1 from '../../../assets/user1.png'
+
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -166,11 +166,14 @@ width:'700px'
     marginBottom:'20px',   
  },
  user1:{
-     width:'100px',
-     height:'100px',
-     marginTop:'20px',
-     align:'center',
-     marginLeft:'90px'
+  width:'170px',
+  height:'250px',
+  marginTop:'20px',
+  align:'center',
+  marginLeft:'60px',
+  borderRadius:'50px',
+  borderWidth:'4px',
+  borderColor:'rgb(37, 37, 94)'
  }
 }));
 
@@ -464,7 +467,7 @@ export default function DeliverInfo() {
            <Paper className={classes.paper}>
                <div className={classes.twocolumn}>
                    <div className={classes.columnleft}>
-                        {/*<img src={user1} className={classes.user1} align='center'></img><br/><br/>*/}
+                        <img src={`/${Dt.emp_img}`} className={classes.user1} align='center'></img><br/><br/>
                         <h3 align='center'>{Dt.name}</h3>
                         <h2 align='center' >{Dt.role}</h2>
                    </div>

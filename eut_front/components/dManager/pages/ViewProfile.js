@@ -20,7 +20,16 @@ const useStyles = makeStyles((theme) => ({
     title: {
       flexGrow: 1,
     },
-    
+    user1:{
+      width:'170px',
+      height:'250px',
+      marginTop:'20px',
+      align:'center',
+      marginLeft:'60px',
+      borderRadius:'50px',
+      borderWidth:'4px',
+      borderColor:'rgb(37, 37, 94)'
+     }
    
    
   }));
@@ -42,6 +51,7 @@ const styles = {
     borderRadius: '7px',
     align:'right',
   },
+ 
   }
 
 const dateOnly = (d) => {
@@ -90,86 +100,91 @@ export default function ViewProfile() {
                     <strong> VIEW PROFILE</strong>
               </Typography>
               <br></br>
-              <div >
-               <Form >
-              <Form.Group as={Row} controlId="formHorizontalName">
-                  <Form.Label column lg={2} >
-                   Employee ID :
-                  </Form.Label>
-                  <Col >
-                  <Form.Label column lg={2} >
-                   {Dt.id}
-                  </Form.Label>
-                  </Col>
-              </Form.Group><br/>
-              <Form.Group as={Row} controlId="formHorizontalName">
-                  <Form.Label column lg={2} >
-                   Full Name :
-                  </Form.Label>
-                  <Col >
-                  <Form.Label column lg={2} >
-                  {Dt.name}
-                  </Form.Label>
-                  </Col>
-              </Form.Group><br/>
-              <Form.Group as={Row} controlId="formHorizontalName">
-                  <Form.Label column lg={2} >
-                   NIC :
-                  </Form.Label>
-                  <Col >
-                  <Form.Label column lg={2} >
-                  {Dt.NIC}
-                  </Form.Label>
-                  </Col>
-              </Form.Group><br/>
-              <Form.Group as={Row} controlId="formHorizontalName">
-                  <Form.Label column lg={2} >
-                   Email :
-                  </Form.Label>
-                  <Col >
-                  <Form.Label column lg={2} >
-                  {Dt.email} 
-                  </Form.Label>
-                  </Col>
-              </Form.Group><br/>
-              <Form.Group as={Row} controlId="formHorizontalName">
-                  <Form.Label column lg={2} >
-                   Phone Number :
-                  </Form.Label>
-                  <Col >
-                  <Form.Label column lg={2} >
-                   {Dt.phone_no} 
-                  </Form.Label>
-                  </Col>
-              </Form.Group><br/>
-              <Form.Group as={Row} controlId="formHorizontalName">
-                  <Form.Label column lg={2} >
-                   Address :
-                  </Form.Label>
-                  <Col >
-                  <Form.Label column lg={2} >
-                    {Dt.address} 
-                  </Form.Label>
-                  </Col>
-              </Form.Group><br/>
-              
-              <Form.Group as={Row} controlId="formHorizontalName">
-                  <Form.Label column lg={2} >
-                   Job start Date :
-                  </Form.Label>
-                  <Col >
-                  <Form.Label column lg={2} >
-                  {dateOnly(Dt.job_start_date)}
-                  </Form.Label>
-                  </Col>
-              </Form.Group><br/>
+              <div style={{display:"flex" , justifyContent:"space-even" , flexWrap:"wrap"}}>
+                <div>
+                  <img src={`/${Dt.emp_img}`} className={classes.user1} align='center'></img>
+                </div>
 
-              </Form> 
-            <div align="right">
-              <Link  style={styles.updatebtn} to={location=>`/EditProfileRoute/${Dt.id}`} >  Edit Profile</Link>
-            </div>
+                <div style={{width:'900px'}} >
+                    <Form >
+                    <Form.Group as={Row} controlId="formHorizontalName">
+                        <Form.Label column lg={2} >
+                        Employee ID :
+                        </Form.Label>
+                        <Col >
+                        <Form.Label column lg={2} >
+                        {Dt.id}
+                        </Form.Label>
+                        </Col>
+                    </Form.Group><br/>
+                    <Form.Group as={Row} controlId="formHorizontalName">
+                        <Form.Label column lg={2} >
+                        Full Name :
+                        </Form.Label>
+                        <Col >
+                        <Form.Label column lg={2} >
+                        {Dt.name}
+                        </Form.Label>
+                        </Col>
+                    </Form.Group><br/>
+                    <Form.Group as={Row} controlId="formHorizontalName">
+                        <Form.Label column lg={2} >
+                        NIC :
+                        </Form.Label>
+                        <Col >
+                        <Form.Label column lg={2} >
+                        {Dt.NIC}
+                        </Form.Label>
+                        </Col>
+                    </Form.Group><br/>
+                    <Form.Group as={Row} controlId="formHorizontalName">
+                        <Form.Label column lg={2} >
+                        Email :
+                        </Form.Label>
+                        <Col >
+                        <Form.Label column lg={2} >
+                        {Dt.email} 
+                        </Form.Label>
+                        </Col>
+                    </Form.Group><br/>
+                    <Form.Group as={Row} controlId="formHorizontalName">
+                        <Form.Label column lg={2} >
+                        Phone Number :
+                        </Form.Label>
+                        <Col >
+                        <Form.Label column lg={2} >
+                        {Dt.phone_no} 
+                        </Form.Label>
+                        </Col>
+                    </Form.Group><br/>
+                    <Form.Group as={Row} controlId="formHorizontalName">
+                        <Form.Label column lg={2} >
+                        Address :
+                        </Form.Label>
+                        <Col >
+                        <Form.Label column lg={2} >
+                          {Dt.address} 
+                        </Form.Label>
+                        </Col>
+                    </Form.Group><br/>
+                    
+                    <Form.Group as={Row} controlId="formHorizontalName">
+                        <Form.Label column lg={2} >
+                        Job start Date :
+                        </Form.Label>
+                        <Col >
+                        <Form.Label column lg={2} >
+                        {dateOnly(Dt.job_start_date)}
+                        </Form.Label>
+                        </Col>
+                    </Form.Group><br/>
+
+                    </Form> 
+                    <div align="right">
+                      <Link  style={styles.updatebtn} to={location=>`/EditProfileRoute/${Dt.id}`} >  Edit Profile</Link>
+                    </div>
+                  </div>
               </div>
-
               </div>
               
               
