@@ -3,7 +3,8 @@ import Chart from "react-apexcharts";
 import axios from 'axios';
 import { Table } from "react-bootstrap";
 import {Button} from "@material-ui/core"
-import {Form} from "react-bootstrap";
+import {Form, Row, Col} from "react-bootstrap";
+import Title from "./Title";
 
 const dateOnly = (d) => {
     const date = new Date(d);
@@ -139,25 +140,43 @@ const dateOnly = (d) => {
 
     return (
         <div>
-                <div style={{display:'flex'}}>
-                
-                    <p>From Date</p>
-                    <input type='date' style={{width:'400px',height:'40px',border:'none',backgroundColor:'aliceblue',paddingLeft:'20px',marginTop:'10px',marginLeft:'20px',borderRadius:'10px'}} placeholder='From Date' 
-                    onChange={(event)=> {
-                        setFromdate(event.target.value);
-                    }} >
+                <h4 align = "center"><strong>Delivery Progress Report</strong></h4>
+                <br></br><br></br>
+                <Form>
 
-                    </input>
-                    <p>To Date</p>
-                    <input type='date' style={{width:'400px',height:'40px',border:'none',backgroundColor:'aliceblue',paddingLeft:'20px',marginTop:'10px',marginLeft:'20px',borderRadius:'10px'}} placeholder='To date' 
-                    onChange={(event)=> {
-                        setTodate(event.target.value);
-                    }} >
+                    <div style={{display:'flex' , justifyContent:'space-between', flexWrap:'nowrap'}}>
+                        <div>
+                        <Form.Group as={Row} controlId="formGridfromDate">
+                        <Form.Label column lg={2}>
+                            From Date
+                        </Form.Label>
+                        <Col>
+                        <Form.Control type="date" onChange={(event)=> {setFromdate(event.target.value);}} />
+                        </Col>
+                        </Form.Group>
+                        </div>
 
-                    </input>
-                    <Button variant="contained" color="primary" onClick={()=>{Delivery()}}>Click to View</Button>
-                </div>
-
+                        <div>
+                        <Form.Group as={Row} controlId="formGridState">
+                        <Form.Label column lg={2}>
+                            To Date
+                        </Form.Label>
+                        <Col>
+                        <Form.Control type = "date" onChange={(event)=> {setTodate(event.target.value);}} />
+                        </Col>   
+                        </Form.Group> 
+                        </div>                
+                                       
+                        <div>
+                        <Button variant="contained" color="primary" onClick={()=>{Delivery()}}>Click to View</Button>
+                        </div>
+                    </div>
+                </Form>
+                   
+                <br></br>  
+                    
+               
+                <Title>Delivery Details From {from_date} To {to_date}</Title>
                 <Table striped bordered hover responsive>
                 <thead >
                     <tr>
@@ -184,7 +203,7 @@ const dateOnly = (d) => {
                 })}
                     
                 </tbody> 
-                </Table>
+                </Table><br></br>
 
                 <div className="app">
                     <div className="row">
@@ -210,8 +229,9 @@ const dateOnly = (d) => {
                         />
                         </div>
                     </div>
-                </div>
+                </div><br></br><br></br>
 
+                <Title>Cash On Delivery Payment Details From {from_date} To {to_date}</Title>
                 <Table striped bordered hover responsive>
                 <thead >
                     <tr>
@@ -237,266 +257,278 @@ const dateOnly = (d) => {
                 })}
                     
                 </tbody> 
-                </Table>
+                </Table><br></br><br></br>
 
+                
                 <div style={{display:'flex' , flexWrap:'wrap',justifyContent:'space-between'}}>
                     <div id="chart">
-                    
-                    <Chart 
-                        options={{
-                        chart: {
-                            width: 380,
-                            type: 'pie',
-                            },
-                            labels: status1,
-                            responsive: [{
-                            breakpoint: 480,
-                            options: {
-                                chart: {
-                                width: 200
+                        <Title>Delivery Status From {from_date} To {to_date}</Title>
+                        <Chart 
+                            options={{
+                            chart: {
+                                width: 380,
+                                type: 'pie',
                                 },
-                                legend: {
-                                position: 'bottom'
+                                labels: status1,
+                                responsive: [{
+                                breakpoint: 480,
+                                options: {
+                                    chart: {
+                                    width: 200
+                                    },
+                                    legend: {
+                                    position: 'bottom'
+                                    }
                                 }
-                            }
-                            }] }
-                            }
-                        series={orders1}
-                    
-                        type="pie"
-                        width={500}
-                        height={350}
-                        />
+                                }] }
+                                }
+                            series={orders1}
+                        
+                            type="pie"
+                            width={500}
+                            height={350}
+                            />
                     </div>
 
                 
 
 
-                <div id="chart">
-      
-                <Chart 
-                options={{
-                chart: {
-                type: 'donut',
-                },
-                labels: status2,
-                responsive: [{
-                breakpoint: 480,
-                options: {
-                    chart: {
-                    width: 100
-                    },
-                    legend: {
-                    position: 'bottom'
-                    }
-                }
-                }]} }
-                series={count1} 
-                
-                
-                type="donut"
-                width="500" 
-                height="350"/>
-                </div>
+                    <div id="chart">
+                            <Title>Payment Status From {from_date} To {to_date}</Title>
+                            <Chart 
+                            options={{
+                            chart: {
+                            type: 'donut',
+                            },
+                            labels: status2,
+                            responsive: [{
+                            breakpoint: 480,
+                            options: {
+                                chart: {
+                                width: 100
+                                },
+                                legend: {
+                                position: 'bottom'
+                                }
+                            }
+                            }]} }
+                            series={count1} 
+                            
+                            
+                            type="donut"
+                            width="500" 
+                            height="350"/>
+                    </div>
 
                 
                 </div>
 
             <br></br><br></br>
+
+            
+            <div style={{display:'flex' , flexWrap:'wrap',justifyContent:'space-between'}}>
+                <div>
+                    <Title>Return Details From {from_date} To {to_date}</Title>
+                    <Table striped bordered hover responsive style={{width:'500px'}}>
+                    
+                    <thead >
+                        <tr>
+                        <th scope="col">OrderId</th>
+                        <th scope="col">Return Date</th>
+                        <th scope="col">Reason</th>
+                        <th scope="col">Status</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                    {returnList.map((record)=>{
+                    return(
+                        <tr>
+                        <th scope="row">{record.order_id}</th>
+                        <td>{dateOnly(record.return_date) }</td>
+                        <td>{record.reason}</td>
+                        <td>{record.return_status}</td>
+                        
+                    </tr>
+                    )
+                    })}
+                        
+                    </tbody> 
+                    </Table>
+
+                </div>
+
+                <div>
+                    <Title>Deliver Details From {from_date} To {to_date}</Title>
+                    <Table striped bordered hover responsive style={{width:'500px'}}>
+                    <thead >
+                        <tr>
+                        <th scope="col">Deliver</th>
+                        <th scope="col">Number of Orders</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                    {deliverList.map((record)=>{
+                    return(
+                        <tr>
+                        <th scope="row">{record.name}</th>
+                        <td>{record.count}</td>
+                    </tr>
+                    )
+                    })}
+                        
+                    </tbody> 
+                    </Table>
+                </div>
+            </div>    
+            <br></br><br></br>
+
             <div style={{display:'flex' , flexWrap:'wrap',justifyContent:'space-between'}}>
 
-                <Table striped bordered hover responsive style={{width:'500px'}}>
-                <thead >
-                    <tr>
-                    <th scope="col">OrderId</th>
-                    <th scope="col">Return Date</th>
-                    <th scope="col">Reason</th>
-                    <th scope="col">Status</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                {returnList.map((record)=>{
-                return(
-                    <tr>
-                    <th scope="row">{record.order_id}</th>
-                    <td>{dateOnly(record.return_date) }</td>
-                    <td>{record.reason}</td>
-                    <td>{record.return_status}</td>
-                    
-                </tr>
-                )
-                })}
-                    
-                </tbody> 
-                </Table>
-
-                <Table striped bordered hover responsive style={{width:'500px'}}>
-                <thead >
-                    <tr>
-                    <th scope="col">Deliver</th>
-                    <th scope="col">Number of Orders</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                {deliverList.map((record)=>{
-                return(
-                    <tr>
-                    <th scope="row">{record.name}</th>
-                    <td>{record.count}</td>
-                </tr>
-                )
-                })}
-                    
-                </tbody> 
-                </Table>
-
-                
-            <br></br><br></br><br></br>
-
-            <div style={{display:'flex' , flexWrap:'wrap',justifyContent:'space-between'}}>
-
-            <div id="card">
-                <div id="chart">
-                <Chart 
-                options={{ chart: {
-                height: 350,
-                type: 'radialBar',
-                toolbar: {
-                    show: true
-                }
-                },
-                plotOptions: {
-                radialBar: {
-                    startAngle: -135,
-                    endAngle: 225,
-                    hollow: {
-                    margin: 0,
-                    size: '70%',
-                    background: '#fff',
-                    image: undefined,
-                    imageOffsetX: 0,
-                    imageOffsetY: 0,
-                    position: 'front',
-                    dropShadow: {
-                        enabled: true,
-                        top: 3,
-                        left: 0,
-                        blur: 4,
-                        opacity: 0.24
-                    }
-                    },
-                    track: {
-                    background: '#fff',
-                    strokeWidth: '67%',
-                    margin: 0, // margin is in pixels
-                    dropShadow: {
-                        enabled: true,
-                        top: -3,
-                        left: 0,
-                        blur: 4,
-                        opacity: 0.35
-                    }
-                    },
-                
-                    dataLabels: {
-                    show: true,
-                    name: {
-                        offsetY: -10,
-                        show: true,
-                        color: '#888',
-                        fontSize: '17px'
-                    },
-                    value: {
-                        formatter: function(val) {
-                        return parseInt(val);
+                <div id="card">
+                    <div id="chart">
+                        <Title>Return Status From {from_date} To {to_date}</Title>
+                        <Chart 
+                        options={{ chart: {
+                        height: 350,
+                        type: 'radialBar',
+                        toolbar: {
+                            show: true
+                        }
                         },
-                        color: '#111',
-                        fontSize: '36px',
-                        show: true,
-                    }
-                    }
-                }
-                },
-                fill: {
-                type: 'gradient',
-                gradient: {
-                    shade: 'dark',
-                    type: 'horizontal',
-                    shadeIntensity: 0.5,
-                    gradientToColors: ['#ABE5A1'],
-                    inverseColors: true,
-                    opacityFrom: 1,
-                    opacityTo: 1,
-                    stops: [0, 100]
-                }
-                },
-                stroke: {
-                lineCap: 'round'
-                },
-                labels: ['Return Percentage'],
-            }} 
-                series={[returncount] } 
-                type="radialBar" 
-                height={350} 
-                width={500}
-                />
+                        plotOptions: {
+                        radialBar: {
+                            startAngle: -135,
+                            endAngle: 225,
+                            hollow: {
+                            margin: 0,
+                            size: '70%',
+                            background: '#fff',
+                            image: undefined,
+                            imageOffsetX: 0,
+                            imageOffsetY: 0,
+                            position: 'front',
+                            dropShadow: {
+                                enabled: true,
+                                top: 3,
+                                left: 0,
+                                blur: 4,
+                                opacity: 0.24
+                            }
+                            },
+                            track: {
+                            background: '#fff',
+                            strokeWidth: '67%',
+                            margin: 0, // margin is in pixels
+                            dropShadow: {
+                                enabled: true,
+                                top: -3,
+                                left: 0,
+                                blur: 4,
+                                opacity: 0.35
+                            }
+                            },
+                        
+                            dataLabels: {
+                            show: true,
+                            name: {
+                                offsetY: -10,
+                                show: true,
+                                color: '#888',
+                                fontSize: '17px'
+                            },
+                            value: {
+                                formatter: function(val) {
+                                return parseInt(val);
+                                },
+                                color: '#111',
+                                fontSize: '36px',
+                                show: true,
+                            }
+                            }
+                        }
+                        },
+                        fill: {
+                        type: 'gradient',
+                        gradient: {
+                            shade: 'dark',
+                            type: 'horizontal',
+                            shadeIntensity: 0.5,
+                            gradientToColors: ['#ABE5A1'],
+                            inverseColors: true,
+                            opacityFrom: 1,
+                            opacityTo: 1,
+                            stops: [0, 100]
+                        }
+                        },
+                        stroke: {
+                        lineCap: 'round'
+                        },
+                        labels: ['Return Percentage'],
+                        }} 
+                        series={[returncount] } 
+                        type="radialBar" 
+                        height={350} 
+                        width={500}
+                        />
+                    </div>
                 </div>
-                </div>
-            </div>
+            
             
 
-            <div className="app">
-                <div className="row">
-                <div className="mixed-chart">
-                    <Chart
-                    options={ {
-                        chart: {
-                        height: 350,
-                        type: 'bar',
-                        events: {
-                            click: function(chart, w, e) {
-                            }
-                        }
-                        },
-                        
-                        plotOptions: {
-                        bar: {
-                            columnWidth: '45%',
-                            distributed: true,
-                        }
-                        },
-                        dataLabels: {
-                        enabled: false
-                        },
-                        legend: {
-                        show: false
-                        },
-                        
-                        xaxis: {
-                        categories: deliver,
-                        labels: {
-                            style: {
-                            
-                            fontSize: '12px'
-                            }
-                        }
-                        }
-                    }}
-                    series={[
-                        {
-                        name: "Orders",
-                        data: orders3
-                        }
-                    ]}
-                    type="bar"
-                    width="500"
-                    height="350"
-                    />
+                <div className="app">
+                    <div className="row">
+                        <div className="mixed-chart">
+                            <Title>Deliver Status From {from_date} To {to_date}</Title>
+                            <Chart
+                            options={ {
+                                chart: {
+                                height: 350,
+                                type: 'bar',
+                                events: {
+                                    click: function(chart, w, e) {
+                                    }
+                                }
+                                },
+                                
+                                plotOptions: {
+                                bar: {
+                                    columnWidth: '45%',
+                                    distributed: true,
+                                }
+                                },
+                                dataLabels: {
+                                enabled: false
+                                },
+                                legend: {
+                                show: false
+                                },
+                                
+                                xaxis: {
+                                categories: deliver,
+                                labels: {
+                                    style: {
+                                    
+                                    fontSize: '12px'
+                                    }
+                                }
+                                }
+                            }}
+                            series={[
+                                {
+                                name: "Orders",
+                                data: orders3
+                                }
+                            ]}
+                            type="bar"
+                            width="500"
+                            height="350"
+                            />
+                        </div>
+                    </div>
                 </div>
-                </div>
-            </div>
+
             </div>
 
 
