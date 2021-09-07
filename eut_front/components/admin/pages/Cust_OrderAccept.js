@@ -2,8 +2,6 @@ import React,{useEffect,useState} from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
 import clsx from 'clsx';
-import ReactNotification from 'react-notifications-component'
-import {store} from "react-notifications-component"
 import "animate.css"
 import "react-notifications-component/dist/theme.css"
 
@@ -29,19 +27,16 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
 import {Redirect} from "react-router-dom"
 import Form from 'react-bootstrap/Form';
 import { Button } from 'react-bootstrap';
 import { Row } from 'react-bootstrap';
 import { Col } from 'react-bootstrap';
 import {useParams} from 'react-router-dom'
-
 import { mainListItems, Logout } from './listItems';
 import {toast} from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+
 
 function Copyright() {
   return (
@@ -150,6 +145,11 @@ const useStyles = makeStyles((theme) => ({
   imageInput:{
     border:'none',
     borderColor:'white'
+  },
+  profile_img:{
+    width:'50px',
+    height:'50px',
+    borderRadius:'50px'
   }
   
 }));
@@ -177,28 +177,44 @@ export default function Cust_OrderAccept() {
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
   const [state,setState]=useState({file:'',product_img:'',message:'',success:false})
-  const[name,setName]=useState("");
-  const {cus_product_id} = useParams();
+  
+  const {customer_id,order_id,product_id} = useParams();
   const [Dt, setDt] = useState([])
   const [newdelivery_date, setNewDelivery] = useState();
-  const [newadvanced_payment, setNewAdvanced] = useState();
-  const [newtotal_payment, setNewTotal] = useState();
+  const [advanced, setNewAdvanced] = useState();
+  const [total, setNewTotal] = useState();
+  const[cusname,setCusName]=useState("");
+  const [Cus, setCus] = useState([])
+  const [o_id,setOID]=useState([])
+  const [p_id,setPID]=useState([])
+  const [CusProduct, setCusProduct] = useState([])
+  
 
   useEffect(() => {
     const fetchData = async () => {
-        const response = await axios.get('http://localhost:3001/ViewCusOrder', {
+        const response = await axios.get('http://localhost:3001/ViewCustomerOrder', {
             params: {
-               cus_product_id: cus_product_id,
+               customer_id:customer_id,
                 
             }
         });
   
-        setDt(response.data[0]);
-       
+   setCus(response.data[0]);
+   const response3 = await axios.get('http://localhost:3001/ViewCusOrder', {
+    params: {
+        cus_product_id:cus_product_id,  
+    }
+    
+}); 
+setCusProduct(response3.data[0]);
         
     };
     fetchData();
-  }, [cus_product_id]);
+  }, [customer_id]);
+
+  
+
+
 
   const [categoryList,setCategoryList]=useState([])
  useEffect(()=>{
@@ -210,22 +226,107 @@ export default function Cust_OrderAccept() {
  
     
     
- 
+ const [orderview,setOrderView]=useState([])
+ const {cus_product_id}=useParams();
   
-  const updateCustomized = (cus_product_id) => {
-    axios.put("http://localhost:3001/InsertCustomized", {delivery_date: newdelivery_date,advanced_payment:newadvanced_payment,total_payment:newtotal_payment,cus_product_id: cus_product_id}).then(
-      (response) => {
-        
-        setCategoryList(Dt.map((val) => {
-          return val.cus_product_id === cus_product_id ? {cus_product_id: val.cus_product_id, delivery_date: val.delivery_date, advanced_payment: val.advanced_payment,total_payment:val.total_payment, delivery_date: newdelivery_date,advanced_payment:newadvanced_payment,total_payment:newtotal_payment} : val
-          
-        }))
-     }
-    )
-   notify();
-   
+  
+  const updateCustomized = async (customer_id,cus_product_id) => {
+  const response1 = await axios.get('http://localhost:3001/ViewCusOrder1', {
+      params: {
+          cus_product_id:cus_product_id,  
+      }
+      
+  });
+
+  setOrderView(response1.data);
+const product_img=response1.data[0].design;
+const product_name=response1.data[0].product_name;
+const material=response1.data[0].material;
+const description=response1.data[0].description;
+const color = response1.data[0].color;
+
+  axios.get('http://localhost:3001/addCustomizedProduct',
+  {
+    params:{
+      product_img:product_img,
+   product_name:product_name,
+   material:material,
+   description:description,
+   price:total,
+   color:color,
+    }
+    })
+
+    axios.get("http://localhost:3001/InsertCustomizedOrder1", {
+      params:{
+      customer_id:customer_id,
+      total:total,
+      },
+      
+    })
   
   };
+
+ 
+  const { id } = useParams();
+  const [Dts, setDts] = useState([])
+ 
+ useEffect(() => {
+  const fetchData = async () => {
+      const response = await axios.get('http://localhost:3001/viewAdmin', {
+          params: {
+              id: id,  
+          }
+          
+      });
+
+      setDts(response.data[0]);
+         console.log(response.data[0]);
+
+  };
+  fetchData();
+}, [id]);
+
+
+const NotificationClick = async () => {
+  const response = await axios.get('http://localhost:3001/NoficationActive', {
+     
+      
+  });
+  notify();
+}
+
+const [cusorderCount,setCusOrderCount]=useState([])
+  useEffect(()=>{
+    axios.get("http://localhost:3001/CustomizedOrderCount").then((response)=>{
+      setCusOrderCount(response.data)
+      
+    })
+  },[])
+const customizedcount=cusorderCount.map(record=>record.count);
+console.log(customizedcount);
+
+const customToast=()=>{
+  return(
+    <div>
+      You have requested customized Order from Customer!
+      <button style={{marginLeft:'10px',border:'none',backgroundColor:'white',borderRadius:'5px'}} onClick={Cuspage}>View</button>
+    </div>
+  )
+}
+
+const Cuspage=()=>{
+window.location.href='/admin/pages/CustomizedOrders'
+}
+
+
+const notify=()=>{
+   
+  toast.info(customToast,{position:toast.POSITION.TOP_RIGHT,autoClose:false})
+
+
+    }
+ 
 
   
   
@@ -255,11 +356,7 @@ export default function Cust_OrderAccept() {
     return <Redirect to="" />
   }
 
-  const notify=()=>{
-   
-    toast.info('Your Accept message has been sent.',{position:toast.POSITION.TOP_RIGHT,autoClose:false})
   
-      }
   
 
 
@@ -281,14 +378,12 @@ export default function Cust_OrderAccept() {
             <strong>ADMIN</strong>
           </Typography>
           <IconButton color="inherit">
-            <Badge badgeContent={4} color="secondary">
-              <NotificationsIcon />
+            <Badge badgeContent={customizedcount} color="secondary">
+              <NotificationsIcon onClick={NotificationClick}/>
             </Badge>
           </IconButton>
-          <IconButton color="inherit" fontSize="inherit">
-           <AccountCircleIcon   onClick={handleClick}/>
-  
-          </IconButton>
+          
+          <img src={`/${Dts.emp_img}`} onClick={handleClick} className={classes.profile_img}/>
           <Menu
         id="simple-menu"
         anchorEl={anchorEl}
@@ -340,39 +435,17 @@ export default function Cust_OrderAccept() {
               <strong>ORDER ACCEPTANCE</strong>
               
             </Typography><br/>
-            <p style={{marginLeft:'30px',color:'red',fontSize:'18px'}}>Dear {Dt.name},<br/>Your Order has been accepted. You can continue your payment process.</p>
+            <p style={{marginLeft:'30px',color:'red',fontSize:'18px'}}>Dear {Cus.fname}, <br/>Your Order has been accepted. You can continue your payment process.</p>
              
             <Form>
              
-<Form.Group as={Row} controlId="formHorizontalName">
-     <Form.Label column lg={3} >
-      Delivery Date :
-     </Form.Label>
-     <Col >
-       <Form.Control type="text" 
-       onChange={(event)=> {
-         setNewDelivery(event.target.value);
-       }}
-       ></Form.Control>
-     </Col>
-   </Form.Group><br/>
+
+
+   
 
    <Form.Group as={Row} controlId="formHorizontalPrice">
      <Form.Label column lg={3} >
-    Advanced Payment :
-     </Form.Label>
-     <Col >
-       <Form.Control type="text"  onChange={(event)=> {
-         setNewAdvanced(event.target.value);
-       }}
-     
-       />
-     </Col>
-   </Form.Group><br/>
-
-   <Form.Group as={Row} controlId="formHorizontalPrice">
-     <Form.Label column lg={3} >
-    Total Payment :
+    Unit Price :
      </Form.Label>
      <Col >
        <Form.Control type="text"  onChange={(event)=> {
@@ -385,7 +458,7 @@ export default function Cust_OrderAccept() {
   
    
   <div align="center">
-       <Button  type="submit"   style={{fontSize:'20px',width:'200px'}} onClick={() => {updateCustomized(Dt.cus_product_id)}} >Send</Button>
+       <Button  type="submit"   style={{fontSize:'20px',width:'200px'}} onClick={() => {updateCustomized(Cus.customer_id,CusProduct.cus_product_id)}} >Send</Button>
     
        </div><br/><br/>
        <div >
@@ -412,42 +485,4 @@ export default function Cust_OrderAccept() {
   );
 }
 
-// function Home(){
-//     const handleOnClickDefault=()=>{
-        
-//   store.addNotification({
-//     title:'New card added',
-//     message:'Tom added the card',
-//     type:'success',
-//     container:"top-right",
-//     insert:"top",
-//     animationIn:["animated","fadeIn"],
-//     animation:["animated","fadeOut"],
-//     dismiss:{
-//       duration:2000,
-//       showIcon:true,
-//     },
-//     width:600
-//   })
-//     }
   
-   
-//     return(
-//       <div>
-//         <button onClick={handleOnClickDefault}>
-//           default
-//         </button>
-        
-//       </div>
-//     )
-  
-//   }
-  
-//   function MyNotify(){
-//     return(
-//       <div className="bg-primary text-white">
-//         <h1>New Card Added</h1>
-//         <h4>Tom added the card</h4>
-//       </div>
-//     )
-//   }

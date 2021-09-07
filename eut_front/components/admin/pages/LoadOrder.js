@@ -24,12 +24,12 @@ export default function LoadOrder() {
         <Table striped bordered hover responsive>
         <thead className="tableheading">
           <tr>
-            <th scope="col">ID</th>
+            <th scope="col">Product ID</th>
             <th scope="col">Product Name</th>
             <th scope='col'>Customer Name</th>
-            <th scope='col'>Price</th>
-            <th scope='col'>Delivery Date</th>
-           
+            <th scope='col'>Design</th>
+            <th scope='col'>Material</th>
+            <th scope='col'>Color</th>
             
             
             
@@ -39,7 +39,7 @@ export default function LoadOrder() {
        {orderList.filter(val=>{if(searchTerm===""){
                        return val;
                      }else if(
-                       val.product_name.toLowerCase().includes(searchTerm.toLowerCase()) || val.name.toLowerCase().includes(searchTerm.toLowerCase()))
+                       val.product_name.toLowerCase().includes(searchTerm.toLowerCase()) || val.fname.toLowerCase().includes(searchTerm.toLowerCase()))
                        
                      {
                        return val
@@ -49,9 +49,10 @@ export default function LoadOrder() {
               <tr>
               <th scope="row">{record.cus_product_id}</th>
               <td>{record.product_name}</td>
-              <td>{record.name}</td>
-              <td>{record.price}</td>
-              <td>{record.delivery_date}</td>
+              <td>{record.fname}</td>
+              <td><img src={`/${record.design}`} className='image' alt='/No Image'/></td>
+              <td>{record.material}</td>
+              <td>{record.color}</td>
              
               
             </tr>

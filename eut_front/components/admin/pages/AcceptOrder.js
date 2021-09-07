@@ -1,8 +1,11 @@
-import {toast} from 'react-toastify'
+import React,{useEffect,useState} from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
 import clsx from 'clsx';
-import React, { useState, useEffect } from "react";
+import "animate.css"
+import "react-notifications-component/dist/theme.css"
+
+
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -24,15 +27,15 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import { useParams } from 'react-router-dom';
 import {Redirect} from "react-router-dom"
 import Form from 'react-bootstrap/Form';
 import { Button } from 'react-bootstrap';
 import { Row } from 'react-bootstrap';
 import { Col } from 'react-bootstrap';
-
+import {useParams} from 'react-router-dom'
 import { mainListItems, Logout } from './listItems';
-
+import {toast} from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 
 function Copyright() {
@@ -132,12 +135,13 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     overflow: 'auto',
     flexDirection: 'column',
+    marginLeft:'200px',
+    marginTop:'70px'
    
   },
   fixedHeight: {
     height: 240,
   },
-  
   imageInput:{
     border:'none',
     borderColor:'white'
@@ -147,6 +151,7 @@ const useStyles = makeStyles((theme) => ({
     height:'50px',
     borderRadius:'50px'
   }
+  
 }));
 
 const styles = {
@@ -157,27 +162,114 @@ const styles = {
   
 };
 
+toast.configure()
 
+export default function AcceptOrder() {
 
-export default function AddProductForm() {
-
+  const dateOnly = (d) => {
+    const date = new Date(d);
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    return `${year} - ${month} - ${day}`;
+  };
 
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
   const [state,setState]=useState({file:'',product_img:'',message:'',success:false})
-  const[ product_name,setName]=useState("");
-  const[price,setPrice]=useState("");
-  const[measurement,setMeasurement]=useState("");
-  const[color,setColor]=useState("");
-  const[description,setDescription]=useState("");
-  const[quantity,setQuantity]=useState("");
-  const[material,setMaterial]=useState("");
-  const[category_id,setCategoryID]=useState("");
-  const[image,setImage]=useState("");
-  const [progressbar,setProgressbar] = useState(0);
-
-  const { id } = useParams();
+  
+  const {customer_id,order_id,product_id} = useParams();
   const [Dt, setDt] = useState([])
+  const [newdelivery_date, setNewDelivery] = useState();
+  const [advanced, setNewAdvanced] = useState();
+  const [total, setNewTotal] = useState();
+  const[cusname,setCusName]=useState("");
+  const [Cus, setCus] = useState([])
+  const [o_id,setOID]=useState([])
+  const [p_id,setPID]=useState([])
+  const [CusProduct, setCusProduct] = useState([])
+  const [pList,setPList]=useState([])
+  
+
+  useEffect(() => {
+    const fetchData = async () => {
+        const response = await axios.get('http://localhost:3001/ViewCustomerOrder', {
+            params: {
+               customer_id:customer_id,
+                
+            }
+        });
+  
+   setCus(response.data[0]);
+   const response3 = await axios.get('http://localhost:3001/ViewCusOrder', {
+    params: {
+        cus_product_id:cus_product_id,  
+    }
+    
+}); 
+setCusProduct(response3.data[0]);
+        
+    };
+    fetchData();
+  }, [customer_id]);
+
+  
+
+
+
+  const [categoryList,setCategoryList]=useState([])
+ useEffect(()=>{
+   axios.get("http://localhost:3001/loadcusorder").then((response)=>{
+     setCategoryList(response.data)
+   })
+ },[])
+
+ 
+    
+    
+ const [orderview1,setOrderView1]=useState([])
+ const {cus_product_id}=useParams();
+  
+  
+  const updateCustomized = async () => {
+    const response1 = await axios.get('http://localhost:3001/ViewCustomizedOrder1', {
+        params: {
+            cus_product_id:cus_product_id,  
+        }
+        
+    });
+    setOrderView1(response1.data);
+    const product_img=response1.data[0].design;
+    const product_name=response1.data[0].product_name;
+    const material=response1.data[0].material;
+    const description=response1.data[0].description;
+    const color=response1.data[0].color;
+
+    axios.get('http://localhost:3001/addCustomizedProduct1',
+  {
+    params:{
+    product_img:product_img,
+   product_name:product_name,
+   material:material,
+   description:description,
+   price:total,
+   color:color,
+    }
+    })
+
+    axios.get('http://localhost:3001/InsertCustomizedOrder1',{
+       params:{
+        customer_id:customer_id,
+        total:total,
+        }
+    })
+
+      
+  };
+
+ 
+  const { id } = useParams();
+  const [Dts, setDts] = useState([])
  
  useEffect(() => {
   const fetchData = async () => {
@@ -188,13 +280,12 @@ export default function AddProductForm() {
           
       });
 
-      setDt(response.data[0]);
+      setDts(response.data[0]);
          console.log(response.data[0]);
 
   };
   fetchData();
 }, [id]);
-
 
 
 const NotificationClick = async () => {
@@ -235,72 +326,10 @@ const notify=()=>{
 
 
     }
-  
-
-
-  const [typeList,setTypeList]=useState([])
-  useEffect(()=>{
-    axios.get("http://localhost:3001/loadCategoryType").then((response)=>{
-      setTypeList(response.data)
-    })
-  },[])
-  
-
-  const submitForm =() =>{
-    // e.preventDefault();
-      
-    if(state.file)
-    {
-      let formData=new FormData();
-      formData.append('file',state.file)
-
-   axios.post('http://localhost:3001/imageUpload',formData,{
-        'content-Type':'multipart/form-data',
-      })
-
-      axios.post('http://localhost:3001/addProducts', {
-     
-       
-        image:state.file.name,
-        product_name: product_name,
-         price:price,
-         material:material,
-         description:description,
-         quantity:quantity,
-         category_id:category_id,
-        
-        
-      }).then(()=>{
-        alert('Product added successfully');
-        window.location.href='/ManageProducts'
-      })
-     
-
-}else{
-  setState({
-    ...state,
-    message:'please select image'
-  })
  
-}
 
-}
-
-  const handleInput =(e) =>{
-    let reader =new FileReader();
-    let file=e.target.files[0]
-    reader.onloadend =() =>{
-      setState({
-        ...state,
-        file:file,
-        product_img:reader.result,
-        message:""
-      })
-    }
-    reader.readAsDataURL(file);
-  }
-
-
+  
+  
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -318,12 +347,17 @@ const notify=()=>{
     setAnchorEl(null);
   };
 
-   
+  
+
+    
     const[isAuth,setIsAuth]=useState(true);
 
   if(!isAuth){
     return <Redirect to="" />
   }
+
+  
+  
 
 
   return (
@@ -349,7 +383,7 @@ const notify=()=>{
             </Badge>
           </IconButton>
           
-          <img src={`/${Dt.emp_img}`} onClick={handleClick} className={classes.profile_img}/>
+          <img src={`/${Dts.emp_img}`} onClick={handleClick} className={classes.profile_img}/>
           <Menu
         id="simple-menu"
         anchorEl={anchorEl}
@@ -383,155 +417,61 @@ const notify=()=>{
         <Divider />
       </Drawer>
       </div>
-      <main className={classes.content}>
+      <main  className={classes.content}>
         <div className={classes.appBarSpacer} />
         <Container maxWidth="lg" className={classes.container}>
-          <Grid container spacing={18}>
+          <Grid container spacing={20} >
         
             
             
 
             {/* Recent Orders */}
-            <Grid item xs={11} direction="row"  >
+            <Grid item xs={10} direction="row"  >
             
-  
+           
             <div >
               <Paper className={classes.paper}>
-              <Typography component="h1" variant="h6" color="inherit"  align="center" width="100%" noWrap className={classes.title}>
-              <strong>ADD NEW PRODUCTS</strong>
+              <Typography component="h2" variant="h6" color="inherit"  align="center" width="100%" noWrap className={classes.title}>
+              <strong>ORDER ACCEPTANCE</strong>
+              
             </Typography><br/>
-            <Form  onSubmit={submitForm} >
+            <p style={{marginLeft:'30px',color:'red',fontSize:'18px'}}>Dear {Cus.fname}, <br/>Your Order has been accepted. You can continue your payment process.</p>
+             
+            <Form>
+             
 
-<Form.Group as={Row} controlId="formHorizontalName">
-     <Form.Label column lg={2} >
-      Product Name :
-     </Form.Label>
-     <Col >
-       <Form.Control type="text" placeholder="chair,table and etc" 
-       onChange={(event)=> {
-         setName(event.target.value);
-       }}
-       />
-     </Col>
-   </Form.Group><br/>
+
+   
 
    <Form.Group as={Row} controlId="formHorizontalPrice">
-     <Form.Label column lg={2} >
-     Price :
+     <Form.Label column lg={3} >
+    Unit Price :
      </Form.Label>
      <Col >
-       <Form.Control type="text" placeholder="Rs.xxxx.xx" 
-       onChange={(event)=> {
-         setPrice(event.target.value);
+       <Form.Control type="text"  onChange={(event)=> {
+         setNewTotal(event.target.value);
        }}
+     
        />
      </Col>
    </Form.Group><br/>
   
    
-
-<Form.Group as={Row} controlId="formHorizontalFile" className="mb-3">
-     <Form.Label column lg={2}>
-      Product Image :</Form.Label>
-     <Col >
-       <Form.Control type="file" name="img" className={classes.imageInput} onChange={handleInput} />
-     </Col>
-     </Form.Group>  
+  <div align="center">
+       <Button  type="submit"   style={{fontSize:'20px',width:'200px'}} onClick={() => {updateCustomized(customer_id,cus_product_id)}} >Send</Button>
     
-{state.message && <h6 className={classes.mess}>{state.message}</h6>}            
-     <div style={{marginLeft:'227px'}}>
-{state.product_img && (<img src={state.product_img}  width="20%" height="20%"  alt="preview" />)}
-</div><br/>
-
-<Form.Group as={Row} controlId="formHorizontalQuantity">
-     <Form.Label column lg={2} >
-     Material :
-     </Form.Label>
-     <Col >
-       <Form.Control type="text" placeholder="Eg: wood" 
-       onChange={(event)=> {
-         setMaterial(event.target.value);
-       }}
-       />
-     </Col>
-   </Form.Group><br/>
-
-   
-                       
-{/* <Form.Group as={Row} controlId="formHorizontalCategory">
-
-     <Form.Label column lg={2} >
-     Product Category :
-     </Form.Label>
-     <Col >
-       <Form.Control as="Select" name='type' onChange={(event)=> { setCategory(event.target.value); }}>
-       {typeList.map((record)=>{return(
-       <option value={record.name}>{record.name}</option>
-       )
-      })}
+       </div><br/><br/>
+       <div >
       
-      
-       </Form.Control>  
-     </Col>
-   </Form.Group><br/> */}
-
-   <Form.Group as={Row} controlId="formHorizontalCategory">
-
-     <Form.Label column lg={2} >
-      Category ID:
-     </Form.Label>
-     <Col >
-       <Form.Control as="Select" name='type' onChange={(event)=> { setCategoryID(event.target.value); }} >
-         <option>Select Category</option>
-       {typeList.map((record)=>{return(
-       <option value={record.category_id}>{record.category_id}-{record.name}</option>
-       )
-      })}
-      
-      
-       </Form.Control>  
-     </Col>
-   </Form.Group><br/>
-  
-
-  
-   <Form.Group as={Row} controlId="formHorizontalQuantity">
-     <Form.Label column lg={2} >
-     Quantity :
-     </Form.Label>
-     <Col >
-       <Form.Control type="text" placeholder="5" 
-       onChange={(event)=> {
-         setQuantity(event.target.value);
-       }}
-       />
-     </Col>
-   </Form.Group><br/>
-   
-   <Form.Group as={Row} controlId="formHorizontalDescription">
-     <Form.Label column lg={2} >
-     Description :
-     </Form.Label>
-     <Col >
-       <Form.Control type="text" placeholder="about the product" 
-       onChange={(event)=> {
-         setDescription(event.target.value);
-       }}
-       />
-     </Col>
-   </Form.Group><br/>
-   
-
-       <div align="center">
-       <Button  type="submit"   style={{fontSize:'20px',width:'200px'}} >Submit</Button>
        </div>
-      
 
 </Form>
-                
+{/* <Home />  */}
             
               </Paper>
+              
               </div>
+             
             </Grid>
  
           </Grid>
@@ -545,3 +485,4 @@ const notify=()=>{
   );
 }
 
+  

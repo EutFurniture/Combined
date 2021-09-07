@@ -42,7 +42,7 @@ export default function LoadCustomer() {
                      {employeeList.filter(val=>{if(searchTerm===""){
                        return val;
                      }else if(
-                       val.name.toLowerCase().includes(searchTerm.toLowerCase()) || val.email.toLowerCase().includes(searchTerm.toLowerCase())
+                       val.fname.toLowerCase().includes(searchTerm.toLowerCase()) || val.email.toLowerCase().includes(searchTerm.toLowerCase())
                        ||  val.address.toLowerCase().includes(searchTerm.toLowerCase()))
                      {
                        return val
@@ -51,10 +51,10 @@ export default function LoadCustomer() {
                        return(
                         <tr>
                          <th scope="row">{record.customer_id}</th>
-                         <td>{record.name}<br/></td>
+                         <td>{record.fname}{''} {record.lname}<br/></td>
                           <td>{record.email}</td>
                         <td>{record.address}</td>
-                        <td>{record.phone_no}</td>
+                        <td>{record.phone}</td>
                         <td>{record.points}</td>
                         <td>{record.order_frequency}</td>
                         

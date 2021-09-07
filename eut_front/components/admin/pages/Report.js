@@ -1,35 +1,41 @@
-import { Link } from "react-router-dom";
+import React,{useEffect,useState} from 'react';
 import clsx from 'clsx';
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import EmployeeView from './EmployeeView';
-import {Redirect} from "react-router-dom"
-import { useParams } from "react-router-dom";
-import {toast} from 'react-toastify'
-import "../css/manageEmployee.css"
-
+import 'bootstrap/dist/css/bootstrap.min.css';
+import {Table} from 'react-bootstrap';
+import axios from 'axios';
+import { useParams } from 'react-router-dom';
+import { Link, Switch } from "react-router-dom";
+import BarChartIcon from '@material-ui/icons/BarChart';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Drawer from '@material-ui/core/Drawer';
-
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
-import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
 import Badge from '@material-ui/core/Badge';
 import Container from '@material-ui/core/Container';
-import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
+import Grid from '@material-ui/core/Grid';
+import Divider from '@material-ui/core/Divider';
+import TimelineIcon from '@material-ui/icons/Timeline';
+import TrendingUpIcon from '@material-ui/icons/TrendingUp';
+import {Redirect} from "react-router-dom"
+import TrendingDownIcon from '@material-ui/icons/TrendingDown';
 
+
+import {Bar, Pie, Doughnut} from 'react-chartjs-2'
 
 import { mainListItems, Logout } from './listItems';
+//import {Doughnut} from '../../charts/Doughnut'
+//import Adminmain from "../main/Adminmain"
+import '../css/Dashboard.css'
 
 const drawerWidth = 240;
 
@@ -78,7 +84,7 @@ const useStyles = makeStyles((theme) => ({
     width: 60,
     borderRadius:100,
     borderColor:'white',
-  
+
   },
   drawerPaper: {
     position: 'relative',
@@ -109,21 +115,56 @@ const useStyles = makeStyles((theme) => ({
   container: {
     paddingTop: theme.spacing(4),
     paddingBottom: theme.spacing(4),
+   
   },
+  custom:{
+    display:'flex',
+    paddingLeft:'20px',
+    
+   height:'80px',
+   paddingBottom:'10px',
+    color:'black',
+    fontSize:'20px',
+   
+  
+},
   paper: {
-    padding: theme.spacing(2),
+    padding: theme.spacing(1),
     display: 'flex',
     overflow: 'auto',
     flexDirection: 'column',
   },
   fixedHeight: {
-    height: 240,
+    height: 'auto',
   },
-  profile_img:{
-    width:'50px',
-    height:'50px',
-    borderRadius:'50px'
-  }
+  maindash:{
+    display:'flex'
+  },
+  piechart:{
+      display:'flex'
+  },
+  pieleft:{
+ width:'400px',
+ marginLeft:'100px'
+  },
+  pieright:{
+    width:'400px',
+    marginLeft:'300px'
+     },
+ datesalign:{
+  display:'flex'
+},
+dateleft:{
+    marginRight:'100px',
+    marginBottom:'20px',
+    marginLeft:'30px'
+},
+profile_img:{
+  width:'50px',
+  height:'50px',
+  borderRadius:'50px'
+}
+
 }));
 
 const styles = {
@@ -133,85 +174,69 @@ const styles = {
 };
 
 
-export default function ManageEmployee() {
+ 
+
+
+
+const MovingItems=()=> {
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
+  const {id}=useParams();
+  const [Dt, setDt] = useState([])
+  const[to_date,setTodate]=useState("");
+  const[from_date,setFromdate]=useState("");
+
+  useEffect(() => {
+    const fetchData = async () => {
+        const response = await axios.get('http://localhost:3001/viewAdmin', {
+            params: {
+                id: id,  
+            }
+            
+        });
+   
+        setDt(response.data[0]);
+           console.log(response.data[0]);
+   
+    };
+    fetchData();
+   }, [id]);
+
+   const [cus,setCus]=useState([])
+
+  
+    const customer = async () => {
+        const response = await axios.get('http://localhost:3001/CusWithDate', {
+            params: {
+               to_date:to_date,  
+               from_date:from_date
+            }
+            
+        });
+   
+        setCus(response.data);
+           
+   
+    }
+
+
+
   const handleDrawerOpen = () => {
     setOpen(true);
   };
   const handleDrawerClose = () => {
     setOpen(false);
   };
-  
-  const { id } = useParams();
-  const [Dt, setDt] = useState([])
- 
- useEffect(() => {
-  const fetchData = async () => {
-      const response = await axios.get('http://localhost:3001/viewAdmin', {
-          params: {
-              id: id,  
-          }
-          
-      });
-
-      setDt(response.data[0]);
-         console.log(response.data[0]);
-
-  };
-  fetchData();
-}, [id]);
-
-const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorEl, setAnchorEl] = React.useState(null);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
 
-const NotificationClick = async () => {
-  const response = await axios.get('http://localhost:3001/NoficationActive', {
-     
-      
-  });
-  notify();
-}
-
-const [cusorderCount,setCusOrderCount]=useState([])
-  useEffect(()=>{
-    axios.get("http://localhost:3001/CustomizedOrderCount").then((response)=>{
-      setCusOrderCount(response.data)
-      
-    })
-  },[])
-const customizedcount=cusorderCount.map(record=>record.count);
-console.log(customizedcount);
-
-const customToast=()=>{
-  return(
-    <div>
-      You have requested customized Order from Customer!
-      <button style={{marginLeft:'10px',border:'none',backgroundColor:'white',borderRadius:'5px'}} onClick={Cuspage}>View</button>
-    </div>
-  )
-}
-
-const Cuspage=()=>{
-window.location.href='/admin/pages/CustomizedOrders'
-}
-
-
-const notify=()=>{
-   
-  toast.info(customToast,{position:toast.POSITION.TOP_RIGHT,autoClose:false})
-
-
-    }
-  
-
-
   const handleClose = () => {
     setAnchorEl(null);
   };
+
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
   const[isAuth,setIsAuth]=useState(true);
@@ -219,6 +244,7 @@ const notify=()=>{
   if(!isAuth){
     return <Redirect to="" />
   }
+
 
   return (
     <div className={classes.root}>
@@ -238,11 +264,17 @@ const notify=()=>{
             <b>ADMIN</b>
           </Typography>
           <IconButton color="inherit">
-            <Badge badgeContent={customizedcount} color="secondary">
-              <NotificationsIcon onClick={NotificationClick}/>
+            <Badge badgeContent={4} color="secondary">
+              <NotificationsIcon />
             </Badge>
           </IconButton>
-          
+
+         
+          {/* <IconButton color="inherit" fontSize="inherit">
+           <AccountCircleIcon   onClick={handleClick}/>
+  
+          </IconButton> */}
+
           <img src={`/${Dt.emp_img}`} onClick={handleClick} className={classes.profile_img}/>
    <Menu
         id="simple-menu"
@@ -251,9 +283,10 @@ const notify=()=>{
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-        <MenuItem onClick={handleClose}>Profile</MenuItem>
+        <MenuItem onClick={handleClose}><Link to='/admin/pages/ViewProfile' style={{textDecoration:'none',color:'black'}}>Profile</Link></MenuItem>
         <MenuItem onClick={()=>setIsAuth(false)}>Logout</MenuItem>
       </Menu>
+
         </Toolbar>
       </AppBar>
       <div style={styles.side}>
@@ -269,38 +302,68 @@ const notify=()=>{
             <ChevronLeftIcon />
           </IconButton>
         </div>
-        <Divider/> 
+        <Divider />
         <List style={{backgroundColor: 'rgb(37, 37, 94)', color:'white'}}>{mainListItems}</List>
-        <Divider/>
+        <Divider />
         <List style={{backgroundColor: 'rgb(37, 37, 94)', color:'red'}} onClick={()=>setIsAuth(false)}>{Logout}</List>
-       <Divider/>
+        <Divider />
       </Drawer>
       </div>
-      
-      <main style={{backgroundColor: '#f0f8ff'}} className={classes.content}>
+
+      {/* <main className={classes.content}>
+      <Adminmain />
+        
+
+ </main> */}
+ <main style={{backgroundColor: '#f0f8ff'}} className={classes.content}>
         <div className={classes.appBarSpacer} />
         <Container maxWidth="lg" className={classes.container}>
-        
-        <Grid container spacing={3}>
-        {/* Recent Orders */}
-        <Grid item xs={12}  direction="row"  >
-        
-        <div >
-        
-           <Paper className={classes.paper}>
-               
-                <Typography  component="h1" variant="h6" color="inherit" align="center" width="100%" noWrap className={classes.title}>
-                  <strong>DETAILS OF EMPLOYEES </strong>
-                </Typography>
-                <EmployeeView/>
-                     
-          </Paper>
-          </div>
-        </Grid>
+          <Grid container spacing={1}>
+          
+           
+           
+               <h1><b>CUSTOMER DETAILS</b></h1><br/>
+               <div style={{display:'flex'}}>
+                   <div style={{width:'1220px'}}>
+               <Grid item xs={16}  direction="row">
+              <Paper style={{height:'70px'}}>
+                  <div style={{display:'flex'}}>
+                  <h4 style={{color:'red',marginLeft:'10px',paddingTop:'10px',marginTop:'10px'}}>Enter Dates</h4>
+                  <p>From Date</p>
+                  <input type='date' style={{width:'400px',height:'40px',border:'none',backgroundColor:'aliceblue',paddingLeft:'20px',marginTop:'10px',marginLeft:'20px',borderRadius:'10px'}} placeholder='From Date' 
+                   onChange={(event)=> {
+                    setFromdate(event.target.value);
+                  }} ></input>
+ <p>To Date</p>
+<input type='date' style={{width:'400px',height:'40px',border:'none',backgroundColor:'aliceblue',paddingLeft:'20px',marginTop:'10px',marginLeft:'20px',borderRadius:'10px'}} placeholder='To date' 
+                   onChange={(event)=> {
+                    setTodate(event.target.value);
+                  }} ></input>
+                  <button style={{marginLeft:'30px',fontSize:'20px',width:'150px',height:'50px',backgroundColor:'#0070ff',border:'none',borderRadius:'10px',color:'white',marginTop:'10px'}}
+                  onClick={()=>{customer()}}>Click to View</button>
+                  </div>
 
-      </Grid>
+                  {cus.map((record)=>{
+                       return(
+                  <div ><br/>
+                
+                  <div style={{display:'flex'}}><label className={classes.formlabel1}><b style={{marginRight:'65px'}}>Customer ID :</b>{record.customer_id}</label></div>
+                  <label className={classes.formlabel1}><b style={{marginRight:'30px'}}>Customer Name :</b > {record.fname}</label><br/>
+                  <label className={classes.formlabel1}><b style={{marginRight:'100px'}}>Address : </b>{record.address}</label><br/>
+                  <label className={classes.formlabel1}><b style={{marginRight:'50px'}}>Phone No :</b>{record.phone} </label><br/>
+                       
+                  </div>
+              )
+            })}
+              </Paper>
+              </Grid><br/>
+              </div>
+              </div>
+              </Grid>
         </Container>
       </main>
     </div>
   );
 }
+
+export default MovingItems;

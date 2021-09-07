@@ -3,7 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
 import clsx from 'clsx';
 import {useParams} from "react-router-dom"
-
+import {toast} from 'react-toastify'
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -25,9 +25,6 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
 import {Redirect} from "react-router-dom"
 import Form from 'react-bootstrap/Form';
 import { Button } from 'react-bootstrap';
@@ -143,6 +140,11 @@ const useStyles = makeStyles((theme) => ({
   imageInput:{
     border:'none',
     borderColor:'white'
+  },
+  profile_img:{
+    width:'50px',
+    height:'50px',
+    borderRadius:'50px'
   }
   
 }));
@@ -186,7 +188,7 @@ export default function EditGifts() {
       });
 
       setDt(response.data[0]);
-      setNewName(response.data[0].name)
+      setNewName(response.data[0]. product_name)
       setNewPrice(response.data[0].price)
       setNewProduct_img(response.data[0].product_img)
       setNewQuantity(response.data[0].quantity)
@@ -194,6 +196,73 @@ export default function EditGifts() {
   };
   fetchData();
 }, [product_id]);
+
+const { id } = useParams();
+  const [Dts, setDts] = useState([])
+ 
+ useEffect(() => {
+  const fetchData = async () => {
+      const response = await axios.get('http://localhost:3001/viewAdmin', {
+          params: {
+              id: id,  
+          }
+          
+      });
+
+      setDts(response.data[0]);
+         console.log(response.data[0]);
+
+  };
+  fetchData();
+}, [id]);
+
+const [anchorEl, setAnchorEl] = React.useState(null);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+const NotificationClick = async () => {
+  const response = await axios.get('http://localhost:3001/NoficationActive', {
+     
+      
+  });
+  notify();
+}
+
+const [cusorderCount,setCusOrderCount]=useState([])
+  useEffect(()=>{
+    axios.get("http://localhost:3001/CustomizedOrderCount").then((response)=>{
+      setCusOrderCount(response.data)
+      
+    })
+  },[])
+const customizedcount=cusorderCount.map(record=>record.count);
+console.log(customizedcount);
+
+const customToast=()=>{
+  return(
+    <div>
+      You have requested customized Order from Customer!
+      <button style={{marginLeft:'10px',border:'none',backgroundColor:'white',borderRadius:'5px'}} onClick={Cuspage}>View</button>
+    </div>
+  )
+}
+
+const Cuspage=()=>{
+window.location.href='/admin/pages/CustomizedOrders'
+}
+
+
+const notify=()=>{
+   
+  toast.info(customToast,{position:toast.POSITION.TOP_RIGHT,autoClose:false})
+
+
+    }
+  
+
+
 
 const updateGift = (ID) => {
   if(state.file)
@@ -204,11 +273,11 @@ const updateGift = (ID) => {
         'content-Type':'multipart/form-data',
       })
 
-  axios.put("http://localhost:3001/updateGift", {name: newName,price:newPrice,product_img:state.file.name,quantity:newQuantity,product_id: product_id}).then(
+  axios.put("http://localhost:3001/updateGift", { product_name: newName,price:newPrice,product_img:state.file.name,quantity:newQuantity,product_id: product_id}).then(
     (response) => {
       
       setGiftList(Dt.map((val) => {
-        return val.product_id === product_id ? {product_id: val.product_id, name: val.name, price: val.price,product_img:val.product_img,quantity:val.quantity, 
+        return val.product_id === product_id ? {product_id: val.product_id,  product_name: val. product_name, price: val.price,product_img:val.product_img,quantity:val.quantity, 
           name: newName,price:newPrice,product_img:newProduct_img,quantity:newQuantity } : val
         
       }))
@@ -244,11 +313,7 @@ const handleInput =(e) =>{
     setOpen(false);
   };
 
-  const [anchorEl, setAnchorEl] = React.useState(null);
-
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
+ 
 
   const handleClose = () => {
     setAnchorEl(null);
@@ -282,14 +347,12 @@ const handleInput =(e) =>{
             <strong>ADMIN</strong>
           </Typography>
           <IconButton color="inherit">
-            <Badge badgeContent={4} color="secondary">
-              <NotificationsIcon />
+            <Badge badgeContent={customizedcount} color="secondary">
+              <NotificationsIcon onClick={NotificationClick}/>
             </Badge>
           </IconButton>
-          <IconButton color="inherit" fontSize="inherit">
-           <AccountCircleIcon   onClick={handleClick}/>
-  
-          </IconButton>
+          
+          <img src={`/${Dts.emp_img}`} onClick={handleClick} className={classes.profile_img}/>
           <Menu
         id="simple-menu"
         anchorEl={anchorEl}
