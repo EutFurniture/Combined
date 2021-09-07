@@ -81,6 +81,11 @@ const useStyles = makeStyles((theme) => ({
     borderColor:'white',
 
   },
+  profile_img:{
+    width:'50px',
+    height:'50px',
+    borderRadius:'50px'
+  },
   drawerPaper: {
     position: 'relative',
     whiteSpace: 'nowrap',

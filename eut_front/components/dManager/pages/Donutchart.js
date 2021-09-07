@@ -13,8 +13,8 @@ function Donutchart() {
   },[])
 
 
-const count=paymentList.map(record=>record.count);
-const status=paymentList.map(record=>record.payment_status);
+const count1=paymentList.map(record=>record.count);
+const status2=paymentList.map(record=>record.payment_status);
 
   return (
     <div id="chart">
@@ -24,7 +24,7 @@ const status=paymentList.map(record=>record.payment_status);
       chart: {
       type: 'donut',
     },
-    labels: status,
+    labels: status2,
     responsive: [{
       breakpoint: 480,
       options: {
@@ -36,7 +36,7 @@ const status=paymentList.map(record=>record.payment_status);
         }
       }
     }]} }
-    series={count} 
+    series={count1} 
       
     
     type="donut"

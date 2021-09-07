@@ -138,12 +138,14 @@ export default function EditProfile() {
 
     const classes = useStyles();
     const [open, setOpen] = React.useState(true);
-    const {employee_id} = useParams();
+    const [state,setState]=useState({file:'',pro_img:'',message:'',success:false})
+    const {id} = useParams();
     const [Dt, setDt] = useState([])
     const [newName, setNewName] = useState();
     const [newEmail, setNewEmail] = useState();
     const [newPhone, setNewPhone] = useState();
     const [newAddress, setNewAddress] = useState();
+    const[newPro_img,setNewPro_img]=useState();
 
     const [paymentNotifyCount,setpaymentNotifyCount]=useState([])
   useEffect(()=>{
@@ -303,7 +305,7 @@ export default function EditProfile() {
       const fetchData = async () => {
           const response = await axios.get('http://localhost:3001/viewDeliveryManager', {
               params: {
-                 employee_id: employee_id,
+                 id: id,
               }
           });
           setDt(response.data[0]);
@@ -311,10 +313,11 @@ export default function EditProfile() {
           setNewEmail(response.data[0].email)
           setNewPhone(response.data[0].phone_no)
           setNewAddress(response.data[0].address)
+          setNewPro_img(response.data[0].emp_img)
              console.log(response.data[0]);
       };
       fetchData();
-    }, [employee_id]);
+    }, [id]);
   
     const [DeliverList,setDeliverList]=useState([])
     useEffect(()=>{
@@ -324,24 +327,50 @@ export default function EditProfile() {
     },[])
     
     const editDeliver = (id) => {
-      axios.put("http://localhost:3001/UpdateDelivers", {
+
+      if(state.file)
+      {
+        let formData=new FormData();
+        formData.append('file',state.file) 
+        axios.post('http://localhost:3001/imageUpload',formData,{
+            'content-Type':'multipart/form-data',
+          })
+
+      axios.put("http://localhost:3001/EditDeliveryManager", {
           name: newName,
           email: newEmail,
           phone:newPhone,
           address:newAddress,
-          employee_id: employee_id}).then(
+          emp_img:state.file.name,
+          id: id}).then(
         (response) => {
           console.log(response.name)
           
           setDeliverList(Dt.map((val) => {
-            return val.employee_id === employee_id ? {employee_id: val.employee_id, name: val.name,email: val.email, phone: val.phone_no, address: val.address
+            return val.id === id ? {id: val.id, name: val.name,email: val.email, phone: val.phone_no, address: val.address,emp_img:val.emp_img,
                 } : val  
           }))
        }
       )
       alert("Updated successfully")  
+      }
     };
 
+
+    const handleInput =(e) =>{
+      let reader =new FileReader();
+      let file=e.target.files[0]
+      reader.onloadend =() =>{
+        setState({
+          ...state,
+          file:file,
+          userImage:reader.result,
+          message:""
+        })
+       
+      }
+      reader.readAsDataURL(file);
+    }
     
   
 
@@ -480,6 +509,17 @@ export default function EditProfile() {
                   />
                   </Col>
               </Form.Group><br/>
+
+              <Form.Group as={Row} controlId="formHorizontalFile" className="mb-3">
+                  <Form.Label column lg={2}>
+                  Profile Image :
+                  </Form.Label>
+                  <Col >
+                  <Form.Control type="file"  defaultValue={newPro_img} className={classes.imageInput}
+                    onChange={handleInput}
+                  />                  
+                  </Col>
+              </Form.Group>  
 
               <Form.Group as={Row} controlId="formHorizontalName">
                   <Form.Label column lg={2} >

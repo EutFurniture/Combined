@@ -21,7 +21,7 @@ function Line() {
             },[])
 
         
-        const orders=orderList.map(record=>record.count);
+        const orders2=orderList.map(record=>record.count);
         const date=orderList.map(record=>dateOnly(record.order_last_date));
 
   return (
@@ -40,7 +40,7 @@ function Line() {
             series={[
               {
                 name: "Orders",
-                data: orders
+                data: orders2
               }
             ]}
             type="line"

@@ -14,10 +14,10 @@ const dateOnly = (d) => {
 
 
 export default function MonthlyReturnReport(){
-  const [cashList,setcashList]=useState([])
+  const [returnList,setreturnList]=useState([])
   useEffect(()=>{
     axios.get("http://localhost:3001/ReturnReport").then((response)=>{
-      setcashList(response.data)
+      setreturnList(response.data)
     })
   },[])
 
@@ -34,7 +34,7 @@ export default function MonthlyReturnReport(){
       </thead>
 
      <tbody>
-     {cashList.map((record)=>{
+     {returnList.map((record)=>{
       return(
         <tr>
         <th scope="row">{record.order_id}</th>

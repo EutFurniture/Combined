@@ -13,17 +13,17 @@ useEffect(()=>{
   })
 },[])
 
-const [returnList,setreturnList]=useState([]);
+const [returnsList,setreturnsList]=useState([]);
 useEffect(()=>{
   axios.get('http://localhost:3001/returnordercnt').then((response)=>{
-    setreturnList(response.data);
+    setreturnsList(response.data);
     console.log(response);
   })
 },[])
 
 
 const t_count=totalList.map(record=>record.t_count);
-const r_count=returnList.map(record=>record.r_count);
+const r_count=returnsList.map(record=>record.r_count);
 
 const returncount = (r_count/t_count) * 100 
 

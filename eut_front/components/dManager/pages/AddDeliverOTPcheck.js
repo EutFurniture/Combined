@@ -5,7 +5,8 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import PersonIcon from '@material-ui/icons/Person';
 import LockIcon from '@material-ui/icons/Lock';
-import { Form, Col, Row, Button } from 'react-bootstrap';
+import { Form, Col, Row} from 'react-bootstrap';
+import {Button} from '@material-ui/core'
 import * as yup from "yup";
 
 const schema = yup.object().shape({
@@ -69,7 +70,7 @@ function AddDeliverOTPcheck() {
 
                 
               <div align="center">   
-               <Button variant='primary' style={{fontSize:'20px',width:'200px'}} type="submit">Check</Button><br/>
+               <Button variant='contained' color="primary" style={{fontSize:'20px',width:'200px'}} type="submit">Check</Button><br/>
               </div>
              </Form>
          </div>
