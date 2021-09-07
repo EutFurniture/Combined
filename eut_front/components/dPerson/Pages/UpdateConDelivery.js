@@ -279,8 +279,9 @@ export default function UpdateConDelivery() {
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-        <MenuItem onClick={handleClose}>Profile</MenuItem>
+         <MenuItem component={Link} to="/employee/DpProfile">Profile</MenuItem>
         <MenuItem onClick={()=>setIsAuth(false)}>Logout</MenuItem>
+        <MenuItem component={Link} to="/Calender">Calendar</MenuItem>
       </Menu>
         </Toolbar>
       </AppBar>
