@@ -6,6 +6,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import {Table} from 'react-bootstrap';
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import Pagination from '@material-ui/lab/Pagination';
+import Typography from '@material-ui/core/Typography';
 
 
 export default function Productview() {
@@ -16,8 +18,13 @@ export default function Productview() {
         setProductList(response.data)
       })
     },[])
+
+    const [page, setPage] = React.useState(1);
+    const handleChange = (event, value) => {
+      setPage(value);
+    };
     return(
-      <div ><br/>
+      <div><br/>
       <div className='box-main'>
       <div className="searchbar">
                    <input type="text"  placeholder="Search" onChange={(e)=>{setSearchTerm(e.target.value);}} />
@@ -43,7 +50,7 @@ export default function Productview() {
        {productList.filter(val=>{if(searchTerm===""){
                        return val;
                      }else if(
-                       val.name.toLowerCase().includes(searchTerm.toLowerCase())) 
+                       val.product_name.toLowerCase().includes(searchTerm.toLowerCase())) 
                      {
                        return val
                      }
@@ -51,7 +58,7 @@ export default function Productview() {
                        return(
               <tr align='center'>
               <th scope="row">{record.product_id}</th>
-              <td>{record.name}</td>
+              <td>{record.product_name}</td>
               <td>{record.price}</td>
               <td><img src={record.product_img} className='image'/></td>
               <td>{record.quantity}</td>
@@ -71,6 +78,8 @@ export default function Productview() {
           
         </tbody> 
       </Table>
+      <Typography>Page: {page}</Typography>
+      <Pagination count={10} page={page} onChange={handleChange} />
       </div>
     )
 }

@@ -21,7 +21,7 @@ class DeliveryData extends React.Component {
       }
     
       componentDidMount() {
-        fetch('http://localhost:3001/DeliveryReport')
+        fetch('http://localhost:3001/DeliveryReport1')
           .then(res => res.json())
           .then(result => {
             this.setState({

@@ -27,12 +27,12 @@ import {Link} from 'react-router-dom';
 import {toast} from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import Axios from 'axios';
-import {Button} from 'react-bootstrap';
+import {Button} from '@material-ui/core';
 
 import { mainListItems, Logout, Profile } from './listItems';
 import ViewReports from './ViewReports';
-
-
+import ReactToPrint from 'react-to-print';
+import DataComponent from './DataComponent';
 import GenerateReport from './GenerateReport';
 import Radial from './Radial';
 import Mychart from './Mychart';
@@ -157,9 +157,12 @@ const styles = {
 
 toast.configure()
 
-export default function ManageReports() {
+const ManageReports = ({componentRef}) =>  {
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
+
+  const[to_date,setTodate]=useState("");
+  const[from_date,setFromdate]=useState("");
 
   const [paymentNotifyCount,setpaymentNotifyCount]=useState([])
   useEffect(()=>{
@@ -242,7 +245,7 @@ export default function ManageReports() {
         return(
           <div style={{fontSize:'15px'}}>
             You have {paymentmesscount} New Payment Confirmations from Deliver Person! <br></br><br></br>
-            <Button variant="light" onClick={Notification_page_payment}>View</Button>
+            <Button variant="contained" onClick={Notification_page_payment}>View</Button>
           </div>
         )
       }
@@ -264,7 +267,7 @@ export default function ManageReports() {
           return(
             <div style={{fontSize:'15px'}}>
               You have {returnmesscount} New Return Delivery Confirmations from Deliver Person! <br></br><br></br>
-              <Button variant="light" onClick={Notification_page_return}>View</Button>
+              <Button variant="contained" onClick={Notification_page_return}>View</Button>
             </div>
           )
         }
@@ -284,7 +287,7 @@ export default function ManageReports() {
           return(
             <div style={{fontSize:'15px'}}>
               You have New {ordermesscount} Delivery Confirmations from Deliver Person! <br></br><br></br>
-              <Button variant="light" onClick={Notification_page_order}>View</Button>
+              <Button variant="contained" onClick={Notification_page_order}>View</Button>
             </div>
           )
         }
@@ -412,9 +415,15 @@ export default function ManageReports() {
             <Grid item xs={12}  direction="row"  >
             <div >
               <Paper className={classes.paper}>
-                <MonthlyDeliveryReport/>
-                <GenerateReport/>
-                {/* <ViewReports/> */}
+              <div align="right">              
+              <ReactToPrint
+              content={() =>componentRef}
+                trigger={() => <Button variant="contained" color="secondary">Download to PDF!</Button>}
+              /><br/>
+              </div> <br></br><br></br>
+              <DataComponent  ref={(response) => (componentRef = response)} />
+              
+                
               </Paper>
               </div>
             </Grid>
@@ -429,4 +438,4 @@ export default function ManageReports() {
     </div>
   );
 }
-
+ export default ManageReports;

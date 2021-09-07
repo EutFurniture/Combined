@@ -3,7 +3,7 @@ import React,{useEffect,useState} from 'react'
 import clsx from 'clsx';
 import axios from "axios"
 import { useParams } from 'react-router-dom';
-
+import {toast} from 'react-toastify'
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 
 import { makeStyles } from '@material-ui/core/styles';
@@ -22,8 +22,6 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import Grid from '@material-ui/core/Grid';
 import Divider from '@material-ui/core/Divider';
-import sofa1 from '../../../assets/sofa1.jpg'
-import sofa3 from '../../../assets/sofa3.jpg'
 import "../css/manageEmployee.css";
 
 import { mainListItems, Logout } from './listItems';
@@ -203,7 +201,12 @@ width:'700px'
      marginTop:'20px',
      align:'center',
      marginLeft:'60px'
- }
+ },
+ profile_img:{
+  width:'50px',
+  height:'50px',
+  borderRadius:'50px'
+}
 
   
 
@@ -247,6 +250,73 @@ export default function ProductInfo() {
   };
   //const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
+  const { id } = useParams();
+  const [Dts, setDts] = useState([])
+ 
+ useEffect(() => {
+  const fetchData = async () => {
+      const response = await axios.get('http://localhost:3001/viewAdmin', {
+          params: {
+              id: id,  
+          }
+          
+      });
+
+      setDts(response.data[0]);
+         console.log(response.data[0]);
+
+  };
+  fetchData();
+}, [id]);
+
+const [anchorEl, setAnchorEl] = React.useState(null);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+const NotificationClick = async () => {
+  const response = await axios.get('http://localhost:3001/NoficationActive', {
+     
+      
+  });
+  notify();
+}
+
+const [cusorderCount,setCusOrderCount]=useState([])
+  useEffect(()=>{
+    axios.get("http://localhost:3001/CustomizedOrderCount").then((response)=>{
+      setCusOrderCount(response.data)
+      
+    })
+  },[])
+const customizedcount=cusorderCount.map(record=>record.count);
+console.log(customizedcount);
+
+const customToast=()=>{
+  return(
+    <div>
+      You have requested customized Order from Customer!
+      <button style={{marginLeft:'10px',border:'none',backgroundColor:'white',borderRadius:'5px'}} onClick={Cuspage}>View</button>
+    </div>
+  )
+}
+
+const Cuspage=()=>{
+window.location.href='/admin/pages/CustomizedOrders'
+}
+
+
+const notify=()=>{
+   
+  toast.info(customToast,{position:toast.POSITION.TOP_RIGHT,autoClose:false})
+
+
+    }
+  
+
+
+
   return (
     <div className={classes.root}>
       <CssBaseline />
@@ -265,15 +335,12 @@ export default function ProductInfo() {
             <b>ADMIN</b>
           </Typography>
           <IconButton color="inherit">
-            <Badge badgeContent={4} color="secondary">
-              <NotificationsIcon />
+            <Badge badgeContent={customizedcount} color="secondary">
+              <NotificationsIcon onClick={NotificationClick}/>
             </Badge>
           </IconButton>
-
-          <IconButton color="inherit" fontSize="inherit">
-           <AccountCircleIcon   />
-  
-          </IconButton>
+          
+          <img src={`/${Dts.emp_img}`} onClick={handleClick} className={classes.profile_img}/>
         </Toolbar>
         
       </AppBar>
@@ -318,7 +385,7 @@ export default function ProductInfo() {
                 
                 <div ><br/>
                   <div style={{display:'flex'}}><label className={classes.formlabel1}><b style={{marginRight:'65px'}}>Product ID :</b>{Dt.product_id}</label></div>
-                  <label className={classes.formlabel1}><b style={{marginRight:'30px'}}>Product Name :</b > {Dt.name}</label><br/>
+                  <label className={classes.formlabel1}><b style={{marginRight:'30px'}}>Product Name :</b > {Dt. product_name}</label><br/>
                   <label className={classes.formlabel1}><b style={{marginRight:'100px'}}>Price : </b>{Dt.price}</label><br/>
                   <label className={classes.formlabel1}><b>Product Image :</b></label><br/><img style={{marginLeft:'160px'}} src={`/${Dt.product_img}`} className="image1" /><br/><br/>
                   <label className={classes.formlabel1}><b style={{marginRight:'80px'}}>Material :</b> {Dt.material}</label><br/>

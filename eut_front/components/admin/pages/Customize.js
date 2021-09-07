@@ -1,11 +1,12 @@
 import { BrowserRouter as Router, Route, Switch, Link, useParams } from "react-router-dom";
-import Cust_OrderAccept from './Cust_OrderAccept'
+import AcceptOrder from './AcceptOrder'
+import Cust_OrderAccept from "./Cust_OrderAccept";
 const Customize=()=>{
     return(
         <div>
             <Switch>
-                <Route path="/Customize/:cus_product_id">
-                    <Cust_OrderAccept />
+                <Route path="/Customize/:customer_id/:cus_product_id">
+                    <AcceptOrder />
                 </Route>
             </Switch>
         </div>

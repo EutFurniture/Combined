@@ -1,13 +1,12 @@
 import React from 'react';
-import CustomerChart from '../../charts/CustomerChart';
-import OrderChart from '../../charts/OrderChart';
-import CustomerData from './CustomerData';
-import ReturnItem from './ReturnItem';
-import CustomizeData from './CustomizeData'
-import DeliveryData from './DeliveryData';
-import MonthlyDeliverReport from './MonthlyDeliverReport';
-
-
+// import CustomerChart from '../../charts/CustomerChart';
+// import OrderChart from '../../charts/OrderChart';
+// import OrderData from './OrderData';
+// import ReturnItem from './ReturnItem';
+// import CustomizeData from './CustomizeData'
+// import DeliveryData from './DeliveryData';
+// import CustomerData from './CustomerData';
+import ReportDetails from './ReportDetails';
   
 class DataComponent extends React.Component {
 
@@ -20,7 +19,7 @@ class DataComponent extends React.Component {
       }
     
       componentDidMount() {
-        fetch('http://localhost:3001/DeliverReport')
+        fetch('http://localhost:3001/deliveryReport')
           .then(res => res.json())
           .then(result => {
             this.setState({
@@ -35,41 +34,12 @@ class DataComponent extends React.Component {
 
     render() {
       return (
-          <div>
-              <h2 style={{marginLeft:'20px'}}><b>Monthly Deliver Details</b></h2>
-        <table  className="table">
-          <thead>
-            <tr>
-              <th scope="col">Deliver</th>
-              <th scope="col">Number of Orders</th>
-            </tr>
-          </thead>
-          <tbody>
-          {this.state.records.map((record)=>{
-                   return(
-              <tr>
-                <td>{record.name}</td>
-                <td>{record.count}</td>
-              </tr>
-                   )
-                })}
-                
-          </tbody>
-          <caption>Customer Details</caption>
-        </table> 
-        <CustomerChart/> 
-        <h2 style={{marginLeft:'20px'}}><b>Monthly Order Details</b></h2>
-        <MonthlyDeliverReport />
-        <OrderChart/>
-        <h2 style={{marginLeft:'20px'}}><b>Monthly Return Item Details</b></h2>
-        <ReturnItem />
-        <h2 style={{marginLeft:'20px'}}><b>Monthly Customized Order Details</b></h2>
-        <CustomizeData />
-        <h2 style={{marginLeft:'20px'}}><b>Monthly Delivery Details</b></h2>
-        <DeliveryData />
+          <div >
+          <ReportDetails />
         </div>    
       );
     }
   }
 
   export default DataComponent;
+

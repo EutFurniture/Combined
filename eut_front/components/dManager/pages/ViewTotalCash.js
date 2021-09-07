@@ -5,6 +5,11 @@ import Link from '@material-ui/core/Link';
 import Typography from '@material-ui/core/Typography';
 import Title from './Title';
 
+const d = new Date();
+const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+let currentMonth =  months[d.getMonth() ];
+let currentYear = d.getFullYear();
+
 class ViewTotalCash extends Component{
   constructor(props) {
     super(props);
@@ -44,7 +49,8 @@ class ViewTotalCash extends Component{
                 </div>
                 </Typography>
                 <Typography color="textSecondary" flex = "1" >
-                     2021
+                {currentMonth} {currentYear}
+                     
                 </Typography>
                 <div style={{marginTop: 60 }}>
                     <Link color="primary" href="/dManager/pages/ManageCashOnDelivery">

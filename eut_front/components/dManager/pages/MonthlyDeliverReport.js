@@ -14,10 +14,10 @@ const dateOnly = (d) => {
 
 
 export default function MonthlyDeliverReport(){
-  const [cashList,setcashList]=useState([])
+  const [deliverList,setdeliverList]=useState([])
   useEffect(()=>{
     axios.get("http://localhost:3001/DeliverReport").then((response)=>{
-      setcashList(response.data)
+      setdeliverList(response.data)
     })
   },[])
 
@@ -32,7 +32,7 @@ export default function MonthlyDeliverReport(){
       </thead>
 
      <tbody>
-     {cashList.map((record)=>{
+     {deliverList.map((record)=>{
       return(
         <tr>
         <th scope="row">{record.name}</th>

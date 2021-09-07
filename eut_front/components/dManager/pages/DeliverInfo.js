@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import clsx from 'clsx';
 import axios from "axios";
-//import user1 from '../../../assets/user1.png'
+
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -27,7 +27,7 @@ import {Link} from 'react-router-dom';
 import {toast} from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import Axios from 'axios';
-import {Button} from 'react-bootstrap';
+import {Button} from '@material-ui/core';
 
 
 import { mainListItems, Logout, Profile } from './listItems';
@@ -80,6 +80,11 @@ const useStyles = makeStyles((theme) => ({
     borderRadius:100,
     borderColor:'white',
 
+  },
+  profile_img:{
+    width:'50px',
+    height:'50px',
+    borderRadius:'50px'
   },
   drawerPaper: {
     position: 'relative',
@@ -161,11 +166,14 @@ width:'700px'
     marginBottom:'20px',   
  },
  user1:{
-     width:'100px',
-     height:'100px',
-     marginTop:'20px',
-     align:'center',
-     marginLeft:'90px'
+  width:'170px',
+  height:'250px',
+  marginTop:'20px',
+  align:'center',
+  marginLeft:'60px',
+  borderRadius:'50px',
+  borderWidth:'4px',
+  borderColor:'rgb(37, 37, 94)'
  }
 }));
 
@@ -270,7 +278,7 @@ export default function DeliverInfo() {
         return(
           <div style={{fontSize:'15px'}}>
             You have {paymentmesscount} New Payment Confirmations from Deliver Person! <br></br><br></br>
-            <Button variant="light" onClick={Notification_page_payment}>View</Button>
+            <Button variant="contained" onClick={Notification_page_payment}>View</Button>
           </div>
         )
       }
@@ -292,7 +300,7 @@ export default function DeliverInfo() {
           return(
             <div style={{fontSize:'15px'}}>
               You have {returnmesscount} New Return Delivery Confirmations from Deliver Person! <br></br><br></br>
-              <Button variant="light" onClick={Notification_page_return}>View</Button>
+              <Button variant="contained" onClick={Notification_page_return}>View</Button>
             </div>
           )
         }
@@ -312,7 +320,7 @@ export default function DeliverInfo() {
           return(
             <div style={{fontSize:'15px'}}>
               You have New {ordermesscount} Delivery Confirmations from Deliver Person! <br></br><br></br>
-              <Button variant="light" onClick={Notification_page_order}>View</Button>
+              <Button variant="contained" onClick={Notification_page_order}>View</Button>
             </div>
           )
         }
@@ -459,7 +467,7 @@ export default function DeliverInfo() {
            <Paper className={classes.paper}>
                <div className={classes.twocolumn}>
                    <div className={classes.columnleft}>
-                        {/*<img src={user1} className={classes.user1} align='center'></img><br/><br/>*/}
+                        <img src={`/${Dt.emp_img}`} className={classes.user1} align='center'></img><br/><br/>
                         <h3 align='center'>{Dt.name}</h3>
                         <h2 align='center' >{Dt.role}</h2>
                    </div>

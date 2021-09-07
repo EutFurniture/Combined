@@ -13,37 +13,37 @@ export default function Mychart()
             },[])
 
         
-        const orders=statusList.map(record=>record.count);
-        const status=statusList.map(record=>record.status);
+        const orders1=statusList.map(record=>record.count);
+        const status1=statusList.map(record=>record.status);
 
         return (
 
             <div id="chart">
                 
             <Chart 
-            options={{
-                chart: {
-                    width: 380,
-                    type: 'pie',
-                  },
-                  labels: status,
-                  responsive: [{
-                    breakpoint: 480,
-                    options: {
-                      chart: {
-                        width: 200
-                      },
-                      legend: {
-                        position: 'bottom'
+                options={{
+                  chart: {
+                      width: 380,
+                      type: 'pie',
+                    },
+                    labels: status1,
+                    responsive: [{
+                      breakpoint: 480,
+                      options: {
+                        chart: {
+                          width: 200
+                        },
+                        legend: {
+                          position: 'bottom'
+                        }
                       }
-                    }
-                  }] }
-        }
-        series={orders}
-            
-            type="pie"
-            width={500}
-             />
+                    }] }
+                      }
+                series={orders1}
+              
+              type="pie"
+              width={500}
+              />
           </div>
             
         )

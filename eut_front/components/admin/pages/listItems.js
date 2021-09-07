@@ -75,14 +75,14 @@ export const mainListItems = (
       <ListItemText primary="Manage Employees" />
     </ListItem>
    
-    <ListItem button>
+    <ListItem button component={Link} to="/MovingItems">
       <ListItemIcon style={{color:'white'}}>
         <AssignmentReturnedIcon />
       </ListItemIcon>
       <ListItemText primary="Moving Items" />
     </ListItem>
 
-    <ListItem  button component={Link} to="/GenerateReport">
+    <ListItem  button component={Link} to="/ReportGeneration">
       <ListItemIcon style={{color:'white'}}>
         <AssessmentIcon />
       </ListItemIcon>

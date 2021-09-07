@@ -1,67 +1,208 @@
-const express = require('express')
-const app = express();
-const mysql = require('mysql');
-const cors = require('cors');
+const express = require("express");
+const mysql=require("mysql");
+const cors=require("cors");
+const app=express();
 const path = require('path');
-const { name } = require('ejs');
+const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const bodyParser =  require('body-parser')
-
-const cookieParser = require("cookie-parser");
-const session = require("express-session");
-
 const { response } = require('express');
-const multer = require('multer');
-const fs = require('fs');
 const saltRounds = 10;
-
-
-//const fileUpload = require('express-fileupload');
-
-app.use(cors());
+const fs=require('fs');
+const multer=require('multer');
+require('dotenv').config();
 app.use(express.json());
+
+//const { ConnectionPolicyContext } = require("twilio/lib/rest/voice/v1/connectionPolicy");
+const cookieParser=require('cookie-parser');
+const session = require('express-session');
+const bodyParser = require('body-parser');
+var nodemailer = require('nodemailer')
+app.use(cors({
+  origin:["http://localhost:3000"],
+  methods:["GET","POST","PUT"],
+  credentials:true 
+}));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended:true}));
+app.use(cookieParser());
+app.use(session({
+  key:"customer_id",
+  secret:"subscribe",
+  resave:false,
+  saveUninitialized:false,
+  cookie:{
+   // expires:60*60*24,
+  },
+}));
 app.set("view engine","ejs");
 
-const db = mysql.createConnection({
-    user : 'root',
-    host : 'localhost',
-    password: '',
-    database: 'eut_furniture',
-    multipleStatements:true
+const db=mysql.createConnection({
+  user:"root",
+  host:"localhost",
+  password:"",
+  database:"eut_furniture",
 });
 
-// app.post('/login',(req,res)=>{
-//   const email = req.body.email;
-//   const password = req.body.password;
+
+
+
+
+app.post('/forget',(req,res)=>{
+  const email = req.body.email
+  console.log(email)
+  db.query
+  ("SELECT * FROM userlogin WHERE u_email = ?;", 
+  [email], 
+  (err, result)=> {
+
+      if(err){
+          res.send({err: err})
+      }
+      if(result){
+          if (result.length > 0) {
+              var transport = nodemailer.createTransport(
+                  {
+                      service:'gmail',
+                      auth: {
+                          user: 'eutfurniture.group45@gmail.com',
+                          pass:'eutgroup45@#'
+                      }
+                  }
+              )
+              const otp = Math.floor(100000 + Math.random() * 900000);
+              const head = 'Forget Password'
+              const mess = `Dear User, 
+          
+              Use this OTP code for Reset Your Password.
+              Your OTP code is ${otp}
+              
+          
+              With regrads,
+              Eut Furniture Team`;
+              
+              var mailOptions = {
+                  from : 'eutfurniture.group45@gmail.com',
+                  to: email,
+                  subject: head,
+                  text: mess
+              }
+              
+              transport.sendMail(mailOptions,function(error,info){
+                  if(error){
+                      console.log(error)
+                  }
+                  else{
+                      console.log('Email sent' + info.response)       
+              
+                      db.query("UPDATE userlogin SET reset_otp = ? WHERE u_email=?", 
+                      [otp,email],(err,result)=>{
+               
+                   
+                      if(result){
+                          console.log(result);
+                          res.send({message:"Check your Email to Reset Password"}); 
+                      }
+                   })
+                  }
+              })
+              
+          }else{
+              res.send({message:"Email Doesn't Exist"});
+          }
+
+          
+      }}
+  );
+    
+});
+
+
+
+app.post('/ResetPassword', (req,res) => {
+
+  const otp = req.body.otp;
+  const password = req.body.password;
+  const c_password = req.body.c_password;
+  console.log(password)
+  console.log(c_password)
+  console.log(otp)
+
+  db.query
+  ("SELECT * FROM userlogin WHERE reset_otp = ?;", 
+  [otp], 
+  (err, result)=> {
+
+      if(err){
+          res.send({err: err})
+      }
+      if(result){
+          console.log(result);
+          if (result.length > 0) {
+              bcrypt.hash(password,saltRounds,(err,hash)=>{
+
+                  if(err){
+                      console.log(err);
+                  }
+
+              db.query("UPDATE userlogin SET u_password=? WHERE reset_otp=?", 
+              [hash,otp], 
+              (err, result) => {
+
+                  if (err) {
+                      console.log(err);
+                  } else {
+                      
+                      res.send({message:"Password Updated Successfully"});
+                  }
+              }
+              )
+              });
+          }}
+});
+});
+
+
+ 
+      
+const storage=multer.diskStorage({
+    destination(req,file,cb){
+        cb(null,'../client/public/')
+    },
+    filename(req,file,cb) {
+       console.log(file)
+        cb(null,
+            `${file.originalname.split('.')[0]}.jpg`
+            )
+    }
+})
+const upload=multer({storage,
+   fileFilter(req,file,cb){
+    if(!file.originalname.match(/\.(jpeg|jpg|png)$/i)){
+      return  cb(new Error('pleaseupload image with type of'))
+    }
+    cb(undefined,true)
+}
+})
+
+
+
+app.post("/upload",upload.single('file'),(req,res)=> {
    
-//   db.query(
-//       "SELECT * FROM employee WHERE email=?;",
-//       email,
-//       (err,result)=>{
-//           if(err)
-//           { 
-//               res.send({err:err})
-//           } 
-//           if(result.length > 0){
-//               bcrypt.compare(password, result[0].password,(error,response)=>{
-//                 if(response){
-//                   res.send(result)
-//                 } else{
-//                   res.send({message:'Username or password incorrect'});
-//                 }
-//               })
-//           } else{
-//                res.send({message:"User Doesn't Exist"});
-//              }
-//           }
-         
-//       )
-//   })
+})
+app.get("/gift",(req,res) =>{
+    db.query("SELECT * FROM products WHERE category_id=5",(err,result) =>{
+     
+            if(err) throw err;
+                   res.send(result);
+                 });
+        
+   
+})
 
 
+ 
 
-
-app.post('/register',(req,res)=>{
+  app.post('/addNewEmployee',(req,res)=>{
     
     const name = req.body.name;
     const NIC = req.body.NIC;
@@ -72,89 +213,210 @@ app.post('/register',(req,res)=>{
     const address = req.body.address;
     const role = req.body.role;
     const password = req.body.password;
+  
    
-    bcrypt.hash(password,saltRounds,(err,hash)=>{
-        
-      if(err){
-          console.log(err);
+    var transport = nodemailer.createTransport(
+      {
+          service:'gmail',
+          auth: {
+              user: 'eutfurniture.group45@gmail.com',
+              pass:'eutgroup45@#'
+          }
       }
+  )
+  const otp = Math.floor(100000 + Math.random() * 900000);
+  const head = 'otp code';
+  const mess = `Dear ${name}, 
 
-    db.query("INSERT INTO employee (name,NIC,email,phone_no,job_start_date,confirm_password,address,role,password) VALUES (?,?,?,?,?,?,?,?,?)",
-    [name,NIC,email,phone_no,job_start_date,hash,address,role,hash],(err,result)=>{
-       
-            console.log(err);
-       if(result){
-         res.send({message:"Successfully added"});
-       }
-      })
-    
-    })
-    
-});
+                  Your otp code is ${otp}
+                  Use this code to verify your Account.
 
-app.post('/adddeliver',(req,res)=>{
-    
-  const name = req.body.name;
-  const NIC = req.body.NIC;
-  const email = req.body.email;
-  const phone_no = req.body.phone_no;
-  const job_start_date = req.body.job_start_date;
-  const confirm_password = req.body.confirm_password;
-  const address = req.body.address;
-  const role = req.body.role;
-  const password = req.body.password;
- 
-  bcrypt.hash(password,saltRounds,(err,hash)=>{
+              With regrads,
+              Eut Furniture Team`;
+  
+  var mailOptions = {
+      from : 'eutfurniture.group45@gmail.com',
+      to: email,
+      subject: head,
+      text: mess
+  }
+  
+  transport.sendMail(mailOptions,function(error,info){
+      if(error){
+          console.log(error)
+      }
+      else{
+          console.log('Email sent' + info.response)
+          bcrypt.hash(password,saltRounds,(err,hash)=>{
       
-    if(err){
-        console.log(err);
-    }
+              if(err){
+                  console.log(err);
+              }
 
-  db.query("INSERT INTO employee (name,NIC,email,phone_no,job_start_date,confirm_password,address,role,password) VALUES (?,?,?,?,?,?,?,?,?)",
-  [name,NIC,email,phone_no,job_start_date,hash,address,role,hash],(err,result)=>{
-     
-          console.log(err);
-     if(result){
-       res.send({message:"Successfully added"});
-     }
-    })
-  
-  })
-  
+              const sqlAdd="INSERT INTO employee(name, NIC, email, phone_no, job_start_date,address, role,password) VALUES ( ?, ?, ?, ?, ?, ?,?, ?) ";
+              const values =[name,NIC,email ,phone_no ,job_start_date,address,role,hash];
+              db.query(sqlAdd,values,(err,result)=>{
+       
+      if(err){
+        console.log(err)
+      }else{
+        const sqlUser="INSERT INTO userlogin(u_email, u_name, u_password,user_role,u_otp,u_verify) VALUES ( ?, ?, ?,?,?,'0') ";
+              const valuesu =[name,email,hash,role,otp ];
+              db.query(sqlUser,valuesu,(err,result)=>{
+        res.send({message:"Email has been Sent"});
+              })
+      }
+})
+
+})
+
+}
+})    
 });
 
-app.post('/login',(req,res)=>{
-  
-  const email = req.body.email;
-  const password = req.body.password;
+app.post('/otpCheck', (req, res) => {
+
+  const email = req.body.email
+  const otp = req.body.otp
+
   console.log(email)
-  console.log(password)
-  db.query(
-      "SELECT *FROM employee WHERE email=?;",
-     email,
-      (err,result)=>{
-          if(err)
-          { 
-              res.send({err:err})
-          } 
-          if(result){
-          if(result.length > 0){
-            bcrypt.compare(password,result[0].password,(error, response) =>{
-                if(response){
-                 res.send(result);
-                }
-                else{
-                 res.send({message:"Invalid Username or Password"});
-                }
-            })
-         }
-         else{
-             res.send({message:"Invalid Username or Password"});
-         }
-     }
-    }
- );
+  console.log(otp)
+  db.query
+  ("SELECT * FROM userlogin WHERE u_email = ? AND u_otp = ?;", 
+  [email,otp], 
+  (err, result)=> {
+
+      if(err){
+          res.send({err: err})
+      }
+      if(result){
+          console.log(result);
+          if (result.length > 0) {
+              
+              db.query("UPDATE userlogin SET u_verify=? WHERE u_email = ? AND u_otp = ?", 
+              [1,email,otp], 
+              (err, result) => {
+
+                  if (err) {
+                      console.log(err);
+                  } else {
+                      res.send({message:"OTP code verified Successfully"});
+                  }
+              }
+              );
+              
+          }else{
+              res.send({message:"Correct otp code"});
+          }
+
+          
+      }}
+  );
 });
+
+
+// app.post('/adddeliver',(req,res)=>{
+    
+//   const name = req.body.name;
+//   const NIC = req.body.NIC;
+//   const email = req.body.email;
+//   const phone_no = req.body.phone_no;
+//   const job_start_date = req.body.job_start_date;
+//   const confirm_password = req.body.confirm_password;
+//   const address = req.body.address;
+//   const role = req.body.role;
+//   const password = req.body.password;
+ 
+//   bcrypt.hash(password,saltRounds,(err,hash)=>{
+      
+//     if(err){
+//         console.log(err);
+//     }
+
+//   db.query("INSERT INTO employee (name,NIC,email,phone_no,job_start_date,confirm_password,address,role,password) VALUES (?,?,?,?,?,?,?,?,?)",
+//   [name,NIC,email,phone_no,job_start_date,hash,address,role,hash],(err,result)=>{
+     
+//           console.log(err);
+//      if(result){
+//        res.send({message:"Successfully added"});
+//      }
+//     })
+  
+//   })
+  
+// });
+
+// app.post('/login',(req,res)=>{
+  
+//   const email = req.body.email;
+//   const password = req.body.password;
+//   console.log(email)
+//   console.log(password)
+//   db.query(
+//       "SELECT *FROM employee WHERE email=?;",
+//      email,
+//       (err,result)=>{
+//           if(err)
+//           { 
+//               res.send({err:err})
+//           } 
+//           if(result){
+//           if(result.length > 0){
+//             bcrypt.compare(password,result[0].password,(error, response) =>{
+//                 if(response){
+//                  res.send(result);
+//                 }
+//                 else{
+//                  res.send({message:"Invalid Username or Password"});
+//                 }
+//             })
+//          }
+//          else{
+//              res.send({message:"Invalid Username or Password"});
+//          }
+//      }
+//     }
+//  );
+// });
+
+
+
+app.post('/login', (req, res) => {
+
+	const email = req.body.email
+	const password = req.body.password
+    
+    console.log(email)
+    console.log(password)
+	db.query
+	("SELECT * FROM userlogin WHERE u_email = ?;", 
+	email, 
+	(err, result)=> {
+
+		if(err){
+			res.send({err: err})
+		}
+        if(result){
+            console.log(result);
+			if (result.length > 0) {
+				bcrypt.compare(password, result[0].u_password, (error, response)=>{
+                    console.log(response);
+                    if(response){
+                      req.session.user = result;          
+						res.send(result);
+					}else{
+						res.send({message:"Invalid Username or Password!"})
+					}
+				})
+			}else{
+				res.send({message:"User doesn't exist"});
+			}
+
+            
+		}}
+	);
+});
+
 
 
 app.post('/AddCategory',(req,res)=>{
@@ -175,8 +437,6 @@ app.post('/AddCategory',(req,res)=>{
   })
   
 });
-
-
 
 app.post('/AddCustomizedOrder',(req,res)=>{
  customer_id=req.body.customer_id;
@@ -446,7 +706,19 @@ app.get("/viewGift",(req,res)=>{
 });
 
 //view customized order
-app.get("/ViewCusOrder",(req,res)=>{
+app.get("/ViewCusOrder1",(req,res)=>{
+  cus_product_id=req.params.cus_product_id;
+  
+  db.query("SELECT customer.fname,customized_products.cus_product_id,customized_products.customer_id,customized_products.product_name,customized_products.description,customized_products.material,customized_products.color,customized_products.measurement,customized_products.design FROM customized_products INNER JOIN customer ON customized_products.customer_id=customer.customer_id WHERE customized_products.cus_product_id=?  ",[req.query.cus_product_id],(err,result)=>{
+    // console.log(req.query.cus_product_id);
+    res.send(result);
+  });
+  
+});
+
+
+//view customized order
+app.get("/ViewCustomizedOrder1",(req,res)=>{
   cus_product_id=req.params.cus_product_id;
   
   db.query("SELECT customer.fname,customized_products.cus_product_id,customized_products.customer_id,customized_products.product_name,customized_products.description,customized_products.material,customized_products.color,customized_products.measurement,customized_products.design FROM customized_products INNER JOIN customer ON customized_products.customer_id=customer.customer_id WHERE customized_products.cus_product_id=?  ",[req.query.cus_product_id],(err,result)=>{
@@ -533,30 +805,9 @@ app.post('/update',(req, res) => {
   });
 });
 
-const storage = multer.diskStorage({
-  destination(req,file,cb){
-    cb(null,'../client/public/')
-  },
-  filename(req,file,cb){
-    cb(
-      null,
-      `${file.originalname.split('.')[0]}.jpg`
-    )
-  }
-})
 
-const upload = multer({
-  storage,
-  limits:{
-    fileSize: 5000000
-  },
-  fileFilter(req,file,cb){
-    if(!file.originalname.match(/\.(jpeg|jpg|png)$/i)){
-      return  cb(new Error('pleaseupload image with type of jpg or jpeg'))
-  }
-  cb(undefined,true)
-}
-})
+
+
 
 app.post("/imageUpload",upload.single('file'),(req,res)=> {
    
@@ -585,7 +836,7 @@ db.query(
 );
 })
 
-app.get('/addCustomizedProduct',(req,res)=>{
+app.get('/addCustomizedProduct1',(req,res)=>{
   
  
 const product_img =req.query.product_img;
@@ -593,21 +844,38 @@ const product_name = req.query.product_name;
 const material = req.query.material;
 const price=req.query.price;
 const description=req.query.description;
+const color=req.query.color;
 // const quantity = 1;
 // const category_id=7;
 
 
 db.query(
-  "INSERT INTO products(product_name,product_img,material,quantity,category_id,description,price) VALUES (?,?,?,1,7,?,?)",[product_name,product_img,material,description,price],
+  "INSERT INTO products(product_name,product_img,material,quantity,category_id,description,price,color) VALUES (?,?,?,1,7,?,?,?)",[product_name,product_img,material,description,price,color],
   (err,result)=>{
     if(err){
       console.log(err)
     }else{
-      res.send("Values added")
+      res.send(result);
     }
   }
 );
 })
+
+app.get('/InsertCustomizedToOrderItem',(req,res)=>{
+
+  db.query("INSERT INTO orderitem (order_id,product_id,total,quantity) VALUES(71,69,1000,1)",
+    (err,result)=>{
+      if(err){
+        console.log(err)
+      }else{
+        res.send(result)
+        console.log('success');
+      
+      }
+    }
+  ); 
+ 
+  })
 
 
 // app.post('/addGift',(req,res)=>{
@@ -669,18 +937,19 @@ app.put('/updateCategory', (req,res) => {
 });
 
 //add customized order
-app.get('/InsertCustomized', (req,res) => {
+app.get('/InsertCustomizedOrder1', (req,res) => {
   const customer_id=req.query.customer_id;
   const total = req.query.total;
   // console.log(req.query.advance);
   
-  db.query("INSERT INTO orders(customer_id,o_date,advance_price,total_price,order_type) VALUES (?,NOW(),?,?,'customized')",[req.query.customer_id,total*0.2,(total+100)], 
+  db.query("INSERT INTO orders(customer_id,o_date,advance_price,total_price,order_type) VALUES (?,NOW(),?,?,'customized')",[req.query.customer_id,total*(0.2),total], 
    
   (err, result) => {
       if (err) {
           console.log(err);
       } else {
           res.send(result);
+          
       }
      }
   );
@@ -692,7 +961,7 @@ app.get('/getorder_id',(req,res) =>{
   db.query("SELECT order_id FROM orders WHERE customer_id=? AND order_type='customized' ORDER BY order_id DESC LIMIT 1 ",[req.query.customer_id],(err,result)=>{
     
     res.send(result);
-    console.log(result.order_id);
+    console.log(result);
   });
 
  
@@ -707,11 +976,11 @@ app.get('/getproductid',(req,res) =>{
 });
 
 //add customized order
-app.get('/insertitem', (req,res) => {
+app.get('/insertCustomizeditem', (req,res) => {
   const total=req.body.total;
  const order_id=req.params.order_id;
   const product_id=req.params.product_id;
-  db.query("INSERT INTO orderitem(order_id,product_id,quantity,total) VALUES (?,?,1,?)",[req.query.order_id,req.query.product_id,req.query.total], 
+  db.query("INSERT INTO orderitem(order_id,product_id,quantity) VALUES (?,?,1)",[req.query.order_id,req.query.product_id], 
    
   (err, result) => {
       if (err) {
@@ -724,6 +993,29 @@ app.get('/insertitem', (req,res) => {
   // console.log(req.query.order_id);
   // console.log(req.query.product_id);
 });
+
+//Get Order ID
+app.get('/Get_OrderID1',(req,res) =>{
+  customer_id=req.params.customer_id;
+   db.query("SELECT order_id FROM orders orders WHERE customer_id= ? AND order_type='customized' ORDER BY order_id DESC LIMIT 1 ",[req.query.customer_id],(err,result)=>{
+     
+     res.send(result);
+     console.log(result);
+   });
+ 
+  
+ })
+
+ //Get PRoduct ID
+ app.get('/Get_ProductID1',(req,res) =>{
+  db.query("SELECT product_id FROM products WHERE category_id=7 ORDER BY product_id DESC LIMIT 1 ",(err,result)=>{
+    
+    res.send(result);
+    
+  });
+  console.log(result);
+});
+
 
 // order status
 app.get('/OrderStatus', (req,res) => {
@@ -760,6 +1052,25 @@ app.get('/OrderStatusReject', (req,res) => {
      }
   );
 });
+
+// order status
+app.get('/OrderStatusAccept', (req,res) => {
+  
+  const cus_product_id=req.params.cus_product_id;
+  
+ 
+  db.query("UPDATE customized_products SET status='Accept' WHERE cus_product_id = ?", 
+  [req.query.cus_product_id], 
+  (err, result) => {
+      if (err) {
+          console.log(err);
+      } else {
+          res.send(result);
+      }
+     }
+  );
+});
+
 
 // order active
 app.get('/NoficationActive', (req,res) => {
@@ -888,7 +1199,7 @@ app.get('/CategoryNoChart',(req,res) => {
 
 //customized order pie chart
 app.get('/Cus_OrderChart',(req,res) => {
-  db.query('SELECT SUM(quantity) AS quantity, category_name FROM customized_products GROUP BY category_name', (err, result) => {
+  db.query('SELECT SUM(quantity) AS quantity, category_name FROM customized_products WHERE date BETWEEN ? AND ? GROUP BY category_name',[req.query.from_date,req.query.to_date], (err, result) => {
       if(err) {
           console.log(err)
       }else {
@@ -901,8 +1212,8 @@ app.get('/Cus_OrderChart',(req,res) => {
 
 //customer analytics
 //customized order pie chart
-app.get('/CustomerCount',(req,res) => {
-  db.query('SELECT date, COUNT(customer_id) AS count FROM customer GROUP BY date', (err, result) => {
+app.get('/CustomerCount1',(req,res) => {
+  db.query('SELECT date, COUNT(customer_id) AS count FROM customer WHERE date BETWEEN ? AND ? GROUP BY date',[req.query.from_date,req.query.to_date], (err, result) => {
       if(err) {
           console.log(err)
       }else {
@@ -914,8 +1225,8 @@ app.get('/CustomerCount',(req,res) => {
 });
 
 //return items
-app.get('/ReturnCount',(req,res) => {
-  db.query('SELECT category.name,COUNT(return_item.return_id) AS count FROM ((orderitem INNER JOIN (orders INNER JOIN return_item ON orders.order_id=return_item.order_id) ON orderitem.order_id=orders.order_id) INNER JOIN (products INNER JOIN category ON products.category_id=category.category_id) ON orderitem.product_id=products.product_id) WHERE EXTRACT(MONTH FROM return_item.return_date) = MONTH(CURRENT_TIMESTAMP) GROUP BY (category.category_id)', (err, result) => {
+app.get('/ReturnCount1',(req,res) => {
+  db.query('SELECT category.name,COUNT(return_item.return_id) AS count FROM ((orderitem INNER JOIN (orders INNER JOIN return_item ON orders.order_id=return_item.order_id) ON orderitem.order_id=orders.order_id) INNER JOIN (products INNER JOIN category ON products.category_id=category.category_id) ON orderitem.product_id=products.product_id) WHERE return_item.return_date BETWEEN ? AND ? GROUP BY (category.category_id)',[req.query.from_date,req.query.to_date], (err, result) => {
       if(err) {
           console.log(err)
       }else {
@@ -926,10 +1237,27 @@ app.get('/ReturnCount',(req,res) => {
   });
 });
 
+//Cus with Date
+app.get('/CusWithDate',(req,res) => {
+   const todate=req.body.to_date;
+   const fromdate=req.body.from_date;
+
+  db.query("SELECT customer_id,fname,address,phone FROM customer WHERE date BETWEEN ? AND ? ",[req.query.from_date,req.query.to_date], (err, result) => {
+      if(err) {
+          console.log(err)
+      }else {
+          res.send(result);
+        console.log(result);
+          
+      }
+  });
+});
+
+
 //moving items
 app.get('/MovingItems',(req,res) => {
   const currentmonth=req.body.month;
-  db.query('SELECT SUM(orderitem.quantity) AS count, category.name FROM ((orderitem INNER JOIN (products INNER JOIN category ON products.category_id=category.category_id) ON orderitem.product_id=products.product_id)INNER JOIN orders ON orderitem.order_id=orders.order_id) WHERE EXTRACT(MONTH FROM orders.o_date)=? AND category.name NOT IN("Gift","customized products") GROUP BY products.category_id',[req.query.month], (err, result) => {
+  db.query('SELECT SUM(orderitem.quantity) AS sum, products.product_name FROM ((orderitem INNER JOIN products ON orderitem.product_id=products.product_id) INNER JOIN orders ON orderitem.order_id=orders.order_id) WHERE EXTRACT(MONTH FROM orders.o_date)=? GROUP BY orderitem.product_id',[req.query.month], (err, result) => {
       if(err) {
           console.log(err)
       }else {
@@ -938,6 +1266,7 @@ app.get('/MovingItems',(req,res) => {
           
       }
   });
+  console.log(req.query.month);
 });
 
 //Order Analytics
@@ -953,9 +1282,36 @@ app.get('/OrderAnalyze',(req,res) => {
   });
 });
 
+//Max Analytics
+app.get('/MaxItem',(req,res) => {
+  const currentmonth=req.body.month;
+  db.query('SELECT SUM(orderitem.quantity) AS sum, products.product_name FROM ((orderitem INNER JOIN products ON orderitem.product_id=products.product_id)INNER JOIN orders ON orderitem.order_id=orders.order_id) WHERE EXTRACT(MONTH FROM orders.o_date)=? GROUP BY orderitem.product_id ORDER BY sum DESC LIMIT 1',[req.query.month],(err, result) => {
+      if(err) {
+          console.log(err)
+      }else {
+          res.send(result);
+          // console.log(result);
+          
+      }
+  });
+});
+
+//Max Analytics
+app.get('/MinItem',(req,res) => {
+  db.query('SELECT SUM(orderitem.quantity) AS sum, products.product_name FROM ((orderitem INNER JOIN products ON orderitem.product_id=products.product_id)INNER JOIN orders ON orderitem.order_id=orders.order_id) WHERE EXTRACT(MONTH FROM orders.o_date)=? GROUP BY orderitem.product_id ORDER BY sum ASC LIMIT 1',[req.query.month], (err, result) => {
+      if(err) {
+          console.log(err)
+      }else {
+          res.send(result);
+          // console.log(result);
+          
+      }
+  });
+});
+
 //OrderChart
 app.get('/OrderChart',(req,res) => {
-  db.query('SELECT orders.o_date, SUM(orderitem.quantity) AS count FROM orderitem INNER JOIN orders ON orderitem.order_id=orders.order_id GROUP BY orders.o_date', (err, result) => {
+  db.query('SELECT orders.o_date, SUM(orderitem.quantity) AS count FROM orderitem INNER JOIN orders ON orderitem.order_id=orders.order_id WHERE orders.o_date BETWEEN ? AND ? GROUP BY orders.o_date',[req.query.from_date,req.query.to_date], (err, result) => {
       if(err) {
           console.log(err)
       }else {
@@ -968,7 +1324,7 @@ app.get('/OrderChart',(req,res) => {
 
 //OrderChart
 app.get('/ReturnItemReport',(req,res) => {
-  db.query('SELECT products.product_name,return_item.reason,return_item.return_id,return_item.return_date,return_item.reschedule_date,return_item.return_status FROM ((orderitem INNER JOIN (orders INNER JOIN return_item ON orders.order_id=return_item.order_id)ON orderitem.order_id=orders.order_id)INNER JOIN products ON orderitem.product_id=products.product_id) WHERE EXTRACT(MONTH FROM return_date) = MONTH(CURRENT_TIMESTAMP)', (err, result) => {
+  db.query('SELECT products.product_name,return_item.reason,return_item.return_id,return_item.return_date,return_item.reschedule_date,return_item.return_status FROM ((orderitem INNER JOIN (orders INNER JOIN return_item ON orders.order_id=return_item.order_id)ON orderitem.order_id=orders.order_id)INNER JOIN products ON orderitem.product_id=products.product_id) WHERE return_item.return_date BETWEEN ? AND ?', [req.query.from_date,req.query.to_date],(err, result) => {
       if(err) {
           console.log(err)
       }else {
@@ -1041,8 +1397,8 @@ app.get('/CategoryCount',(req,res) => {
 });
 
 //
-app.get('/CustomizedReport',(req,res) => {
-  db.query('SELECT customized_products.cus_product_id,customized_products.design,customized_products.product_name,customer.fname FROM customized_products INNER JOIN customer ON customized_products.customer_id=customer.customer_id', (err, result) => {
+app.get('/CustomizedReport1',(req,res) => {
+  db.query('SELECT customized_products.cus_product_id,customized_products.design,customized_products.product_name,customer.fname FROM customized_products INNER JOIN customer ON customized_products.customer_id=customer.customer_id WHERE customized_products.date BETWEEN ? AND ?', [req.query.from_date,req.query.to_date], (err, result) => {
       if(err) {
           console.log(err)
       }else {
@@ -1077,8 +1433,8 @@ app.get('/DeliverCount',(req,res) => {
 });
 
 //deliverCount
-app.get('/DeliveryStatus',(req,res) => {
-  db.query('SELECT COUNT(status) AS count FROM orders WHERE status="Completed"', (err, result) => {
+app.get('/DeliveryStatus1',(req,res) => {
+  db.query('SELECT COUNT(status) AS count FROM orders WHERE status="Completed" AND orders.order_last_date BETWEEN ? AND ?',[req.query.from_date,req.query.to_date], (err, result) => {
       if(err) {
           console.log(err)
       }else {
@@ -1089,8 +1445,8 @@ app.get('/DeliveryStatus',(req,res) => {
 });
 
 //OrderReport
-app.get('/OrderReport',(req,res) => {
-  db.query('SELECT orders.order_id,products.product_name,orders.o_date,orderitem.quantity,orders.total_price FROM ((orderitem INNER JOIN orders ON orderitem.order_id=orders.order_id) INNER JOIN products ON orderitem.product_id=products.product_id) WHERE EXTRACT(MONTH FROM o_date) = MONTH(CURRENT_TIMESTAMP)', (err, result) => {
+app.get('/OrderReport1',(req,res) => {
+  db.query('SELECT orders.order_id,products.product_name,orders.o_date,orderitem.quantity,orders.total_price FROM ((orderitem INNER JOIN orders ON orderitem.order_id=orders.order_id) INNER JOIN products ON orderitem.product_id=products.product_id) WHERE orders.o_date BETWEEN ? AND ?',[req.query.from_date,req.query.to_date] ,(err, result) => {
       if(err) {
           console.log(err)
       }else {
@@ -1101,8 +1457,8 @@ app.get('/OrderReport',(req,res) => {
 });
 
 //CustomerReport
-app.get('/CustomerReport',(req,res) => {
-  db.query('SELECT customer_id, fname,lname,email,address,phone,points,order_frequency,date FROM customer WHERE EXTRACT(MONTH FROM date) = MONTH(CURRENT_TIMESTAMP)', (err, result) => {
+app.get('/CustomerReport1',(req,res) => {
+  db.query("SELECT customer_id, fname,lname,email,address,phone,points,order_frequency,date FROM customer WHERE date BETWEEN ? AND ? ",[req.query.from_date,req.query.to_date], (err, result) => {
       if(err) {
           console.log(err)
       }else {
@@ -1113,8 +1469,8 @@ app.get('/CustomerReport',(req,res) => {
 });
 
 //DeliveryReport
-app.get('/DeliveryReport',(req,res) => {
-  db.query('SELECT products.product_name, orders.order_id,orders.order_last_date,orders.status FROM ((orderitem INNER JOIN orders ON orderitem.order_id=orders.order_id)INNER JOIN products ON orderitem.product_id=products.product_id) WHERE EXTRACT(MONTH FROM orders.o_date) = MONTH(CURRENT_TIMESTAMP)', (err, result) => {
+app.get('/DeliveryReport1',(req,res) => {
+  db.query('SELECT products.product_name, orders.order_id,orders.order_last_date,orders.status FROM ((orderitem INNER JOIN orders ON orderitem.order_id=orders.order_id)INNER JOIN products ON orderitem.product_id=products.product_id) WHERE orders.order_last_date BETWEEN ? AND ? ',[req.query.from_date,req.query.to_date], (err, result) => {
       if(err) {
           console.log(err)
       }else {
@@ -1171,7 +1527,8 @@ app.get("/viewAdmin",(req,res)=>{
   });
       
 });
-
-app.listen(3001,()=>{
-    console.log("Your server is running on port 3001");
+  
+    
+app.listen(3001,() => {
+    console.log("running sever");
 });

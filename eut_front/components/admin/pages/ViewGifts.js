@@ -59,11 +59,11 @@ export default function ViewGifts() {
               <td align="center">
               <Link to={location=> `/Gift/${record.product_id}`}  className="viewbtn" >View</Link>
                 <Link to={location=> `/GiftEdit/${record.product_id}`}  className="updatebtn"> Edit</Link>
-                <Link 
+                {/* <Link 
                   className="deletebtn"
                  >
                   Delete
-                </Link>
+                </Link> */}
               </td>
             </tr>    
            )

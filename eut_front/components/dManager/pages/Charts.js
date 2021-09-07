@@ -1,6 +1,7 @@
 import React,{useEffect,useState} from "react";
 import Chart from "react-apexcharts";
 import axios from 'axios';
+import Title from './Title';
 
 const dateOnly = (d) => {
   const date = new Date(d);
@@ -9,6 +10,11 @@ const dateOnly = (d) => {
   const day = date.getDate();
   return `${year} - ${month} - ${day}`;
 };
+
+const d = new Date();
+const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+let currentMonth =  months[d.getMonth() ];
+let currentYear = d.getFullYear();
 
 function Charts() {
 
@@ -28,7 +34,7 @@ function Charts() {
       <div className="app">
       <div className="row">
         <div className="mixed-chart">
-        <h5 style={{marginLeft:'20px'}} >Delivery</h5>
+          <Title>Delivery Overview - {currentMonth} {currentYear} </Title>
           <Chart
             options={{
               chart: {

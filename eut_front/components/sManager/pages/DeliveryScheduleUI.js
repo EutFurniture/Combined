@@ -18,7 +18,7 @@ class DeliveryScheduleUI extends Component{
   }
 
   componentDidMount()  {
-    fetch('http://localhost:3001/DeliverySchedule')
+    fetch('http://localhost:3001/sales_DeliverySchedule')
       .then(res => res.json())
       .then(result => {
         this.setState({

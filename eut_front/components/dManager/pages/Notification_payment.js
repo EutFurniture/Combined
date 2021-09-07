@@ -28,7 +28,7 @@ import {Link} from 'react-router-dom';
 import {toast} from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import Axios from 'axios';
-import {Button} from 'react-bootstrap';
+import {Button} from '@material-ui/core';
 
 import { mainListItems, Logout, Profile } from './listItems';
 import View_Notification_Payment from './View_Notification_Payment';
@@ -235,7 +235,7 @@ export default function Notification_payment() {
         return(
           <div style={{fontSize:'15px'}}>
             You have {paymentmesscount} New Payment Confirmations from Deliver Person! <br></br><br></br>
-            <Button variant="light" onClick={Notification_page_payment}>View</Button>
+            <Button variant="contained" onClick={Notification_page_payment}>View</Button>
           </div>
         )
       }
@@ -257,7 +257,7 @@ export default function Notification_payment() {
           return(
             <div style={{fontSize:'15px'}}>
               You have {returnmesscount} New Return Delivery Confirmations from Deliver Person! <br></br><br></br>
-              <Button variant="light" onClick={Notification_page_return}>View</Button>
+              <Button variant="contained" onClick={Notification_page_return}>View</Button>
             </div>
           )
         }
@@ -277,7 +277,7 @@ export default function Notification_payment() {
           return(
             <div style={{fontSize:'15px'}}>
               You have New {ordermesscount} Delivery Confirmations from Deliver Person! <br></br><br></br>
-              <Button variant="light" onClick={Notification_page_order}>View</Button>
+              <Button variant="contained" onClick={Notification_page_order}>View</Button>
             </div>
           )
         }

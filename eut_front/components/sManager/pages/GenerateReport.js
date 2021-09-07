@@ -193,7 +193,7 @@ const GenerateReport=()=> {
   
   const [quantityList,setQuantityList]=useState([])
   useEffect(()=>{
-    axios.get("http://localhost:3001/CategoryNoChart").then((response)=>{
+    axios.get("http://localhost:3001/sales_CategoryNoChart").then((response)=>{
       setQuantityList(response.data)
       console.log(response)
     })
@@ -205,7 +205,7 @@ const GenerateReport=()=> {
   
   const [customercount,setCustomerCount]=useState([])
   useEffect(()=>{
-    axios.get("http://localhost:3001/CustomerCount").then((response)=>{
+    axios.get("http://localhost:3001/sales_CustomerCount").then((response)=>{
       setCustomerCount(response.data)
       console.log(response)
     })
@@ -214,14 +214,14 @@ const GenerateReport=()=> {
   
   const [order,setOrder]=useState([])
   useEffect(()=>{
-    axios.get("http://localhost:3001/Order").then((response)=>{
+    axios.get("http://localhost:3001/sales_Order").then((response)=>{
       setOrder(response.data)
     })
   },[])
 
   const [orderanalyze,setOrderAnalyze]=useState([])
   useEffect(()=>{
-    axios.get("http://localhost:3001/OrderAnalyze").then((response)=>{
+    axios.get("http://localhost:3001/sales_OrderAnalyze").then((response)=>{
       setOrderAnalyze(response.data)
     })
   },[])
@@ -247,7 +247,7 @@ const count=customercount.map(record=>record.count);
   const [orderdate,setOrderDate]=useState([])
   const[currentmonth,setMonth]=useState("");
   const OrderDate = async () => {
-      const response = await axios.get('http://localhost:3001/OrderDetails', {
+      const response = await axios.get('http://localhost:3001/sales_OrderDetails', {
           params: {
            
             month:currentmonth,  

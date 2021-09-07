@@ -41,7 +41,7 @@ export default function LoadPayment() {
        {paymentList.filter(val=>{if(searchTerm===""){
                        return val;
                      }else if(
-                       val.product_name.toLowerCase().includes(searchTerm.toLowerCase()) || val.payment_method.toLowerCase().includes(searchTerm.toLowerCase())
+                       val.fname.toLowerCase().includes(searchTerm.toLowerCase()) || val.payment_method.toLowerCase().includes(searchTerm.toLowerCase())
                        || val.payment_status.toLowerCase().includes(searchTerm.toLowerCase()))
                        
                      {
