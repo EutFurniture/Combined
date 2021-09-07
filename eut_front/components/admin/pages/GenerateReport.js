@@ -1,20 +1,12 @@
 import React,{useEffect,useState} from 'react';
 import clsx from 'clsx';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {Table} from 'react-bootstrap';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import CategoryChart from '../../charts/CategoryChart';
 import Chart from "react-apexcharts";
 
-import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
-import AssignmentReturnedIcon from '@material-ui/icons/AssignmentReturned';
-import AssignmentIcon from '@material-ui/icons/Assignment';
-import ShoppingBasketIcon from '@material-ui/icons/ShoppingBasket';
-import LocalMallIcon from '@material-ui/icons/LocalMall';
-import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
-import PersonOutlineOutlinedIcon from '@material-ui/icons/PersonOutlineOutlined';
-import PeopleIcon from '@material-ui/icons/People';
+
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Drawer from '@material-ui/core/Drawer';
@@ -33,13 +25,10 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Grid from '@material-ui/core/Grid';
 import Divider from '@material-ui/core/Divider';
-import ApexChart from '../../charts/ApexChart';
-
+import {toast} from 'react-toastify'
 import {Redirect} from "react-router-dom"
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 
-import {Bar, Pie, Doughnut,Line} from 'react-chartjs-2'
-import {userData} from "../../charts/dummydata"
 import { mainListItems, Logout } from './listItems';
 import '../css/Dashboard.css'
 import CustomizeOrder from './CustomizeOrder'
@@ -79,6 +68,11 @@ const useStyles = makeStyles((theme) => ({
   },
   menuButtonHidden: {
     display: 'none',
+  },
+  profile_img:{
+    width:'50px',
+    height:'50px',
+    borderRadius:'50px'
   },
   title: {
     flexGrow: 1,
@@ -266,11 +260,71 @@ const count=customercount.map(record=>record.count);
   const handleDrawerClose = () => {
     setOpen(false);
   };
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const { id } = useParams();
+  const [Dt, setDt] = useState([])
+ 
+ useEffect(() => {
+  const fetchData = async () => {
+      const response = await axios.get('http://localhost:3001/viewAdmin', {
+          params: {
+              id: id,  
+          }
+          
+      });
+
+      setDt(response.data[0]);
+         console.log(response.data[0]);
+
+  };
+  fetchData();
+}, [id]);
+
+const [anchorEl, setAnchorEl] = React.useState(null);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
+
+const NotificationClick = async () => {
+  const response = await axios.get('http://localhost:3001/NoficationActive', {
+     
+      
+  });
+  notify();
+}
+
+const [cusorderCount,setCusOrderCount]=useState([])
+  useEffect(()=>{
+    axios.get("http://localhost:3001/CustomizedOrderCount").then((response)=>{
+      setCusOrderCount(response.data)
+      
+    })
+  },[])
+const customizedcount=cusorderCount.map(record=>record.count);
+console.log(customizedcount);
+
+const customToast=()=>{
+  return(
+    <div>
+      You have requested customized Order from Customer!
+      <button style={{marginLeft:'10px',border:'none',backgroundColor:'white',borderRadius:'5px'}} onClick={Cuspage}>View</button>
+    </div>
+  )
+}
+
+const Cuspage=()=>{
+window.location.href='/admin/pages/CustomizedOrders'
+}
+
+
+const notify=()=>{
+   
+  toast.info(customToast,{position:toast.POSITION.TOP_RIGHT,autoClose:false})
+
+
+    }
+  
+
 
   const handleClose = () => {
     setAnchorEl(null);
@@ -303,23 +357,19 @@ const count=customercount.map(record=>record.count);
             <b>ADMIN</b>
           </Typography>
           <IconButton color="inherit">
-            <Badge badgeContent={4} color="secondary">
-              <NotificationsIcon />
+            <Badge badgeContent={customizedcount} color="secondary">
+              <NotificationsIcon onClick={NotificationClick}/>
             </Badge>
           </IconButton>
-
-         
-          <IconButton color="inherit" fontSize="inherit">
-           <AccountCircleIcon   onClick={handleClick}/>
-  
-          </IconButton>
+          
+          <img src={`/${Dt.emp_img}`} onClick={handleClick} className={classes.profile_img}/>
    <Menu
         id="simple-menu"
         anchorEl={anchorEl}
         keepMounted
         open={Boolean(anchorEl)}
         onClose={handleClose}
-      >
+     >
         <MenuItem onClick={handleClose}>Profile</MenuItem>
         <MenuItem onClick={()=>setIsAuth(false)}>Logout</MenuItem>
       </Menu>
@@ -451,7 +501,7 @@ const count=customercount.map(record=>record.count);
             <Grid item xs={6} >
            
               <Paper style={{height:'430px'}} >
-              <h2 style={{marginLeft:'20px',paddingTop:'10px'}}><b>Categories</b></h2>
+              <h2 style={{marginLeft:'20px',paddingTop:'10px',color:'red'}}><b>Categories</b></h2>
                           
                           <Chart 
             options={{
@@ -484,7 +534,7 @@ const count=customercount.map(record=>record.count);
 
           <Grid item xs={6} style={{marginLeft:'20px'}}>
               <Paper style={{height:'430px'}} >
-              <h2 style={{marginLeft:'20px',paddingTop:'10px'}}><b>Delivery Status</b></h2>
+              <h2 style={{marginLeft:'20px',paddingTop:'10px',color:'red'}}><b>Delivery Status</b></h2>
                 <CategoryChart />
               </Paper>
             </Grid>

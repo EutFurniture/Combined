@@ -1,9 +1,11 @@
 import React,{useEffect,useState} from 'react';
 import clsx from 'clsx';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import {Table} from 'react-bootstrap';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { Link, Switch } from "react-router-dom";
+import BarChartIcon from '@material-ui/icons/BarChart';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Drawer from '@material-ui/core/Drawer';
@@ -22,10 +24,10 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Grid from '@material-ui/core/Grid';
 import Divider from '@material-ui/core/Divider';
+import TimelineIcon from '@material-ui/icons/Timeline';
+import TrendingUpIcon from '@material-ui/icons/TrendingUp';
 import {Redirect} from "react-router-dom"
-import ReactToPrint from 'react-to-print';
-import DataComponent from './DataComponent';
-import {toast} from 'react-toastify'
+import TrendingDownIcon from '@material-ui/icons/TrendingDown';
 
 
 import {Bar, Pie, Doughnut} from 'react-chartjs-2'
@@ -176,7 +178,7 @@ const styles = {
 
 
 
-const ReportGeneration=({componentRef})=> {
+const MovingItems=()=> {
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
   const {id}=useParams();
@@ -234,44 +236,7 @@ const ReportGeneration=({componentRef})=> {
   const handleClose = () => {
     setAnchorEl(null);
   };
-  const NotificationClick = async () => {
-    const response = await axios.get('http://localhost:3001/NoficationActive', {
-       
-        
-    });
-    notify();
-  }
-  
-  const [cusorderCount,setCusOrderCount]=useState([])
-    useEffect(()=>{
-      axios.get("http://localhost:3001/CustomizedOrderCount").then((response)=>{
-        setCusOrderCount(response.data)
-        
-      })
-    },[])
-  const customizedcount=cusorderCount.map(record=>record.count);
-  console.log(customizedcount);
-  
-  const customToast=()=>{
-    return(
-      <div>
-        You have requested customized Order from Customer!
-        <button style={{marginLeft:'10px',border:'none',backgroundColor:'white',borderRadius:'5px'}} onClick={Cuspage}>View</button>
-      </div>
-    )
-  }
-  
-  const Cuspage=()=>{
-  window.location.href='/admin/pages/CustomizedOrders'
-  }
-  
-  
-  const notify=()=>{
-     
-    toast.info(customToast,{position:toast.POSITION.TOP_RIGHT,autoClose:false})
-  
-  
-      }
+
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
   const[isAuth,setIsAuth]=useState(true);
@@ -299,10 +264,16 @@ const ReportGeneration=({componentRef})=> {
             <b>ADMIN</b>
           </Typography>
           <IconButton color="inherit">
-            <Badge badgeContent={customizedcount} color="secondary">
-              <NotificationsIcon onClick={NotificationClick}/>
+            <Badge badgeContent={4} color="secondary">
+              <NotificationsIcon />
             </Badge>
           </IconButton>
+
+         
+          {/* <IconButton color="inherit" fontSize="inherit">
+           <AccountCircleIcon   onClick={handleClick}/>
+  
+          </IconButton> */}
 
           <img src={`/${Dt.emp_img}`} onClick={handleClick} className={classes.profile_img}/>
    <Menu
@@ -351,25 +322,39 @@ const ReportGeneration=({componentRef})=> {
           
            
            
-               <h1><b>SYSTEM ANALYTICS</b></h1><br/>
+               <h1><b>CUSTOMER DETAILS</b></h1><br/>
                <div style={{display:'flex'}}>
                    <div style={{width:'1220px'}}>
                <Grid item xs={16}  direction="row">
-              <Paper >
-                <div style={{display:'flex'}}>
-                  <div>
-              <h2 style={{color:'indigo',marginBottom:'1px',marginLeft:'30px',marginTop:'30px'}}>Click here to Download the Report</h2>
-              </div>
-              <div>
-          <ReactToPrint
-           content={() =>componentRef}
-            trigger={() => <button className="btn btn-success" style={{align:'left',marginLeft:'30px',marginBottom:'20px',backgroundColor:'green',borderRadius:'5px'}}>Download to PDF!</button>}
-          />
-         </div>
-         </div> 
-          <DataComponent  ref={(response) => (componentRef = response)} />
-          
-              
+              <Paper style={{height:'70px'}}>
+                  <div style={{display:'flex'}}>
+                  <h4 style={{color:'red',marginLeft:'10px',paddingTop:'10px',marginTop:'10px'}}>Enter Dates</h4>
+                  <p>From Date</p>
+                  <input type='date' style={{width:'400px',height:'40px',border:'none',backgroundColor:'aliceblue',paddingLeft:'20px',marginTop:'10px',marginLeft:'20px',borderRadius:'10px'}} placeholder='From Date' 
+                   onChange={(event)=> {
+                    setFromdate(event.target.value);
+                  }} ></input>
+ <p>To Date</p>
+<input type='date' style={{width:'400px',height:'40px',border:'none',backgroundColor:'aliceblue',paddingLeft:'20px',marginTop:'10px',marginLeft:'20px',borderRadius:'10px'}} placeholder='To date' 
+                   onChange={(event)=> {
+                    setTodate(event.target.value);
+                  }} ></input>
+                  <button style={{marginLeft:'30px',fontSize:'20px',width:'150px',height:'50px',backgroundColor:'#0070ff',border:'none',borderRadius:'10px',color:'white',marginTop:'10px'}}
+                  onClick={()=>{customer()}}>Click to View</button>
+                  </div>
+
+                  {cus.map((record)=>{
+                       return(
+                  <div ><br/>
+                
+                  <div style={{display:'flex'}}><label className={classes.formlabel1}><b style={{marginRight:'65px'}}>Customer ID :</b>{record.customer_id}</label></div>
+                  <label className={classes.formlabel1}><b style={{marginRight:'30px'}}>Customer Name :</b > {record.fname}</label><br/>
+                  <label className={classes.formlabel1}><b style={{marginRight:'100px'}}>Address : </b>{record.address}</label><br/>
+                  <label className={classes.formlabel1}><b style={{marginRight:'50px'}}>Phone No :</b>{record.phone} </label><br/>
+                       
+                  </div>
+              )
+            })}
               </Paper>
               </Grid><br/>
               </div>
@@ -381,4 +366,4 @@ const ReportGeneration=({componentRef})=> {
   );
 }
 
-export default ReportGeneration;
+export default MovingItems;

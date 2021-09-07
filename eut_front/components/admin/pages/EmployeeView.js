@@ -100,7 +100,7 @@ const [modal, setModal] = useState(false);
                      {employeeList.filter(val=>{if(searchTerm===""){
                        return val;
                      }else if(
-                       val.name.toLowerCase().includes(searchTerm.toLowerCase()) || val.email.toLowerCase().includes(searchTerm.toLowerCase())) 
+                     val.name.toLowerCase().includes(searchTerm.toLowerCase()) || val.email.toLowerCase().includes(searchTerm.toLowerCase())) 
                      {
                        return val
                      }

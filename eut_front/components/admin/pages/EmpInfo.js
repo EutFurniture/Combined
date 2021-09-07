@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import clsx from 'clsx';
 import axios from "axios";
-import user1 from '../../../assets/user1.png'
+
 
 
 import { makeStyles } from '@material-ui/core/styles';
@@ -17,12 +17,10 @@ import Badge from '@material-ui/core/Badge';
 import Container from '@material-ui/core/Container';
 import Paper from '@material-ui/core/Paper';
 import MenuIcon from '@material-ui/icons/Menu';
-import AddCircleIcon from '@material-ui/icons/AddCircle';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import Grid from '@material-ui/core/Grid';
-import {Button} from 'react-bootstrap';
-import Catergory from '../../../assets/category2.jpg'
+import {toast} from 'react-toastify'
 import Divider from '@material-ui/core/Divider';
 import {useParams} from 'react-router-dom'
 
@@ -66,6 +64,11 @@ const useStyles = makeStyles((theme) => ({
   },
   menuButtonHidden: {
     display: 'none',
+  },
+  profile_img:{
+    width:'50px',
+    height:'50px',
+    borderRadius:'50px'
   },
   title: {
     flexGrow: 1,
@@ -270,6 +273,72 @@ export default function EmpInfo() {
   };
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
+  
+
+const [Dts, setDts] = useState([])
+
+useEffect(() => {
+const fetchData = async () => {
+    const response = await axios.get('http://localhost:3001/viewAdmin', {
+        params: {
+            id: id,  
+        }
+        
+    });
+
+    setDts(response.data[0]);
+       console.log(response.data[0]);
+
+};
+fetchData();
+}, [id]);
+
+const [anchorEl, setAnchorEl] = React.useState(null);
+
+const handleClick = (event) => {
+  setAnchorEl(event.currentTarget);
+};
+
+const NotificationClick = async () => {
+const response = await axios.get('http://localhost:3001/NoficationActive', {
+   
+    
+});
+notify();
+}
+
+const [cusorderCount,setCusOrderCount]=useState([])
+useEffect(()=>{
+  axios.get("http://localhost:3001/CustomizedOrderCount").then((response)=>{
+    setCusOrderCount(response.data)
+    
+  })
+},[])
+const customizedcount=cusorderCount.map(record=>record.count);
+console.log(customizedcount);
+
+const customToast=()=>{
+return(
+  <div>
+    You have requested customized Order from Customer!
+    <button style={{marginLeft:'10px',border:'none',backgroundColor:'white',borderRadius:'5px'}} onClick={Cuspage}>View</button>
+  </div>
+)
+}
+
+const Cuspage=()=>{
+window.location.href='/admin/pages/CustomizedOrders'
+}
+
+
+const notify=()=>{
+ 
+toast.info(customToast,{position:toast.POSITION.TOP_RIGHT,autoClose:false})
+
+
+  }
+
+
   return (
     <div className={classes.root}>
       <CssBaseline />
@@ -288,14 +357,13 @@ export default function EmpInfo() {
             <b>ADMIN</b>
           </Typography>
           <IconButton color="inherit">
-            <Badge badgeContent={4} color="secondary">
-              <NotificationsIcon />
+            <Badge badgeContent={customizedcount} color="secondary">
+              <NotificationsIcon onClick={NotificationClick}/>
             </Badge>
           </IconButton>
+          
+          <img src={`/${Dts.emp_img}`} onClick={handleClick} className={classes.profile_img}/>
 
-          <Paper variant="outlined">
-   <img src="https://images.pexels.com/photos/1526814/pexels-photo-1526814.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500" className={classes.userimage} />
-</Paper>
         </Toolbar>
         
       </AppBar>

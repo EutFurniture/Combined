@@ -1,11 +1,10 @@
 import React,{useEffect,useState} from 'react';
 import clsx from 'clsx';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {Table} from 'react-bootstrap';
+
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { Link, Switch } from "react-router-dom";
-import BarChartIcon from '@material-ui/icons/BarChart';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Drawer from '@material-ui/core/Drawer';
@@ -24,11 +23,10 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Grid from '@material-ui/core/Grid';
 import Divider from '@material-ui/core/Divider';
-import TimelineIcon from '@material-ui/icons/Timeline';
 import TrendingUpIcon from '@material-ui/icons/TrendingUp';
 import {Redirect} from "react-router-dom"
 import TrendingDownIcon from '@material-ui/icons/TrendingDown';
-
+import {toast} from 'react-toastify'
 
 import {Bar, Pie, Doughnut} from 'react-chartjs-2'
 
@@ -186,6 +184,8 @@ const MovingItems=()=> {
   const {id}=useParams();
   const [Dt, setDt] = useState([])
   const[currentmonth,setMonth]=useState("");
+  const [maxanalyze,setMaxAnalyze]=useState([])
+  const [minanalyze,setMinAnalyze]=useState([])
 
   useEffect(() => {
     const fetchData = async () => {
@@ -216,22 +216,33 @@ const MovingItems=()=> {
    
         setMoving(response.data);
            console.log(response.data[0]);
+
+           const response1 = await axios.get('http://localhost:3001/MaxItem', {
+            params: {
+               month:currentmonth,  
+            }
+            
+        });
+            setMaxAnalyze(response1.data)
+         
+
+         const response2= await axios.get("http://localhost:3001/MinItem",{
+          params: {
+            month:currentmonth,  
+         }
+          })
+          setMinAnalyze(response2.data)
    
     }
+
    
+
+  const product_name=maxanalyze.map(record=>record.product_name);
   
-
+  const slow_name=minanalyze.map(record=>record.product_name);
   
-//   useEffect(()=>{
-//     axios.get("http://localhost:3001/MovingItems").then((response)=>{
-//       setMoving(response.data)
-//     })
-//   },[])
-
-
-
-const name=moving.map(record=>record.name);
-const count=moving.map(record=>record.count);
+const name=moving.map(record=>record.product_name);
+const count=moving.map(record=>record.sum);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -248,6 +259,47 @@ const count=moving.map(record=>record.count);
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const NotificationClick = async () => {
+    const response = await axios.get('http://localhost:3001/NoficationActive', {
+       
+        
+    });
+    notify();
+  }
+  
+  const [cusorderCount,setCusOrderCount]=useState([])
+    useEffect(()=>{
+      axios.get("http://localhost:3001/CustomizedOrderCount").then((response)=>{
+        setCusOrderCount(response.data)
+        
+      })
+    },[])
+  const customizedcount=cusorderCount.map(record=>record.count);
+  console.log(customizedcount);
+  
+  const customToast=()=>{
+    return(
+      <div>
+        You have requested customized Order from Customer!
+        <button style={{marginLeft:'10px',border:'none',backgroundColor:'white',borderRadius:'5px'}} onClick={Cuspage}>View</button>
+      </div>
+    )
+  }
+  
+  const Cuspage=()=>{
+  window.location.href='/admin/pages/CustomizedOrders'
+  }
+  
+  
+  const notify=()=>{
+     
+    toast.info(customToast,{position:toast.POSITION.TOP_RIGHT,autoClose:false})
+  
+  
+      }
+    
+  
 
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
@@ -276,16 +328,12 @@ const count=moving.map(record=>record.count);
             <b>ADMIN</b>
           </Typography>
           <IconButton color="inherit">
-            <Badge badgeContent={4} color="secondary">
-              <NotificationsIcon />
+            <Badge badgeContent={customizedcount} color="secondary">
+              <NotificationsIcon onClick={NotificationClick}/>
             </Badge>
           </IconButton>
-
-         
-          {/* <IconButton color="inherit" fontSize="inherit">
-           <AccountCircleIcon   onClick={handleClick}/>
-  
-          </IconButton> */}
+          
+        
 
           <img src={`/${Dt.emp_img}`} onClick={handleClick} className={classes.profile_img}/>
    <Menu
@@ -427,12 +475,12 @@ const count=moving.map(record=>record.count);
               <Paper style={{align:'center',marginLeft:'20px',backgroundColor: '#045de9',backgroundImage:'linear-gradient(315deg, #045de9 0%, #09c6f9 74%)',height:'230px',borderRadius:'20px'}}>
                   <h4 style={{color:'white',marginLeft:'50px',marginTop:'50px',paddingTop:'20px'}}>Fast Moving Item</h4>
              <TrendingUpIcon style={{marginLeft:'100px',width:'100px',height:'120px',color:'white'}}/>
-             <h6 style={{marginLeft:'120px'}}>Bed Set</h6>
+             <h5 style={{textAlign:'center'}}>{product_name}</h5>
               </Paper><br/>
               <Paper style={{align:'center',marginLeft:'20px',backgroundColor: '#045de9',backgroundImage:'linear-gradient(315deg, #045de9 0%, #09c6f9 74%)',height:'230px',borderRadius:'20px'}}>
                   <h4 style={{color:'white',marginLeft:'50px',paddingTop:'20px'}}>Slow Moving Item</h4>
              <TrendingDownIcon style={{marginLeft:'100px',width:'100px',height:'120px',color:'white'}}/>
-             <h6 style={{marginLeft:'120px'}}>Sofa Set</h6>
+             <h5 style={{textAlign:'center'}}>{slow_name}</h5>
               </Paper><br/>
               </Grid>  
             </div>

@@ -16,7 +16,10 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-
+import {toast} from 'react-toastify'
+import {Redirect} from "react-router-dom"
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Drawer from '@material-ui/core/Drawer';
@@ -226,6 +229,11 @@ cusbutton:{
   borderRadius:'10px',
   backgroundColor:'blue',
   color:'white'
+},
+profile_img:{
+  width:'50px',
+  height:'50px',
+  borderRadius:'50px'
 }
 
 
@@ -263,7 +271,7 @@ export default function CustomizedOrders() {
 const {cus_product_id}=useParams();
   
  const viewOrder = async (cus_product_id) => {
-     const response = await axios.get('http://localhost:3001/ViewCusOrder', {
+     const response = await axios.get('http://localhost:3001/ViewCusOrder1', {
          params: {
              cus_product_id:cus_product_id,  
          }
@@ -296,6 +304,15 @@ const statusUpdate = async (cus_product_id) => {
   });
 alert("Order Removed from list");
 window.location.href='/admin/pages/CustomizedOrders'
+}
+
+const statusUpdate1 = async (cus_product_id) => {
+  const response = await axios.get('http://localhost:3001/OrderStatusAccept', {
+      params: {
+          cus_product_id:cus_product_id,  
+      }
+      
+  });
 }
 
 
@@ -390,6 +407,74 @@ window.location.href='/admin/pages/CustomizedOrders'
     setOpen1(false);
   };
 
+  const [cusorderCount,setCusOrderCount]=useState([])
+  useEffect(()=>{
+    axios.get("http://localhost:3001/CustomizedOrderCount").then((response)=>{
+      setCusOrderCount(response.data)
+      
+    })
+  },[])
+
+  const NotificationClick = async () => {
+    const response = await axios.get('http://localhost:3001/NoficationActive', {
+       
+        
+    });
+    notify();
+  }
+  
+  const customizedcount=cusorderCount.map(record=>record.count);
+  const customToast=()=>{
+    return(
+      <div>
+        You have requested customized Order from Customer!
+        <button style={{marginLeft:'10px',border:'none',backgroundColor:'white',borderRadius:'5px'}} onClick={Cuspage}>View</button>
+      </div>
+    )
+  }
+
+const Cuspage=()=>{
+  window.location.href='/admin/pages/CustomizedOrders'
+}
+
+  const notify=()=>{
+   
+    toast.info(customToast,{position:toast.POSITION.TOP_RIGHT,autoClose:false})
+  
+  
+      }
+
+      const { id } = useParams();
+      const [Dts, setDts] = useState([])
+     
+     useEffect(() => {
+      const fetchData = async () => {
+          const response = await axios.get('http://localhost:3001/viewAdmin', {
+              params: {
+                  id: id,  
+              }
+              
+          });
+    
+          setDts(response.data[0]);
+            //  console.log(response.data[0]);
+    
+      };
+      fetchData();
+    }, [id]);
+
+    const [anchorEl, setAnchorEl] = React.useState(null);
+
+    const handleClick = (event) => {
+      setAnchorEl(event.currentTarget);
+    };
+  
+    const[isAuth,setIsAuth]=useState(true);
+  
+    if(!isAuth){
+      return <Redirect to="" />
+    }
+
   return (
     <div className={classes.root}>
       <CssBaseline />
@@ -408,14 +493,26 @@ window.location.href='/admin/pages/CustomizedOrders'
             <b>ADMIN</b>
           </Typography>
           <IconButton color="inherit">
-            <Badge badgeContent={4} color="secondary">
-              <NotificationsIcon />
+            <Badge badgeContent={customizedcount} color="secondary">
+              <NotificationsIcon onClick={NotificationClick}/>
             </Badge>
           </IconButton>
-          <IconButton color="inherit" fontSize="inherit">
-           <AccountCircleIcon   />
-  
-          </IconButton>
+           
+
+       
+
+          <img src={`/${Dts.emp_img}`} onClick={handleClick} className={classes.profile_img}/>
+   <Menu
+        id="simple-menu"
+        anchorEl={anchorEl}
+        keepMounted
+        open={Boolean(anchorEl)}
+        onClose={handleClose}
+      >
+        <MenuItem onClick={handleClose}><Link to='/admin/pages/ViewProfile' style={{textDecoration:'none',color:'black'}}>Profile</Link></MenuItem>
+        <MenuItem onClick={()=>setIsAuth(false)}>Logout</MenuItem>
+      </Menu>
+
           
         </Toolbar>
         
@@ -530,7 +627,7 @@ window.location.href='/admin/pages/CustomizedOrders'
                           </Box>
                           <div display='flex'>
                            
-                          <Link to={location=> `/Customize/${record.customer_id}/${record.cus_product_id}`}  className={classes.accept}  >Accept</Link>
+                          <Link to={location=> `/Customize/${record.customer_id}/${record.cus_product_id}`} onClick={()=>{statusUpdate1(record.cus_product_id)}} className={classes.accept}  >Accept</Link>
                           <Link className={classes.reject} onClick={handleClickOpen}>Reject</Link>
                           <Dialog open={open1} onClose={handleClose} aria-labelledby="form-dialog-title">
         <DialogTitle id="form-dialog-title" align='center'><b>ORDER REJECT</b></DialogTitle>

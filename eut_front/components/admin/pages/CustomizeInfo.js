@@ -1,10 +1,9 @@
 
-import React,{useEffect,useState} from 'react'
+import React, { useState, useEffect } from "react";
 import clsx from 'clsx';
-import axios from "axios"
-import { useParams } from 'react-router-dom';
-import {toast} from 'react-toastify'
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+import axios from "axios";
+import user1 from '../../../assets/user1.png'
+
 
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -18,11 +17,17 @@ import Badge from '@material-ui/core/Badge';
 import Container from '@material-ui/core/Container';
 import Paper from '@material-ui/core/Paper';
 import MenuIcon from '@material-ui/icons/Menu';
+import AddCircleIcon from '@material-ui/icons/AddCircle';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import Grid from '@material-ui/core/Grid';
+import {Button} from 'react-bootstrap';
+import Catergory from '../../../assets/category2.jpg'
 import Divider from '@material-ui/core/Divider';
-import "../css/manageEmployee.css";
+import chair from '../../../assets/chair.jpg'
+import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+import {useParams} from "react-router-dom"
+
 
 import { mainListItems, Logout } from './listItems';
 
@@ -173,10 +178,23 @@ textareabox:{
     border:'none',
     backgroundColor:'#E1F4FF',
 },
-
-
+formrow:{
+ gridTemplateColumns:'1fr 3fr',
+ display:'flex'
+},
+formleft:{
+  width:'200px',
+  marginTop:'20px',
+  marginBottom:'30px',
+  marginLeft:'20px'
+},
+formright1:{
+  width:'800px',
+  marginTop:'10px',
+  marginBottom:'20px'
+},
 formlabel1:{
-  marginBottom:'20px',
+  marginBottom:'32px',
   fontSize:'16px', 
   
 },
@@ -201,12 +219,7 @@ width:'700px'
      marginTop:'20px',
      align:'center',
      marginLeft:'60px'
- },
- profile_img:{
-  width:'50px',
-  height:'50px',
-  borderRadius:'50px'
-}
+ }
 
   
 
@@ -219,18 +232,18 @@ const styles = {
 };
 
 
-export default function ProductInfo() {
+export default function GiftInfo() {
    
     const classes = useStyles();
     const [open, setOpen] = React.useState(true);
-    const { product_id } = useParams();
+    const {cus_product_id } = useParams();
     const [Dt, setDt] = useState([])
 
     useEffect(() => {
       const fetchData = async () => {
-          const response = await axios.get('http://localhost:3001/viewProduct', {
+          const response = await axios.get('http://localhost:3001/ViewCusOrder', {
               params: {
-                  product_id: product_id,
+                  cus_product_id: cus_product_id,
                   
               }
           });
@@ -239,7 +252,7 @@ export default function ProductInfo() {
              console.log(response.data[0]);
       };
       fetchData();
-    }, [product_id]);
+    }, [ cus_product_id]);
     
 
   const handleDrawerOpen = () => {
@@ -248,74 +261,7 @@ export default function ProductInfo() {
   const handleDrawerClose = () => {
     setOpen(false);
   };
-  //const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
-
-  const { id } = useParams();
-  const [Dts, setDts] = useState([])
- 
- useEffect(() => {
-  const fetchData = async () => {
-      const response = await axios.get('http://localhost:3001/viewAdmin', {
-          params: {
-              id: id,  
-          }
-          
-      });
-
-      setDts(response.data[0]);
-         console.log(response.data[0]);
-
-  };
-  fetchData();
-}, [id]);
-
-const [anchorEl, setAnchorEl] = React.useState(null);
-
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-const NotificationClick = async () => {
-  const response = await axios.get('http://localhost:3001/NoficationActive', {
-     
-      
-  });
-  notify();
-}
-
-const [cusorderCount,setCusOrderCount]=useState([])
-  useEffect(()=>{
-    axios.get("http://localhost:3001/CustomizedOrderCount").then((response)=>{
-      setCusOrderCount(response.data)
-      
-    })
-  },[])
-const customizedcount=cusorderCount.map(record=>record.count);
-console.log(customizedcount);
-
-const customToast=()=>{
-  return(
-    <div>
-      You have requested customized Order from Customer!
-      <button style={{marginLeft:'10px',border:'none',backgroundColor:'white',borderRadius:'5px'}} onClick={Cuspage}>View</button>
-    </div>
-  )
-}
-
-const Cuspage=()=>{
-window.location.href='/admin/pages/CustomizedOrders'
-}
-
-
-const notify=()=>{
-   
-  toast.info(customToast,{position:toast.POSITION.TOP_RIGHT,autoClose:false})
-
-
-    }
-  
-
-
+  const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
   return (
     <div className={classes.root}>
@@ -335,12 +281,15 @@ const notify=()=>{
             <b>ADMIN</b>
           </Typography>
           <IconButton color="inherit">
-            <Badge badgeContent={customizedcount} color="secondary">
-              <NotificationsIcon onClick={NotificationClick}/>
+            <Badge badgeContent={4} color="secondary">
+              <NotificationsIcon />
             </Badge>
           </IconButton>
-          
-          <img src={`/${Dts.emp_img}`} onClick={handleClick} className={classes.profile_img}/>
+
+          <IconButton color="inherit" fontSize="inherit">
+           <AccountCircleIcon   />
+  
+          </IconButton>
         </Toolbar>
         
       </AppBar>
@@ -378,21 +327,18 @@ const notify=()=>{
                
              
             <div >
-           <Typography  style={{fontSize:'30px',marginLeft:'20px'}} color="inherit" align="left" width="100%" noWrap className={classes.title}>
-                  <strong align="center"> PRODUCT INFORMATION </strong>
-                
+           <Typography style={{fontSize:'30px',marginLeft:'20px'}} color="inherit" align="left" width="100%" noWrap className={classes.title}>
+                  <strong> CUSTOMIZED ORDER INFORMATION </strong>
                 </Typography>
-                
+               
                 <div ><br/>
-                  <div style={{display:'flex'}}><label className={classes.formlabel1}><b style={{marginRight:'65px'}}>Product ID :</b>{Dt.product_id}</label></div>
-                  <label className={classes.formlabel1}><b style={{marginRight:'30px'}}>Product Name :</b > {Dt. product_name}</label><br/>
-                  <label className={classes.formlabel1}><b style={{marginRight:'100px'}}>Price : </b>{Dt.price}</label><br/>
-                  <label className={classes.formlabel1}><b>Product Image :</b></label><br/><img style={{marginLeft:'160px'}} src={`/${Dt.product_img}`} className="image1" /><br/><br/>
-                  <label className={classes.formlabel1}><b style={{marginRight:'80px'}}>Material :</b> {Dt.material}</label><br/>
-                  <label className={classes.formlabel1}><b style={{marginRight:'80px'}}>Quantity :</b> {Dt.quantity} </label><br/>
-                  <label className={classes.formlabel1}><b style={{marginRight:'50px'}}>Description :</b> {Dt.description}</label><br/>
+                  <div style={{display:'flex'}}><label className={classes.formlabel1}><b style={{marginRight:'65px'}}>Order ID :</b>{Dt.customer_id}</label></div>
+                  <label className={classes.formlabel1}><b style={{marginRight:'30px'}}>Product Name :</b > {Dt.product_name}</label><br/>
+                  {/* <label className={classes.formlabel1}><b>Gift Image :</b></label><br/><img style={{marginLeft:'120px'}} src={`/${Dt.product_img}`} className="image1" /><br/><br/>
+                  <label className={classes.formlabel1}><b style={{marginRight:'70px'}}>Price : </b>{Dt.price}</label><br/>       
+                  <label className={classes.formlabel1}><b style={{marginRight:'40px'}}>Quantity :</b> {Dt.quantity} </label><br/> */}
                   </div>
-              
+            
             
            </div>
             </Paper>

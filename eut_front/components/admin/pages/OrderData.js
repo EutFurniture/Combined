@@ -8,7 +8,7 @@ const dateOnly = (d) => {
   };
 
   
-class DeliveryData extends React.Component {
+class OrderData extends React.Component {
 
    
 
@@ -21,7 +21,7 @@ class DeliveryData extends React.Component {
       }
     
       componentDidMount() {
-        fetch('http://localhost:3001/DeliveryReport1')
+        fetch('http://localhost:3001/OrderReport')
           .then(res => res.json())
           .then(result => {
             this.setState({
@@ -42,9 +42,9 @@ class DeliveryData extends React.Component {
                 <th>Order ID</th>
                
                 <th >Product Name</th>
-                  <th >Delivery Date</th>
-                  <th>Status</th>
-                 
+                  <th >Order Date</th>
+                  <th>Quantity</th>
+                  <th>Total Price</th>
                   
               </tr>
           </thead>
@@ -54,19 +54,19 @@ class DeliveryData extends React.Component {
               <tr>
                 <td>{record.order_id}</td>
                 <td>{record.product_name}</td>
-                <td>{dateOnly(record.order_last_date)}</td>
-                <td>{record.status}</td>
-              
+                <td>{dateOnly(record.o_date)}</td>
+                <td>{record.quantity}</td>
+                <td>{record.total_price}</td>
              
               </tr>
                    )
                 })}
                 
           </tbody>
-          <caption>Delivery Details</caption>
+          <caption>Order Details</caption>
         </table>       
       );
     }
   }
 
-  export default DeliveryData;
+  export default OrderData;

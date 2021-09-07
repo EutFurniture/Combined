@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState,useEffect} from "react";
+import { useParams } from "react-router-dom";
 import clsx from 'clsx';
 import axios from "axios";
 import Box from '@material-ui/core/Box';
@@ -8,7 +9,7 @@ import { Button } from 'react-bootstrap';
 import { Row } from 'react-bootstrap';
 import { Col } from 'react-bootstrap';
 import {Redirect} from "react-router-dom"
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+import {toast} from 'react-toastify'
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Drawer from '@material-ui/core/Drawer';
@@ -64,6 +65,11 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'flex-end',
     padding: '0 8px',
     ...theme.mixins.toolbar,
+  },
+  profile_img:{
+    width:'50px',
+    height:'50px',
+    borderRadius:'50px'
   },
   appBar: {
     zIndex: theme.zIndex.drawer + 1,
@@ -231,7 +237,7 @@ export default function AddEmployeeForm() {
   
   const addEmployee = (data)=>{
   
-     axios.post('http://localhost:3001/register',{
+     axios.post('http://localhost:3001/addNewEmployee',{
        name:data.name,
        NIC:data.NIC,
        email:data.email,
@@ -245,8 +251,8 @@ export default function AddEmployeeForm() {
   
       }).then((response)=>{
         if(response.data.message){
-          alert('Employee added successfully')
-          window.location.href='/admin/pages/ManageEmployee'
+          alert(response.data.message)
+          window.location.href='/admin/pages/ManageOTPEmp'
          
       }
        });
@@ -264,11 +270,71 @@ export default function AddEmployeeForm() {
   const handleDrawerClose = () => {
     setOpen(false);
   };
-  const [anchorEl, setAnchorEl] = React.useState(null);
+ 
+const { id } = useParams();
+const [Dt, setDt] = useState([])
 
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
+useEffect(() => {
+const fetchData = async () => {
+    const response = await axios.get('http://localhost:3001/viewAdmin', {
+        params: {
+            id: id,  
+        }
+        
+    });
+
+    setDt(response.data[0]);
+       console.log(response.data[0]);
+
+};
+fetchData();
+}, [id]);
+
+const [anchorEl, setAnchorEl] = React.useState(null);
+
+const handleClick = (event) => {
+  setAnchorEl(event.currentTarget);
+};
+
+const NotificationClick = async () => {
+const response = await axios.get('http://localhost:3001/NoficationActive', {
+   
+    
+});
+notify();
+}
+
+const [cusorderCount,setCusOrderCount]=useState([])
+useEffect(()=>{
+  axios.get("http://localhost:3001/CustomizedOrderCount").then((response)=>{
+    setCusOrderCount(response.data)
+    
+  })
+},[])
+const customizedcount=cusorderCount.map(record=>record.count);
+console.log(customizedcount);
+
+const customToast=()=>{
+return(
+  <div>
+    You have requested customized Order from Customer!
+    <button style={{marginLeft:'10px',border:'none',backgroundColor:'white',borderRadius:'5px'}} onClick={Cuspage}>View</button>
+  </div>
+)
+}
+
+const Cuspage=()=>{
+window.location.href='/admin/pages/CustomizedOrders'
+}
+
+
+const notify=()=>{
+ 
+toast.info(customToast,{position:toast.POSITION.TOP_RIGHT,autoClose:false})
+
+
+  }
+
 
   const handleClose = () => {
     setAnchorEl(null);
@@ -300,16 +366,12 @@ export default function AddEmployeeForm() {
             <b>ADMIN</b>
           </Typography>
           <IconButton color="inherit">
-            <Badge badgeContent={4} color="secondary">
-              <NotificationsIcon />
+            <Badge badgeContent={customizedcount} color="secondary">
+              <NotificationsIcon onClick={NotificationClick}/>
             </Badge>
           </IconButton>
-
-         
-          <IconButton color="inherit" fontSize="inherit">
-           <AccountCircleIcon   onClick={handleClick}/>
-  
-          </IconButton>
+          
+          <img src={`/${Dt.emp_img}`} onClick={handleClick} className={classes.profile_img}/>
           <Menu
         id="simple-menu"
         anchorEl={anchorEl}

@@ -2,9 +2,7 @@
 import React, { useState, useEffect } from "react";
 import clsx from 'clsx';
 import axios from "axios";
-import user1 from '../../../assets/user1.png'
-
-
+import {toast} from 'react-toastify'
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Drawer from '@material-ui/core/Drawer';
@@ -17,14 +15,13 @@ import Badge from '@material-ui/core/Badge';
 import Container from '@material-ui/core/Container';
 import Paper from '@material-ui/core/Paper';
 import MenuIcon from '@material-ui/icons/Menu';
-import AddCircleIcon from '@material-ui/icons/AddCircle';
+
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import Grid from '@material-ui/core/Grid';
-import {Button} from 'react-bootstrap';
-import Catergory from '../../../assets/category2.jpg'
+
 import Divider from '@material-ui/core/Divider';
-import chair from '../../../assets/chair.jpg'
+
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import {useParams} from "react-router-dom"
 
@@ -109,7 +106,11 @@ const useStyles = makeStyles((theme) => ({
     overflow: 'auto',
     
   },
- 
+  profile_img:{
+    width:'50px',
+    height:'50px',
+    borderRadius:'50px'
+  },
   container: {
     paddingTop: theme.spacing(4),
     paddingBottom: theme.spacing(4),
@@ -254,7 +255,71 @@ export default function GiftInfo() {
       fetchData();
     }, [product_id]);
     
-
+    const { id } = useParams();
+    const [Dts, setDts] = useState([])
+   
+   useEffect(() => {
+    const fetchData = async () => {
+        const response = await axios.get('http://localhost:3001/viewAdmin', {
+            params: {
+                id: id,  
+            }
+            
+        });
+  
+        setDts(response.data[0]);
+           console.log(response.data[0]);
+  
+    };
+    fetchData();
+  }, [id]);
+  
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  
+    const handleClick = (event) => {
+      setAnchorEl(event.currentTarget);
+    };
+  
+  const NotificationClick = async () => {
+    const response = await axios.get('http://localhost:3001/NoficationActive', {
+       
+        
+    });
+    notify();
+  }
+  
+  const [cusorderCount,setCusOrderCount]=useState([])
+    useEffect(()=>{
+      axios.get("http://localhost:3001/CustomizedOrderCount").then((response)=>{
+        setCusOrderCount(response.data)
+        
+      })
+    },[])
+  const customizedcount=cusorderCount.map(record=>record.count);
+  console.log(customizedcount);
+  
+  const customToast=()=>{
+    return(
+      <div>
+        You have requested customized Order from Customer!
+        <button style={{marginLeft:'10px',border:'none',backgroundColor:'white',borderRadius:'5px'}} onClick={Cuspage}>View</button>
+      </div>
+    )
+  }
+  
+  const Cuspage=()=>{
+  window.location.href='/admin/pages/CustomizedOrders'
+  }
+  
+  
+  const notify=()=>{
+     
+    toast.info(customToast,{position:toast.POSITION.TOP_RIGHT,autoClose:false})
+  
+  
+      }
+    
+  
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -281,15 +346,12 @@ export default function GiftInfo() {
             <b>ADMIN</b>
           </Typography>
           <IconButton color="inherit">
-            <Badge badgeContent={4} color="secondary">
-              <NotificationsIcon />
+            <Badge badgeContent={customizedcount} color="secondary">
+              <NotificationsIcon onClick={NotificationClick}/>
             </Badge>
           </IconButton>
-
-          <IconButton color="inherit" fontSize="inherit">
-           <AccountCircleIcon   />
-  
-          </IconButton>
+          
+          <img src={`/${Dts.emp_img}`} onClick={handleClick} className={classes.profile_img}/>
         </Toolbar>
         
       </AppBar>
@@ -333,7 +395,7 @@ export default function GiftInfo() {
                
                 <div ><br/>
                   <div style={{display:'flex'}}><label className={classes.formlabel1}><b style={{marginRight:'65px'}}>Gift ID :</b>{Dt.product_id}</label></div>
-                  <label className={classes.formlabel1}><b style={{marginRight:'30px'}}>Gift Name :</b > {Dt.name}</label><br/>
+                  <label className={classes.formlabel1}><b style={{marginRight:'30px'}}>Gift Name :</b > {Dt. product_name}</label><br/>
                   <label className={classes.formlabel1}><b>Gift Image :</b></label><br/><img style={{marginLeft:'120px'}} src={`/${Dt.product_img}`} className="image1" /><br/><br/>
                   <label className={classes.formlabel1}><b style={{marginRight:'70px'}}>Price : </b>{Dt.price}</label><br/>       
                   <label className={classes.formlabel1}><b style={{marginRight:'40px'}}>Quantity :</b> {Dt.quantity} </label><br/>

@@ -4,7 +4,7 @@ import axios from 'axios';
 import { useState,useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import clsx from 'clsx';
-
+import {toast} from 'react-toastify'
 import EditIcon from '@material-ui/icons/Edit';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import { makeStyles } from '@material-ui/core/styles';
@@ -155,6 +155,12 @@ const useStyles = makeStyles((theme) => ({
     border:'none',
     borderColor:'white'
   },
+  profile_img:{
+    width:'50px',
+    height:'50px',
+    borderRadius:'50px'
+  }
+  
   
   
 }));
@@ -203,6 +209,44 @@ export default function ViewProfile() {
 }, [id]);
 
 
+const NotificationClick = async () => {
+  const response = await axios.get('http://localhost:3001/NoficationActive', {
+     
+      
+  });
+  notify();
+}
+
+const [cusorderCount,setCusOrderCount]=useState([])
+  useEffect(()=>{
+    axios.get("http://localhost:3001/CustomizedOrderCount").then((response)=>{
+      setCusOrderCount(response.data)
+      
+    })
+  },[])
+const customizedcount=cusorderCount.map(record=>record.count);
+console.log(customizedcount);
+
+const customToast=()=>{
+  return(
+    <div>
+      You have requested customized Order from Customer!
+      <button style={{marginLeft:'10px',border:'none',backgroundColor:'white',borderRadius:'5px'}} onClick={Cuspage}>View</button>
+    </div>
+  )
+}
+
+const Cuspage=()=>{
+window.location.href='/admin/pages/CustomizedOrders'
+}
+
+
+const notify=()=>{
+   
+  toast.info(customToast,{position:toast.POSITION.TOP_RIGHT,autoClose:false})
+
+
+    }
   
   
 
@@ -251,14 +295,12 @@ export default function ViewProfile() {
             <strong>ADMIN</strong>
           </Typography>
           <IconButton color="inherit">
-            <Badge badgeContent={4} color="secondary">
-              <NotificationsIcon />
+            <Badge badgeContent={customizedcount} color="secondary">
+              <NotificationsIcon onClick={NotificationClick}/>
             </Badge>
           </IconButton>
-          <IconButton color="inherit" fontSize="inherit">
-           <AccountCircleIcon   onClick={handleClick}/>
-  
-          </IconButton>
+          
+          <img src={`/${Dt.emp_img}`} onClick={handleClick} className={classes.profile_img}/>
           <Menu
         id="simple-menu"
         anchorEl={anchorEl}
@@ -314,9 +356,8 @@ export default function ViewProfile() {
                   <img src={`/${Dt.emp_img}`} className={classes.user1} align='center'></img>
 
                   <h2 style={{textAlign:'center'}}>{Dt.name}</h2> <br/>
-                  <div align='center'>
-                  <Link to='/ProductInfo'   style={{color:'white',textDecoration:'none',borderRadius:'10px',backgroundColor:'green',fontSize:'18px',padding:'10px 30px 10px 30px'}} >Edit Profile</Link>
-              </div>
+                 <Button href='/UpdateProfile' style={{color:'white',textDecoration:'none',borderRadius:'10px',backgroundColor:'green',fontSize:'18px',border:'none',width:'200px'}} >Edit Profile</Button>
+                 
              
                   </div>
                <div style={{width:'800px',fontSize:'16px',Color:'white'}}>
