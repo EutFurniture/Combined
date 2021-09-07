@@ -23,32 +23,30 @@ export const DpListItems = (
       </ListItemIcon>
       <ListItemText primary="Dashboard" />
     </ListItem>
-    <ListItem button component={Link} to="/employee/ViewAvailableDelivery">
+    <ListItem button component={Link} to="/dPerson/ViewAvailableDelivery">
       <ListItemIcon style={{color:'white'}}>
       <Search />
       </ListItemIcon>
       <ListItemText primary="Available Delivery" />
     </ListItem>
-    <ListItem button component={Link} to="/employee/AddReturnedItem">
+    <ListItem button component={Link} to="/dPerson/AddReturnedItem">
       <ListItemIcon style={{color:'white'}}>
       <AddCircleOutlineIcon />
       </ListItemIcon>
       <ListItemText primary="Add Returned Item" />
     </ListItem>
-    <ListItem button component={Link} to="/employee/ConfirmCashPay">
+    <ListItem button component={Link} to="/dPerson/ConfirmCashPay">
       <ListItemIcon style={{color:'white'}}>
         < CheckCircleIcon />
       </ListItemIcon>
       <ListItemText primary="ConfirmCashPay" />
     </ListItem>
-    <ListItem button component={Link} to="/employee/ConfirmDelivery">
+    <ListItem button component={Link} to="/dPerson/ConfirmDelivery">
       <ListItemIcon style={{color:'white'}}>
         < DoneOutlineSharpIcon />
       </ListItemIcon>
       <ListItemText primary="ConfirmDelivery" />
-    </ListItem>
-    
-    
+      </ListItem>
     <ListItem button component={Link} to="/Maps">
       <ListItemIcon style={{color:'white'}}>
         < RoomSharpIcon />
@@ -57,14 +55,14 @@ export const DpListItems = (
     </ListItem>
     
 
-  <ListItem button component={Link} to="/Locate">
+ {/*} <ListItem button component={Link} to="/Locate">
       <ListItemIcon style={{color:'white'}}>
         < MyLocationIcon />
       </ListItemIcon>
       <ListItemText primary="Locate Me" />
-</ListItem> 
+</ListItem> */}
 
-   <ListItem button component={Link} to="/employee/DpProfile">
+   <ListItem button component={Link} to="/dPerson/DpProfile">
       <ListItemIcon style={{color:'white'}}>
         <PersonIcon/>
       </ListItemIcon>

@@ -1,4 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from "react";
+import Axios from 'axios';
+import { useParams ,Link} from "react-router-dom";
+import {Table} from 'react-bootstrap';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -18,12 +21,21 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import {Redirect} from "react-router-dom";
-import { useState } from 'react';
-import { Link } from "react-router-dom";
 import { DpListItems, Logout } from './dplistItems';
-import Returnview from './Returnview';
-
-
+import AddCircleIcon from '@material-ui/icons/AddCircle';
+import 'bootstrap/dist/css/bootstrap.min.css';
+function Copyright() {
+  return (
+    <Typography variant="body2" color="textSecondary" align="center">
+      {'Copyright © '}
+      <Link color="inherit" href="https://material-ui.com/">
+        Eut Furniture
+      </Link>{' '}
+      {new Date().getFullYear()}
+      {'.'}
+    </Typography>
+  );
+}
 
 const drawerWidth = 240;
 
@@ -134,13 +146,72 @@ const useStyles = makeStyles((theme) => ({
 const styles = {
   side:{
     backgroundColor:'rgb(37, 37, 94)',
+  },
+  viewbtn:{
+    backgroundColor: '#33b5e5',
+    width: '200px',
+    textDecoration: 'none',
+    height: '100px',
+    marginRight: '5px',
+    fontSize: '17px',
+    paddingLeft: '15px',
+    paddingRight: '15px',
+    paddingTop: '5px',
+    paddingBottom: '5px',
+    color: 'white',
+    borderRadius: '7px',
+  } ,
+  updatebtn:{
+    backgroundColor: '#0C1385',
+    width: '200px',
+    textDecoration: 'none',
+    height: '100px',
+    marginRight: '5px',
+    fontSize: '17px',
+    paddingLeft: '15px',
+    paddingRight: '15px',
+    paddingTop: '5px',
+    paddingBottom: '5px',
+    color: 'white',
+    borderRadius: '7px',
   }
+};
+const dateOnly = (d) => {
+  const date = new Date(d);
+  const year = date.getFullYear();
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+  return `${year} - ${month} - ${day}`;
 };
 
 
 export default function AddReturnedItem(userData) {
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
+  const [user,setUser]=useState([])
+  const { employee_id } = useParams();
+   useEffect(() => {
+   
+    const fetchData = async () => {
+
+      
+     
+      const response = await Axios.get('http://localhost:3001/returnItem', {
+            params: {
+          employee_id: userData.userData.id
+           }
+        });
+     
+        setUser(response.data);
+
+        console.log(employee_id);
+      
+    }
+  fetchData();
+  }, [employee_id]);      
+
+
+
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -153,23 +224,21 @@ export default function AddReturnedItem(userData) {
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
+      setAnchorEl(event.currentTarget);
   };
-
+  
   const handleClose = () => {
-    setAnchorEl(null);
+      setAnchorEl(null);
   };
-
- // const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
-
+  
+   // const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
+  
   const[isAuth,setIsAuth]=useState(true);
-
+  
   if(!isAuth){
-    return <Redirect to="" />
+      return <Redirect to="" />
   }
-
-
-
+  
 
   return (
     <div className={classes.root}>
@@ -199,12 +268,12 @@ export default function AddReturnedItem(userData) {
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-        <MenuItem component={Link} to="/employee/DpProfile">Profile</MenuItem>
+        <MenuItem component={Link} to="/dPerson/DpProfile">Profile</MenuItem>
+      <MenuItem component={Link} to="/Calender">Calendar</MenuItem>
         <MenuItem onClick={()=>setIsAuth(false)}>Logout</MenuItem>
-        <MenuItem component={Link} to="/Calender">Calendar</MenuItem>
       </Menu>
 
- 
+
         </Toolbar>
         
       </AppBar>
@@ -242,10 +311,46 @@ export default function AddReturnedItem(userData) {
            <Paper className={classes.paper}>
                
                 <Typography  component="h1" variant="h6" color="inherit" align="center" width="100%" noWrap className={classes.title}>
-                  <h3>RETURNED ITEMS  </h3>
+                  <h4> DETAILS OF RETURN ITEMS</h4>
                 </Typography>
                
-                <Returnview/>
+                <div ><br/>
+           
+                <div align = 'right'>
+            <Link  to='/AddForm' className="Addbtn"><AddCircleIcon style={{marginTop:'5px'}}/> Add New </Link> <br/>
+            </div>        
+               
+        <Table striped bordered hover responsive>
+        <thead className="tableheading">
+          <tr>
+          <th scope="col">Order ID</th>
+            <th scope="col">Customer Name</th>
+            <th scope='col'>Address</th>
+            <th align="center">Phone Number</th>
+            <th scope='col'>Action</th>
+          </tr>
+        </thead> 
+     
+       <tbody className="tablebody">
+       {user.map(record=>
+               <tr >
+              <td align="center" >{record.return_id}</td>
+              <td align="center">{record.order_id}</td>
+              <td align="center" >{record.product_id}</td>
+              <td align="center">{dateOnly(record.return_date)}</td>
+               <td align="center">
+               <Link style={styles.viewbtn} to={location=> `/dPerson/DpReturnItemInfoRoute/${record.order_id}`}> View </Link>
+               <Link style={styles.updatebtn} to={location=> `/dPerson/UpdateReturnDetailRoute/${record.order_id}`}> Update </Link>
+                  
+              </td>
+
+     </tr>
+ )}
+                            
+ </tbody> 
+      </Table>
+    
+   </div>
                      
           </Paper>
           </div>
@@ -253,7 +358,11 @@ export default function AddReturnedItem(userData) {
 
       </Grid>
         </Container>
+        <Copyright/>
       </main>
     </div>
   );
 }
+
+
+ 

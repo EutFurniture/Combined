@@ -173,7 +173,7 @@ export default function AddForm() {
    const [order_id, setOrder_id]= useState("");
    const [return_date, setReturn_date]= useState("");
    const [reason, setReason]= useState("");
-  
+   const [employee_id, setEmployee_id]= useState("");
   
 
 
@@ -181,6 +181,7 @@ export default function AddForm() {
       Axios.post('http://localhost:3001/create', {
        
         product_id: product_id,
+        employee_id: employee_id,
         order_id: order_id,
         return_date: return_date,
         reason: reason,
@@ -190,15 +191,16 @@ export default function AddForm() {
       });
     };
 
-  const [anchorEl, setAnchorEl] = React.useState(null);
+    const [anchorEl, setAnchorEl] = React.useState(null);
 
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+    
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+    
 
  // const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
@@ -238,10 +240,9 @@ export default function AddForm() {
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-         
-        <MenuItem component={Link} to="/employee/DpProfile">Profile</MenuItem>
+        <MenuItem component={Link} to="/dPerson/DpProfile">Profile</MenuItem>
+      <MenuItem component={Link} to="/Calender">Calendar</MenuItem>
         <MenuItem onClick={()=>setIsAuth(false)}>Logout</MenuItem>
-        <MenuItem component={Link} to="/Calender">Calendar</MenuItem>
       </Menu>
         </Toolbar>
       </AppBar>
@@ -315,6 +316,18 @@ export default function AddForm() {
                       </Col>
                     </Form.Group><br/>
 
+                    <Form.Group as={Row} controlId="formHorizontalProduct_id">
+                      <Form.Label column lg={2}>
+                        Employee ID :
+                      </Form.Label>
+                      <Col sm={10}>
+                        <Form.Control type="text" placeholder="Product ID" 
+                        onChange={(event)=> {
+                          setEmployee_id(event.target.value);
+                        }}
+                        />
+                      </Col>
+                    </Form.Group><br/>
 
                     <Form.Group as={Row} controlId="formHorizontalReturn_date">
                       <Form.Label column lg={2}>
@@ -347,7 +360,7 @@ export default function AddForm() {
 
                     
                         <div     align='center' style={styles.button_style}>
-                        <Button  type="submit" size='lg' href= '/employee/AddReturnedItem' >View Return Item</Button>
+                        <Button  type="submit" size='lg' href= '/dPerson/AddReturnedItem' >View Return Item</Button>
 
                         <Button  type="submit" size='lg' onClick={addReturnItem}>Add Returned Items</Button>
                          

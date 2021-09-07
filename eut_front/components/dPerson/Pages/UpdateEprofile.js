@@ -138,15 +138,15 @@ export default function UpdateEprofile(userData) {
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
 
-  const { employee_id } = useParams();
+  const { id } = useParams();
   const [Dt, setDt] = useState([])
-  const [newE_name, setNewE_name] = useState();
+  const [newName, setNewName] = useState();
   const [newEmail, setNewEmail] = useState();
-  const [newE_address, setNewE_address] = useState();
-  const [newE_phone, setNewE_phone] = useState();
-  const [newpassword, setNewpassword] = useState();
-  const [newE_image, setNewE_image] = useState();
-  const [state, setState] = useState({ file: '', name: '', description: '', userImage: "", message: "", success: false })
+  const [newAddress, setNewAddress] = useState();
+  const [newPhone_no, setNewPhone_no] = useState();
+  const [newPassword, setNewPassword] = useState();
+  const [newEmp_img, setNewEmp_img] = useState();
+  const [state, setState] = useState({ file: '', name: '', description: '', emp_img: "", message: "", success: false })
   const [employeeList, setEmployeeList] = useState([]);
  
 
@@ -154,23 +154,23 @@ export default function UpdateEprofile(userData) {
     const fetchData = async () => {
       const response = await axios.get('http://localhost:3001/DpProfile', {
         params: {
-          employee_id: userData.userData.employee_id,
+          id: userData.userData.id,
 
         }
       });
 
       setDt(response.data[0]);
-      setNewE_name(response.data[0].e_name);
-      setNewE_address(response.data[0].e_address)
-      setNewE_phone(response.data[0].e_phone)
-      setNewE_image(response.data[0].e_image)
+      setNewName(response.data[0].name);
+      setNewAddress(response.data[0].address)
+      setNewPhone_no(response.data[0].phone_no)
+      setNewEmp_img(response.data[0].emp_img)
       console.log(response.data[0]);
     };
     fetchData();
-  }, [employee_id]); 
+  }, [id]); 
   
 
-  const updateEmployeeProfile = (employee_id) => {
+  const updateEmployeeProfile = (id) => {
 
     if(state.file)
     {
@@ -178,19 +178,19 @@ export default function UpdateEprofile(userData) {
       let formData = new FormData();
       formData.append('file', state.file)
     
-      axios.post('http://localhost:3001/upload', formData, {
+      axios.post('http://localhost:3001/imageUpload', formData, {
 
         'content-Type': 'multipart/form-data',
       })
      
 
-        axios.put("http://localhost:3001/updateEmployeeProfile", {e_name: newE_name, e_address: newE_address, e_image:state.file.name ,  e_phone: newE_phone,   employee_id: employee_id}).then(
+        axios.put("http://localhost:3001/updateEmployeeProfile", {name: newName, address: newAddress, emp_img:state.file.name ,  phone_no: newPhone_no,   id: id}).then(
         (response) => {
 
           setEmployeeList(Dt.map((val) => {
-            return val.employee_id === employee_id ? {
-              employee_id: val.employee_id, e_name: val.e_name, e_address: val.e_address,  e_image: val.e_image, e_phone: val.e_phone,
-              e_name: newE_name, e_address: newE_address, e_image: newE_image, e_phone: newE_phone
+            return val.id === id ? {
+              id: val.id, name: val.name, address: val.address,  emp_img: val.emp_img, phone_no: val.phone_no,
+              name: newName, address: newAddress, emp_img: newEmp_img, phone_no: newPhone_no
             } : val
 
           }))
@@ -207,7 +207,7 @@ export default function UpdateEprofile(userData) {
       setState({
         ...state,
         file: file,
-        e_image: reader.result,
+        emp_img: reader.result,
         message: ""
       })
 
@@ -247,25 +247,15 @@ export default function UpdateEprofile(userData) {
 
                   <Form >
 
-                  <Form.Group as={Row} controlId="formHorizontalName">
-                  <Form.Label column lg={2} >
-                   Email :
-                  </Form.Label>
-                  <Col >
-                  <Form.Label column lg={2} >
-                   {Dt.email}
-                  </Form.Label>
-                  </Col>
-              </Form.Group><br/>
 
                     <Form.Group as={Row} controlId="formHorizontalName">
                       <Form.Label column lg={2} >
                          Name :
                       </Form.Label>
                       <Col >
-                        <Form.Control type="text" defaultValue={newE_name}
+                        <Form.Control type="text" defaultValue={newName}
                           onChange={(event) => {
-                            setNewE_name(event.target.value);
+                            setNewName(event.target.value);
                           }} />
                       </Col>
                     </Form.Group><br />
@@ -275,8 +265,8 @@ export default function UpdateEprofile(userData) {
                         Address :
                       </Form.Label>
                       <Col >
-                        <Form.Control type="text" defaultValue={newE_address} onChange={(event) => {
-                          setNewE_address(event.target.value);
+                        <Form.Control type="text" defaultValue={newAddress} onChange={(event) => {
+                          setNewAddress(event.target.value);
                         }} />
                       </Col>
                     </Form.Group><br />
@@ -286,7 +276,7 @@ export default function UpdateEprofile(userData) {
                         Image :
                       </Form.Label>
                       <Col >
-                        <Form.Control type="file" defaultValue={newE_image}
+                        <Form.Control type="file" defaultValue={newEmp_img}
                           onChange={handleInput}
                         />
                       </Col>
@@ -297,8 +287,8 @@ export default function UpdateEprofile(userData) {
                         Phone No :
                       </Form.Label>
                       <Col >
-                        <Form.Control type="text" defaultValue={newE_phone} onChange={(event) => {
-                          setNewE_phone(event.target.value);
+                        <Form.Control type="text" defaultValue={newPhone_no} onChange={(event) => {
+                          setNewPhone_no(event.target.value);
                         }} />
                       </Col>
                     </Form.Group><br />
@@ -307,8 +297,8 @@ export default function UpdateEprofile(userData) {
 
 
                     <div align="center">
-                    <Button style={{ fontSize: '20px', width: '200px' }} type="submit" onClick={() => {updateEmployeeProfile(Dt.employee_id)}} >
-               <Link to="/employee/DpProfile"   className={classes.update}>Update</Link>  
+                    <Button style={{ fontSize: '20px', width: '200px' }} type="submit" onClick={() => {updateEmployeeProfile(Dt.id)}} >
+               <Link to="/dPerson/DpProfile"   className={classes.update}>Update</Link>  
                     </Button>
                     </div>
 

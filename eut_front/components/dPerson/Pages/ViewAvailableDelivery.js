@@ -1,4 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from "react";
+import Axios from 'axios';
+import { useParams ,Link} from "react-router-dom";
+import {Table} from 'react-bootstrap';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -18,13 +21,21 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import {Redirect} from "react-router-dom";
-import { useState } from 'react';
-import { Link } from "react-router-dom";
-
+import ViewConDelivery from './ViewConDelivery'
 import { DpListItems, Logout } from './dplistItems';
-import DeliveryView from './DeliveryView';
-
-
+import 'bootstrap/dist/css/bootstrap.min.css';
+function Copyright() {
+  return (
+    <Typography variant="body2" color="textSecondary" align="center">
+      {'Copyright © '}
+      <Link color="inherit" href="https://material-ui.com/">
+        Eut Furniture
+      </Link>{' '}
+      {new Date().getFullYear()}
+      {'.'}
+    </Typography>
+  );
+}
 
 const drawerWidth = 240;
 
@@ -135,13 +146,50 @@ const useStyles = makeStyles((theme) => ({
 const styles = {
   side:{
     backgroundColor:'rgb(37, 37, 94)',
-  }
+  },
+  viewbtn:{
+    backgroundColor: '#33b5e5',
+    width: '200px',
+    textDecoration: 'none',
+    height: '100px',
+    marginRight: '5px',
+    fontSize: '17px',
+    paddingLeft: '15px',
+    paddingRight: '15px',
+    paddingTop: '5px',
+    paddingBottom: '5px',
+    color: 'white',
+    borderRadius: '7px',
+  } 
 };
 
 
-const ViewAvailableDelivery = (userData) => {
+export default function ViewAvailableDelivery(userData) {
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
+  const [user,setUser]=useState([])
+  const { employee_id } = useParams();
+   useEffect(() => {
+   
+    const fetchData = async () => {
+
+      
+     
+      const response = await Axios.get('http://localhost:3001/viewAvailableDelivery', {
+            params: {
+          employee_id: userData.userData.id
+           }
+        });
+     
+        setUser(response.data);
+
+        console.log(employee_id);
+      
+    }
+  fetchData();
+  }, [employee_id]);      
+
+
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -169,7 +217,7 @@ const ViewAvailableDelivery = (userData) => {
   if(!isAuth){
       return <Redirect to="" />
   }
-
+  
 
   return (
     <div className={classes.root}>
@@ -188,7 +236,6 @@ const ViewAvailableDelivery = (userData) => {
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
             <b>DELIVERY PERSON</b>
           </Typography>
-
           <IconButton color="inherit" fontSize="inherit">
            <AccountCircleIcon   onClick={handleClick}/>
   
@@ -200,10 +247,11 @@ const ViewAvailableDelivery = (userData) => {
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-         <MenuItem component={Link} to="/employee/DpProfile">Profile</MenuItem>
+        <MenuItem component={Link} to="/dPerson/DpProfile">Profile</MenuItem>
+      <MenuItem component={Link} to="/Calender">Calendar</MenuItem>
         <MenuItem onClick={()=>setIsAuth(false)}>Logout</MenuItem>
-        <MenuItem component={Link} to="/Calender">Calendar</MenuItem>
       </Menu>
+
 
         </Toolbar>
         
@@ -242,10 +290,43 @@ const ViewAvailableDelivery = (userData) => {
            <Paper className={classes.paper}>
                
                 <Typography  component="h1" variant="h6" color="inherit" align="center" width="100%" noWrap className={classes.title}>
-                  <h4>Available Deliveries</h4>
+                  <h4> DETAILS OF DELIVERIES</h4>
                 </Typography>
                
-                <DeliveryView/>
+                <div ><br/>
+                <div className='box-main'>
+                           
+                </div>
+        <Table striped bordered hover responsive>
+        <thead className="tableheading">
+          <tr>
+          <th scope="col">Order ID</th>
+            <th scope="col">Customer Name</th>
+            <th scope='col'>Address</th>
+            <th align="center">Phone Number</th>
+            <th scope='col'>Action</th>
+          </tr>
+        </thead> 
+     
+       <tbody className="tablebody">
+       {user.map(item=>
+               <tr >
+              <td align="center">{item.order_id}</td>
+              <td align="center">{item.fname}</td>
+              <td align="center">{item.address}</td>
+              <td align="center">{item.phone}</td>
+              <td align="center">
+              <Link style={styles.viewbtn} to={location=> `/dPerson/AvailableDeliveryInfoRoute/${item.order_id}`}> View </Link>
+         </td>
+
+     </tr>
+ )}
+                            
+   
+        </tbody> 
+      </Table>
+    
+   </div>
                      
           </Paper>
           </div>
@@ -253,8 +334,11 @@ const ViewAvailableDelivery = (userData) => {
 
       </Grid>
         </Container>
+        <Copyright/>
       </main>
     </div>
   );
 }
-export default ViewAvailableDelivery;
+
+
+ 

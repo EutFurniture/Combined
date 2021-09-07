@@ -165,14 +165,13 @@ const dateOnly = (d) => {
 
 export default function DpProfile(userData) {
   const [user,setUser]=useState([])
-  const { employee_id } = useParams();
+  const { id } = useParams();
   
- 
   useEffect(() => {
     const fetchData = async () => {
         const response = await Axios.get('http://localhost:3001/dpprofile', {
             params: {
-              employee_id:userData.userData.employee_id,
+              id:userData.userData.id,
                 
             }
         });
@@ -182,7 +181,10 @@ export default function DpProfile(userData) {
          
     };
     fetchData();
-  }, [employee_id]);
+  }, [id]);
+ 
+  
+  
  
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
@@ -224,7 +226,7 @@ export default function DpProfile(userData) {
             className={clsx(classes.menuButton, open && classes.menuButtonHidden)}
           >
 
-         <MenuItem component={Link} to="/employee/DpProfile">Profile</MenuItem>
+         <MenuItem component={Link} to="/dPerson/DpProfile">Profile</MenuItem>
         <MenuItem onClick={()=>setIsAuth(false)}>Logout</MenuItem>
         <MenuItem component={Link} to="/Calender">Calendar</MenuItem>
             <MenuIcon />
@@ -243,7 +245,7 @@ export default function DpProfile(userData) {
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-        <MenuItem component={Link} to="/employee/DpProfile">Profile</MenuItem>
+        <MenuItem component={Link} to="/dPerson/DpProfile">Profile</MenuItem>
         <MenuItem onClick={()=>setIsAuth(false)}>Logout</MenuItem>
         <MenuItem component={Link} to="/Calender">Calendar</MenuItem>
       </Menu>
@@ -281,9 +283,9 @@ export default function DpProfile(userData) {
               <Paper className={classes.paper} style={{backgroundColor: '#BDF5F6', color:'black', fontSize:15}} >
               <div class="d-flex flex-column align-items-center text-center" >
                  <br/>
-                 <img src={`/${user.e_image}`} alt="myprofile"  width="200" height="200" />
+                 <img src={`/${user.emp_img}`} alt="myprofile"  width="200" height="200" />
                  <div class="mt-3">
-                   <h4>{user.e_name}</h4>
+                   <h4>{user.name}</h4>
 
                    
                  </div>
@@ -300,7 +302,18 @@ export default function DpProfile(userData) {
      </Form.Label>
      <Col >
      <Form.Label column lg={2} >
-     {user.e_name}
+     {user.name}
+     </Form.Label>
+      </Col>
+   </Form.Group><br/>
+
+   <Form.Group as={Row} controlId="formHorizontalName">
+     <Form.Label column lg={2} >
+     NIC :
+     </Form.Label>
+     <Col >
+     <Form.Label column lg={2} >
+     {user.NIC}
      </Form.Label>
       </Col>
    </Form.Group><br/>
@@ -322,7 +335,7 @@ export default function DpProfile(userData) {
      </Form.Label>
      <Col >
      <Form.Label column lg={2} >
-     {user.e_phone}
+     {user.phone_no}
      </Form.Label>
       </Col>
    </Form.Group><br/>
@@ -333,7 +346,7 @@ export default function DpProfile(userData) {
      </Form.Label>
      <Col >
      <Form.Label column lg={2} >
-     {user.e_address}
+     {user.address}
      </Form.Label>
       </Col>
    </Form.Group><br/>
@@ -344,7 +357,7 @@ export default function DpProfile(userData) {
      </Form.Label>
      <Col >
      <Form.Label column lg={2} >
-     {dateOnly(user.e_job_start_date)}
+     {dateOnly(user.job_start_date)}
      </Form.Label>
       </Col>
    </Form.Group><br/>
@@ -352,7 +365,7 @@ export default function DpProfile(userData) {
               </div>
               <div class="col-sm-12">
            
-              <Link   style={styles.updatebtn} to={location=>`/employee/updateEprofile/${user.employee_id}`} className="edit">Edit</Link>
+              <Link   style={styles.updatebtn} to={location=>`/dPerson/updateEprofile/${user.id}`} className="edit">Edit</Link>
            
              </div>
               </Paper>

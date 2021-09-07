@@ -3,38 +3,24 @@ import Axios from 'axios';
 import { useParams ,Link} from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {Table} from 'react-bootstrap';
-import Typography from '@material-ui/core/Typography';
 
-function Copyright() {
-  return (
-    <Typography variant="body2" color="textSecondary" align="center">
-      {'Copyright © '}
-      <Link color="inherit" href="https://material-ui.com/">
-        Eut Furniture
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
 
 const styles = {
-    updatebtn:{
-    backgroundColor: '#04B404',
-    width: '200px',
-    textDecoration: 'none',
-    height: '100px',
-    marginRight: '5px',
-    fontSize: '17px',
-    paddingLeft: '15px',
-    paddingRight: '15px',
-    paddingTop: '5px',
-    paddingBottom: '5px',
-    color: 'white',
-    borderRadius: '7px',
-  }  
+  updatebtn:{
+  backgroundColor: '#33b5e5',
+  width: '200px',
+  textDecoration: 'none',
+  height: '100px',
+  marginRight: '5px',
+  fontSize: '17px',
+  paddingLeft: '15px',
+  paddingRight: '15px',
+  paddingTop: '5px',
+  paddingBottom: '5px',
+  color: 'white',
+  borderRadius: '7px',
 }
-
+}
 export default function ViewConDelivery(userData) {
  
   const [user,setUser]=useState([])
@@ -43,13 +29,15 @@ export default function ViewConDelivery(userData) {
    
     const fetchData = async () => {
 
+      const emp = userData.userData.employee_id;
+      console.log(emp);
       const response = await Axios.get('http://localhost:3001/viewConfirmDelivery', {
             params: {
-             employee_id:userData.userData.employee_id
+             employee_id: emp
            }
         });
      
-        setUser(response.data[0]);
+        setUser(response.data);
       
       
     }
@@ -75,19 +63,19 @@ export default function ViewConDelivery(userData) {
         </thead> 
      
        <tbody className="tablebody">
-       {user.map((record)=>{
-                       return(
+       {user.map((item)=>{
+                       
               <tr>
-              <th scope="row">{record.order_id}</th>
-              <td>{record.status}</td>
+              <th scope="row">{item.order_id}</th>
+              <td>{item.status}</td>
               
               <td align="center">
-              <Link style={styles.updatebtn} to={location=> `/employee/UpdateConDeliveryRoute/${record.order_id}`}>Click to Confirm </Link>
+            <Link style={styles.updatebtn} to={location=> `/employee/UpdateConDeliveryRoute/${item.order_id}`}>Click to Confirm </Link>
               
                   
               </td>
             </tr>
-          )
+         
         })}
 
              
