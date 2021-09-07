@@ -35,6 +35,7 @@ import { useParams } from 'react-router-dom';
 import { mainListItems, Logout } from './listItems';
 import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
+import {toast} from 'react-toastify'
 
 function Copyright() {
   return (
@@ -142,6 +143,11 @@ const useStyles = makeStyles((theme) => ({
   imageInput:{
     border:'none',
     borderColor:'white'
+  },
+  profile_img:{
+    width:'50px',
+    height:'50px',
+    borderRadius:'50px'
   }
 }));
 
@@ -241,6 +247,47 @@ export default function UpdateProfile() {
       reader.readAsDataURL(file);
     }
 
+    const NotificationClick = async () => {
+      const response = await axios.get('http://localhost:3001/NoficationActive', {
+         
+          
+      });
+      notify();
+    }
+    
+    const [cusorderCount,setCusOrderCount]=useState([])
+      useEffect(()=>{
+        axios.get("http://localhost:3001/CustomizedOrderCount").then((response)=>{
+          setCusOrderCount(response.data)
+          
+        })
+      },[])
+    const customizedcount=cusorderCount.map(record=>record.count);
+    console.log(customizedcount);
+    
+    const customToast=()=>{
+      return(
+        <div>
+          You have requested customized Order from Customer!
+          <button style={{marginLeft:'10px',border:'none',backgroundColor:'white',borderRadius:'5px'}} onClick={Cuspage}>View</button>
+        </div>
+      )
+    }
+    
+    const Cuspage=()=>{
+    window.location.href='/admin/pages/CustomizedOrders'
+    }
+    
+    
+    const notify=()=>{
+       
+      toast.info(customToast,{position:toast.POSITION.TOP_RIGHT,autoClose:false})
+    
+    
+        }
+      
+    
+
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -284,14 +331,12 @@ export default function UpdateProfile() {
             <strong>ADMIN</strong>
           </Typography>
           <IconButton color="inherit">
-            <Badge badgeContent={4} color="secondary">
-              <NotificationsIcon />
+            <Badge badgeContent={customizedcount} color="secondary">
+              <NotificationsIcon onClick={NotificationClick}/>
             </Badge>
           </IconButton>
-          <IconButton color="inherit" fontSize="inherit">
-           <AccountCircleIcon   onClick={handleClick}/>
-  
-          </IconButton>
+          
+          <img src={`/${Dt.emp_img}`} onClick={handleClick} className={classes.profile_img}/>
           <Menu
         product_id="simple-menu"
         anchorEl={anchorEl}
