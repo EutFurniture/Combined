@@ -13,179 +13,60 @@ const db = mysql.createConnection({
     database: 'furniture',
 });
 
-app.post('/sales_create', (req,res) => {
-    const id = req.body.id;
-    const email = req.body.email;
-    const fname = req.body.name;
-    const phone = req.body.phone;
-    const address = req.body.address;
 
-    db.query('INSERT INTO customer (email, phone, address, fname) VALUES (?,?,?,?)', 
-    [email, phone, address, fname], (err, result) => {
-        if (err) {
-            console.log(err)
-        } else{
-            res.send("Values Inserted")
-        }
-      }
-    );
-});
-
-// add customers
-app.get('/sales_customers',(req,res) => {
-    db.query('SELECT * FROM customers', (err, result) => {
-        if(err) {
-            console.log(err)
-        }else {
-            res.send(result);
-        }
-    });
-});
-
-//View deliverySchedule
-app.get('/sales_DeliverySchedule',(req,res) => {
-    db.query('SELECT order_id, DATE_FORMAT(o_date,"%d-%m-%y") AS o_date, DATE_FORMAT(order_last_date,"%d-%m-%y") AS order_last_date FROM orders', (err, result) => {
-        if(err) {
-            console.log(err)
-        }else {
-            res.send(result);
-        }
-    });
-});
-
-//view payment
-app.get('/sales_pposts',(req,res)=>{
-    db.query("SELECT * FROM payment;",
-    (err,results,fields)=>{
-        if(err) throw err;
-        res.send(results);
-    });
-});
-
-/*view orders
-app.get('/OrdersUI',(req,res)=>{
-    db.query("SELECT * FROM orders;",
-    (err,results,fields)=>{
-        if(err) throw err;
-        res.send(results);
-    });
-});
-*/
-app.get('/sales_OrdersUI', (req, res) => {
-       
-    db.query('SELECT orderitem.quantity,DATE_FORMAT(orders.o_date,"%d-%m-%y") AS o_date,DATE_FORMAT(orders.order_last_date,"%d-%m-%y") AS order_last_date,orders.status,orderitem.total,orders.customer_id FROM orders INNER JOIN orderitem ON orders.order_id = orderitem.order_id ORDER BY orders.order_id  DESC;', (err, results, fields) => {
-       if(err) throw err;
-       res.send(results);
-     });
-   
-   });
-
-
-
-app.get('/sales_OrdersStatus',(req,res)=>{
-    db.query('SELECT order_id, DATE_FORMAT(o_date,"%d-%m-%y") AS o_date, DATE_FORMAT(order_last_date,"%d-%m-%y") AS order_last_date, status, order_description FROM orders;',
-    (err,results,fields)=>{
-        if(err) throw err;
-        res.send(results);
-    });
-});
-
-//view notification
-app.get('/sales_NotificationUI',(req,res)=>{
-    db.query("SELECT * FROM notification;",
-    (err,results,fields)=>{
-        if(err) throw err;
-        res.send(results);
-    });
-});
-
-
-
-
-//update
-
-//update name
-app.put('/sales_updateName', (req,res) => {
-    const id=req.body.id;
-    const name = req.body.name;
-    db.query("UPDATE customers SET name = ? WHERE id = ?", 
-    [name, id], 
-    (err, result) => {
-        if (err) {
-            console.log(err);
-        } else {
-            res.send(result);
-        }
-       }
-    );
-});
-
-//update address
-app.put('/sales_updateAddress', (req,res) => {
-    const id=req.body.id;
-    const address = req.body.address;
-    db.query("UPDATE customers SET address = ? WHERE id = ?", 
-    [address, id], 
-    (err, result) => {
-        if (err) {
-            console.log(err);
-        } else {
-            res.send(result);
-        }
-       }
-    );
-});
-
-app.put('/sales_updatePhone', (req,res) => {
-    const id=req.body.id;
-    const phone = req.body.phone;
-    db.query("UPDATE customers SET phone = ? WHERE id = ?", 
-    [phone, id], 
-    (err, result) => {
-        if (err) {
-            console.log(err);
-        } else {
-            res.send(result);
-        }
-       }
-    );
-});
-
-
-
-//delete
-app.delete('/sales_delete/:id', (req,res) => {
-    const id = req.params.id
-    db.query("DELETE FROM customers WHERE id = ?", id, (err, result) => {
-        if (err) {
-            console.log(err);
-        }else {
-            res.send(result);
-        }
-    })
-})
+//Server
 
 app.listen(3001,()=>{
     console.log("Yey, your server is running on port 3001");
 });
 
-//promotions
-app.post('/sales_create_pro', (req,res) => {
-    const name = req.body.name;
-    const price = req.body.price;
-    const brand = req.body.brand;
-    const description = req.body.description;
+//Dashboard
 
-    db.query('INSERT INTO promotions (name, price, brand, description) VALUES (?,?,?,?)', 
-    [name, price, brand, description], (err, result) => {
-        if (err) {
+
+//Orders
+
+app.get('/sales_loadOrders',(req,res)=>{
+    db.query('SELECT orders.order_id, orderitem.quantity,DATE_FORMAT(orders.o_date,"%d-%m-%y") AS o_date,DATE_FORMAT(orders.order_last_date,"%d-%m-%y") AS order_last_date,orders.status,orderitem.total,orders.customer_id FROM orders INNER JOIN orderitem ON orders.order_id = orderitem.order_id ORDER BY orders.order_id  DESC;', (err, results, fields) => {
+        if(err) throw err;
+        res.send(results);
+      });
+})
+
+app.get('/sales_employeeDetail',(req,res) => {
+    db.query('SELECT * FROM orders', (err, result) => {
+        if(err) {
             console.log(err)
-        } else{
-            res.send("Values Inserted")
+        }else {
+            res.send(result);
         }
-      }
-    );
+    });
 });
+
+app.get('/sales_viewOrder',(req,res)=>{
+    order_id=req.params.order_id;
+    db.query("SELECT * FROM orders WHERE order_id=?",[req.query.order_id],(err,result)=>{
+      console.log(req.query.order_id);
+      res.send(result);
+    });
+    
+  });
+
+  app.put('/sales_updateOrderDate', (req,res) => {
+    const order_id=req.body.order_id;
+    const order_last_date=req.body.order_last_date;
+    db.query("UPDATE orders SET order_last_date=? WHERE order_id = ?", 
+    [order_last_date,order_id], 
+    (err, result) => {
+        if (err) {
+            console.log(err);
+        } else {
+            res.send(result);
+        }
+       }
+    );
+  });
+
+//Promotions
 
 app.post("/sales_customization",(req,res)=> {
    
@@ -212,14 +93,17 @@ app.post("/sales_customization",(req,res)=> {
       
     })
 
+//Payments
 
+app.get('/sales_pposts',(req,res)=>{
+    db.query('SELECT orders.order_id,orders.total_price,payment.payment_id,payment.payment_status,payment.payment_method FROM orders INNER JOIN payment ON orders.order_id = payment.order_id ORDER BY orders.order_id  DESC;',
+    (err,results,fields)=>{
+        if(err) throw err;
+        res.send(results);
+    });
+});
 
-
-
-
-
-//load customer new
-
+//ManageCustomer
 
 app.get('/sales_load',(req,res)=>{
     db.query('SELECT * FROM customer',(err,result,fields)=>{
@@ -230,26 +114,7 @@ app.get('/sales_load',(req,res)=>{
     })
 })
 
-app.get('/sales_loadEmployee',(req,res)=>{
-    db.query('SELECT name FROM customer" ',(err,result,fields)=>{
-        if(!err)
-        res.send(result);
-        else
-        console.log(err);
-    })
-  })
-
-  app.get("/sales_employeesLoad/:customer_id", (req, res) => {
-    db.query("SELECT * FROM customer WHERE customer_id=?", (err, result) => {
-      if (err) {
-        console.log(err);
-      } else {
-        res.send(result);
-      }
-    });
-  });
-
-  app.get('/sales_employees',(req,res) => {
+app.get('/sales_employees',(req,res) => {
     db.query('SELECT * FROM customer', (err, result) => {
         if(err) {
             console.log(err)
@@ -259,28 +124,7 @@ app.get('/sales_loadEmployee',(req,res)=>{
     });
 });
 
-
-app.delete("/sales_deleteCustomer/:customer_id",(req,res)=>{
-    const customer_id = req.params.customer_id;
-    const sqlDelete="DELETE FROM customer WHERE customer_id=?";
-
-    db.query(sqlDelete,customer_id,(err,result)=>{
-      if(err) console.log(err);
-    });
-  });
-
-
-  app.get('/sales_loadEmp/:customer_id',(req,res)=>{
-    const customer_id = req.params.customer_id;
-    db.query('SELECT * FROM customer WHERE customer_id=?',(err,result)=>{
-      if(!err)
-      res.send(result);
-      else
-      console.log(err);
-    })
-})
-
-  app.get('/sales_view',(req,res)=>{
+app.get('/sales_view',(req,res)=>{
     customer_id=req.params.customer_id;
     db.query("SELECT * FROM customer WHERE customer_id=?",[req.query.customer_id],(err,result)=>{
       console.log(req.query.customer_id);
@@ -289,21 +133,7 @@ app.delete("/sales_deleteCustomer/:customer_id",(req,res)=>{
     
   });
 
-  /*
-  app.put('/updateEmployee/:customer_id', (req,res) => {
-    console.log(customer_id);
-    //const id = req.body.id;
-    const name = req.body.name;
-    const sqlUpdate = "UPDATE SET customer name=? WHERE customer_id=?";
-  
-    db.query(sqlUpdate,[name,customer_id],(err,result)=>{
-      if(err) console.log(err);
-    })
-  });
-  */
-
-//update Employee
-app.put('/sales_updateEmployee', (req,res) => {
+  app.put('/sales_updateEmployee', (req,res) => {
     const customer_id=req.body.customer_id;
     const fname = req.body.fname;
     const email=req.body.email;
@@ -321,28 +151,329 @@ app.put('/sales_updateEmployee', (req,res) => {
     );
   });
 
+//AddCustomer and AddOrder
 
-  app.get("/sales_viewEmp",(req,res)=>{
-    db.query( "SELECT *FROM customer WHERE customer_id=?",[req.params.customer_id],(err,rows,fields)=>
-   {
-        if(!err)
-        res.send(rows);
-        else
-        console.log(err);
-   })
+app.post('/sales_create', (req,res) => {
+    const id = req.body.id;
+    const email = req.body.email;
+    const fname = req.body.name;
+    const phone = req.body.phone;
+    const address = req.body.address;
+
+    db.query('INSERT INTO customer (email, phone, address, fname) VALUES (?,?,?,?)', 
+    [email, phone, address, fname], (err, result) => {
+        if (err) {
+            console.log(err)
+        } else{
+            res.send("Values Inserted")
+        }
+      }
+    );
+});
+
+app.post('/sales_create_order', (req,res) => {
+    const customer_id = req.body.customer_id;
+    const o_date = req.body.o_date;
+    const order_last_date = req.body.order_last_date;
+    const order_description = req.body.order_description;
+    const total_price = req.body.total_price;
+   
+
+    db.query('INSERT INTO orders(customer_id, o_date, order_last_date, order_description, total_price) VALUES (?,?,?,?,?)',
+    [customer_id, o_date, order_last_date, order_description, total_price], (err, result) => {
+        if (err) {
+            console.log(err)
+        } else{
+            res.send("Values Inserted")
+        }
+      }
+    );
 });
 
 
+//Report
+
+//Order Analytics
+app.get('/sales_OrderAnalyze',(req,res) => {
+    db.query('SELECT EXTRACT(MONTH FROM o_date) AS month, COUNT(order_id) AS count FROM orders GROUP BY month', (err, result) => {
+        if(err) {
+            console.log(err)
+        }else {
+            res.send(result);
+            // console.log(result);
+            
+        }
+    });
+  });
+
+  //return items
+app.get('/sales_ReturnCount',(req,res) => {
+    db.query('SELECT category.name,COUNT(return_item.return_id) AS count FROM ((orderitem INNER JOIN (orders INNER JOIN return_item ON orders.order_id=return_item.order_id) ON orderitem.order_id=orders.order_id) INNER JOIN (products INNER JOIN category ON products.category_id=category.category_id) ON orderitem.product_id=products.product_id) WHERE EXTRACT(MONTH FROM return_item.return_date) = MONTH(CURRENT_TIMESTAMP) GROUP BY (category.category_id)', (err, result) => {
+        if(err) {
+            console.log(err)
+        }else {
+            res.send(result);
+            // console.log(result);
+            
+        }
+    });
+  });
+  
+  //moving items
+  app.get('/sales_MovingItems',(req,res) => {
+    const currentmonth=req.body.month;
+    db.query('SELECT SUM(orderitem.quantity) AS count, category.name FROM ((orderitem INNER JOIN (products INNER JOIN category ON products.category_id=category.category_id) ON orderitem.product_id=products.product_id)INNER JOIN orders ON orderitem.order_id=orders.order_id) WHERE EXTRACT(MONTH FROM orders.o_date)=? AND category.name NOT IN("Gift","customized products") GROUP BY products.category_id',[req.query.month], (err, result) => {
+        if(err) {
+            console.log(err)
+        }else {
+            res.send(result);
+            // console.log(result);
+            
+        }
+    });
+  });
+
+  //customized order pie chart
+app.get('/sales_Cus_OrderChart',(req,res) => {
+    db.query('SELECT SUM(quantity) AS quantity, category_name FROM customized_products GROUP BY category_name', (err, result) => {
+        if(err) {
+            console.log(err)
+        }else {
+            res.send(result);
+            // console.log(result);
+            
+        }
+    });
+  });
+
+  app.get('/sales_CategoryNoChart',(req,res) => {
+    db.query('SELECT SUM(products.quantity) AS quantity, category.name FROM products INNER JOIN category ON products.category_id=category.category_id GROUP BY products.category_id', (err, result) => {
+        if(err) {
+            console.log(err)
+        }else {
+            res.send(result);
+            // console.log(result);
+            
+        }
+    });
+  });
 
 
+  app.get('/sales_CustomerCount',(req,res) => {
+    db.query('SELECT date, COUNT(customer_id) AS count FROM customer GROUP BY date', (err, result) => {
+        if(err) {
+            console.log(err)
+        }else {
+            res.send(result);
+            // console.log(result);
+            
+        }
+    });
+  });
 
+  //OrderChart
+app.get('/sales_OrderChart',(req,res) => {
+    db.query('SELECT orders.o_date, SUM(orderitem.quantity) AS count FROM orderitem INNER JOIN orders ON orderitem.order_id=orders.order_id GROUP BY orders.o_date', (err, result) => {
+        if(err) {
+            console.log(err)
+        }else {
+            res.send(result);
+            // console.log(result);
+            
+        }
+    });
+  });
 
+  //OrderChart
+app.get('/sales_ReturnItemReport',(req,res) => {
+    db.query('SELECT products.product_name,return_item.reason,return_item.return_id,return_item.return_date,return_item.reschedule_date,return_item.return_status FROM ((orderitem INNER JOIN (orders INNER JOIN return_item ON orders.order_id=return_item.order_id)ON orderitem.order_id=orders.order_id)INNER JOIN products ON orderitem.product_id=products.product_id) WHERE EXTRACT(MONTH FROM return_date) = MONTH(CURRENT_TIMESTAMP)', (err, result) => {
+        if(err) {
+            console.log(err)
+        }else {
+            res.send(result);
+            // console.log(result);
+            
+        }
+    });
+  });
+  
+  
+  //employeeCount
+  app.get('/sales_EmployeeCount',(req,res) => {
+    db.query('SELECT COUNT(id) AS count FROM employee', (err, result) => {
+        if(err) {
+            console.log(err)
+        }else {
+            res.send(result);
+            
+        }
+    });
+  });
+  
+  //customerCount
+  app.get('/sales_CustomerNumber',(req,res) => {
+    db.query('SELECT COUNT(customer_id) AS count FROM customer', (err, result) => {
+        if(err) {
+            console.log(err)
+        }else {
+            res.send(result);
+           
+        }
+    });
+  });
+  
+  //orderCount
+  app.get('/sales_OrderCount',(req,res) => {
+    db.query('SELECT COUNT(order_id) AS ordcount FROM orders WHERE EXTRACT(MONTH FROM o_date) = MONTH(CURRENT_TIMESTAMP)', (err, result) => {
+        if(err) {
+            console.log(err)
+        }else {
+            res.send(result);
+           
+        }
+    });
+  });
+  
+  //productCount
+  app.get('/sales_ProductCount',(req,res) => {
+    db.query('SELECT COUNT(product_id) AS procount FROM products', (err, result) => {
+        if(err) {
+            console.log(err)
+        }else {
+            res.send(result);
+           
+        }
+    });
+  });
+  
+  //categoryCount
+  app.get('/sales_CategoryCount',(req,res) => {
+    db.query('SELECT COUNT(category_id) AS catcount FROM category', (err, result) => {
+        if(err) {
+            console.log(err)
+        }else {
+            res.send(result);
+           
+        }
+    });
+  });
+  
+  //
+  app.get('/sales_CustomizedReport',(req,res) => {
+    db.query('SELECT customized_products.cus_product_id,customized_products.design,customized_products.product_name,customer.fname FROM customized_products INNER JOIN customer ON customized_products.customer_id=customer.customer_id', (err, result) => {
+        if(err) {
+            console.log(err)
+        }else {
+            res.send(result);
+           
+        }
+    });
+  });
+  
+  //returnCount
+  app.get('/sales_ReturnItemCount',(req,res) => {
+    db.query('SELECT COUNT(return_id) AS returncount FROM return_item', (err, result) => {
+        if(err) {
+            console.log(err)
+        }else {
+            res.send(result);
+           
+        }
+    });
+  });
+  
+  //deliverCount
+  app.get('/sales_DeliverCount',(req,res) => {
+    db.query('SELECT COUNT(id) AS deliver_count FROM employee WHERE role="Delivery Person"', (err, result) => {
+        if(err) {
+            console.log(err)
+        }else {
+            res.send(result);
+           
+        }
+    });
+  });
+  
+  //deliverCount
+  app.get('/sales_DeliveryStatus',(req,res) => {
+    db.query('SELECT COUNT(status) AS count FROM orders WHERE status="Completed"', (err, result) => {
+        if(err) {
+            console.log(err)
+        }else {
+            res.send(result);
+           
+        }
+    });
+  });
+  
+  //OrderReport
+  app.get('/sales_OrderReport',(req,res) => {
+    db.query('SELECT orders.order_id,products.product_name,orders.o_date,orderitem.quantity,orders.total_price FROM ((orderitem INNER JOIN orders ON orderitem.order_id=orders.order_id) INNER JOIN products ON orderitem.product_id=products.product_id) WHERE EXTRACT(MONTH FROM o_date) = MONTH(CURRENT_TIMESTAMP)', (err, result) => {
+        if(err) {
+            console.log(err)
+        }else {
+            res.send(result);
+           
+        }
+    });
+  });
+  
+  //CustomerReport
+  app.get('/sales_CustomerReport',(req,res) => {
+    db.query('SELECT customer_id, fname,lname,email,address,phone,points,order_frequency,date FROM customer WHERE EXTRACT(MONTH FROM date) = MONTH(CURRENT_TIMESTAMP)', (err, result) => {
+        if(err) {
+            console.log(err)
+        }else {
+            res.send(result);
+           
+        }
+    });
+  });
+  
+  //DeliveryReport
+  app.get('/DeliveryReport',(req,res) => {
+    db.query('SELECT products.product_name, orders.order_id,orders.order_last_date,orders.status FROM ((orderitem INNER JOIN orders ON orderitem.order_id=orders.order_id)INNER JOIN products ON orderitem.product_id=products.product_id) WHERE EXTRACT(MONTH FROM orders.o_date) = MONTH(CURRENT_TIMESTAMP)', (err, result) => {
+        if(err) {
+            console.log(err)
+        }else {
+            res.send(result);
+           
+        }
+    });
+  });
+  
+  
+//income
+app.get('/sales_TotalIncome',(req,res) => {
+    db.query('SELECT SUM(total_price) AS income FROM orders WHERE EXTRACT(MONTH FROM o_date) = MONTH(CURRENT_TIMESTAMP)', (err, result) => {
+        if(err) {
+            console.log(err)
+        }else {
+            res.send(result);
+           
+        }
+    });
+  });
+  
+  //order analytics
+  app.get('/sales_OrderByDate',(req,res) => {
+   
+    const currentmonth=req.body.month;
+    db.query('SELECT products.name,customer.name AS cus_name,orders.o_date,orders.total_price FROM ((orders INNER JOIN products ON orders.product_id=products.product_id) INNER JOIN customer ON orders.customer_id=customer.customer_id WHERE orders.o_date BETWEEN )', (err, result) => {
+        if(err) {
+            console.log(err)
+        }else {
+            res.send(result);
+           
+        }
+    });
+  });
 
 
 
 
 //log in
-
+/*
 app.post('/login',(req,res)=>{
   
     const email = req.body.email;
@@ -374,66 +505,15 @@ app.post('/login',(req,res)=>{
            })
           
         });
-
-
-app.post('/sales_create_order', (req,res) => {
-            const customer_id = req.body.customer_id;
-            const o_date = req.body.o_date;
-            const order_last_date = req.body.order_last_date;
-            const order_description = req.body.order_description;
-            const total_price = req.body.total_price;
-        
-            db.query('INSERT INTO orders (customer_id, o_date, order_last_date, order_description, total_price) VALUES (?,?,?,?,?)', 
-            [customer_id, o_date, order_last_date, order_description, total_price], (err, result) => {
-                if (err) {
-                    console.log(err)
-                } else{
-                    res.send("Values Inserted")
-                }
-              }
-            );
-        });
+  
+  
  
-  app.put('/sales_updateDate', (req,res) => {
-    const order_id=req.body.order_id;
-    const order_last_date = req.body.order_last_date;
-    db.query("UPDATE orders SET order_last_date = ? WHERE order_id = ?", 
-    [order_last_date, order_id], 
-    (err, result) => {
-        if (err) {
-            console.log(err);
-        } else {
-            res.send(result);
-        }
-       }
-    );
-});
 
-
-app.get('/sales_order_check',(req,res) => {
-    db.query('SELECT order_id, customer_id, DATE_FORMAT(o_date,"%d-%m-%y") AS o_date, DATE_FORMAT(order_last_date,"%d-%m-%y") AS order_last_date, order_description, total_price FROM orders ORDER BY order_id DESC', (err, result) => {
-        if(err) {
-            console.log(err)
-        }else {
-            res.send(result);
-        }
-    });
-});
+*/
 
 
 
 
-//Report
+ 
 
-//Order Analytics
-app.get('/sales_OrderAnalyze',(req,res) => {
-    db.query('SELECT EXTRACT(MONTH FROM o_date) AS month, COUNT(order_id) AS count FROM orders GROUP BY month', (err, result) => {
-        if(err) {
-            console.log(err)
-        }else {
-            res.send(result);
-            // console.log(result);
-            
-        }
-    });
-  });
+ 
