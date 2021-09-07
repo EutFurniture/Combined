@@ -10,11 +10,34 @@ const { response } = require('express');
 const multer = require('multer');
 const saltRounds = 10;
 
+const cookieParser = require('cookie-parser');
+const session = require('express-session');
+
 var nodemailer = require('nodemailer')
 
-app.use(cors());
+app.use(cors({
+    origin: ["http://localhost:3000"],
+    methods: ["GET", "POST", "PUT"],
+    credentials: true
+  }));
+
+
+
 app.use(express.json());
 app.set("view engine","ejs");
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cookieParser());
+app.use(session({
+  key: "customer_id",
+  secret: "subscribe",
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    // expires:60*60*24,
+  },
+}));
 
 const db = mysql.createConnection({
     user: "root",
@@ -25,7 +48,13 @@ const db = mysql.createConnection({
 });
 
 
-
+app.get("/login", (req, res) => {
+    if (req.session.user) {
+      res.send({ loggedIn: true, user: req.session.user });
+    } else {
+      res.send({ loggedIn: false });
+    }
+  });
 
 app.post('/login', (req, res) => {
 
@@ -48,7 +77,7 @@ app.post('/login', (req, res) => {
 				bcrypt.compare(password, result[0].u_password, (error, response)=>{
                     console.log(response);
                     if(response){
-                        
+                        req.session.user = result;
 						res.send(result);
 					}else{
 						res.send({message:"Invalid Username or Password!"})
@@ -380,7 +409,7 @@ app.get("/delivery", (req, res) => {
 });
 
 app.get("/deliverys", (req, res) => {
-    db.query("SELECT orders.order_id,orders.employee_id,orders.order_last_date, orders.status,customer.fname,customer.address FROM orders INNER JOIN customer ON orders.customer_id=customer.customer_id WHERE  orders.status='Completed' OR  orders.status='Returned'  ORDER BY orders.order_id DESC LIMIT 8", (err, result, fields) => {
+    db.query("SELECT orders.order_id,orders.employee_id,orders.order_last_date, orders.status,customer.fname,customer.address FROM orders INNER JOIN customer ON orders.customer_id=customer.customer_id WHERE  (orders.status='Completed' OR  orders.status='Returned')  AND EXTRACT(MONTH FROM order_last_date) = MONTH(CURRENT_TIMESTAMP)  ORDER BY orders.order_id DESC LIMIT 8", (err, result, fields) => {
         if (err) {
             console.log(err);
         } else{
@@ -390,7 +419,7 @@ app.get("/deliverys", (req, res) => {
 });
 
 app.get("/Assign", (req, res) => {
-    db.query("SELECT orders.order_id,orders.employee_id,orders.order_last_date,customer.address FROM orders INNER JOIN customer ON orders.customer_id=customer.customer_id WHERE orders.employee_id=0 ", (err, result, fields) => {
+    db.query("SELECT orders.order_id,orders.employee_id,orders.order_last_date,customer.address FROM orders INNER JOIN customer ON orders.customer_id=customer.customer_id WHERE orders.employee_id=0 AND orders.status='Ready to deliver'", (err, result, fields) => {
         if (err) {
             console.log(err);
         } else{
@@ -400,7 +429,7 @@ app.get("/Assign", (req, res) => {
 });
 
 app.get("/viewStatus", (req, res) => {
-    db.query("SELECT employee.id,employee.name,customer.address,orders.order_last_date,COUNT(orders.status) AS pending FROM employee INNER JOIN orders ON orders.employee_id=employee.id INNER JOIN customer ON customer.customer_id=orders.customer_id WHERE (orders.status='Pending' OR orders.status='R_Pending') GROUP BY orders.order_last_date ORDER BY employee.id;", (err, result, fields) => {
+    db.query("SELECT employee.id,employee.name,employee.address AS e_address,customer.address,orders.order_last_date,COUNT(orders.status) AS pending FROM employee INNER JOIN orders ON orders.employee_id=employee.id INNER JOIN customer ON customer.customer_id=orders.customer_id WHERE (orders.status='Pending' OR orders.status='R_Pending') GROUP BY orders.order_last_date ORDER BY employee.id;", (err, result, fields) => {
         if (err) {
             console.log(err);
         } else{
@@ -410,7 +439,7 @@ app.get("/viewStatus", (req, res) => {
 });
 
 app.get("/getPriority", (req, res) => {
-    db.query("SELECT orders.employee_id,orders.order_id,orders.order_last_date,orders.status,orders.o_priority FROM orders WHERE orders.status='Pending' UNION SELECT return_item.employee_id,return_item.order_id,return_item.reschedule_date,return_item.return_status, return_item.o_priority FROM return_item WHERE return_item.return_status='R_Pending' ORDER BY employee_id", (err, result, fields) => {
+    db.query("SELECT orders.employee_id,orders.order_id,orders.order_last_date,orders.status,orders.o_priority FROM orders WHERE orders.status='Pending' OR orders.status='R_Pending' ORDER BY employee_id  ", (err, result, fields) => {
         if (err) {
             console.log(err);
         } else{
@@ -440,7 +469,7 @@ app.get("/cashOnDelivery", (req, res) => {
 });
 
 app.get("/totalcashOnDelivery", (req, res) => {
-    db.query("SELECT SUM(orders.total_price) AS total, SUM(orders.advance_price) AS advance FROM orders INNER JOIN payment ON orders.order_id = payment.order_id WHERE payment.payment_method = 'cash on delivery' AND payment.payment_status='Paid'", (err, result, fields) => {
+    db.query("SELECT SUM(orders.total_price) AS total,orders.order_last_date, SUM(orders.advance_price) AS advance FROM orders INNER JOIN payment ON orders.order_id = payment.order_id WHERE (payment.payment_method = 'cash on delivery' AND payment.payment_status='Paid') AND EXTRACT(MONTH FROM order_last_date) = MONTH(CURRENT_TIMESTAMP)", (err, result, fields) => {
         if (err) {
             console.log(err);
         } else{
@@ -449,31 +478,12 @@ app.get("/totalcashOnDelivery", (req, res) => {
     });
 });
 
-app.post('/create', (req, res) => {
-    console.log(req.body);
-  
-    const order_id = req.body.order_id;
-    const product_id = req.body.product_id;
-    const return_date = req.body.return_date;
-    const reason = req.body.reason;
 
-    db.query("INSERT INTO return_item ( order_id, product_id, return_date, reason) VALUES (?,?,?,?)" ,
-     [ order_id, product_id, return_date, reason],
-      (err,result) => {
-          if(err){
-          console.log(err)
-          }else {
-              res.send(result)
-          }
-     });
-});
+app.delete("/deleteDeliver/:email",(req,res)=>{
+    const email = req.params.email;
 
-
-app.delete("/deleteDeliver/:id",(req,res)=>{
-    const id = req.params.id;
-    const sqlDelete="DELETE FROM employee WHERE id=?";
-
-    db.query(sqlDelete,id,(err,result)=>{
+    db.query("DELETE FROM employee WHERE email=?; DELETE FROM userlogin WHERE u_email = ? AND user_role='Deliver';",
+    [email,email],(err,result)=>{
       if(err) {
           console.log(err);
       }
@@ -481,12 +491,7 @@ app.delete("/deleteDeliver/:id",(req,res)=>{
   });
 
 
-app.get("/viewAvailableDelivery", (req, res) => {
-    const sql_View = "SELECT orders.order_id,orders.order_last_date,customer.address,customer.fname, customer.phone FROM orders LEFT JOIN customer ON orders.customer_id=customer.customer_id ";
-        db.query(sql_View, (err, result) => {
-            res.send(result);
-        });      
-    });
+
 
     app.get("/viewDeliver",(req,res)=>{
         id=req.params.id;
@@ -673,6 +678,27 @@ app.put('/updateDeliveryStatus', (req,res) => {
        }
     );
   });
+
+
+  app.put('/EditDeliveryManager', (req,res) => {
+    const id=req.body.id;
+    const name = req.body.name;
+    const email = req.body.email;
+    const emp_img = req.body.emp_img;
+    const phone = req.body.phone;
+    const address = req.body.address;
+   
+    db.query("UPDATE employee SET name = ?,email=?,emp_img=?,phone_no=?,address=? WHERE id=?; ", 
+    [name,email,emp_img,phone,address,id], 
+    (err, result) => {
+        if (err) {
+            console.log(err);
+        } else {
+            res.send(result);
+        }
+       }
+    );
+  });
   //UPDATE userlogin SET u_name,u_email WHERE u_email=?
 
   app.get("/viewDeliverySchedule", (req, res) => {
@@ -686,7 +712,9 @@ app.put('/updateDeliveryStatus', (req,res) => {
 });
 
 app.get("/orderstatuscount", (req, res) => {
-    db.query("SELECT COUNT(order_id) AS count,status FROM orders WHERE NOT status='Processing'  AND EXTRACT(MONTH FROM order_last_date) = MONTH(CURRENT_TIMESTAMP) GROUP BY status ORDER BY status", (err, result, fields) => {
+    db.query("SELECT COUNT(order_id) AS count,status FROM orders WHERE NOT status='Processing'  AND  orders.order_last_date BETWEEN ? AND ? GROUP BY status ORDER BY status", 
+    [req.query.from_date,req.query.to_date],
+    (err, result, fields) => {
         if (err) {
             console.log(err);
         } else{
@@ -697,7 +725,9 @@ app.get("/orderstatuscount", (req, res) => {
 });
 
 app.get("/totalordercnt", (req, res) => {
-    db.query("SELECT COUNT(orders.order_id) AS t_count  FROM orders  WHERE  EXTRACT(MONTH FROM order_last_date) = MONTH(CURRENT_TIMESTAMP)", (err, result, fields) => {
+    db.query("SELECT COUNT(orders.order_id) AS t_count  FROM orders WHERE orders.order_last_date BETWEEN ? AND ?",
+    [req.query.from_date,req.query.to_date],
+     (err, result, fields) => {
         if (err) {
             console.log(err);
         } else{
@@ -708,7 +738,9 @@ app.get("/totalordercnt", (req, res) => {
 });
 
 app.get("/returnordercnt", (req, res) => {
-    db.query("SELECT COUNT(orders.order_id) AS r_count FROM orders INNER JOIN return_item ON orders.order_id = return_item.order_id WHERE EXTRACT(MONTH FROM return_date) = MONTH(CURRENT_TIMESTAMP);", (err, result, fields) => {
+    db.query("SELECT COUNT(orders.order_id) AS r_count FROM orders INNER JOIN return_item ON orders.order_id = return_item.order_id WHERE return_item.return_date BETWEEN ? AND ?;",
+    [req.query.from_date,req.query.to_date],
+     (err, result, fields) => {
         if (err) {
             console.log(err);
         } else{
@@ -719,7 +751,9 @@ app.get("/returnordercnt", (req, res) => {
 });
 
 app.get("/ordervsdate", (req, res) => {
-    db.query("SELECT COUNT(order_id) AS count,order_last_date FROM orders WHERE EXTRACT(MONTH FROM order_last_date) = MONTH(CURRENT_TIMESTAMP) GROUP BY order_last_date", (err, result, fields) => {
+    db.query("SELECT COUNT(order_id) AS count,order_last_date FROM orders  WHERE order_last_date BETWEEN ? AND ? GROUP BY order_last_date",
+    [req.query.from_date,req.query.to_date],
+     (err, result, fields) => {
         if (err) {
             console.log(err);
         } else{
@@ -730,7 +764,9 @@ app.get("/ordervsdate", (req, res) => {
 });
 
 app.get("/pricevsdate", (req, res) => {
-    db.query("SELECT order_last_date,SUM(total_price) AS total FROM orders GROUP BY order_last_date;", (err, result, fields) => {
+    db.query("SELECT order_last_date,SUM(total_price) AS total FROM orders WHERE EXTRACT(MONTH FROM order_last_date) = MONTH(CURRENT_TIMESTAMP) GROUP BY order_last_date;", 
+    
+    (err, result, fields) => {
         if (err) {
             console.log(err);
         } else{
@@ -741,7 +777,9 @@ app.get("/pricevsdate", (req, res) => {
 });
   
 app.get("/paymentdonut", (req, res) => {
-    db.query("SELECT COUNT(payment.order_id) AS count,payment.payment_status,orders.order_last_date FROM payment INNER JOIN orders ON payment.order_id = orders.order_id WHERE payment_method='cash on delivery' AND EXTRACT(MONTH FROM order_last_date) = MONTH(CURRENT_TIMESTAMP) GROUP BY payment_status", (err, result, fields) => {
+    db.query("SELECT COUNT(payment.order_id) AS count,payment.payment_status,orders.order_last_date FROM payment INNER JOIN orders ON payment.order_id = orders.order_id WHERE payment_method='cash on delivery' AND  orders.order_last_date BETWEEN ? AND ? GROUP BY payment_status",
+    [req.query.from_date,req.query.to_date],
+     (err, result, fields) => {
         if (err) {
             console.log(err);
         } else{
@@ -752,7 +790,9 @@ app.get("/paymentdonut", (req, res) => {
 });
 
 app.get("/delivervsorder", (req, res) => {
-    db.query("SELECT employee.name,COUNT(orders.order_id) AS count FROM employee LEFT JOIN orders ON employee.id=orders.employee_id WHERE employee.role = 'Deliver'  AND EXTRACT(MONTH FROM order_last_date) = MONTH(CURRENT_TIMESTAMP) GROUP BY employee.name", (err, result, fields) => {
+    db.query("SELECT employee.name,COUNT(orders.order_id) AS count FROM employee LEFT JOIN orders ON employee.id=orders.employee_id WHERE employee.role = 'Deliver'  AND orders.order_last_date BETWEEN ? AND ? GROUP BY employee.name", 
+    [req.query.from_date,req.query.to_date],
+    (err, result, fields) => {
         if (err) {
             console.log(err);
         } else{
@@ -917,7 +957,9 @@ app.get('/cashpaymentnotifyDeactive', (req,res) => {
 });
 
 app.get("/deliveryReport", (req, res) => {
-    db.query("SELECT orders.order_id,orders.employee_id,orders.order_last_date, orders.status,customer.fname,customer.address,payment.payment_method FROM orders INNER JOIN customer ON orders.customer_id=customer.customer_id INNER JOIN payment ON payment.order_id=orders.order_id WHERE (orders.status='Ready to deliver' OR orders.status='Completed' OR orders.status='Returned' OR orders.status='Pending' OR orders.status='R_Pending') AND EXTRACT(MONTH FROM order_last_date) = MONTH(CURRENT_TIMESTAMP) ORDER BY orders.order_id DESC;", (err, result, fields) => {
+    db.query("SELECT orders.order_id,orders.employee_id,orders.order_last_date, orders.status,customer.fname,customer.address,payment.payment_method FROM orders INNER JOIN customer ON orders.customer_id=customer.customer_id INNER JOIN payment ON payment.order_id=orders.order_id WHERE (orders.status='Ready to deliver' OR orders.status='Completed' OR orders.status='Returned' OR orders.status='Pending' OR orders.status='R_Pending') AND orders.order_last_date BETWEEN ? AND ?;",
+    [req.query.from_date,req.query.to_date],
+    (err, result, fields) => {
         if (err) {
             console.log(err);
         } else{
@@ -927,7 +969,9 @@ app.get("/deliveryReport", (req, res) => {
 });
 
 app.get("/CashOnDeliveryReport", (req, res) => {
-    db.query("SELECT payment.order_id,payment.payment_status, orders.order_last_date,orders.total_price,orders.advance_price,customer.fname FROM orders INNER JOIN payment ON payment.order_id=orders.order_id INNER JOIN customer ON orders.customer_id = customer.customer_id WHERE payment.payment_method='cash on delivery' AND EXTRACT(MONTH FROM order_last_date) = MONTH(CURRENT_TIMESTAMP) ORDER BY orders.order_id DESC", (err, result, fields) => {
+    db.query("SELECT payment.order_id,payment.payment_status, orders.order_last_date,orders.total_price,orders.advance_price,customer.fname FROM orders INNER JOIN payment ON payment.order_id=orders.order_id INNER JOIN customer ON orders.customer_id = customer.customer_id WHERE payment.payment_method='cash on delivery' AND orders.order_last_date BETWEEN ? AND ? ORDER BY orders.order_id ASC", 
+    [req.query.from_date,req.query.to_date],
+    (err, result, fields) => {
         if (err) {
             console.log(err);
         } else{
@@ -938,7 +982,9 @@ app.get("/CashOnDeliveryReport", (req, res) => {
 });
 
 app.get("/ReturnReport", (req, res) => {
-    db.query("SELECT order_id, return_date,reason, return_status FROM return_item WHERE EXTRACT(MONTH FROM return_date) = MONTH(CURRENT_TIMESTAMP) ORDER BY order_id DESC", (err, result, fields) => {
+    db.query("SELECT order_id, return_date,reason, return_status FROM return_item WHERE return_date BETWEEN ? AND ? ORDER BY order_id ASC", 
+    [req.query.from_date,req.query.to_date],
+    (err, result, fields) => {
         if (err) {
             console.log(err);
         } else{
@@ -949,7 +995,9 @@ app.get("/ReturnReport", (req, res) => {
 });
 
 app.get("/DeliverReport", (req, res) => {
-    db.query("SELECT employee.name,COUNT(orders.order_id) AS count FROM employee LEFT JOIN orders ON employee.id=orders.employee_id WHERE employee.role = 'Deliver' AND EXTRACT(MONTH FROM order_last_date) = MONTH(CURRENT_TIMESTAMP) GROUP BY employee.id", (err, result, fields) => {
+    db.query("SELECT employee.name,COUNT(orders.order_id) AS count FROM employee LEFT JOIN orders ON employee.id=orders.employee_id WHERE employee.role = 'Deliver'  AND orders.order_last_date BETWEEN ? AND ? GROUP BY employee.id",
+    [req.query.from_date,req.query.to_date],
+     (err, result, fields) => {
         if (err) {
             console.log(err);
         } else{
@@ -957,8 +1005,4 @@ app.get("/DeliverReport", (req, res) => {
             console.log(result);
         }
     });
-});
-
-app.listen(3001, () => {
-    console.log("yay your server is running on port 3001");
 });
