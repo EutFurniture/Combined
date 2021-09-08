@@ -9,9 +9,12 @@ import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import Axios from'axios';
 import './sign.css';
+import { useParams } from "react-router-dom";
 import Footer from './customer/Footer'
 import { Fragment } from 'react';
-
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
 const useStyles = makeStyles((theme) => ({
   paper: {
     marginTop: theme.spacing(9),
@@ -37,53 +40,45 @@ const useStyles = makeStyles((theme) => ({
     fontWeight:'bold',
   }
 }));
-
+const schema = yup.object().shape({
+  fname: yup.string().required(),
+  email: yup.string().email().required(),
+  address: yup.string().required(),
+  nic: yup.string().max(10, "Must be 10 Characters.").min(10, "Must be 10 Characters."),
+  phone: yup.string().required().min(8).max(15),
+  cpassword: yup.string().when('password', (password, schema) => {
+      if (password) return schema.required('Confirm Password is required');
+  })
+      .oneOf([yup.ref('password')], 'Passwords must match')
+})
 export default function SignUp() {
   const classes = useStyles();
-  const[fname,setFName]=useState();
-  const[city,setCity]=useState("");
-  const[email,setEmail]=useState();
-  const[phone,setPhone]=useState("");
-  const[post,setPost]=useState("");
-  const[address,setAddress]=useState("");
-  const[password,setPassword]=useState("");
-  const[cpassword,setCpassword]=useState("");
-  const[otp,setOtp]=useState("");
-  Axios.defaults.withCredentials=true;
-  const regist=()=>{
+  const { customer_id } = useParams();
+
+  
+ const { register , handleSubmit, formState: { errors } } = useForm({
+  resolver: yupResolver(schema),
+});
+  const otpinfo=async(data)=>{
     Axios.post('http://localhost:3001/customerRegister',{
-      fname:fname,
-      email:email,
-      phone:phone,
-      address:address,
-      password:password,
-      cpassword:cpassword,
-      post:post,
-      city:city,
-      otp:otp,
+      fname:data.fname,
+      email:data.email,
+      phone:data.phone,
+      address:data.address,
+      password:data.password,
+      cpassword:data.cpassword,
+      nic:data.nic,
+      
     
   }).then((response) => { 
     if(response.data.message){
       alert(response.data.message)
-    
+  
+      window.location.href='/manageotp'
     }
   });
-  };
-
-  const otpinfo=()=>{
-    Axios.post('http://localhost:3001/insertotpcode',{
-      fname:fname,
-      email:email,
-     
-    
-  }).then((response) => { 
-    if(response.data.message){
-      alert(response.data.message)
-    
-    }
-  });
-
-  }
+  
+}
 
   
   return (
@@ -102,7 +97,7 @@ export default function SignUp() {
         <Typography component="h1" className={classes.sign} variant="h5">
           Sign up
         </Typography>
-        <form className={classes.form} noValidate>
+        <form className={classes.form} onSubmit={handleSubmit(otpinfo)} >
           <Grid container spacing={2}>
             <Grid item xs={12} >
               <TextField
@@ -114,10 +109,11 @@ export default function SignUp() {
                 id="firstName"
                 label="Full Name"
                 autoFocus
-                defaultValue={fname}
-                onChange={(event)=>{setFName(event.target.value); }}
+               
+                {...register('fname')}
                 
               />
+               {errors.fname?.message && <p className=" errormessage" >{errors.fname?.message}</p>}  
             </Grid>
            
            
@@ -131,47 +127,29 @@ export default function SignUp() {
                 name="email"
                 type="email"
                 autoComplete="email"
-                defaultValue={email}
-                onChange={(event)=>{setEmail(event.target.value); }}
+                {...register('email')}
+                
                
               />
+               {errors.email?.message && <p className=" errormessage" >{errors.email?.message}</p>}  
             </Grid>
-            <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            color="primary"
-            className={classes.otp}
-            onClick={otpinfo}
-           
-          >
-          OTP
-          </Button>
             <Grid item xs={12}>
               <TextField
                 variant="outlined"
                 required
                 fullWidth
-                id="otp"
-                label="OTP"
-                name="otp"
-                type="otp"
-                autoComplete="otp"
-                onChange={(event)=>{setOtp(event.target.value); }}
+                id="nic"
+                label="NIC"
+                name="nic"
+                type="nic"
+                autoComplete="nic"
+                {...register('nic')}
+               
+               
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                variant="outlined"
-                required
-                fullWidth
-                id="city"
-                label="Your City"
-                name="city"
-                autoComplete="city"
-                onChange={(event)=>{setCity(event.target.value); }}
-              />
-            </Grid>
+          
+        
             <Grid item xs={12} sm={6}>
               <TextField
                 variant="outlined"
@@ -181,21 +159,11 @@ export default function SignUp() {
                 label="Address"
                 name="address"
                 autoComplete="address"
-                onChange={(event)=>{setAddress(event.target.value); }}
+                {...register('address')}
               />
+               {errors.address?.message && <p className=" errormessage" >{errors.address?.message}</p>}  
             </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                variant="outlined"
-                required
-                fullWidth
-                id="postalcode"
-                label="Postal Code"
-                name="postalcode"
-                autoComplete="postalcode"
-                onChange={(event)=>{setPost(event.target.value); }}
-              />
-            </Grid>
+          
             <Grid item xs={12} sm={6}>
               <TextField
                 variant="outlined"
@@ -206,8 +174,9 @@ export default function SignUp() {
                 name="phone"
                 type="phone"
                 autoComplete="phone"
-                onChange={(event)=>{setPhone(event.target.value); }}
+                {...register('phone')}
               />
+               {errors.phone?.message && <p className=" errormessage" >{errors.phone?.message}</p>}  
             </Grid>
             <Grid item xs={12}>
               <TextField
@@ -219,8 +188,10 @@ export default function SignUp() {
                 type="password"
                 id="password"
                 autoComplete="current-password"
-                onChange={(event)=>{setPassword(event.target.value); }}
+                {...register('password')}
+                
               />
+               {errors.password?.message && <p className=" errormessage" >{errors.password?.message}</p>}  
             </Grid>
             <Grid item xs={12}>
               <TextField
@@ -232,8 +203,9 @@ export default function SignUp() {
                 type="password"
                 id="cpassword"
                 autoComplete="conform-password"
-                onChange={(event)=>{setCpassword(event.target.value); }}
+                {...register('cpassword')}
               />
+               {errors.cpassword?.message && <p className=" errormessage" >{errors.cpassword?.message}</p>}  
             </Grid>
            
           </Grid>
@@ -243,10 +215,13 @@ export default function SignUp() {
             variant="contained"
             color="primary"
             className={classes.submit}
-            onClick={regist}
+            
            
           >
-            Sign Up
+               Sign UP
+           
+              
+                
           </Button>
           <Grid container justifyContent="flex-end">
             <Grid item>

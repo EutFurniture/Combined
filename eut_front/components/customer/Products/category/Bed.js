@@ -1,20 +1,18 @@
-import React, {useState,useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Title from '../Title';
 import styled from 'styled-components';
-import AddShoppingCart from '@material-ui/icons/AddShoppingCart';
 import axios from 'axios';
-import {  useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import Pproduct from "../../Pproduct";
 import Footer from '../../Footer'
-export default function ProductList (userData){
+export default function ProductList(userData) {
     const { customer_id } = useParams();
-
-    const [product, setDt] = useState([]);
+    const [product, setDt] = useState([])
     useEffect(() => {
         const fetchData = async () => {
             const response = await axios.get('http://localhost:3001/bed', {
-                
+
             });
 
             setDt(response.data);
@@ -23,163 +21,231 @@ export default function ProductList (userData){
         fetchData();
     }, []);
 
-    const addToCart=(id,price)=>{
-        const custid=userData.userData.customer_id;
+    const addToCart = (id, price) => {
+        const custid = userData.userData.customer_id;
         console.log(custid)
         console.log(id)
-       axios.get('http://localhost:3001/checkproduct', {
-         params: {
-            cid: custid,
-            pid:id,
-            price:price
-         }
-     });
-   }
 
-	
-   
-  
-    
-      
-          return(
-              <React.Fragment>
-             <Pproduct/>
-            
-                  <div className="py-5">
-                  <Title name="Beds" />
-                      <div className="container">
-                         
-                          
-                          <div className="row">
-                          
-                              {
-                                  product.map(item  => (
-                                  
-                                    <ProductWrapper className="col-9 mx-auto col-md-6 col-lg-3 my-3">
-                                    <div className ="card" key={item.product_id}>
-                                        
-                                        
-                                       
-                                     
-                                        <div className="img-container p-5">
-                                        <Link to={location =>`/customer/detail/${item.product_id}`}>
-                                        <img src={item.product_img} alt="proudct" className="card-img-top"/>
-                                        </Link>
-                                   
-                                   
-                                    <button className="cart-btn"  onClick={() => {
-                                     //  console.log(product.product_id); 
-                                      addToCart(item.product_id,item.price);
-                                     
-                                    //   this.openModal(product.product_id);
-                                      
-                                    }}>
-                                  
-                                   
-                                    
-                                    <AddShoppingCart />
-                                   
-                                 
-                              
-                                  </button> 
-                                        </div>
-                                        
-                                       
-                    
-                                        
-                                        <div className="card-footer d-flex justify-content-between">
-                                            <p className="align-self-center mb-0 font-weight-bold">
-                                                {item.product_name}
-                                            </p>
-                                            <h5 className="text-blue font-italic  mb-0">
-                                                <span className="mr-1">Rs.</span>
-                                                {item.price}
-                                            </h5>
-                                          
-                                        </div>
-                                        {/* { product.quantity > 0 ?
-                                        <div>
-                                            <button className="btn btn-sm btn-warning float-right" onClick={this.addToCart(product.product_id)}>Add to cart</button>
-                                            <input type="number" value={this.state.quantity} name="quantity" onChange={this.handleInputChange} className="float-right" style={{ width: "60px", marginRight: "10px", borderRadius: "3px"}}/>
-                                        </div> : 
-                                        <p className="text-danger"> product is out of stock </p>
-                                     } */}
-                                         
-                                    </div>
-                                
-                                </ProductWrapper>
-                          
-                                )
-                                  
-                                 )
-                                 
-                                      
-                                  
-                                  }
-                         
-                             
-                          </div>
-                      </div>
-                  </div>
-                <Footer /> 
-              </React.Fragment>
-                // <Product />
-              
-          )
+        axios.get('http://localhost:3001/checkproduct', {
+            params: {
+                cid: custid,
+                pid: id,
+                price: price
+            }
+        });
+       
     }
-  
-  const ProductWrapper = styled.div`
-.card{
-    border-color: transparent;
-    transition: all 1s linear;
-    height:100%;
+
+    return (
+        <React.Fragment>
+            <Pproduct />
+
+            <div className="py-5">
+                <Title name="Dining" title="Set" />
+                <div className="container">
+
+
+                    <div className="row ">
+
+                        {
+                            product.map(item => (
+
+                                <ProductWrapper className="col-8 mr-auto  col-md-6 col-lg-3 my-2 ">
+                                    <div className="card" key={item.product_id}>
+
+
+
+
+                                        <div className="img-container p-5">
+
+                                            <Link to={location => `/customer/detail/${item.product_id}`}>
+                                                <img src={item.product_img} alt="proudct" className="card-img-top" />
+                                            </Link>
+
+
+                                        </div>
+
+                                        <div className="card_body">
+                                            <h2>{item.product_name}</h2>
+                                            <div className="price">
+                                                <span>{item.currency}</span>
+                                                <h6>{item.price}.00</h6>
+                                            </div>
+                                            <hr className="new" />
+                                            <div className="cta_group">
+                                                {item.quantity > 0 ?
+                                                    <div>
+                                                        <Link className="button-atc" onClick={() => {
+                                                            addToCart(item.product_id, item.price)
+                                                        }}>ADD to cart </Link>
+                                                         
+                                                    </div>
+                                                   
+                                                    
+                                                    :
+                                                    <p className="text"> product is out of stock </p>
+                                                }
+
+                                            </div>
+                                        </div>
+
+
+
+                                    </div>
+
+                                </ProductWrapper>
+
+                            )
+
+                            )
+
+
+
+                        }
+
+
+                    </div>
+                </div>
+            </div>
+            <Footer />
+        </React.Fragment>
+        // <Product />
+
+    )
 }
 
-.card-footer{
-    background: transparent;
-    border-top: transparent;
-    transition: all 1s linear;
+const ProductWrapper = styled.div`
+
+            .card{
+                width:100%;
+                height:95%;
+                position: relative;
+                border-radius: 10px;
+               
+                
+               
 }
+
 &:hover{
     .card{
-        border:0.04rem solid rgba(0,0,0,0.2);
-        box-shadow:2px 2px 5px 0px rgba(0,0,0,0.2)
-
+        background-color:rgb(119, 124, 126);
+       
     }
-    .card-footer{
-        backgrouns: rgba(247,247,247);
+    .new{
+        border:1px solid white;
+    } 
+    .button-atc
+   {
+    color:white;
+
+   }
+   .text{
+    color:red;
+   }
+}
+
+          
+      
+           
+  
+}
+            .img-container{
+                position:relative;
+            overflow: hidden;
+            height:60%;
+}
+            .card-img-top{
+                transition: all 1s linear;
+               
+}
+            .img-container:hover .card-img-top{
+                transform: scale(1.2);
+               
+}
+         
+.card_body{
+    padding:0 5px;
+    width:100%;
+    height:65%;
+    
+}
+.card_body h2{
+    
+        text-align: center;
+        font-weight: bold;
+        text-transform: uppercase;
+        margin:10px 0;
+        font-size: 17px;
+        color: black;
+        
+        
     }
+    .card_body p{
+        text-align: center;
+        font-size: 13px;
+        line-height: 1.5;
+        margin-bottom: 10px;
+    }
+
+.price_section{
+    justify-content: space-between;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
-.img-container{
-    position:relative;
-    overflow: hidden;
-}
-.card-img-top{
-    transition: all 1s linear;
-}
-.img-container:hover .card-img-top{
-    transform: scale(1.2);
-}
-.cart-btn{
-    position: absolute;
-    bottom:0;
-    right:0;
-    padding: 0.2rem 0.4rem;
-    background:var(--lightBlue);
-    border:none;
-    color:var(--mainWhite);
-    font-size:1.4rem;
-    border-radius:0.5rem 0 0 0;
-    transform: translate(100%, 100%);
-    transition: all 1s linear;
+.price{
+    display: flex;
+    text-align:center;
+    justify-content: center;
+    align-items: center;
+    color:rgb(190, 17, 17);
+    font-size: 15px;
+    }
+.price span{
+        margin-right: 6px;
+        display:grid;
+        font-size: 18px;
+        font-weight:bold;
+    }
+
+    .price h6{
+        margin-top: 8px;
+       font-weight:bold;
+        
+    }
+    .cta-group{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+            .button-atc{
+            position:absolute;
+            color: rgb(32, 119, 219);
+            text-transform: uppercase;
+            font-weight: bold;
+            font-size: 16px;
+            transition: all .3s ease-in-out;
+           margin-left:28%;
+           text-decoration:none;
+           text-align:center;
+           text-shadow:0px 4px 10px grey;   
 }
 
-.img-container:hover .cart-btn{
-    transform: translate(0, 0);
+           
+            .img-container:hover .cart-btn{
+                transform: translate(0, 0);
 }
+.text{
+    text-align:center;
+    font-weight:bold;
+   font-size:20px;
 
-.cart-btn:hover{
-    color:var(--mainBlue);
-    cursor: pointer;
 }
-`;
+.new{
+    border:1px solid grey;
+    margin-top:8%;
+}
+.new:hover{
+    border:1px solid white;
+}      
+            `;
