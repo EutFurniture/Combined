@@ -1,32 +1,39 @@
 .logo {
-      width: 100vw;
+      width: 96vw;
       height: 70vh;
-      align-items: 'center';
-      position: 'relative';
-      left: 2%;
+      align-items:center;
+      position:relative;
+      margin-left: 0.5%;
+     
     }
-    .p1 {
-      text-align:  'center';
-      color: rgb(17, 83, 170);
-    text-shadow: '0 10px 100px rgb(20, 19, 19)';
-      font-size: 30px;
-      margin-top: 10px;
-      font-weight: 'bold';
-      padding: 10px;
-    }
+.p1 {
+    text-align:center;
+  
+    color: rgb(17, 83, 170);
+    text-shadow: 0 10px 100px rgb(20, 19, 19);
+    font-size: 30px;
+    margin-top: 10px;
+    font-weight: bold;
+    padding: 10px;
+    
+}
     .ab {
   
       font-weight: 20px;
+      margin-right: 1%;
     }
   
     .ser {
-     list-style-type: 'circle';
+     
+     margin-left: 1%;
+    
   
     }
   
     .about{
       font-size: 15px;
       margin-top: 1%;
+      margin-left: 1%;
     }
   
   
