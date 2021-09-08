@@ -26,12 +26,11 @@ import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import { DpListItems, Logout } from './dplistItems';
 
 
-const drawerWidth = 240;
+const drawerWproduct_idth = 240;
 
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
-   
   },
   toolbar: {
     paddingRight: 24, // keep right padding when drawer closed
@@ -45,15 +44,15 @@ const useStyles = makeStyles((theme) => ({
   },
   appBar: {
     zIndex: theme.zIndex.drawer + 1,
-    transition: theme.transitions.create(['width', 'margin'], {
+    transition: theme.transitions.create(['wproduct_idth', 'margin'], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
   },
   appBarShift: {
-    marginLeft: drawerWidth,
-    width: `calc(100% - ${drawerWidth}px)`,
-    transition: theme.transitions.create(['width', 'margin'], {
+    marginLeft: drawerWproduct_idth,
+    wproduct_idth: `calc(100% - ${drawerWproduct_idth}px)`,
+    transition: theme.transitions.create(['wproduct_idth', 'margin'], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
     }),
@@ -61,37 +60,32 @@ const useStyles = makeStyles((theme) => ({
   menuButton: {
     marginRight: 36,
   },
-  menuButtonHidden: {
+  menuButtonHproduct_idden: {
     display: 'none',
   },
   title: {
     flexGrow: 1,
-  },
-  userimage : {
-    height: 60,
-    width: 60,
-    borderRadius:100,
-    borderColor:'white',
-
+    fontSize:40,
+    fontWeight:600,
   },
   drawerPaper: {
     position: 'relative',
     whiteSpace: 'nowrap',
-    width: drawerWidth,
-    transition: theme.transitions.create('width', {
+    wproduct_idth: drawerWproduct_idth,
+    transition: theme.transitions.create('wproduct_idth', {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
     }),
   },
   drawerPaperClose: {
-    overflowX: 'hidden',
-    transition: theme.transitions.create('width', {
+    overflowX: 'hproduct_idden',
+    transition: theme.transitions.create('wproduct_idth', {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
-    width: theme.spacing(7),
+    wproduct_idth: theme.spacing(7),
     [theme.breakpoints.up('sm')]: {
-      width: theme.spacing(9),
+      wproduct_idth: theme.spacing(9),
     },
   },
   appBarSpacer: theme.mixins.toolbar,
@@ -99,41 +93,40 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
     height: '100vh',
     overflow: 'auto',
-    
+    backgroundColor:'#f0f8ff'
   },
- 
   container: {
     paddingTop: theme.spacing(4),
     paddingBottom: theme.spacing(4),
     alignContent:'center',
     align:'center',
+    
   },
   paper: {
+    position:'relative',
+    align:'center',
     padding: theme.spacing(2),
     display: 'flex',
     overflow: 'auto',
     flexDirection: 'column',
+   
   },
   fixedHeight: {
-    height: 'auto',
+    height: 240,
   },
+  
+  imageInput:{
+    border:'none',
+    borderColor:'white'
+  }
 }));
 
 const styles = {
-  side:{
-    backgroundColor:'rgb(37, 37, 94)',
+  sproduct_ide:{
+    backgroundColor:'rgb(37,37,94)',
   },
-
-  card:{
-    display:"flex",
-    flexDirection :"row",
-    justifyContent:"space-between",
-  },
-
-  pack:{
-    justifyContent:'flex-around',
-    marginLeft:'20px'
-  }  
+ 
+  
 };
 
 
@@ -196,8 +189,9 @@ export default function DeliveryInfo() {
   return (
     <div className={classes.root}>
       <CssBaseline />
+
       <AppBar position="absolute" className={clsx(classes.appBar, open && classes.appBarShift)}>
-        <Toolbar className={classes.toolbar} style={{backgroundColor: 'rgb(37, 37, 94)'}}>
+        <Toolbar className={classes.toolbar} style={{backgroundColor: 'rgb(37,37,94)'}}>
           <IconButton
             edge="start"
             color="inherit"
@@ -205,33 +199,29 @@ export default function DeliveryInfo() {
             onClick={handleDrawerOpen}
             className={clsx(classes.menuButton, open && classes.menuButtonHidden)}
           >
-
-         <MenuItem component={Link} to="/dPerson/DpProfile">Profile</MenuItem>
-        <MenuItem onClick={()=>setIsAuth(false)}>Logout</MenuItem>
-        <MenuItem component={Link} to="/Calender">Calendar</MenuItem>
             <MenuIcon />
           </IconButton>
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
             <strong>DELIVERY PERSON</strong>
           </Typography>
+
           <IconButton color="inherit" fontSize="inherit">
            <AccountCircleIcon   onClick={handleClick}/>
   
           </IconButton>
           <Menu
-        id="simple-menu"
+        product_id="simple-menu"
         anchorEl={anchorEl}
         keepMounted
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-        <MenuItem component={Link} to="/employee/DpProfile">Profile</MenuItem>
+        <MenuItem onClick={handleClose}>Profile</MenuItem>
         <MenuItem onClick={()=>setIsAuth(false)}>Logout</MenuItem>
-        <MenuItem component={Link} to="/Calender">Calendar</MenuItem>
       </Menu>
-        </Toolbar> 
+        </Toolbar>
       </AppBar>
-      <div style={styles.side}>
+      <div style={styles.sproduct_ide}>
       <Drawer
         variant="permanent"
         classes={{
@@ -239,19 +229,19 @@ export default function DeliveryInfo() {
         }}
         open={open}
       >
-        <div className={classes.toolbarIcon} style={{backgroundColor: 'rgb(37, 37, 94)', color:'white'}}>
+        <div className={classes.toolbarIcon} style={{backgroundColor: 'rgb(37,37,94)', color:'white'}}>
           <IconButton onClick={handleDrawerClose} style={{color:'white'}}>
             <ChevronLeftIcon />
           </IconButton>
         </div>
         <Divider />
         <List style={{backgroundColor: 'rgb(37,37,94)', color:'white'}}>{DpListItems}</List>
+        
         <Divider />
         <List style={{backgroundColor: 'rgb(37,37,94)', color:'white'}}>{Logout}</List>
         <Divider />
       </Drawer>
-      </div>
-     
+      </div>  
       <main className={classes.content}>
         <div className={classes.appBarSpacer} />
         <Container maxWidth="lg" className={classes.container}>
