@@ -234,7 +234,7 @@ export default function AddCustomForm() {
       }).then((response)=>{
         if(response.data.message){
           alert('Employee added successfully')
-          window.location.href='/sManager/pages/ManageCustom'
+          window.location.href='/sManager/pages/ManageEmployee'
          
       }
        });

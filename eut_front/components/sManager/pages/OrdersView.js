@@ -11,15 +11,14 @@ import {Table} from 'react-bootstrap';
 
 
 
-export default function CustomView() {
+export default function OrdersView() {
   const [searchTerm,setSearchTerm]=useState("");
   const [employeeList,setEmployeeList]=useState([])
  useEffect(()=>{
-   axios.get("http://localhost:3001/sales_load").then((response)=>{
+   axios.get("http://localhost:3001/sales_loadOrders").then((response)=>{
      setEmployeeList(response.data)
    })
  },[])
-
 
 
 const [modal, setModal] = useState(false);
@@ -41,22 +40,23 @@ const [modal, setModal] = useState(false);
               <div ><br/>
                 <div className='box-main'>
                 <div className="searchbar">
-                   <input type="text" onChange={(e)=>{setSearchTerm(e.target.value);}} placeholder="Search"/>
+                   <input type="text" onChange={(e)=>{setSearchTerm(e.target.value);}} placeholder="Search by Status"/>
                    <SearchIcon  className='searchicon'/>
                 </div>
-                <Link  to='/sManager/pages/AddCustomForm' className="Addbtn"><AddCircleIcon style={{marginTop:'0px'}}/> Add New</Link>
+                <Link  to='/sManager/pages/AddOrderForm' className="Addbtn"><AddCircleIcon style={{marginTop:'0px'}}/> Add New</Link>
                
                 </div><br/>
                
                 <Table striped bordered hover responsive>
                   <thead className="tableheading">
                     <tr>
-                      <th scope="col">ID</th>
-                      <th scope="col">Name</th>
-                      <th scope="col">Phone</th>
-                      <th scope="col">Email</th>
-                      <th scope="col">Address</th>
-                      <th scope="col">Points</th>
+                      <th scope="col">Order ID</th>
+                      <th scope="col">Customer ID</th>
+                      <th scope="col">Quanity</th>
+                      <th scope="col">Order Date</th>
+                      <th scope="col">Due Date</th>
+                      <th scope="col">Status</th>
+                      <th scope="col">Total</th>
                       <th>Action</th>
                     </tr>
                   </thead>
@@ -64,25 +64,27 @@ const [modal, setModal] = useState(false);
                      {employeeList.filter(val=>{if(searchTerm===""){
                        return val;
                      }else if(
-                       val.fname.toLowerCase().includes(searchTerm.toLowerCase()) || val.email.toLowerCase().includes(searchTerm.toLowerCase())) 
+                       val.status.toLowerCase().includes(searchTerm.toLowerCase())
+                       ) 
                      {
                        return val
                      }
                     }).map((record)=>{
                        return(
                         <tr>
-                        <th scope="row">{record.customer_id}</th>
-                        <td>{record.fname}</td>
-                        <td>{record.phone}</td>
-                        <td>{record.email}</td>
-                        <td>{record.address}</td>
-                        <td>{record.points}</td>
+                        <th scope="row">{record.order_id}</th>
+                        <td >{record.customer_id}</td>
+                        <td>{record.quantity}</td>
+                        <td>{record.o_date}</td>
+                        <td >{record.order_last_date}</td>
+                        <td >{record.status}</td>
+                        <td>{record.total}</td>
                         <td align="center">
-                        
-                          <Link to={location=> `/CustomEdit/${record.customer_id}`} className="updatebtn ">
+                         
+                          <Link to={location=> `/OrdersEdit/${record.order_id}`} className="updatebtn ">
                             Edit
                           </Link>
-                        
+            
                         </td>
                       </tr>
                        )
@@ -96,3 +98,5 @@ const [modal, setModal] = useState(false);
            
   )
 }
+
+

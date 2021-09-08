@@ -1,5 +1,12 @@
-import React from 'react';
+import { Link } from "react-router-dom";
 import clsx from 'clsx';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import CustomView from './CustomView';
+import {Redirect} from "react-router-dom"
+import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+
+import "../../../css/manageCustom.css"
 
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -15,31 +22,14 @@ import Badge from '@material-ui/core/Badge';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
-import Link from '@material-ui/core/Link';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import NotificationsIcon from '@material-ui/icons/Notifications';
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+
 
 import { mainListItems, Logout } from './listItems';
-import Chart from './Chart';
-import Deposits from './Deposits';
-
-
-
-
-function Copyright() {
-  return (
-    <Typography variant="body2" color="textSecondary" align="center">
-      {'Copyright © '}
-      <Link color="inherit" href="https://material-ui.com/">
-        Eut Furniture
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
 
 const drawerWidth = 240;
 
@@ -80,6 +70,15 @@ const useStyles = makeStyles((theme) => ({
   },
   title: {
     flexGrow: 1,
+    fontSize:40,
+    fontWeight:600,
+  },
+  userimage : {
+    height: 60,
+    width: 60,
+    borderRadius:100,
+    borderColor:'white',
+  
   },
   drawerPaper: {
     position: 'relative',
@@ -125,12 +124,12 @@ const useStyles = makeStyles((theme) => ({
 
 const styles = {
   side:{
-    backgroundColor:'rgb(37,37,94)',
+    backgroundColor:'rgb(37, 37, 94)',
   }
 };
 
 
-export default function Dashboard() {
+export default function ManageCustom() {
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
   const handleDrawerOpen = () => {
@@ -140,19 +139,27 @@ export default function Dashboard() {
     setOpen(false);
   };
   const [anchorEl, setAnchorEl] = React.useState(null);
-  const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
+
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
+
   const handleClose = () => {
     setAnchorEl(null);
   };
+  const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
+
+  const[isAuth,setIsAuth]=useState(true);
+
+  if(!isAuth){
+    return <Redirect to="" />
+  }
 
   return (
     <div className={classes.root}>
       <CssBaseline />
       <AppBar position="absolute" className={clsx(classes.appBar, open && classes.appBarShift)}>
-        <Toolbar className={classes.toolbar} style={{backgroundColor: 'rgb(37,37,94)'}}>
+        <Toolbar className={classes.toolbar} style={{backgroundColor: 'rgb(37, 37, 94)'}}>
           <IconButton
             edge="start"
             color="inherit"
@@ -163,17 +170,27 @@ export default function Dashboard() {
             <MenuIcon />
           </IconButton>
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-            <strong>SALES MANAGER</strong>
+            <b>Sales Manager</b>
           </Typography>
-          <IconButton color="inherit" fontSize="inherit">
+          <IconButton color="inherit">
             <Badge badgeContent={4} color="secondary">
-            <NotificationsIcon />
+              <NotificationsIcon />
             </Badge>
           </IconButton>
           <IconButton color="inherit" fontSize="inherit">
            <AccountCircleIcon   onClick={handleClick}/>
   
           </IconButton>
+   <Menu
+        id="simple-menu"
+        anchorEl={anchorEl}
+        keepMounted
+        open={Boolean(anchorEl)}
+        onClose={handleClose}
+      >
+        <MenuItem onClick={handleClose}>Profile</MenuItem>
+        <MenuItem onClick={()=>setIsAuth(false)}>Logout</MenuItem>
+      </Menu>
         </Toolbar>
       </AppBar>
       <div style={styles.side}>
@@ -184,42 +201,41 @@ export default function Dashboard() {
         }}
         open={open}
       >
-        <div className={classes.toolbarIcon} style={{backgroundColor: 'rgb(37,37,94)', color:'white'}}>
+        <div className={classes.toolbarIcon} style={{backgroundColor: 'rgb(37, 37, 94)', color:'white'}}>
           <IconButton onClick={handleDrawerClose} style={{color:'white'}}>
             <ChevronLeftIcon />
           </IconButton>
         </div>
-        <Divider />
-        <List style={{backgroundColor: 'rgb(37,37,94)', color:'white'}}>{mainListItems}</List>
-        <Divider />
-        <List style={{backgroundColor: 'rgb(37,37,94)', color:'red'}}>{Logout}</List>
-        <Divider />
+        <Divider/> 
+        <List style={{backgroundColor: 'rgb(37, 37, 94)', color:'white'}}>{mainListItems}</List>
+        <Divider/>
+        <List style={{backgroundColor: 'rgb(37, 37, 94)', color:'red'}} onClick={()=>setIsAuth(false)}>{Logout}</List>
+       <Divider/>
       </Drawer>
       </div>
       
-      <main className={classes.content}>
+      <main style={{backgroundColor: '#f0f8ff'}} className={classes.content}>
         <div className={classes.appBarSpacer} />
         <Container maxWidth="lg" className={classes.container}>
-         <h3>Dashboard</h3><br />
-          <Grid container spacing={3}>
-            {/* Chart */}
-            <Grid item xs={12} >
-              <Paper className={fixedHeightPaper}>
-                <Chart />
-              </Paper>
-            </Grid>
-            {/* Recent Deposits */}
-       
-            {/* Recent Orders */}
-            <Grid item xs={12}>
-              <Paper className={classes.paper}>
-                <Deposits />
-              </Paper>
-            </Grid>
-          </Grid>
-          <Box pt={4}>
-            <Copyright />
-          </Box>
+        
+        <Grid container spacing={3}>
+        {/* Recent Orders */}
+        <Grid item xs={12}  direction="row"  >
+        
+        <div >
+        
+           <Paper className={classes.paper}>
+               
+                <Typography  component="h1" variant="h6" color="inherit" align="center" width="100%" noWrap className={classes.title}>
+                  <h1>Details of Customers </h1>
+                </Typography>
+                <CustomView/>
+                     
+          </Paper>
+          </div>
+        </Grid>
+
+      </Grid>
         </Container>
       </main>
     </div>

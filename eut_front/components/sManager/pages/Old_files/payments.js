@@ -19,14 +19,14 @@ import Link from '@material-ui/core/Link';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import NotificationsIcon from '@material-ui/icons/Notifications';
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+
 
 import { mainListItems, Logout } from './listItems';
 import Chart from './Chart';
 import Deposits from './Deposits';
+import Orders from './Orders';
 
-
-
+import PaymentUI from './PaymentUI';
 
 function Copyright() {
   return (
@@ -139,14 +139,7 @@ export default function Dashboard() {
   const handleDrawerClose = () => {
     setOpen(false);
   };
-  const [anchorEl, setAnchorEl] = React.useState(null);
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
 
   return (
     <div className={classes.root}>
@@ -165,14 +158,10 @@ export default function Dashboard() {
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
             <strong>SALES MANAGER</strong>
           </Typography>
-          <IconButton color="inherit" fontSize="inherit">
+          <IconButton color="inherit" href="/sManager/pages/Notification">
             <Badge badgeContent={4} color="secondary">
-            <NotificationsIcon />
+              <NotificationsIcon />
             </Badge>
-          </IconButton>
-          <IconButton color="inherit" fontSize="inherit">
-           <AccountCircleIcon   onClick={handleClick}/>
-  
           </IconButton>
         </Toolbar>
       </AppBar>
@@ -196,31 +185,20 @@ export default function Dashboard() {
         <Divider />
       </Drawer>
       </div>
-      
       <main className={classes.content}>
         <div className={classes.appBarSpacer} />
         <Container maxWidth="lg" className={classes.container}>
-         <h3>Dashboard</h3><br />
-          <Grid container spacing={3}>
-            {/* Chart */}
-            <Grid item xs={12} >
-              <Paper className={fixedHeightPaper}>
-                <Chart />
-              </Paper>
-            </Grid>
-            {/* Recent Deposits */}
+        
        
-            {/* Recent Orders */}
-            <Grid item xs={12}>
-              <Paper className={classes.paper}>
-                <Deposits />
-              </Paper>
-            </Grid>
-          </Grid>
-          <Box pt={4}>
+          <h3>Payments</h3>
+          <br/>
+          <PaymentUI />
+
+        </Container>
+
+        <Box pt={4}>
             <Copyright />
           </Box>
-        </Container>
       </main>
     </div>
   );

@@ -1,6 +1,15 @@
 import React from 'react';
 import clsx from 'clsx';
 
+//from customer
+import '../../../App.css';
+import { useState } from 'react';
+import Axios from 'axios';
+//
+import Button from 'react-bootstrap/Button';
+import back from "./pro.gif";
+import styled from 'styled-components';
+
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Drawer from '@material-ui/core/Drawer';
@@ -19,11 +28,16 @@ import Link from '@material-ui/core/Link';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import NotificationsIcon from '@material-ui/icons/Notifications';
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+
+import { Form, FormGroup, Label, Input, FormText } from 'reactstrap';
+
+
 
 import { mainListItems, Logout } from './listItems';
 import Chart from './Chart';
 import Deposits from './Deposits';
+import Orders from './Orders';
+
 
 
 
@@ -42,6 +56,14 @@ function Copyright() {
 }
 
 const drawerWidth = 240;
+
+const ModelImg = styled.img`
+    width: 100%;
+    height: 100%;
+    background: green;
+
+`
+
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -139,16 +161,37 @@ export default function Dashboard() {
   const handleDrawerClose = () => {
     setOpen(false);
   };
-  const [anchorEl, setAnchorEl] = React.useState(null);
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
+
+  //fromCustomer
+const [name, setName]=useState("");
+const [price, setPrice] = useState("");
+const [brand, setBrand] = useState("");
+const [description, setDescription] = useState("");
+
+const [promotionsList, setPromotionsList] = useState([]);
+
+
+const addPromotion = () => {
+  Axios.post('http://localhost:3001/sales_create_pro', {
+    name: name,  
+    price: price, 
+    brand: brand,
+    description: description
+  }).then(() => {
+    setPromotionsList([
+      ...promotionsList,
+      {
+        name: name, 
+        price: price, 
+        brand: brand
+      },
+    ]);
+  });
+};//
 
   return (
+    
     <div className={classes.root}>
       <CssBaseline />
       <AppBar position="absolute" className={clsx(classes.appBar, open && classes.appBarShift)}>
@@ -165,14 +208,10 @@ export default function Dashboard() {
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
             <strong>SALES MANAGER</strong>
           </Typography>
-          <IconButton color="inherit" fontSize="inherit">
+          <IconButton color="inherit" href="/sManager/pages/Notification">
             <Badge badgeContent={4} color="secondary">
-            <NotificationsIcon />
+              <NotificationsIcon />
             </Badge>
-          </IconButton>
-          <IconButton color="inherit" fontSize="inherit">
-           <AccountCircleIcon   onClick={handleClick}/>
-  
           </IconButton>
         </Toolbar>
       </AppBar>
@@ -196,32 +235,103 @@ export default function Dashboard() {
         <Divider />
       </Drawer>
       </div>
-      
       <main className={classes.content}>
         <div className={classes.appBarSpacer} />
-        <Container maxWidth="lg" className={classes.container}>
-         <h3>Dashboard</h3><br />
-          <Grid container spacing={3}>
-            {/* Chart */}
-            <Grid item xs={12} >
-              <Paper className={fixedHeightPaper}>
-                <Chart />
-              </Paper>
-            </Grid>
-            {/* Recent Deposits */}
+        <br/>
+        
+
+        <Container>
+        <h3> Promotions</h3>
+          <br/>
+          <div class="card">
+            
+            <ModelImg src={back}
+                    alt='default'/>
+            <br/>
+            <p><Button variant="warning">Add New Image</Button></p>
+          </div>
+
+          
+
+        </Container>
+
        
-            {/* Recent Orders */}
-            <Grid item xs={12}>
-              <Paper className={classes.paper}>
-                <Deposits />
-              </Paper>
-            </Grid>
-          </Grid>
-          <Box pt={4}>
+       
+       
+        <Container maxWidth="lg" className={classes.container}>
+        <div className="information_pro">
+        <form>
+        <div>
+            <label>
+                Name
+            </label>
+        </div>
+
+        <div>
+            <input type="text" className="pro_inp" 
+            onChange={(event)=>{
+              setName(event.target.value);
+            }}
+            />
+        </div>
+
+        <div>
+            <label>
+                Price
+            </label>
+        </div>
+
+        <div>
+            <input type="text" className="pro_inp"
+            onChange={(event)=>{
+              setPrice(event.target.value);
+            }}
+            />
+        </div>
+
+        <div>
+            <label>
+                Brand
+            </label>
+        </div>
+
+        <div>
+            <input type="text" className="pro_inp"
+             onChange={(event)=>{
+              setBrand(event.target.value);
+            }}
+            />
+        </div>
+
+        <div>
+            <label>
+                Description
+            </label>
+        </div>
+
+        <textarea class="pro_txt"
+              onChange={(event)=>{
+              setDescription(event.target.value);
+            }}>
+        </textarea>
+
+        <br/>
+        <div>
+            <Button variant="warning" onClick={addPromotion}>Publish</Button>
+        </div>
+
+        </form>
+        </div>
+       
+        
+        </Container>
+
+        <Box pt={4}>
             <Copyright />
           </Box>
-        </Container>
+        
       </main>
     </div>
   );
 }
+

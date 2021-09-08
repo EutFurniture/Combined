@@ -25,7 +25,7 @@ export const mainListItems = (
       </ListItemIcon>
       <ListItemText primary="Dashboard" />
     </ListItem>
-    <ListItem button component={Link} to="/sManager/pages/ManageOrders">
+    <ListItem button component={Link} to="/sManager/pages/Orders">
       <ListItemIcon style={{color:'white'}}>
         <LocalShippingIcon />
       </ListItemIcon>
@@ -46,21 +46,26 @@ export const mainListItems = (
       <ListItemText primary="Payments" />
     </ListItem>
 
-    <ListItem button component={Link} to="/sManager/pages/ManageCustom">
+    <ListItem button component={Link} to="/sManager/pages/customers">
       <ListItemIcon style={{color:'white'}}>
-        <PeopleIcon />
+       <PersonIcon />
       </ListItemIcon>
-      <ListItemText primary="Manage Customers" />
+      <ListItemText primary="Customers" />
     </ListItem>
 
+    <ListItem button component={Link} to="/sManager/pages/DeliverySchedule">
+      <ListItemIcon style={{color:'white'}}>
+        <DateRangeIcon />
+      </ListItemIcon>
+      <ListItemText primary="Delivery Schedule" />
+    </ListItem>
 
-    <ListItem button component={Link} to="/sManager/pages/GenerateReport">
+    <ListItem button>
       <ListItemIcon style={{color:'white'}}>
         <AssignmentIcon />
       </ListItemIcon>
       <ListItemText primary="Generate Reports" />
     </ListItem>
-    
   </div>
 );
 

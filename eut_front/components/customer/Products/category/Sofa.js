@@ -10,7 +10,7 @@ export default function ProductList(userData) {
     const { customer_id } = useParams();
 
     const [product, setDt] = useState([])
-    const [customerid, setcustomerid] = useState([])
+   
     useEffect(() => {
         const fetchData = async () => {
             const response = await axios.get('http://localhost:3001/sofa', {
