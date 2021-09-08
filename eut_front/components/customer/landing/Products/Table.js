@@ -6,13 +6,14 @@ import axios from 'axios';
 import Pproduct from "../Pproduct";
 import Footer from '../../Footer'
 import Blog from '../Blog'
+import {apiurl} from '../../../../utils/common'
 export default function ProductList(userData) {
 
     const [product, setDt] = useState([])
 
     useEffect(() => {
         const fetchData = async () => {
-            const response = await axios.get('http://localhost:3001/table', {
+            const response = await axios.get(apiurl +'/table', {
 
             });
 
@@ -46,7 +47,7 @@ export default function ProductList(userData) {
 
                                         <div className="img-container p-5">
 
-                                            <Link to={location => `/customer/detail/${item.product_id}`}>
+                                            <Link to={location => `/detaill/${item.product_id}`}>
                                                 <img src={item.product_img} alt="proudct" className="card-img-top" />
                                             </Link>
 

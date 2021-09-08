@@ -5,7 +5,7 @@ import AppBar from '@material-ui/core/AppBar';
 import Paper from '@material-ui/core/Paper';
 import Link from '@material-ui/core/Link';
 import Typography from '@material-ui/core/Typography';
-import Blog from '../../blog/Blog'
+import Blog from '../blog/Blog'
 import Grid from '@material-ui/core/Grid';
 import Axios from 'axios'
 import List from '@material-ui/core/List';
@@ -13,6 +13,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import { useParams } from "react-router-dom";
 import { PayHereButton } from 'react-payhere-button'
+import {apiurl} from '../../../utils/common'
 const useStyles = makeStyles((theme) => ({
   appBar: {
     position: 'relative',
@@ -75,7 +76,7 @@ export default function Checkout(userData) {
   const classes = useStyles();
   const [products, setproducts] = useState([])
   const [order, setorder] = useState([])
-  const [subqut, setsubqut] = useState([])
+  
   const { customer_id } = useParams();
   const [user, setUser] = useState([])
   const [activeStep, setActiveStep] = React.useState('');
@@ -90,7 +91,7 @@ export default function Checkout(userData) {
   useEffect(() => {
     const fetchData = async () => {
 
-      const response = await Axios.get('http://localhost:3001/ordergift_id', {
+      const response = await Axios.get(apiurl +'/ordergift_id', {
         params: {
           cid: userData.userData.customer_id,
 
@@ -99,7 +100,7 @@ export default function Checkout(userData) {
       const o_id = response.data[0].order_id;
       setorder(response.data[0])
 
-      const response1 = await Axios.get('http://localhost:3001/getorderproduct', {
+      const response1 = await Axios.get(apiurl +'/getorderproduct', {
         params: {
           oid: o_id,
 
@@ -107,7 +108,7 @@ export default function Checkout(userData) {
       });
       setproducts(response1.data);
       console.log(response1.data);
-      const response2 = await Axios.get('http://localhost:3001/profile', {
+      const response2 = await Axios.get(apiurl +'/profile', {
         params: {
           customer_id: userData.userData.customer_id,
 
@@ -132,7 +133,7 @@ export default function Checkout(userData) {
   products.map(function (a) { return advance = total * 0.2 }, 0);
   var roundadvance = Math.round(advance);
   const onSucess = async () => {
-    const response = await Axios.get('http://localhost:3001/ordergift_id', {
+    const response = await Axios.get(apiurl +'/ordergift_id', {
       params: {
         cid: userData.userData.customer_id,
 
@@ -141,13 +142,13 @@ export default function Checkout(userData) {
     const o_id = response.data[0].order_id;
     const total = response.data[0].total_price;
     const custpoint = Math.round(total * 0.05);
-    Axios.get('http://localhost:3001/insertpayment', {
+    Axios.get(apiurl +'/insertpayment', {
       params: {
         oid: o_id,
 
       }
     });
-    const response2 = await Axios.get('http://localhost:3001/increasepoint', {
+    const response2 = await Axios.get(apiurl +'/increasepoint', {
       params: {
         cid: userData.userData.customer_id,
         price: custpoint,
@@ -156,7 +157,7 @@ export default function Checkout(userData) {
 
     products.map(function (a) {
 
-      return Axios.get('http://localhost:3001/inventorybalance', {
+      return Axios.get(apiurl +'/inventorybalance', {
         params: {
           oid: o_id,
           pid: a.product_id,
@@ -171,12 +172,34 @@ export default function Checkout(userData) {
   }
   
   const OnfullSuccess = async (id) => {
-    Axios.get('http://localhost:3001/insertfullpayment', {
+    Axios.get(apiurl +'/insertfullpayment', {
       params: {
         oid: id,
 
       }
     });
+
+    // const response2 = await Axios.get('http://localhost:3001/increasepoint', {
+    //   params: {
+    //     cid: userData.userData.customer_id,
+    //     price: custpoint,
+    //   }
+    // });
+
+    // products.map(function (a) {
+
+    //   return Axios.get('http://localhost:3001/inventorybalance', {
+    //     params: {
+    //       oid: o_id,
+    //       pid: a.product_id,
+    //       quty: a.quantity,
+
+    //     }
+
+    //   });
+    //});
+
+
   }
   const OnDismissed = () => alert('onDismissed');
   const onDismissed = () => alert('onDismissed');
@@ -259,12 +282,7 @@ export default function Checkout(userData) {
                     {user.city}
                   </Typography>
                 </ListItem>
-                <ListItem className={classes.listItem}>
-                  <ListItemText primary="Postal Code :-" />
-                  <Typography variant="subtitle1" className={classes.total}>
-                    {user.postalcode}
-                  </Typography>
-                </ListItem>
+              
                 <ListItem className={classes.listItem}>
                   <ListItemText primary="Phone no :-" />
                   <Typography variant="subtitle1" className={classes.total}>

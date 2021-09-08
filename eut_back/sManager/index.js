@@ -1,10 +1,39 @@
 const express = require("express");
+const mysql = require("mysql");
+const cors = require("cors");
 const app = express();
-const mysql = require('mysql');
-const cors = require('cors');
-
-app.use(cors());
+const path = require('path');
+//const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
+const { response } = require('express');
+const saltRounds = 10;
+const fs = require('fs');
+//const multer = require('multer');
+//require('dotenv').config();
 app.use(express.json());
+
+//const { ConnectionPolicyContext } = require("twilio/lib/rest/voice/v1/connectionPolicy");
+//const cookieParser = require('cookie-parser');
+const session = require('express-session');
+const bodyParser = require('body-parser');
+//var nodemailer = require('nodemailer')
+app.use(cors({
+  origin: ["http://localhost:3000"],
+  methods: ["GET", "POST", "PUT"],
+  credentials: true
+}));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+//app.use(cookieParser());
+app.use(session({
+  key: "customer_id",
+  secret: "subscribe",
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    // expires:60*60*24,
+  },
+}));
 
 const db = mysql.createConnection({
     user: 'root',
@@ -472,45 +501,55 @@ app.get('/sales_TotalIncome',(req,res) => {
 
 
 
-//log in
-/*
-app.post('/login',(req,res)=>{
-  
-    const email = req.body.email;
-    const password = req.body.password;
-   
-    db.query(
-        "SELECT *FROM employee WHERE email=?;",
-       email,
-        (err,result)=>{
-            console.log(result)
+  app.get("/login", (req, res) => {
+    if (req.session.user) {
+      res.send({ loggedIn: true, user: req.session.user });
+    } else {
+      res.send({ loggedIn: false });
+    }
+  });
+
+
+
+app.post('/login', (req, res) => {
+
+	const email = req.body.email
+	const password = req.body.password
+    
+    console.log(email)
+    console.log(password)
+	db.query
+	("SELECT * FROM userlogin WHERE u_email = ?;", 
+	email, 
+	(err, result)=> {
+
+		if(err){
+			res.send({err: err})
+		}
+        if(result){
+            console.log(result);
+			if (result.length > 0) {
+				bcrypt.compare(password, result[0].u_password, (error, response)=>{
+                    console.log(response);
+                    if(response){
+                        req.session.user = result;
+						res.send(result);
+					}else{
+						res.send({message:"Invalid Username or Password!"})
+					}
+				})
+			}else{
+				res.send({message:"User doesn't exist"});
+			}
+
             
-            
-            if(err)
-            { 
-                res.send({err:err})
-            } 
-            if(result.length > 0){
-                
-             if(password==result[0].password) {
-                      
-                   res.send(result);
-                  }
-                  else{
-                   
-                   res.send({message:"Invalid Username or Password"});
-                  
-                  }
-              }
-           })
-          
-        });
-  
-  
+		}}
+	);
+});
+
  
 
-*/
-
+ 
 
 
 

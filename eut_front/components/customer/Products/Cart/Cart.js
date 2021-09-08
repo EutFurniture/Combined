@@ -6,6 +6,8 @@ import { useParams, Link } from "react-router-dom";
 import { Fragment } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Footer from '../../Footer'
+import DeleteIcon from '@material-ui/icons/Delete';
+import {apiurl} from '../../../../utils/common'
 const useStyles = makeStyles((theme) => ({
     container2: {
         marginLeft: '85%',
@@ -24,20 +26,20 @@ export default function Cart(userData) {
     const [cart, setCartdata] = useState([])
     const { customer_id } = useParams();
     const classes = useStyles();
-    const [cartCount,setCartCount]=useState([])
-
-
+    const [cartCount,setCartCount]=useState([]);
+ const[order,setOrder]=useState([]);
     const id = userData.userData.customer_id
+
     useEffect(() => {
         const fetchData = async () => {
-            const response = await axios.get('http://localhost:3001/getcart', {
+            const response = await axios.get(apiurl +'/getcart', {
                 params: {
                     customer_id: id
                 }
             });
 
             setCartdata(response.data);
-            const response2=await axios.get("http://localhost:3001/cartCount",{
+            const response2=await axios.get(apiurl +'/cartCount',{
                 params:{
                   customer_id:id,
                 }
@@ -50,23 +52,18 @@ export default function Cart(userData) {
 
        
         fetchData();
-    }, []);
+    }, [customer_id]);
     
     const increaseQuantity = async (customer_id, product_id, price) => {
-        const response = await axios.get('http://localhost:3001/qut', {
+        const response3 = await axios.get(apiurl +'/qut', {
             params: {
                 pid: product_id
             }
         })
-        const response1 = await axios.get('http://localhost:3001/Allproduct', {
-            params: {
-                id: product_id
-            }
-        })
-        const quty = response.data[0].quantity;
-        const quty1 = response1.data[0].quantity;
+        const quty = response3.data[0].cquty;
+        const quty1 = response3.data[0].pquty;
         if (quty < quty1) {
-            axios.get('http://localhost:3001/increasequantity', {
+            axios.get(apiurl +'/increasequantity', {
                 params: {
                     cid: customer_id,
                     pid: product_id,
@@ -77,22 +74,22 @@ export default function Cart(userData) {
             })
         }
         else {
-            alert("Only " + quty1 + " " + response1.data[0].product_name + " in the stock.");
+            alert("Only " + quty1 + " " + response3.data[0].product_name + " in the stock.");
         }
     }
+
     const decreaseQuantity = async (customer_id, product_id, price) => {
-        const response = await axios.get('http://localhost:3001/qut', {
+        
+        const response4= await axios.get(apiurl +'/qut', {
             params: {
                 pid: product_id
             }
         })
-        console.log(response.data[0].quantity);
-        const quty = response.data[0].quantity
-
+        const quty = response4.data[0].cquty
         if (quty > 1) {
-            axios.get('http://localhost:3001/decreasequantity', {
+            axios.get(apiurl +'/decreasequantity', {
                 params: {
-                    cid: customer_id,
+                    cid: id,
                     pid: product_id,
                     price: price
                 }
@@ -102,28 +99,28 @@ export default function Cart(userData) {
             })
         }
         else {
-            removeItem(customer_id, product_id)
+            removeItem( product_id)
         }
     }
 
 
-    function removeItem(customer_id, product_id) {
+    function removeItem( product_id) {
 
-        axios.get('http://localhost:3001/removeitem', {
+        axios.get(apiurl +'/removeitem', {
             params: {
-                cid: customer_id,
+                cid: id,
                 pid: product_id,
             }
         }).then((response) => {
-            window.location.reload();
+             window.location.reload();
         })
     }
 
-    function clearCart(customer_id) {
+    function clearCart() {
 
-        axios.get('http://localhost:3001/clearcart', {
+        axios.get(apiurl +'/clearcart', {
             params: {
-                cid: customer_id,
+                cid: id,
 
             }
         }).then((response) => {
@@ -141,12 +138,12 @@ export default function Cart(userData) {
 
     var roundadvance=Math.round(advance);
     
-    //console.log(custpoint);
-    const insertorder = async (customer_id,total) => {
+    
+    const insertorder = async (total) => {
 
-        axios.get('http://localhost:3001/orderproduct', {
+        axios.get(apiurl +'/orderproduct', {
             params: {
-                cid: customer_id,
+                cid: id,
                 total:total,
                 advance:roundadvance,
 
@@ -156,16 +153,18 @@ export default function Cart(userData) {
             window.location.reload();
         })
 
-        const response1=await  axios.get('http://localhost:3001/ordergift_id', {
+        const response1=await  axios.get(apiurl +'/ordergift_id', {
             params: {
-                cid: customer_id,
+                cid:id,
                
             }
         });
         const o_id=response1.data[0].order_id;
+        setOrder(response1.data[0].order_id);
+        console.log(order);
         cart.map(function(a){
             
-            return axios.get('http://localhost:3001/insertorderproduct', {
+            return axios.get(apiurl +'/insertorderproduct', {
                 params: {
                     oid: o_id,
                     pid:a.product_id,
@@ -181,7 +180,7 @@ export default function Cart(userData) {
        
             
 
-        clearCart(customer_id)
+        clearCart()
 
 
     }
@@ -225,10 +224,10 @@ export default function Cart(userData) {
                                     </div>
                                 </div>
                             </div>
-                            {/* */}
+                           
                             <div className="col-10 mx-auto col-lg-2">
-                                <div className="cart-icon" onClick={() => removeItem(item.customer_id, item.product_id)} >
-                                    <i className="fas fa-trash" />
+                                <div className="cart-icon" onClick={() => removeItem(item.product_id)} >
+                                    <DeleteIcon />
                                 </div>
                             </div>
                             <div className="col-10 mx-auto col-lg-2">
@@ -244,7 +243,7 @@ export default function Cart(userData) {
                     <div className="col-10 mt-2 ml-sm-3 ml-md-2 col-sm-8 text-capitalize text-right">
                         <Link to='/customer/dining'>
                             <button id="cart-to" className="btn btn-primary text-uppercase mb-2 px-2 mr-2" type="button"
-                                onClick={() => clearCart(userData.userData.customer_id)}
+                                onClick={() => clearCart()}
                             >
                                 clear cart
                             </button>
@@ -268,13 +267,14 @@ export default function Cart(userData) {
                             </span>
                             <strong>Rs{total}</strong>
                         </h5>
-                        <button id="cart-to" onClick={() => insertorder(userData.userData.customer_id,total)} className="btn btn-primary text-uppercase mb-2 px-3 mr-2"> <Link to={location =>`/customer/checkout/${userData.userData.customer_id}`} className="payment">Payhere</Link></button>
+                        <button id="cart-to" onClick={() => insertorder(total)} className="btn btn-primary text-uppercase mb-2 px-3 mr-2"> <Link to={location =>`/customer/checkout/${userData.userData.customer_id}/${order}`} className="payment">Payhere</Link></button>
                     </div>
                 </div>
             </div>
            
         </Fragment>
 }
+
 <Footer />
         </Fragment>  
       
