@@ -56,13 +56,7 @@ app.get("/login", (req, res) => {
     }
   });
 
-  app.get("/login",(req,res)=>{
-    if(req.session.user){
-      res.send({loggedIn:true,user:req.session.user});
-    }else{
-      res.send({loggedIn:false});
-    }
-   });
+  
      
         // LOG INTO THE SYSTEM
 
@@ -98,69 +92,34 @@ app.get("/login", (req, res) => {
         
  });
 
-app.post('/addDelivers',(req,res)=>{
-    
-    const fullname = req.body.fullname
-    const NIC = req.body.NIC
-    const email = req.body.email
-    const address = req.body.address
-    const mobile = req.body.mobile
-    const password = req.body.password
-    const cpassword = req.body.cpassword
 
-    var transport = nodemailer.createTransport(
-        {
-            service:'gmail',
-            auth: {
-                user: 'eutfurniture.group45@gmail.com',
-                pass:'eutgroup45@#'
-            }
+
+const upload = multer({
+        storage,
+        limits:{
+          fileSize: 5000000
+        },
+        fileFilter(req,file,cb){
+          if(!file.originalname.match(/\.(jpeg|jpg|png)$/i)){
+            return  cb(new Error('pleaseupload image with type of jpg or jpeg'))
         }
-    )
-    const otp = Math.floor(100000 + Math.random() * 900000);
-    const head = 'otp code';
-    const mess = `Dear ${fullname}, 
+        cb(undefined,true)
+      }
+      })
+      
+app.post("/imageUpload",upload.single('file'),(req,res)=> {
+         
+})
 
-                    Your otp code is ${otp}
-                    Use this code to verify your Account.
-
-                With regrads,
-                Eut Furniture Team`;
-    
-    var mailOptions = {
-        from : 'eutfurniture.group45@gmail.com',
-        to: email,
-        subject: head,
-        text: mess
+app.get("/login",(req,res)=>{
+    if(req.session.user){
+      res.send({loggedIn:true,user:req.session.user});
+    }else{
+      res.send({loggedIn:false});
     }
-    
-    transport.sendMail(mailOptions,function(error,info){
-        if(error){
-            console.log(error)
-        }
-        else{
-            console.log('Email sent' + info.response)
-            bcrypt.hash(password,saltRounds,(err,hash)=>{
-        
-                if(err){
-                    console.log(err);
-                }
-          
-                db.query("INSERT INTO employee(name, NIC, email, phone_no, job_start_date, address, role) VALUES ( ?, ?, ?, ?,NOW(), ?,'Deliver'); INSERT INTO userlogin (u_email, u_name, u_password,user_role,u_otp,u_verify) VALUES (?,?,?,'Deliver',?,'0') ;", 
-                [fullname,NIC,email ,mobile ,address,email,fullname,hash,otp],(err,result)=>{
-                    if(err){
-                        console.log(err)
-                      }else{
-                        console.log(result);
-                        res.send({message:"Email has been Sent"});
-                      }
-                })
-              
-              })
-            
-        }
-    })    
-});
+   });
+   
+
 
 app.post('/create', (req, res) => {
     console.log(req.body);
@@ -233,23 +192,6 @@ app.get("/ReturnedDetails",(req,res)=>{
         });
             
     });
-
-const upload = multer({
-        storage,
-        limits:{
-          fileSize: 5000000
-        },
-        fileFilter(req,file,cb){
-          if(!file.originalname.match(/\.(jpeg|jpg|png)$/i)){
-            return  cb(new Error('pleaseupload image with type of jpg or jpeg'))
-        }
-        cb(undefined,true)
-      }
-      })
-      
-app.post("/imageUpload",upload.single('file'),(req,res)=> {
-         
-})
 
 
   app.put('/confirmdelivery/:order_id', (req,res) => {
