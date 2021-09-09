@@ -18,7 +18,6 @@ import AccountCircle from '@material-ui/icons/AccountCircle';
 import ExitToApp from '@material-ui/icons/ExitToApp';
 import Modal from '@material-ui/core/Modal';
 import NotificationsIcon from '@material-ui/icons/Notifications';
-import {Redirect} from 'react-router-dom';
 import Badge from '@material-ui/core/Badge';
 import axios from 'axios';
 import {toast} from 'react-toastify'
@@ -30,9 +29,7 @@ import MuiDialogActions from '@material-ui/core/DialogActions';
 import CloseIcon from '@material-ui/icons/Close';
 import { useParams } from "react-router-dom";
 
-function rand() {
-  return Math.round(Math.random() * 20) - 10;
-}
+
 
 
 const useStyles = makeStyles((theme) => ({
@@ -179,57 +176,61 @@ const DialogActions = withStyles((theme) => ({
 
 export default function Header(props) {
   const classes = useStyles();
-  const { sections, title,cust } = props;
+  const {  title,sections} = props;
   const { customer_id } = useParams();
   const [anchorEl, setAnchorEl] = useState(null );
-  const [isAuth, setIsAuth]= useState(true);
+  
   const [open, setOpen] = useState(false);
   const [cusorderCount,setCusOrderCount]=useState([])
   const [cartCount,setCartCount]=useState([])
   const [customer,setCustomer]=useState([])
   
-  const  logout = (req,res) => {
-    req.session.destroy((err) =>{
-       res.redirect('/landing');
-    })
-};
   
-if(!isAuth){
-  return <Redirect to='/landing' />
-}
+
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
-  toast.configure()
-  const a=cust.customer_id
 
-   const response1= axios.get("http://localhost:3001/CRcustorder",{
-    params:{
-      customer_id:a,
-    }
-   }).then((response)=>{
-      setCusOrderCount(response.data)
+ const logout=()=>{
+   axios.post("http://localhost:3001/logout").then((response)=>{
+    window.location.href='/'
+   })
+ }
+
+
+
+//   toast.configure()
+//   const a=cust.customer_id
+//   const b=cust.email
+// console.log("my"+b);
+
+  //  const response1= axios.get("http://localhost:3001/CRcustorder",{
+  //   params:{
+  //     customer_id:a,
+  //   }
+  //  }).then((response)=>{
+  //     setCusOrderCount(response.data)
       
-    })
-    const response2= axios.get("http://localhost:3001/cartCount",{
-      params:{
-        customer_id:a,
-      }
-    }).then((response)=>{
-      setCartCount(response.data)
+  //   })
+  //   const response2= axios.get("http://localhost:3001/cartCount",{
+  //     params:{
+  //       customer_id:a,
+  //     }
+  //   }).then((response)=>{
+  //     setCartCount(response.data)
      
       
-    })
-    const response3= axios.get("http://localhost:3001/customer",{
-      params:{
-        customer_id:a,
-      }
-    }).then((response)=>{
-      setCustomer(response.data)
+  //   })
+  //   const response3= axios.get("http://localhost:3001/customer",{
+  //     params:{
+  //       email:b,
+  //     }
+  //   }).then((response)=>{
+  //     setCustomer(response.data)
       
-    })
+  //   })
     
-   const point=customer.map(record=>record.points)
+  //  const point=customer.map(record=>record.points)
   
      
     
@@ -245,36 +246,36 @@ if(!isAuth){
     setOpen(false);
   };
   
-  const NotificationClick = async () => {
-    const response = await axios.get('http://localhost:3001/customerNoficationActive', {
+  // const NotificationClick = async () => {
+  //   const response = await axios.get('http://localhost:3001/customerNoficationActive', {
        
         
-    });
-    notify();
-  }
-  const notify=()=>{
+  //   });
+  //   notify();
+  // }
+  // const notify=()=>{
    
-    toast.info(customToast,{position:toast.POSITION.TOP_RIGHT,autoClose:false})
+  //   toast.info(customToast,{position:toast.POSITION.TOP_RIGHT,autoClose:false})
   
   
-      }
+  //     }
 
-      const customToast=()=>{
-        return(
-          <div>
-            Hello,
-            Your customized Order has confirmed.
-            Pay the advance payment for this product.
-            <button style={{marginLeft:'10px',border:'none',backgroundColor:'white',padding:'5px 10px',borderRadius:'5px'}} onClick={Cuspage}>PAY</button>
-          </div>
-        )
-      }
-      const Cuspage=()=>{
-        window.location.href='/customer/notification'
-      }
-     const customizedcount=cusorderCount.map(record=>record.count);
-     const cardcount=cartCount.map(record=>record.count);
-     console.log(customizedcount);
+  //     const customToast=()=>{
+  //       return(
+  //         <div>
+  //           Hello,
+  //           Your customized Order has confirmed.
+  //           Pay the advance payment for this product.
+  //           <button style={{marginLeft:'10px',border:'none',backgroundColor:'white',padding:'5px 10px',borderRadius:'5px'}} onClick={Cuspage}>PAY</button>
+  //         </div>
+  //       )
+  //     }
+  //     const Cuspage=()=>{
+  //       window.location.href='/customer/notification'
+  //     }
+  //   const customizedcount=cusorderCount.map(record=>record.count);
+  //    const cardcount=cartCount.map(record=>record.count);
+     
      const emptybody = (
       <div className="shap"> 
      
@@ -316,11 +317,11 @@ if(!isAuth){
         <img src="../../images/giftt.jpg" className="giftt" />
        </Typography>
        <Typography gutterBottom>
-         You got {point} points
+         You got  points
          so we  give small gift for you.
        </Typography>
        <Typography gutterBottom>
-        So you can order gift below Rs.{point} .
+        So you can order gift below Rs. .
        </Typography>
      </DialogContent>
      <DialogActions>
@@ -434,12 +435,7 @@ if(!isAuth){
           </ListItemIcon>
           <Link color="inherit"  className={classes.toolbarLink} variant="body2" href="/customer/feedback"><ListItemText primary="Feedback" /></Link>
         </StyledMenuItem>
-        {/* <StyledMenuItem onClick={handleClose}>     
-        <ListItemIcon >
-        <Redeem fontSize="small" />
-          </ListItemIcon>
-          <Link color="inherit"  className={classes.toolbarLink} variant="body2" ><ListItemText primary="Gift Data" /></Link>
-        </StyledMenuItem> */}
+        
         <StyledMenuItem onClick={handleClose}>
           <ListItemIcon>
             <Redeem fontSize="small" />
@@ -458,11 +454,11 @@ if(!isAuth){
      
         </StyledMenuItem>
        
-        <StyledMenuItem onClick={handleClose}>
+        <StyledMenuItem onClick={logout}>
           <ListItemIcon>
             <ExitToApp fontSize="small" />
           </ListItemIcon>
-         <Link color="inherit" href="/landing"  variant="body2" className={classes.toolbarLink} onClick={() =>setIsAuth(false)}> <ListItemText primary="Logout" /></Link>
+         <ListItemText primary="Logout" />
         </StyledMenuItem>
       </StyledMenu>
          
@@ -474,17 +470,16 @@ if(!isAuth){
             href='/customer/cart'
             className={classes.toolbarLink}
           >
-          <Badge badgeContent={cardcount} color="secondary">
-           <AddShoppingCart />
+          <Badge  color="secondary">
+           <AddShoppingCart badgeContent />
            </Badge>
           </Link>
 
           <IconButton color="inherit">
-            <Badge badgeContent={customizedcount} color="secondary">
-              <NotificationsIcon onClick={NotificationClick}/>
+            <Badge badgeContent color="secondary">
+              <NotificationsIcon />
             </Badge>
-          </IconButton>
-           
+          </IconButton> 
       </Toolbar>
      
     </React.Fragment>
@@ -494,4 +489,5 @@ if(!isAuth){
 Header.propTypes = {
   sections: PropTypes.array,
   title: PropTypes.string,
+  // cust:PropTypes.array,
 };
