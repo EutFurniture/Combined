@@ -21,7 +21,6 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import {Redirect} from "react-router-dom";
-import ViewConDelivery from './ViewConDelivery'
 import { DpListItems, Logout } from './dplistItems';
 import 'bootstrap/dist/css/bootstrap.min.css';
 function Copyright() {

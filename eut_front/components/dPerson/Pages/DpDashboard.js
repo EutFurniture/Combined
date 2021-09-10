@@ -18,16 +18,15 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import  './DpDashboard.css';
 import {Redirect} from "react-router-dom";
 import { useState  , useEffect} from 'react';
-import { Link } from "react-router-dom"; 
+import { Link } from "react-router-dom";
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Grid from '@material-ui/core/Grid';
 import Divider from '@material-ui/core/Divider';
 import { DpListItems, Logout } from './dplistItems';
-import Testimonial  from './Testimonial';
 import {toast} from 'react-toastify'
-import { ViewProductDeliver } from './ViewProductDeliver';
-
+//import Lines from './Lines';
+import ViewProductDeliver from './ViewProductDeliver';
 
 
 function Copyright() {
@@ -154,19 +153,25 @@ const styles = {
   }
 };
 
-
-
 toast.configure()
-const DpDashboard =()=> {
+export default function DpDashboard(userData) {
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
-
   const [returns_count,setReturnsCount]=useState([])
+   
+
   useEffect(()=>{
     axios.get("http://localhost:3001/CountReturnItems").then((response)=>{
       setReturnsCount(response.data)
     })
   },[])
+  
+ const [productList,setProductList]=useState([])
+  useEffect(()=>{
+    axios.get("http://localhost:3001/viewproductFordeliver").then((response)=>{
+      setProductList(response.data)
+    })
+  },[]) 
 
   const [totalcashon_income,setTotalcashonIncome]=useState([])
   useEffect(()=>{
@@ -189,6 +194,8 @@ const DpDashboard =()=> {
       setRorder(response.data)
     })
   },[])
+  
+
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -310,9 +317,9 @@ if(!isAuth){
 
                            <div className="card2">
                            <h2>Returned Items</h2>
-                           {returns_count.map((record)=>{
+                           {returns_count.map((item)=>{
                                  return(
-                                  <p style={{fontSize:'30px'}}>{record.returncount}</p>
+                                  <p style={{fontSize:'30px'}}>{item.returncount}</p>
                                  )
                                })}
                            </div>
@@ -357,7 +364,8 @@ if(!isAuth){
                        </div>
               </Paper>
             </Grid>
-           <ViewProductDeliver />
+
+           <ViewProductDeliver/>
 
          </Grid>
       
@@ -367,4 +375,3 @@ if(!isAuth){
     </div>
   );
 }
-export default DpDashboard;

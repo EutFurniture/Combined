@@ -12,7 +12,6 @@ import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import Container from '@material-ui/core/Container';
-import Paper from '@material-ui/core/Paper';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import Grid from '@material-ui/core/Grid';
@@ -136,15 +135,9 @@ const useStyles = makeStyles((theme) => ({
       }
     }; 
 
-const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
 const Calender = () => {
   const [date, setDate] = useState(new Date());
-  const [dates, setDates] = useState([]);
-  const [calendar, setCalendar] = useState({
-    month: date.getMonth(),
-    year: date.getFullYear(),
-  });
   const onChange = date => {
       setDate(date);
   } ;
@@ -157,7 +150,6 @@ const Calender = () => {
   const handleDrawerClose = () => {
     setOpen(false);
   };
-  const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
   const [anchorEl, setAnchorEl] = React.useState(null);
 
