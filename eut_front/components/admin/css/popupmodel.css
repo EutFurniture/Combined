@@ -1,6 +1,4 @@
-body.active-modal {
-    overflow-y: hidden;
-}
+
 
 .btn-modal {
     padding: 10px 20px;
@@ -10,7 +8,7 @@ body.active-modal {
 }
 
 .modal, .overlay {
-    width: 100vw;
+    width: '800px';
     height: 100vh;
     top: 0;
     left: 0;
@@ -31,9 +29,9 @@ body.active-modal {
     background: #f1f1f1;
     padding: 14px 28px;
     border-radius: 3px;
-    max-width: 700px;
-    min-width: 500px;
-    max-height: 1000px;
+    max-width: 1000px;
+    min-width: 1000px;
+  
 }
 
 .close-modal {
