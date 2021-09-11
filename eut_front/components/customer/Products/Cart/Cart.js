@@ -169,19 +169,17 @@ export default function Cart(userData) {
                     oid: o_id,
                     pid:a.product_id,
                     quty:a.quantity,
-                   total:a.totalprice
+                    total:a.totalprice
                 }
                
             });
         
         
         
-        });
-       
-            
+        });    
 
-        clearCart()
-
+        clearCart();
+        window.location.href=`/customer/checkout/${o_id}`;
 
     }
 
@@ -267,13 +265,14 @@ export default function Cart(userData) {
                             </span>
                             <strong>Rs{total}</strong>
                         </h5>
-                        <button id="cart-to" onClick={() => insertorder(total)} className="btn btn-primary text-uppercase mb-2 px-3 mr-2"> <Link to={location =>`/customer/checkout/${userData.userData.customer_id}/${order}`} className="payment">Payhere</Link></button>
+                        <button id="cart-to" onClick={() => insertorder(total)} className="btn btn-primary text-uppercase mb-2 px-3 mr-2">pay</button>
                     </div>
                 </div>
             </div>
-           
+        
         </Fragment>
 }
+{/* <Link to={location =>`/customer/checkout/${userData.userData.customer_id}`} className="payment">Payhere</Link> */}
 
 <Footer />
         </Fragment>  

@@ -10,17 +10,14 @@ import Toolbar from '@material-ui/core/Toolbar';
 import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
-import Badge from '@material-ui/core/Badge';
 import Container from '@material-ui/core/Container';
 import Paper from '@material-ui/core/Paper';
 import MenuIcon from '@material-ui/icons/Menu';
-import NotificationsIcon from '@material-ui/icons/Notifications';
 import Grid from '@material-ui/core/Grid';
 import Divider from '@material-ui/core/Divider';
 import {useParams} from 'react-router-dom'
 import { Form,Row,Col } from "react-bootstrap";
 import MenuItem from '@material-ui/core/MenuItem';
-import { Link } from "react-router-dom";
 import {Redirect} from "react-router-dom";
 import { DpListItems, Logout } from './dplistItems';
 import Menu from '@material-ui/core/Menu';
@@ -302,7 +299,7 @@ if(!isAuth){
                   </Form.Label>
                   <Col >
                   <Form.Label column lg={2} >
-                  {Dt.o_description}
+                  {Dt.order_description}
                   </Form.Label>
                   </Col>
               </Form.Group><br/>              

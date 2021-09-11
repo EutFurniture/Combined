@@ -11,7 +11,6 @@ import Toolbar from '@material-ui/core/Toolbar';
 import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
-import Badge from '@material-ui/core/Badge';
 import Container from '@material-ui/core/Container';
 import Paper from '@material-ui/core/Paper';
 import MenuIcon from '@material-ui/icons/Menu';
@@ -24,7 +23,6 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import { DpListItems, Logout } from './dplistItems';
-import { Button } from 'bootstrap';
 
 
 const drawerWidth = 240;
@@ -138,19 +136,19 @@ const styles = {
     marginLeft:'20px'
   }  ,
   updatebtn:{
-    backgroundColor: '#0404B4',
-    width: '200px',
+    backgroundColor: '#041957',
+    width: '400px',
     textDecoration: 'none',
     height: '100px',
     marginRight: '5px',
-    fontSize: '17px',
+    fontSize: '25px',
     paddingLeft: '15px',
     paddingRight: '15px',
     paddingTop: '5px',
     paddingBottom: '5px',
     color: 'white',
-    borderRadius: '7px',
-    align: 'right'
+    borderRadius: '0px',
+    align: 'left'
   }
 };
 
@@ -362,12 +360,13 @@ export default function DpProfile(userData) {
       </Col>
    </Form.Group><br/>
          </Form>    
+
+    
+      
               </div>
               <div class="col-sm-12">
-           
-              <Link   style={styles.updatebtn} to={location=>`/dPerson/updateEprofile/${user.id}`} className="edit">Edit</Link>
-           
-             </div>
+               <Link   style={styles.updatebtn} to={location=>`/dPerson/updateEprofile/${user.id}`} className="edit">Edit</Link>
+               </div>
               </Paper>
 
               </div>
