@@ -277,14 +277,13 @@ app.get('/viewAvailableDelivery',(req, res) =>{
 
 // VIEW CASH ON DELIVERIES TO CONFIRM
 app.get('/viewcashOnDelivery',(req, res) =>{
-    db.query("   SELECT *  FROM  payment  JOIN orders ON  payment.order_id = orders.order_id WHERE orders.employee_id=? AND payment.payment_method='cash on delivery' ", [req.query.employee_id],(err, results)=>
-     { 
-     console.log(req.query.employee_id);
-      res.send(results);
-     })
-     
-  })
-
+  db.query("   SELECT *  FROM  payment  JOIN orders ON  payment.order_id = orders.order_id WHERE orders.employee_id=? AND payment.payment_method='cash on delivery' AND orders.status <> 'completed' ", [req.query.employee_id],(err, results)=>
+   { 
+   console.log(req.query.employee_id);
+    res.send(results);
+   })
+   
+})
            // VIEW  DELIVERY TO CONFIRM
         
         
