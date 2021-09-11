@@ -3,7 +3,6 @@ import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import AppBar from '@material-ui/core/AppBar';
 import Paper from '@material-ui/core/Paper';
-import Link from '@material-ui/core/Link';
 import Typography from '@material-ui/core/Typography';
 import Blog from '../blog/Blog'
 import Grid from '@material-ui/core/Grid';
@@ -171,33 +170,33 @@ export default function Checkout(userData) {
 
   }
   
-  const OnfullSuccess = async (id) => {
+  const OnfullSuccess = async () => {
     Axios.get(apiurl +'/insertfullpayment', {
       params: {
-        oid: id,
+        oid: order.order_id,
 
       }
     });
+    const custpoint = Math.round(total * 0.05);
+    const response2 = await Axios.get('http://localhost:3001/increasepoint', {
+      params: {
+        cid: userData.userData.customer_id,
+        price: custpoint,
+      }
+    });
 
-    // const response2 = await Axios.get('http://localhost:3001/increasepoint', {
-    //   params: {
-    //     cid: userData.userData.customer_id,
-    //     price: custpoint,
-    //   }
-    // });
+    products.map(function (a) {
 
-    // products.map(function (a) {
+      return Axios.get('http://localhost:3001/inventorybalance', {
+        params: {
+          oid:order.order_id,
+          pid: a.product_id,
+          quty: a.quantity,
 
-    //   return Axios.get('http://localhost:3001/inventorybalance', {
-    //     params: {
-    //       oid: o_id,
-    //       pid: a.product_id,
-    //       quty: a.quantity,
+        }
 
-    //     }
-
-    //   });
-    //});
+      });
+    });
 
 
   }
@@ -251,13 +250,7 @@ export default function Checkout(userData) {
 
               </Typography>
             </ListItem>
-            <ListItem className={classes.listItem}>
-              <ListItemText primary=" Now you should pay" />
-              <Typography variant="subtitle1" className={classes.total}>
-                Rs. {roundadvance}
-
-              </Typography>
-            </ListItem>
+            
           </List>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
@@ -313,7 +306,7 @@ export default function Checkout(userData) {
                   <PayHereButton
                     sandbox={true}
                     merchant_id={'1218334'}
-                    onCompleted={OnfullSuccess(order.order_id)}
+                    onCompleted={OnfullSuccess}
                     onDismissed={OnDismissed}
                     //onError={onError}
                     order_id={order.order_id}
