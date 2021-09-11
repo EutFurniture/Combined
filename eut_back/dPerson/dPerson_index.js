@@ -264,14 +264,15 @@ app.get('/ReturnItemview', (req, res) => {
     
    });
   
+       
           // VIEW AVAILABLE DELIVERIES
 app.get('/viewAvailableDelivery',(req, res) =>{
-            db.query("  SELECT orders.order_id,customer.fname, customer.address, customer.phone FROM orders  JOIN customer ON orders.customer_id=customer.customer_id JOIN employee ON orders.employee_id=employee.id  WHERE orders.employee_id=?  ", [req.query.employee_id],(err, results)=>
-                      { 
-                      console.log(req.query.employee_id);
-                       res.send(results);
-                      })
-                      
+   db.query("  SELECT orders.order_id,customer.fname, customer.address, customer.phone FROM orders  JOIN customer ON orders.customer_id=customer.customer_id JOIN employee ON orders.employee_id=employee.id  WHERE orders.employee_id=? AND orders.status <> 'Completed'  ", [req.query.employee_id],(err, results)=>
+             { 
+             console.log(req.query.employee_id);
+              res.send(results);
+             })
+             
 })
 
 // VIEW CASH ON DELIVERIES TO CONFIRM
@@ -286,13 +287,14 @@ app.get('/viewcashOnDelivery',(req, res) =>{
 
            // VIEW  DELIVERY TO CONFIRM
         
+        
 app.get('/viewConfirmDelivery',(req, res) =>{
-    db.query("SELECT *  FROM orders  JOIN employee ON orders.employee_id = employee.id  WHERE orders.employee_id = ?  ", [req.query.employee_id],(err, results)=>
-     { 
-     console.log(req.query.employee_id);
-      res.send(results);
-     })
-     
+     db.query("SELECT *  FROM orders  JOIN employee ON orders.employee_id = employee.id  WHERE orders.employee_id = ? AND orders.status <> 'Completed'  ", [req.query.employee_id],(err, results)=>
+      { 
+      console.log(req.query.employee_id);
+       res.send(results);
+      })
+      
 })
 
 
