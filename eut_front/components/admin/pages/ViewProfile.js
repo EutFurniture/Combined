@@ -5,12 +5,9 @@ import { useState,useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import clsx from 'clsx';
 import {toast} from 'react-toastify'
-import EditIcon from '@material-ui/icons/Edit';
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Drawer from '@material-ui/core/Drawer';
-import Box from '@material-ui/core/Box';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import List from '@material-ui/core/List';
@@ -27,16 +24,13 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
 import {Redirect} from "react-router-dom"
 import Form from 'react-bootstrap/Form';
 import { Button } from 'react-bootstrap';
 import { Row } from 'react-bootstrap';
 import { Col } from 'react-bootstrap';
 
-import { mainListItems, Logout } from './listItems';
+import { mainListItems } from './listItems';
 
 
 
@@ -209,14 +203,6 @@ export default function ViewProfile() {
 }, [id]);
 
 
-const NotificationClick = async () => {
-  const response = await axios.get('http://localhost:3001/NoficationActive', {
-     
-      
-  });
-  notify();
-}
-
 const [cusorderCount,setCusOrderCount]=useState([])
   useEffect(()=>{
     axios.get("http://localhost:3001/CustomizedOrderCount").then((response)=>{
@@ -224,29 +210,43 @@ const [cusorderCount,setCusOrderCount]=useState([])
       
     })
   },[])
-const customizedcount=cusorderCount.map(record=>record.count);
-console.log(customizedcount);
 
-const customToast=()=>{
-  return(
-    <div>
-      You have requested customized Order from Customer!
-      <button style={{marginLeft:'10px',border:'none',backgroundColor:'white',borderRadius:'5px'}} onClick={Cuspage}>View</button>
-    </div>
-  )
-}
+  const NotificationClick = async () => {
+    axios.get('http://localhost:3001/NoficationActive', {
+       
+        
+    });
+    if(customizedcount>0)
+    {
+    const customToast=()=>{
+      return(
+        <div>
+          You have requested customized Order from Customer!
+          <button style={{marginLeft:'10px',border:'none',backgroundColor:'skyblue',borderRadius:'5px'}} onClick={Cuspage}>View</button>
+        </div>
+      )
+    }
+  
+    const notify=()=>{
+     
+      toast.info(customToast,{position:toast.POSITION.TOP_RIGHT,autoClose:false})
+    
+    
+        }
+        notify();
+  }
+  }
+  
+  const customizedcount=cusorderCount.map(record=>record.count);
+  const total=Number(customizedcount);
+
 
 const Cuspage=()=>{
 window.location.href='/admin/pages/CustomizedOrders'
 }
 
 
-const notify=()=>{
-   
-  toast.info(customToast,{position:toast.POSITION.TOP_RIGHT,autoClose:false})
 
-
-    }
   
   
 
@@ -295,7 +295,7 @@ const notify=()=>{
             <strong>ADMIN</strong>
           </Typography>
           <IconButton color="inherit">
-            <Badge badgeContent={customizedcount} color="secondary">
+            <Badge badgeContent={total} color="secondary">
               <NotificationsIcon onClick={NotificationClick}/>
             </Badge>
           </IconButton>
@@ -329,9 +329,7 @@ const notify=()=>{
         <Divider />
         <List style={{backgroundColor: 'rgb(37,37,94)', color:'white'}}>{mainListItems}</List>
         
-        <Divider />
-        <List style={{backgroundColor: 'rgb(37,37,94)', color:'red'}}>{Logout}</List>
-        <Divider />
+        
       </Drawer>
       </div>
       <main className={classes.content}>
@@ -356,7 +354,7 @@ const notify=()=>{
                   <img src={`/${Dt.emp_img}`} className={classes.user1} align='center'></img>
 
                   <h2 style={{textAlign:'center'}}>{Dt.name}</h2> <br/>
-                 <Button href='/UpdateProfile' style={{color:'white',textDecoration:'none',borderRadius:'10px',backgroundColor:'green',fontSize:'18px',border:'none',width:'200px'}} >Edit Profile</Button>
+                 <Button href='/UpdateProfile' style={{color:'white',textDecoration:'none',borderRadius:'10px',backgroundColor:'green',fontSize:'18px',border:'none',width:'200px',marginLeft:'30px'}} >Edit Profile</Button>
                  
              
                   </div>
