@@ -48,6 +48,91 @@ const db = mysql.createConnection({
 //Customer BackEnd
 
 
+
+app.post('/otpCheck', (req, res) => {
+
+  const email = req.body.email
+  const otp = req.body.otp
+
+  console.log(email)
+  console.log(otp)
+  db.query
+    ("SELECT * FROM userlogin WHERE u_email = ? AND u_otp = ?;",
+      [email, otp],
+      (err, result) => {
+
+        if (err) {
+          res.send({ err: err })
+        }
+        if (result) {
+          console.log(result);
+          if (result.length > 0) {
+
+            db.query("UPDATE userlogin SET u_verify=? WHERE u_email = ? AND u_otp = ?",
+              [1, email, otp],
+              (err, result) => {
+
+                if (err) {
+                  console.log(err);
+                } else {
+                  res.send({ message: "OTP code verified Successfully" });
+                }
+              }
+            );
+
+          } else {
+            res.send({ message: "Wrong otp code" });
+          }
+
+
+        }
+      }
+    );
+});
+
+
+
+app.get("/login", (req, res) => {
+  if (req.session.user) {
+    res.send({ loggedIn: true, user: req.session.user });
+  } else {
+    res.send({ loggedIn: false });
+  }
+});
+
+app.post('/login', (req, res) => {
+
+  const email = req.body.email;
+  const password = req.body.password;
+
+  db.query(
+    "SELECT *FROM userlogin WHERE u_email=?;",
+    email,
+    (err, result) => {
+      console.log(result)
+
+
+      if (err) {
+        res.send({ err: err })
+      }
+      if (result.length > 0) {
+
+        if (password == result[0].u_password) {
+          req.session.user = result;
+          // console.log(req.session.user);   
+          res.send(result);
+        }
+        else {
+
+          res.send({ message: "Invalid Username or Password" });
+
+        }
+      }
+    })
+
+});
+
+
 app.post("/customerRegister", (req, res) => {
   const fname = req.body.fname;
   const email = req.body.email;
@@ -113,49 +198,6 @@ app.post("/customerRegister", (req, res) => {
   })
 });
 
-app.post('/otpCheck', (req, res) => {
-
-  const email = req.body.email
-  const otp = req.body.otp
-
-  console.log(email)
-  console.log(otp)
-  db.query
-    ("SELECT * FROM userlogin WHERE u_email = ? AND u_otp = ?;",
-      [email, otp],
-      (err, result) => {
-
-        if (err) {
-          res.send({ err: err })
-        }
-        if (result) {
-          console.log(result);
-          if (result.length > 0) {
-
-            db.query("UPDATE userlogin SET u_verify=? WHERE u_email = ? AND u_otp = ?",
-              [1, email, otp],
-              (err, result) => {
-
-                if (err) {
-                  console.log(err);
-                } else {
-                  res.send({ message: "OTP code verified Successfully" });
-                }
-              }
-            );
-
-          } else {
-            res.send({ message: "Wrong otp code" });
-          }
-
-
-        }
-      }
-    );
-});
-
-
-
 app.post("/insertotpcode", (req, res) => {
   const fname = req.body.fname;
   const email = req.body.email;
@@ -218,50 +260,9 @@ app.post("/insertotpcode", (req, res) => {
     }
   })
 
-
-
 });
 
 
-app.get("/login", (req, res) => {
-  if (req.session.user) {
-    res.send({ loggedIn: true, user: req.session.user });
-  } else {
-    res.send({ loggedIn: false });
-  }
-});
-
-app.post('/login', (req, res) => {
-
-  const email = req.body.email;
-  const password = req.body.password;
-
-  db.query(
-    "SELECT *FROM userlogin WHERE u_email=?;",
-    email,
-    (err, result) => {
-      console.log(result)
-
-
-      if (err) {
-        res.send({ err: err })
-      }
-      if (result.length > 0) {
-
-        if (password == result[0].u_password) {
-          req.session.user = result;
-          // console.log(req.session.user);   
-          res.send(result);
-        }
-        else {
-
-          res.send({ message: "Invalid Username or Password" });
-
-        }
-      }
-    })
-
-});
 app.get('/checkproduct', (req, res) => {
 
 
