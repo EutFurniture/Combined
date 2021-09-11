@@ -19,10 +19,11 @@ import Grid from '@material-ui/core/Grid';
 import Divider from '@material-ui/core/Divider';
 import axios from 'axios'
 import { useParams } from 'react-router-dom';
-
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 import LoadOrder from './LoadOrder'
-
-import { mainListItems, Logout } from './listItems';
+import {Redirect} from "react-router-dom"
+import { mainListItems } from './listItems';
 
 
 
@@ -178,44 +179,60 @@ const [anchorEl, setAnchorEl] = React.useState(null);
     setAnchorEl(event.currentTarget);
   };
 
-const NotificationClick = async () => {
-  const response = await axios.get('http://localhost:3001/NoficationActive', {
-     
-      
-  });
-  notify();
-}
-
-const [cusorderCount,setCusOrderCount]=useState([])
+  const [cusorderCount,setCusOrderCount]=useState([])
   useEffect(()=>{
     axios.get("http://localhost:3001/CustomizedOrderCount").then((response)=>{
       setCusOrderCount(response.data)
       
     })
   },[])
-const customizedcount=cusorderCount.map(record=>record.count);
-console.log(customizedcount);
 
-const customToast=()=>{
-  return(
-    <div>
-      You have requested customized Order from Customer!
-      <button style={{marginLeft:'10px',border:'none',backgroundColor:'white',borderRadius:'5px'}} onClick={Cuspage}>View</button>
-    </div>
-  )
-}
-
+  const NotificationClick = async () => {
+    axios.get('http://localhost:3001/NoficationActive', {
+       
+        
+    });
+    if(customizedcount>0)
+    {
+    const customToast=()=>{
+      return(
+        <div>
+          You have requested customized Order from Customer!
+          <button style={{marginLeft:'10px',border:'none',backgroundColor:'skyblue',borderRadius:'5px'}} onClick={Cuspage}>View</button>
+        </div>
+      )
+    }
+  
+    const notify=()=>{
+     
+      toast.info(customToast,{position:toast.POSITION.TOP_RIGHT,autoClose:false})
+    
+    
+        }
+        notify();
+  }
+  }
+  
+  const customizedcount=cusorderCount.map(record=>record.count);
+  const total=Number(customizedcount);
 const Cuspage=()=>{
 window.location.href='/admin/pages/CustomizedOrders'
 }
 
 
-const notify=()=>{
-   
-  toast.info(customToast,{position:toast.POSITION.TOP_RIGHT,autoClose:false})
+const handleClose = () => {
+  setAnchorEl(null);
+};
+
+// const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
+
+const[isAuth,setIsAuth]=useState(true);
+
+if(!isAuth){
+  return <Redirect to="" />
+}
 
 
-    }
   
  // const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
@@ -237,12 +254,23 @@ const notify=()=>{
             <b>ADMIN</b>
           </Typography>
           <IconButton color="inherit">
-            <Badge badgeContent={customizedcount} color="secondary">
+            <Badge badgeContent={total} color="secondary">
               <NotificationsIcon onClick={NotificationClick}/>
             </Badge>
           </IconButton>
           
-          <img src={`/${Dt.emp_img}`} onClick={handleClick} className={classes.profile_img}/>
+          <img src={`/${Dt.emp_img}`} onClick={handleClick} className={classes.profile_img} alt='/Noimage'/>
+          <Menu
+        id="simple-menu"
+        anchorEl={anchorEl}
+        keepMounted
+        open={Boolean(anchorEl)}
+        onClose={handleClose}
+      >
+        <MenuItem onClick={handleClose}>Profile</MenuItem>
+        <MenuItem onClick={()=>setIsAuth(false)}>Logout</MenuItem>
+      </Menu>
+
         </Toolbar>
         
       </AppBar>
@@ -261,9 +289,7 @@ const notify=()=>{
         </div>
         <Divider/>
         <List style={{backgroundColor: 'rgb(37, 37, 94)', color:'white'}}>{mainListItems}</List>
-        <Divider/>
-        <List style={{backgroundColor: 'rgb(37, 37, 94)', color:'red'}}>{Logout}</List>
-        <Divider/>
+        
       </Drawer>
       </div>
      
