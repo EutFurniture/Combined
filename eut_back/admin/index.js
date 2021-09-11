@@ -507,14 +507,14 @@ app.get('/CustomizedOrderCount',(req,res)=>{
   })
 })
 
-app.get('/loadcusorder',(req,res)=>{
-  db.query('SELECT customer_id,delivery_date,advanced_payment,total_payment FROM customized_products WHERE active=1 ',(err,result,fields)=>{
-      if(!err)
-      res.send(result);
-      else
-      console.log(err);
-  })
-})
+// app.get('/loadcusorder',(req,res)=>{
+//   db.query('SELECT customer_id,delivery_date,advanced_payment,total_payment FROM customized_products WHERE active=1 ',(err,result,fields)=>{
+//       if(!err)
+//       res.send(result);
+//       else
+//       console.log(err);
+//   })
+// })
 
 app.get('/loadProduct',(req,res)=>{
   db.query('SELECT * FROM products ;',(err,results,fields)=>{
