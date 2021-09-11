@@ -1,9 +1,13 @@
-import React,{useEffect,useState} from 'react';
+
+import React, { useState, useEffect } from "react";
 import clsx from 'clsx';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import axios from 'axios';
-import { useParams } from 'react-router-dom';
+import axios from "axios";
+
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 import { Link } from "react-router-dom";
+import {Redirect} from "react-router-dom"
+
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Drawer from '@material-ui/core/Drawer';
@@ -18,25 +22,20 @@ import Paper from '@material-ui/core/Paper';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import NotificationsIcon from '@material-ui/icons/Notifications';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
 import Grid from '@material-ui/core/Grid';
-import Divider from '@material-ui/core/Divider';
-import {Redirect} from "react-router-dom"
-import ReactToPrint from 'react-to-print';
-import DataComponent from './DataComponent';
 import {toast} from 'react-toastify'
+import Divider from '@material-ui/core/Divider';
+import {useParams} from 'react-router-dom'
 
 import { mainListItems } from './listItems';
-//import {Doughnut} from '../../charts/Doughnut'
-//import Adminmain from "../main/Adminmain"
-import '../css/Dashboard.css'
+
 
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
+   
   },
   toolbar: {
     paddingRight: 24, // keep right padding when drawer closed
@@ -68,6 +67,11 @@ const useStyles = makeStyles((theme) => ({
   },
   menuButtonHidden: {
     display: 'none',
+  },
+  profile_img:{
+    width:'50px',
+    height:'50px',
+    borderRadius:'50px'
   },
   title: {
     flexGrow: 1,
@@ -106,25 +110,17 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
     height: '100vh',
     overflow: 'auto',
+    
   },
+ 
   container: {
     paddingTop: theme.spacing(4),
     paddingBottom: theme.spacing(4),
-   
+    marginTop:'20px',
+    marginLeft:'100px',
   },
-  custom:{
-    display:'flex',
-    paddingLeft:'20px',
-    
-   height:'80px',
-   paddingBottom:'10px',
-    color:'black',
-    fontSize:'20px',
-   
-  
-},
   paper: {
-    padding: theme.spacing(1),
+    padding: theme.spacing(2),
     display: 'flex',
     overflow: 'auto',
     flexDirection: 'column',
@@ -132,33 +128,104 @@ const useStyles = makeStyles((theme) => ({
   fixedHeight: {
     height: 'auto',
   },
-  maindash:{
-    display:'flex'
+  addbutton:{
+      backgroundColor:'#0000ff',
+      height:'50px',
+      width:'160px',
+      borderRadius:'5px',
+      marginRight:'10px',
+      textDecoration:'none',
+      textAlign:'center',
+      paddingTop:'10px'
   },
-  piechart:{
-      display:'flex'
+  addcategorybox:{
+    width: '1100px',
+    height:'120px',
+    backgroundColor: '#fff',
+    marginLeft: '30px',
+    display:'flex',
+    //boxShadow:'5px 1px 2px 2px '
+    
   },
-  pieleft:{
- width:'400px',
- marginLeft:'100px'
+  categorybtn:{
+      border:0,
+      backgroundColor:'#9bddff',
+      width:'800px',
+      height:'40px',
+      marginTop:'40px',
+      marginLeft:'30px',
+      fontSize:'20px',
+      borderRadius:'5px'
+
   },
-  pieright:{
-    width:'400px',
-    marginLeft:'300px'
-     },
- datesalign:{
-  display:'flex'
+  addcategory:{
+    height:'40px'
+  },
+  categoryimage:{
+    height:'500px',
+    width:'1100px'
 },
-dateleft:{
-    marginRight:'100px',
-    marginBottom:'20px',
-    marginLeft:'30px'
+btn:{
+    color:'white',
+    fontSize:'18px',
+    width:'150px',
+    height:'40px',
+    backgroundColor:'blue',
+    border:'none',
+    borderRadius:'5px'
 },
-profile_img:{
-  width:'50px',
-  height:'50px',
-  borderRadius:'50px'
-}
+addproducts:{
+    display:'flex',
+},
+textareabox:{
+    border:'none',
+    backgroundColor:'#E1F4FF',
+},
+formrow:{
+ gridTemplateColumns:'1fr 3fr',
+ display:'flex'
+},
+formleft:{
+  width:'200px',
+  marginTop:'20px',
+  marginBottom:'30px',
+  marginLeft:'20px'
+},
+formright1:{
+  width:'800px',
+  marginTop:'10px',
+  marginBottom:'20px'
+},
+formlabel1:{
+  marginBottom:'32px',
+  fontSize:'16px', 
+  
+},
+twocolumn:{
+    gridTemplateColumns:'1fr 2fr', 
+    display:'flex',
+},
+columnleft:{
+    width:'300px',
+    // backgroundColor:'rgb(63, 111, 199)'
+},
+columnright:{
+width:'700px'
+},
+
+ datas:{
+    marginBottom:'20px',   
+ },
+ user1:{
+     width:'150px',
+     height:'150px',
+     marginTop:'20px',
+     align:'center',
+     marginLeft:'60px',
+     borderRadius:'80px'
+ }
+
+  
 
 }));
 
@@ -169,52 +236,37 @@ const styles = {
 };
 
 
- 
-
-
-
-const ReportGeneration=({componentRef})=> {
-  const classes = useStyles();
-  const [open, setOpen] = React.useState(true);
-  const {id}=useParams();
+export default function EmpInfo() {
+  const [employeeList,setEmployeeList]=useState([])
+  const { id } = useParams();
   const [Dt, setDt] = useState([])
-  const[to_date,setTodate]=useState("");
-  const[from_date,setFromdate]=useState("");
+ 
+  const dateOnly = (d) => {
+    const date = new Date(d);
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    return `${year} - ${month} - ${day}`;
+  };
 
-  useEffect(() => {
-    const fetchData = async () => {
-        const response = await axios.get('http://localhost:3001/viewAdmin', {
-            params: {
-                id: id,  
-            }
-            
-        });
-   
-        setDt(response.data[0]);
-           console.log(response.data[0]);
-   
-    };
-    fetchData();
-   }, [id]);
+ useEffect(() => {
+  const fetchData = async () => {
+      const response = await axios.get('http://localhost:3001/view', {
+          params: {
+              id: id,
+              
+          }
+      });
 
-   const [cus,setCus]=useState([])
-
-  
-    const customer = async () => {
-        const response = await axios.get('http://localhost:3001/CusWithDate', {
-            params: {
-               to_date:to_date,  
-               from_date:from_date
-            }
-            
-        });
-   
-        setCus(response.data);
-           
-   
-    }
+      setDt(response.data[0]);
+         console.log(response.data[0]);
+  };
+  fetchData();
+}, [id]);
 
 
+    const classes = useStyles();
+    const [open, setOpen] = React.useState(true);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -222,16 +274,35 @@ const ReportGeneration=({componentRef})=> {
   const handleDrawerClose = () => {
     setOpen(false);
   };
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
+  
 
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-  const [cusorderCount,setCusOrderCount]=useState([])
+const [Dts, setDts] = useState([])
+
+useEffect(() => {
+const fetchData = async () => {
+    const response = await axios.get('http://localhost:3001/viewAdmin', {
+        params: {
+            id: id,  
+        }
+        
+    });
+
+    setDts(response.data[0]);
+       console.log(response.data[0]);
+
+};
+fetchData();
+}, [id]);
+
+const [anchorEl, setAnchorEl] = React.useState(null);
+
+const handleClick = (event) => {
+  setAnchorEl(event.currentTarget);
+};
+
+const [cusorderCount,setCusOrderCount]=useState([])
   useEffect(()=>{
     axios.get("http://localhost:3001/CustomizedOrderCount").then((response)=>{
       setCusOrderCount(response.data)
@@ -267,21 +338,23 @@ const ReportGeneration=({componentRef})=> {
   
   const customizedcount=cusorderCount.map(record=>record.count);
   const total=Number(customizedcount);
-  
-  const Cuspage=()=>{
-  window.location.href='/admin/pages/CustomizedOrders'
-  }
-  
-  
-  
- 
 
-  const[isAuth,setIsAuth]=useState(true);
+const Cuspage=()=>{
+window.location.href='/admin/pages/CustomizedOrders'
+}
 
-  if(!isAuth){
-    return <Redirect to="" />
-  }
 
+
+const handleClose = () => {
+  setAnchorEl(null);
+};
+
+
+const[isAuth,setIsAuth]=useState(true);
+
+if(!isAuth){
+  return <Redirect to="" />
+}
 
   return (
     <div className={classes.root}>
@@ -305,20 +378,20 @@ const ReportGeneration=({componentRef})=> {
               <NotificationsIcon onClick={NotificationClick}/>
             </Badge>
           </IconButton>
-
-          <img src={`/${Dt.emp_img}`} onClick={handleClick} className={classes.profile_img}/>
-   <Menu
+          
+          <img src={`/${Dts.emp_img}`} onClick={handleClick} className={classes.profile_img}/>
+          <Menu
         id="simple-menu"
         anchorEl={anchorEl}
         keepMounted
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-        <MenuItem onClick={handleClose}><Link to='/admin/pages/ViewProfile' style={{textDecoration:'none',color:'black'}}>Profile</Link></MenuItem>
+        <MenuItem onClick={handleClose}>Profile</MenuItem>
         <MenuItem onClick={()=>setIsAuth(false)}>Logout</MenuItem>
       </Menu>
-
         </Toolbar>
+        
       </AppBar>
       <div style={styles.side}>
       <Drawer
@@ -333,50 +406,62 @@ const ReportGeneration=({componentRef})=> {
             <ChevronLeftIcon />
           </IconButton>
         </div>
-        <Divider />
+        <Divider/>
         <List style={{backgroundColor: 'rgb(37, 37, 94)', color:'white'}}>{mainListItems}</List>
-        
+       
       </Drawer>
       </div>
-
-      {/* <main className={classes.content}>
-      <Adminmain />
-        
-
- </main> */}
- <main style={{backgroundColor: '#f0f8ff'}} className={classes.content}>
+     
+      <main style={{backgroundColor: '#f0f8ff'}} className={classes.content}>
         <div className={classes.appBarSpacer} />
-        <Container maxWidth="lg" className={classes.container}>
-          <Grid container spacing={1}>
-          
-           
-           
-               <h1><b>SYSTEM ANALYTICS</b></h1><br/>
-               <div style={{display:'flex'}}>
-                   <div style={{width:'1220px'}}>
-               <Grid item xs={16}  direction="row">
-              <Paper style={{marginTop:'20px'}}>
-                
+        <Container  maxWidth="lg" className={classes.container}>
+        
+        <Grid  container spacing={10}>
+        {/* Recent Orders */}
+        <Grid item xs={10}  direction="row"  >
+        
+        <div >
+           <Paper className={classes.paper}>
+               <div className={classes.twocolumn}>
+                   <div className={classes.columnleft}>
+                        <img src={`/${Dt.emp_img}`} className={classes.user1} align='center'></img><br/><br/>
+                        <h3 align='center'>{Dt.name}</h3>
+                        <h2 style={{marginLeft:'40px'}}>{Dt.role}</h2>
+                   </div>
+                   <div style={{width:'3px',backgroundColor:'rgb(63, 111, 199)',height:'auto'}}></div>
+             
+            <div className={classes.columnright}>
+           <Typography style={{fontSize:'30px',marginLeft:'20px'}} color="inherit" align="left" width="100%" noWrap className={classes.title}>
+                  <strong> PERSONAL INFORMATION </strong>
                  
-              <div align='right' style={{marginTop:'20px'}}>
-          <ReactToPrint
-           content={() =>componentRef}
-            trigger={() => <button className="btn btn-success" style={{marginTop:'20px',border:'none',marginRight:'30px',marginBottom:'20px',backgroundColor:'red',borderRadius:'5px'}}>Download to PDF!</button>}
-          />
-         </div>
-         
-          <DataComponent  ref={(response) => (componentRef = response)} />
-          
+                </Typography>
+                <div style={{fontSize:'20px',marginLeft:'20px'}}>
+                <br/><p>Full Name: {Dt.name}</p>
+                <p>Address: {Dt.address}</p>
+                <p>NIC: {Dt.NIC}</p>
+                <p>Phone number: {Dt.phone_no}</p>
+               </div>
+               <Typography style={{fontSize:'30px',marginLeft:'20px'}} color="inherit" align="left" width="100%" noWrap className={classes.title}>
+                  <strong> JOB INFORMATION </strong>
+                </Typography>
+                <div style={{fontSize:'20px',marginLeft:'20px'}}>
+                <br/><p>Employee ID: Emp{Dt.id}</p>
+                <p>Employee Role: {Dt.role}</p>
+                <p>Job Start Date: {dateOnly(Dt.job_start_date)}</p>
+               </div>
               
-              </Paper>
-              </Grid><br/>
-              </div>
-              </div>
-              </Grid>
+           
+            </div> 
+            </div> 
+          
+            </Paper>
+         
+         </div>
+        </Grid>
+
+      </Grid>
         </Container>
       </main>
     </div>
   );
 }
-
-export default ReportGeneration;

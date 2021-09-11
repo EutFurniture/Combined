@@ -1,28 +1,35 @@
-import React, { useState, useEffect } from "react";
-import Axios from 'axios';
-import { useParams ,Link} from "react-router-dom";
-import {Table} from 'react-bootstrap';
+import React,{useState} from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import clsx from 'clsx';
+
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Drawer from '@material-ui/core/Drawer';
+import Box from '@material-ui/core/Box';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
+import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
+import Badge from '@material-ui/core/Badge';
 import Container from '@material-ui/core/Container';
+import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import Grid from '@material-ui/core/Grid';
-import Divider from '@material-ui/core/Divider';
+import NotificationsIcon from '@material-ui/icons/Notifications';
+import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import {Redirect} from "react-router-dom";
-import { DpListItems, Logout } from './dplistItems';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import {Link} from 'react-router-dom';
+
+import { mainListItems, Logout } from './listItems';
+
+
+import AddEmployeeOTPcheck from './AddEmployeeOTPcheck';
+
 function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
@@ -41,7 +48,6 @@ const drawerWidth = 240;
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
-   
   },
   toolbar: {
     paddingRight: 24, // keep right padding when drawer closed
@@ -76,15 +82,6 @@ const useStyles = makeStyles((theme) => ({
   },
   title: {
     flexGrow: 1,
-    fontSize:40,
-    fontWeight:600,
-  },
-  userimage : {
-    height: 60,
-    width: 60,
-    borderRadius:100,
-    borderColor:'white',
-
   },
   drawerPaper: {
     position: 'relative',
@@ -111,118 +108,77 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
     height: '100vh',
     overflow: 'auto',
-    
+    backgroundColor:'#ede7f6'
   },
- 
   container: {
     paddingTop: theme.spacing(4),
     paddingBottom: theme.spacing(4),
-    marginTop:'20px',
+    alignContent:'center',
+    align:'center',
+    
   },
   paper: {
+    position:'relative',
+    align:'center',
     padding: theme.spacing(2),
     display: 'flex',
     overflow: 'auto',
     flexDirection: 'column',
+   
   },
   fixedHeight: {
-    height: 'auto',
-  },
-  addbutton:{
-      backgroundColor:'#0000ff',
-      height:'50px',
-      width:'160px',
-      borderRadius:'5px',
-      marginRight:'50px',
-      textDecoration:'none',
-      textAlign:'center',
-      paddingTop:'10px'
+    height: 240,
   },
   
-
 }));
 
 const styles = {
   side:{
-    backgroundColor:'rgb(37, 37, 94)',
+    backgroundColor:'rgb(37,37,94)',
   },
-  updatebtn:{
-    backgroundColor: '#04B404',
-    width: '200px',
-    textDecoration: 'none',
-    height: '100px',
-    marginRight: '5px',
-    fontSize: '17px',
-    paddingLeft: '15px',
-    paddingRight: '15px',
-    paddingTop: '5px',
-    paddingBottom: '5px',
-    color: 'white',
-    borderRadius: '7px',
-  }  
+  pack:{
+    justifyContent:'flex-around',
+    marginLeft:'20px'
+  }  ,
+  
 };
 
 
-export default function ConfirmDelivery(userData) {
+
+
+export default function ManageOTPEmp() {
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
-  const [user,setUser]=useState([])
-  const { employee_id } = useParams();
-   useEffect(() => {
-   
-    const fetchData = async () => {
-
-      
-     
-      const response = await Axios.get('http://localhost:3001/viewConfirmDelivery', {
-            params: {
-          employee_id: userData.userData.id
-           }
-        });
-     
-        setUser(response.data);
-
-        console.log(employee_id);
-      
-    }
-  fetchData();
-  }, [employee_id]);      
-
-
-
   const handleDrawerOpen = () => {
     setOpen(true);
   };
   const handleDrawerClose = () => {
     setOpen(false);
   };
-  const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
-
 
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   const handleClick = (event) => {
-      setAnchorEl(event.currentTarget);
+    setAnchorEl(event.currentTarget);
   };
-  
+
   const handleClose = () => {
-      setAnchorEl(null);
+    setAnchorEl(null);
   };
+
   
-   // const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
-  
+
   const[isAuth,setIsAuth]=useState(true);
-  
+
   if(!isAuth){
-      return <Redirect to="" />
+    return <Redirect to="" />
   }
-  
 
   return (
     <div className={classes.root}>
       <CssBaseline />
       <AppBar position="absolute" className={clsx(classes.appBar, open && classes.appBarShift)}>
-        <Toolbar className={classes.toolbar} style={{backgroundColor: 'rgb(37, 37, 94)'}}>
+        <Toolbar className={classes.toolbar} style={{backgroundColor: 'rgb(37,37,94)'}}>
           <IconButton
             edge="start"
             color="inherit"
@@ -233,27 +189,25 @@ export default function ConfirmDelivery(userData) {
             <MenuIcon />
           </IconButton>
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-            <b>DELIVERY PERSON</b>
+            <strong>ADMIN</strong>
           </Typography>
-          <IconButton color="inherit" fontSize="inherit">
-           <AccountCircleIcon   onClick={handleClick}/>
-  
+          <IconButton color="inherit">
+            <Badge badgeContent={4} color="secondary">
+              <NotificationsIcon />
+            </Badge>
           </IconButton>
-          <Menu
-        id="simple-menu"
-        anchorEl={anchorEl}
-        keepMounted
-        open={Boolean(anchorEl)}
-        onClose={handleClose}
-      >
-        <MenuItem component={Link} to="/dPerson/DpProfile">Profile</MenuItem>
-      <MenuItem component={Link} to="/Calender">Calendar</MenuItem>
-        <MenuItem onClick={()=>setIsAuth(false)}>Logout</MenuItem>
-      </Menu>
 
+          
+          <IconButton color="inherit" fontSize="inherit">
+           <AccountCircleIcon onClick={handleClick}  />
+          </IconButton>
+
+          <Menu id="simple-menu" anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={handleClose}>
+            <MenuItem onClick={handleClose}><Link to='' style={{textDecoration:'none',color:'black'}}>Profile</Link></MenuItem>
+            <MenuItem onClick={()=>setIsAuth(false)}>Logout</MenuItem>
+          </Menu>
 
         </Toolbar>
-        
       </AppBar>
       <div style={styles.side}>
       <Drawer
@@ -263,77 +217,50 @@ export default function ConfirmDelivery(userData) {
         }}
         open={open}
       >
-        <div className={classes.toolbarIcon} style={{backgroundColor: 'rgb(37, 37, 94)', color:'white'}}>
+        <div className={classes.toolbarIcon} style={{backgroundColor: 'rgb(37,37,94)', color:'white'}}>
           <IconButton onClick={handleDrawerClose} style={{color:'white'}}>
             <ChevronLeftIcon />
           </IconButton>
         </div>
-        <Divider/>
-        <List style={{backgroundColor: 'rgb(37, 37, 94)', color:'white'}}>{DpListItems}</List>
-        <Divider/>
-        <List style={{backgroundColor: 'rgb(37, 37, 94)', color:'white'}}>{Logout}</List>
-        <Divider/>
+        <Divider />
+        <List style={{backgroundColor: 'rgb(37,37,94)', color:'white'}}>{mainListItems}</List>
+        <Divider />
+        <List style={{backgroundColor: 'rgb(37,37,94)', color:'white'}}></List>
+        <Divider />
+        <Divider />
+        <List style={{backgroundColor: 'rgb(37,37,94)', color:'white'}}>{Logout}</List>
+        <Divider />
       </Drawer>
       </div>
-     
-      <main style={{backgroundColor: '#f0f8ff'}} className={classes.content}>
+      <main className={classes.content}>
         <div className={classes.appBarSpacer} />
         <Container maxWidth="lg" className={classes.container}>
+          <Grid container spacing={3}>
         
-        <Grid container spacing={3}>
-        {/* Recent Orders */}
-        <Grid item xs={12}  direction="row"  >
-        
-        <div >
-        
-           <Paper className={classes.paper}>
-               
-                <Typography  component="h1" variant="h6" color="inherit" align="center" width="100%" noWrap className={classes.title}>
-                  <h4> DETAILS OF DELIVERIES</h4>
-                </Typography>
-               
-                <div ><br/>
-                <div className='box-main'>
-                           
-                </div>
-        <Table striped bordered hover responsive>
-        <thead className="tableheading">
-          <tr>
-             <th scope="col">Order ID</th>
-             <th scope="col">Order Status</th>
-             <th scope='col'>Action</th>
-          </tr>
-        </thead> 
-     
-       <tbody className="tablebody">
-       {user.map(item=>
-                <tr key={item.employee_id}>
-                <td align="center">{item.order_id}</td>
-                <td align="center">{item.status}</td>
-                <td align="center">
-                <Link style={styles.updatebtn} to={location=> `/dPerson/UpdateConDeliveryRoute/${item.order_id}`}>Click to Confirm </Link>
-                </td>
+            <Typography component="h1" variant="h6" color="inherit" align="center" width="100%" noWrap className={classes.title}>
+                  <strong> EMPLOYEE MANAGEMENT</strong>
+            </Typography>
+            
 
-     </tr>
- )}
-                            
-   
-        </tbody> 
-      </Table>
-    
-   </div>
-                     
-          </Paper>
-          </div>
-        </Grid>
-
-      </Grid>
+            {/* Recent Orders */}
+            <Grid item xs={12}  direction="row"  >
+            
+  
+            <div >
+              <Paper className={classes.paper}>
+                <AddEmployeeOTPcheck/>
+              </Paper>
+              </div>
+            </Grid>
+ 
+          </Grid>
+          
+          <Box pt={4}>
+            <Copyright />
+          </Box>
         </Container>
-        <Copyright/>
       </main>
     </div>
   );
 }
 
-
- 

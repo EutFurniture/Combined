@@ -1,13 +1,12 @@
-import React from 'react';
+import {toast} from 'react-toastify'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
-import { useState,useEffect } from 'react';
-import { useParams } from 'react-router-dom';
 import clsx from 'clsx';
-import {toast} from 'react-toastify'
+import React, { useState, useEffect } from "react";
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Drawer from '@material-ui/core/Drawer';
+import Box from '@material-ui/core/Box';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import List from '@material-ui/core/List';
@@ -24,6 +23,7 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
+import { useParams } from 'react-router-dom';
 import {Redirect} from "react-router-dom"
 import Form from 'react-bootstrap/Form';
 import { Button } from 'react-bootstrap';
@@ -82,9 +82,9 @@ const useStyles = makeStyles((theme) => ({
   menuButton: {
     marginRight: 36,
   },
-  // menuButtonHidden: {
-  //   display: 'none',
-  // },
+  menuButtonHidden: {
+    display: 'none',
+  },
   title: {
     flexGrow: 1,
     fontSize:40,
@@ -124,14 +124,6 @@ const useStyles = makeStyles((theme) => ({
     align:'center',
     
   },
-  user1:{
-    width:'150px',
-    height:'150px',
-    marginTop:'20px',
-    align:'center',
-    marginLeft:'60px',
-    borderRadius:'80px'
-},
   paper: {
     position:'relative',
     align:'center',
@@ -141,10 +133,10 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
    
   },
-  
   fixedHeight: {
     height: 240,
   },
+  
   imageInput:{
     border:'none',
     borderColor:'white'
@@ -154,9 +146,6 @@ const useStyles = makeStyles((theme) => ({
     height:'50px',
     borderRadius:'50px'
   }
-  
-  
-  
 }));
 
 const styles = {
@@ -169,19 +158,20 @@ const styles = {
 
 
 
-export default function ViewProfile() {
+export default function AddProductForm() {
 
-    const dateOnly = (d) => {
-        const date = new Date(d);
-        const year = date.getFullYear();
-        const month = date.getMonth() + 1;
-        const day = date.getDate();
-        return `${year} - ${month} - ${day}`;
-      };
 
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
-  
+  const [state,setState]=useState({file:'',product_img:'',message:'',success:false})
+  const[ product_name,setName]=useState("");
+  const[price,setPrice]=useState("");
+  //const[measurement,setMeasurement]=useState("");
+  const[description,setDescription]=useState("");
+  const[quantity,setQuantity]=useState("");
+  const[material,setMaterial]=useState("");
+  const[category_id,setCategoryID]=useState("");
+ 
 
   const { id } = useParams();
   const [Dt, setDt] = useState([])
@@ -248,7 +238,70 @@ window.location.href='/admin/pages/CustomizedOrders'
 
 
   
+
+
+  const [typeList,setTypeList]=useState([])
+  useEffect(()=>{
+    axios.get("http://localhost:3001/loadCategoryType").then((response)=>{
+      setTypeList(response.data)
+    })
+  },[])
   
+
+  const submitForm =() =>{
+    // e.preventDefault();
+      
+    if(state.file)
+    {
+      let formData=new FormData();
+      formData.append('file',state.file)
+
+   axios.post('http://localhost:3001/imageUpload',formData,{
+        'content-Type':'multipart/form-data',
+      })
+
+      axios.post('http://localhost:3001/addProducts', {
+     
+       
+        image:state.file.name,
+        product_name: product_name,
+         price:price,
+         material:material,
+         description:description,
+         quantity:quantity,
+         category_id:category_id,
+        
+        
+      }).then(()=>{
+        alert('Product added successfully');
+        window.location.href='/ManageProducts'
+      })
+     
+
+}else{
+  setState({
+    ...state,
+    message:'please select image'
+  })
+ 
+}
+
+}
+
+  const handleInput =(e) =>{
+    let reader =new FileReader();
+    let file=e.target.files[0]
+    reader.onloadend =() =>{
+      setState({
+        ...state,
+        file:file,
+        product_img:reader.result,
+        message:""
+      })
+    }
+    reader.readAsDataURL(file);
+  }
+
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -267,9 +320,7 @@ window.location.href='/admin/pages/CustomizedOrders'
     setAnchorEl(null);
   };
 
-  
-
-    
+   
     const[isAuth,setIsAuth]=useState(true);
 
   if(!isAuth){
@@ -300,7 +351,7 @@ window.location.href='/admin/pages/CustomizedOrders'
             </Badge>
           </IconButton>
           
-          <img src={`/${Dt.emp_img}`} onClick={handleClick} className={classes.profile_img}/>
+          <img src={`/${Dt.emp_img}`} onClick={handleClick} className={classes.profile_img} alt='/Noimage'/>
           <Menu
         id="simple-menu"
         anchorEl={anchorEl}
@@ -329,7 +380,7 @@ window.location.href='/admin/pages/CustomizedOrders'
         <Divider />
         <List style={{backgroundColor: 'rgb(37,37,94)', color:'white'}}>{mainListItems}</List>
         
-        
+      
       </Drawer>
       </div>
       <main className={classes.content}>
@@ -342,109 +393,152 @@ window.location.href='/admin/pages/CustomizedOrders'
 
             {/* Recent Orders */}
             <Grid item xs={11} direction="row"  >
-            <Paper className={classes.paper}>
-            <div>
-              <Typography component="h1" variant="h6" color="inherit" align="left" width="100%" noWrap className={classes.title}>
-                    <strong> MY PROFILE</strong>
-              </Typography>
-              <br></br>
-              <div style={{display:'flex',backgroundColor:'#f2f3f4',borderRadius:'10px'}}>
+            
+  
+            <div >
+              <Paper className={classes.paper}>
+              <Typography component="h1" variant="h6" color="inherit"  align="center" width="100%" noWrap className={classes.title}>
+              <strong>ADD NEW PRODUCTS</strong>
+            </Typography><br/>
+            <Form  onSubmit={submitForm} >
 
-                  <div style={{width:'300px'}}>
-                  <img src={`/${Dt.emp_img}`} className={classes.user1} align='center'></img>
+<Form.Group as={Row} controlId="formHorizontalName">
+     <Form.Label column lg={2} >
+      Product Name :
+     </Form.Label>
+     <Col >
+       <Form.Control type="text" placeholder="chair,table and etc" 
+       onChange={(event)=> {
+         setName(event.target.value);
+       }}
+       />
+     </Col>
+   </Form.Group><br/>
 
-                  <h2 style={{textAlign:'center'}}>{Dt.name}</h2> <br/>
-                 <Button href='/UpdateProfile' style={{color:'white',textDecoration:'none',borderRadius:'10px',backgroundColor:'green',fontSize:'18px',border:'none',width:'200px',marginLeft:'30px'}} >Edit Profile</Button>
-                 
-             
-                  </div>
-               <div style={{width:'800px',fontSize:'16px',Color:'white'}}>
-               <Form >
-              <Form.Group as={Row} controlId="formHorizontalName">
-                  <Form.Label column lg={3} >
-                   Employee ID :
-                  </Form.Label>
-                  <Col >
-                  <Form.Label column lg={4} >
-                   {Dt.id}
-                  </Form.Label>
-                  </Col>
-              </Form.Group><br/>
-              <Form.Group as={Row} controlId="formHorizontalName">
-                  <Form.Label column lg={3} >
-                   Full Name :
-                  </Form.Label>
-                  <Col >
-                  <Form.Label  column lg={4}>
-                  {Dt.name}
-                  </Form.Label>
-                  </Col>
-              </Form.Group><br/>
-              <Form.Group as={Row} controlId="formHorizontalName">
-                  <Form.Label column lg={3} >
-                   NIC :
-                  </Form.Label>
-                  <Col >
-                  <Form.Label column lg={2} >
-                  {Dt.NIC}
-                  </Form.Label>
-                  </Col>
-              </Form.Group><br/>
-              <Form.Group as={Row} controlId="formHorizontalName">
-                  <Form.Label column lg={3} >
-                   Email :
-                  </Form.Label>
-                  <Col >
-                  <Form.Label column lg={2} >
-                  {Dt.email} 
-                  </Form.Label>
-                  </Col>
-              </Form.Group><br/>
-              <Form.Group as={Row} controlId="formHorizontalName">
-                  <Form.Label column lg={3} >
-                   Phone No :
-                  </Form.Label>
-                  <Col >
-                  <Form.Label column lg={2} >
-                   {Dt.phone_no} 
-                  </Form.Label>
-                  </Col>
-              </Form.Group><br/>
-              <Form.Group as={Row} controlId="formHorizontalName">
-                  <Form.Label column lg={3} >
-                   Address :
-                  </Form.Label>
-                  <Col >
-                  <Form.Label column lg={2} >
-                    {Dt.address} 
-                  </Form.Label>
-                  </Col>
-              </Form.Group><br/>
-              
-              <Form.Group as={Row} controlId="formHorizontalName">
-                  <Form.Label column lg={3} >
-                   Job start Date :
-                  </Form.Label>
-                  <Col >
-                  <Form.Label column lg={2} >
-                  {dateOnly(Dt.job_start_date)}
-                  </Form.Label>
-                  </Col>
-              </Form.Group><br/>
+   <Form.Group as={Row} controlId="formHorizontalPrice">
+     <Form.Label column lg={2} >
+     Price :
+     </Form.Label>
+     <Col >
+       <Form.Control type="text" placeholder="Rs.xxxx.xx" 
+       onChange={(event)=> {
+         setPrice(event.target.value);
+       }}
+       />
+     </Col>
+   </Form.Group><br/>
+  
+   
 
-              </Form> 
-               </div>
-           
+<Form.Group as={Row} controlId="formHorizontalFile" className="mb-3">
+     <Form.Label column lg={2}>
+      Product Image :</Form.Label>
+     <Col >
+       <Form.Control type="file" name="img" className={classes.imageInput} onChange={handleInput} />
+     </Col>
+     </Form.Group>  
+    
+{state.message && <h6 className={classes.mess}>{state.message}</h6>}            
+     <div style={{marginLeft:'227px'}}>
+{state.product_img && (<img src={state.product_img}  width="20%" height="20%"  alt="preview" />)}
+</div><br/>
+
+<Form.Group as={Row} controlId="formHorizontalQuantity">
+     <Form.Label column lg={2} >
+     Material :
+     </Form.Label>
+     <Col >
+       <Form.Control type="text" placeholder="Eg: wood" 
+       onChange={(event)=> {
+         setMaterial(event.target.value);
+       }}
+       />
+     </Col>
+   </Form.Group><br/>
+
+   
+                       
+{/* <Form.Group as={Row} controlId="formHorizontalCategory">
+
+     <Form.Label column lg={2} >
+     Product Category :
+     </Form.Label>
+     <Col >
+       <Form.Control as="Select" name='type' onChange={(event)=> { setCategory(event.target.value); }}>
+       {typeList.map((record)=>{return(
+       <option value={record.name}>{record.name}</option>
+       )
+      })}
+      
+      
+       </Form.Control>  
+     </Col>
+   </Form.Group><br/> */}
+
+   <Form.Group as={Row} controlId="formHorizontalCategory">
+
+     <Form.Label column lg={2} >
+      Category ID:
+     </Form.Label>
+     <Col >
+       <Form.Control as="Select" name='type' onChange={(event)=> { setCategoryID(event.target.value); }} >
+         <option>Select Category</option>
+       {typeList.map((record)=>{return(
+       <option value={record.category_id}>{record.category_id}-{record.name}</option>
+       )
+      })}
+      
+      
+       </Form.Control>  
+     </Col>
+   </Form.Group><br/>
+  
+
+  
+   <Form.Group as={Row} controlId="formHorizontalQuantity">
+     <Form.Label column lg={2} >
+     Quantity :
+     </Form.Label>
+     <Col >
+       <Form.Control type="text" placeholder="5" 
+       onChange={(event)=> {
+         setQuantity(event.target.value);
+       }}
+       />
+     </Col>
+   </Form.Group><br/>
+   
+   <Form.Group as={Row} controlId="formHorizontalDescription">
+     <Form.Label column lg={2} >
+     Description :
+     </Form.Label>
+     <Col >
+       <Form.Control type="text" placeholder="about the product" 
+       onChange={(event)=> {
+         setDescription(event.target.value);
+       }}
+       />
+     </Col>
+   </Form.Group><br/>
+   
+
+       <div align="center">
+       <Button  type="submit"   style={{fontSize:'20px',width:'200px'}} >Submit</Button>
+       </div>
+      
+
+</Form>
+                
+            
+              </Paper>
               </div>
-             
-              </div><br/>
-              
-            </Paper>
             </Grid>
  
           </Grid>
           
-         
+          <Box pt={4}>
+            <Copyright />
+          </Box>
         </Container>
       </main>
     </div>

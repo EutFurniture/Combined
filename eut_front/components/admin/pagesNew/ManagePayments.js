@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from "react";
-import Axios from 'axios';
-import { useParams ,Link} from "react-router-dom";
-import {Table} from 'react-bootstrap';
+import React,{useState,useEffect} from 'react';
 import clsx from 'clsx';
+import {toast} from 'react-toastify'
+import axios from 'axios'
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Drawer from '@material-ui/core/Drawer';
@@ -11,31 +10,25 @@ import Toolbar from '@material-ui/core/Toolbar';
 import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
+import Badge from '@material-ui/core/Badge';
 import Container from '@material-ui/core/Container';
 import Paper from '@material-ui/core/Paper';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
+import NotificationsIcon from '@material-ui/icons/Notifications';
 import Grid from '@material-ui/core/Grid';
-import Divider from '@material-ui/core/Divider';
+import { useParams } from 'react-router-dom';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
-import {Redirect} from "react-router-dom";
-import { DpListItems, Logout } from './dplistItems';
-import AddCircleIcon from '@material-ui/icons/AddCircle';
-import 'bootstrap/dist/css/bootstrap.min.css';
-function Copyright() {
-  return (
-    <Typography variant="body2" color="textSecondary" align="center">
-      {'Copyright © '}
-      <Link color="inherit" href="https://material-ui.com/">
-        Eut Furniture
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
+import { Link } from "react-router-dom";
+import {Redirect} from "react-router-dom"
+
+import Divider from '@material-ui/core/Divider';
+
+import LoadPayment from './LoadPayment'
+
+import { mainListItems } from './listItems';
+
 
 const drawerWidth = 240;
 
@@ -139,6 +132,11 @@ const useStyles = makeStyles((theme) => ({
       textAlign:'center',
       paddingTop:'10px'
   },
+  profile_img:{
+    width:'50px',
+    height:'50px',
+    borderRadius:'50px'
+  }
   
 
 }));
@@ -146,99 +144,98 @@ const useStyles = makeStyles((theme) => ({
 const styles = {
   side:{
     backgroundColor:'rgb(37, 37, 94)',
-  },
-  viewbtn:{
-    backgroundColor: '#33b5e5',
-    width: '200px',
-    textDecoration: 'none',
-    height: '100px',
-    marginRight: '5px',
-    fontSize: '17px',
-    paddingLeft: '15px',
-    paddingRight: '15px',
-    paddingTop: '5px',
-    paddingBottom: '5px',
-    color: 'white',
-    borderRadius: '7px',
-  } ,
-  updatebtn:{
-    backgroundColor: '#0C1385',
-    width: '200px',
-    textDecoration: 'none',
-    height: '100px',
-    marginRight: '5px',
-    fontSize: '17px',
-    paddingLeft: '15px',
-    paddingRight: '15px',
-    paddingTop: '5px',
-    paddingBottom: '5px',
-    color: 'white',
-    borderRadius: '7px',
   }
 };
-const dateOnly = (d) => {
-  const date = new Date(d);
-  const year = date.getFullYear();
-  const month = date.getMonth() + 1;
-  const day = date.getDate();
-  return `${year} - ${month} - ${day}`;
-};
 
 
-export default function AddReturnedItem(userData) {
+export default function Categories() {
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
-  const [user,setUser]=useState([])
-  const { employee_id } = useParams();
-   useEffect(() => {
-   
-    const fetchData = async () => {
-
-      
-     
-      const response = await Axios.get('http://localhost:3001/returnItem', {
-            params: {
-          employee_id: userData.userData.id
-           }
-        });
-     
-        setUser(response.data);
-
-        console.log(employee_id);
-      
-    }
-  fetchData();
-  }, []);      
-
-
-
   const handleDrawerOpen = () => {
     setOpen(true);
   };
   const handleDrawerClose = () => {
     setOpen(false);
   };
-  const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
+ 
 
+  const { id } = useParams();
+  const [Dt, setDt] = useState([])
+ 
+ useEffect(() => {
+  const fetchData = async () => {
+      const response = await axios.get('http://localhost:3001/viewAdmin', {
+          params: {
+              id: id,  
+          }
+          
+      });
 
-  const [anchorEl, setAnchorEl] = React.useState(null);
+      setDt(response.data[0]);
+         console.log(response.data[0]);
+
+  };
+  fetchData();
+}, [id]);
+
+const [anchorEl, setAnchorEl] = React.useState(null);
 
   const handleClick = (event) => {
-      setAnchorEl(event.currentTarget);
+    setAnchorEl(event.currentTarget);
   };
+
+  const [cusorderCount,setCusOrderCount]=useState([])
+  useEffect(()=>{
+    axios.get("http://localhost:3001/CustomizedOrderCount").then((response)=>{
+      setCusOrderCount(response.data)
+      
+    })
+  },[])
+
+  const NotificationClick = async () => {
+    axios.get('http://localhost:3001/NoficationActive', {
+       
+        
+    });
+    if(customizedcount>0)
+    {
+    const customToast=()=>{
+      return(
+        <div>
+          You have requested customized Order from Customer!
+          <button style={{marginLeft:'10px',border:'none',backgroundColor:'skyblue',borderRadius:'5px'}} onClick={Cuspage}>View</button>
+        </div>
+      )
+    }
   
-  const handleClose = () => {
-      setAnchorEl(null);
-  };
-  
-   // const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
-  
-  const[isAuth,setIsAuth]=useState(true);
-  
-  if(!isAuth){
-      return <Redirect to="" />
+    const notify=()=>{
+     
+      toast.info(customToast,{position:toast.POSITION.TOP_RIGHT,autoClose:false})
+    
+    
+        }
+        notify();
+  }
   }
   
+  const customizedcount=cusorderCount.map(record=>record.count);
+  const total=Number(customizedcount);
+
+const Cuspage=()=>{
+window.location.href='/admin/pages/CustomizedOrders'
+}
+
+const handleClose = () => {
+  setAnchorEl(null);
+};
+
+const[isAuth,setIsAuth]=useState(true);
+
+if(!isAuth){
+  return <Redirect to="" />
+}
+
+
 
   return (
     <div className={classes.root}>
@@ -255,12 +252,16 @@ export default function AddReturnedItem(userData) {
             <MenuIcon />
           </IconButton>
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-            <b>DELIVERY PERSON</b>
+            <b>ADMIN</b>
           </Typography>
-          <IconButton color="inherit" fontSize="inherit">
-           <AccountCircleIcon   onClick={handleClick}/>
-  
+          <IconButton color="inherit">
+            <Badge badgeContent={total} color="secondary">
+              <NotificationsIcon onClick={NotificationClick}/>
+            </Badge>
           </IconButton>
+          
+          <img src={`/${Dt.emp_img}`} onClick={handleClick} className={classes.profile_img} alt='/Noimage'/>
+
           <Menu
         id="simple-menu"
         anchorEl={anchorEl}
@@ -268,12 +269,10 @@ export default function AddReturnedItem(userData) {
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-        <MenuItem component={Link} to="/dPerson/DpProfile">Profile</MenuItem>
-      <MenuItem component={Link} to="/Calender">Calendar</MenuItem>
+        <MenuItem onClick={handleClose}><Link to='/admin/pages/ViewProfile' style={{textDecoration:'none',color:'black'}}>Profile</Link></MenuItem>
         <MenuItem onClick={()=>setIsAuth(false)}>Logout</MenuItem>
       </Menu>
-
-
+         
         </Toolbar>
         
       </AppBar>
@@ -291,10 +290,8 @@ export default function AddReturnedItem(userData) {
           </IconButton>
         </div>
         <Divider/>
-        <List style={{backgroundColor: 'rgb(37, 37, 94)', color:'white'}}>{DpListItems}</List>
-        <Divider/>
-        <List style={{backgroundColor: 'rgb(37, 37, 94)', color:'white'}}>{Logout}</List>
-        <Divider/>
+        <List style={{backgroundColor: 'rgb(37, 37, 94)', color:'white'}}>{mainListItems}</List>
+        
       </Drawer>
       </div>
      
@@ -311,46 +308,9 @@ export default function AddReturnedItem(userData) {
            <Paper className={classes.paper}>
                
                 <Typography  component="h1" variant="h6" color="inherit" align="center" width="100%" noWrap className={classes.title}>
-                  <h4> DETAILS OF RETURN ITEMS</h4>
+                  <strong> PAYMENT DETAILS </strong>
                 </Typography>
-               
-                <div ><br/>
-           
-                <div align = 'right'>
-            <Link  to='/AddForm' className="Addbtn"><AddCircleIcon style={{marginTop:'5px'}}/> Add New </Link> <br/>
-            </div>        
-               
-        <Table striped bordered hover responsive>
-        <thead className="tableheading">
-          <tr>
-          <th scope="col">Return ID</th>
-            <th scope="col">Order ID</th>
-            <th scope='col'>Product ID</th>
-            <th align="center">Return Date</th>
-            <th scope='col'>Action</th>
-          </tr>
-        </thead> 
-     
-       <tbody className="tablebody">
-       {user.map(record=>
-               <tr >
-              <td align="center" >{record.return_id}</td>
-              <td align="center">{record.order_id}</td>
-              <td align="center" >{record.product_id}</td>
-              <td align="center">{dateOnly(record.return_date)}</td>
-               <td align="center">
-               <Link style={styles.viewbtn} to={location=> `/dPerson/DpReturnItemInfoRoute/${record.order_id}`}> View </Link>
-               <Link style={styles.updatebtn} to={location=> `/dPerson/UpdateReturnDetailRoute/${record.order_id}`}> Update </Link>
-                  
-              </td>
-
-     </tr>
- )}
-                            
- </tbody> 
-      </Table>
-    
-   </div>
+                <LoadPayment/>
                      
           </Paper>
           </div>
@@ -358,11 +318,7 @@ export default function AddReturnedItem(userData) {
 
       </Grid>
         </Container>
-        <Copyright/>
       </main>
     </div>
   );
 }
-
-
- 

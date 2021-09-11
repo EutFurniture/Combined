@@ -1,6 +1,10 @@
-import React,{useEffect,useState} from 'react';
+
+import React,{useEffect,useState} from 'react'
 import clsx from 'clsx';
+import axios from "axios"
+import { useParams } from 'react-router-dom';
 import {toast} from 'react-toastify'
+import {Link} from 'react-router-dom'
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Drawer from '@material-ui/core/Drawer';
@@ -17,14 +21,11 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import Grid from '@material-ui/core/Grid';
 import Divider from '@material-ui/core/Divider';
-import axios from 'axios'
-import { useParams } from 'react-router-dom';
+import "../css/manageEmployee.css";
+import {Redirect} from "react-router-dom"
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import LoadOrder from './LoadOrder'
-import {Redirect} from "react-router-dom"
-import { mainListItems } from './listItems';
-
+import { mainListItems, Logout } from './listItems';
 
 
 const drawerWidth = 240;
@@ -109,6 +110,7 @@ const useStyles = makeStyles((theme) => ({
     paddingTop: theme.spacing(4),
     paddingBottom: theme.spacing(4),
     marginTop:'20px',
+    marginLeft:'100px',
   },
   paper: {
     padding: theme.spacing(2),
@@ -124,16 +126,110 @@ const useStyles = makeStyles((theme) => ({
       height:'50px',
       width:'160px',
       borderRadius:'5px',
-      marginRight:'50px',
+      marginRight:'10px',
       textDecoration:'none',
       textAlign:'center',
       paddingTop:'10px'
   },
-  profile_img:{
-    width:'50px',
-    height:'50px',
-    borderRadius:'50px'
-  }
+  addcategorybox:{
+    width: '1100px',
+    height:'120px',
+    backgroundColor: '#fff',
+    marginLeft: '30px',
+    display:'flex',
+    //boxShadow:'5px 1px 2px 2px '
+    
+  },
+  categorybtn:{
+      border:0,
+      backgroundColor:'#9bddff',
+      width:'800px',
+      height:'40px',
+      marginTop:'40px',
+      marginLeft:'30px',
+      fontSize:'20px',
+      borderRadius:'5px'
+
+  },
+  addcategory:{
+    height:'40px'
+  },
+  categoryimage:{
+    height:'500px',
+    width:'1100px'
+},
+btn:{
+    color:'white',
+    fontSize:'18px',
+    width:'150px',
+    height:'40px',
+    backgroundColor:'blue',
+    border:'none',
+    borderRadius:'5px'
+},
+addproducts:{
+    display:'flex',
+},
+textareabox:{
+    border:'none',
+    backgroundColor:'#E1F4FF',
+},
+
+
+formlabel1:{
+  marginBottom:'20px',
+  fontSize:'16px', 
+  
+},
+twocolumn:{
+    gridTemplateColumns:'1fr 2fr', 
+    display:'flex',
+},
+columnleft:{
+    width:'300px',
+    // backgroundColor:'rgb(63, 111, 199)'
+},
+columnright:{
+width:'700px'
+},
+
+ datas:{
+    marginBottom:'20px',   
+ },
+ user1:{
+     width:'100px',
+     height:'100px',
+     marginTop:'20px',
+     align:'center',
+     marginLeft:'60px'
+ },
+ profile_img:{
+  width:'50px',
+  height:'50px',
+  borderRadius:'50px'
+},
+accept:{
+    marginLeft:'200px',
+    backgroundColor:'#32cd32',
+    padding:'10px 30px 10px 30px',
+    border:'none',
+    borderRadius:'5px',
+    color:'white',
+    fontSize:'18px',
+    textDecoration:'none'
+  },
+  reject:{
+   marginLeft:'20px',
+   backgroundColor:'#ff0000',
+   padding:'10px 30px 10px 30px',
+   border:'none',
+   borderRadius:'5px',
+   color:'white',
+   fontSize:'18px',
+   textDecoration:'none'
+  }, 
+
+  
 
 }));
 
@@ -144,18 +240,39 @@ const styles = {
 };
 
 
-export default function Categories() {
-  const classes = useStyles();
-  const [open, setOpen] = React.useState(true);
+export default function OrderCustomize() {
+   
+    const classes = useStyles();
+    const [open, setOpen] = React.useState(true);
+    const { cus_product_id } = useParams();
+    const [Dt, setDt] = useState([])
+
+    useEffect(() => {
+      const fetchData = async () => {
+          const response = await axios.get('http://localhost:3001/ViewCusOrder1', {
+              params: {
+                  cus_product_id: cus_product_id,
+                  
+              }
+          });
+    
+          setDt(response.data[0]);
+             console.log(response.data[0]);
+      };
+      fetchData();
+    }, [cus_product_id]);
+    
+
   const handleDrawerOpen = () => {
     setOpen(true);
   };
   const handleDrawerClose = () => {
     setOpen(false);
   };
+  //const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
   const { id } = useParams();
-  const [Dt, setDt] = useState([])
+  const [Dts, setDts] = useState([])
  
  useEffect(() => {
   const fetchData = async () => {
@@ -166,7 +283,7 @@ export default function Categories() {
           
       });
 
-      setDt(response.data[0]);
+      setDts(response.data[0]);
          console.log(response.data[0]);
 
   };
@@ -175,9 +292,6 @@ export default function Categories() {
 
 const [anchorEl, setAnchorEl] = React.useState(null);
 
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
 
   const [cusorderCount,setCusOrderCount]=useState([])
   useEffect(()=>{
@@ -220,21 +334,30 @@ window.location.href='/admin/pages/CustomizedOrders'
 }
 
 
-const handleClose = () => {
-  setAnchorEl(null);
-};
-
-// const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
-
-const[isAuth,setIsAuth]=useState(true);
-
-if(!isAuth){
-  return <Redirect to="" />
-}
-
 
   
- // const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
+    const statusUpdate1 = async (cus_product_id) => {
+        const response = await axios.get('http://localhost:3001/OrderStatusAccept', {
+            params: {
+                cus_product_id:cus_product_id,  
+            }
+            
+        });
+      }
+
+      const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+      };
+      const handleClose = () => {
+        setAnchorEl(null);
+      };
+      
+      const[isAuth,setIsAuth]=useState(true);
+      
+      if(!isAuth){
+        return <Redirect to="" />
+      }
+      
 
   return (
     <div className={classes.root}>
@@ -259,7 +382,7 @@ if(!isAuth){
             </Badge>
           </IconButton>
           
-          <img src={`/${Dt.emp_img}`} onClick={handleClick} className={classes.profile_img} alt='/Noimage'/>
+          <img src={`/${Dts.emp_img}`} onClick={handleClick} className={classes.profile_img} alt='/Noimage'/>
           <Menu
         id="simple-menu"
         anchorEl={anchorEl}
@@ -267,7 +390,7 @@ if(!isAuth){
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-        <MenuItem onClick={handleClose}>Profile</MenuItem>
+        <MenuItem onClick={handleClose}><Link to='/admin/pages/ViewProfile' style={{textDecoration:'none',color:'black'}}>Profile</Link></MenuItem>
         <MenuItem onClick={()=>setIsAuth(false)}>Logout</MenuItem>
       </Menu>
 
@@ -289,30 +412,55 @@ if(!isAuth){
         </div>
         <Divider/>
         <List style={{backgroundColor: 'rgb(37, 37, 94)', color:'white'}}>{mainListItems}</List>
-        
+        <Divider/>
+        <List style={{backgroundColor: 'rgb(37, 37, 94)', color:'red'}}>{Logout}</List>
+        <Divider/>
       </Drawer>
       </div>
      
       <main style={{backgroundColor: '#f0f8ff'}} className={classes.content}>
         <div className={classes.appBarSpacer} />
-        <Container maxWidth="lg" className={classes.container}>
+        <Container  maxWidth="lg" className={classes.container}>
         
-        <Grid container spacing={3}>
+        <Grid  container spacing={10}>
         {/* Recent Orders */}
-        <Grid item xs={12}  direction="row"  >
+        <Grid item xs={10}  direction="row"  >
         
         <div >
-        
            <Paper className={classes.paper}>
                
-                <Typography component="h1" variant="h6" color="inherit" align="center" width="100%" noWrap className={classes.title}>
-                  <strong> CUSTOMIZED ORDER DETAILS </strong>
+             
+            <div >
+           <Typography  style={{fontSize:'30px',textAlign:'center'}} color="inherit" align="left" width="100%" noWrap className={classes.title}>
+                  <strong> ORDER INFORMATION </strong>
+                
                 </Typography>
-               
-                <LoadOrder/>
-                     
-          </Paper>
-          </div>
+                
+                <div ><br/>
+                  <div style={{display:'flex'}}>
+                    <label className={classes.formlabel1}><b style={{marginRight:'23px'}}>Customer Name :</b>{Dt.fname}</label></div>
+                  <label className={classes.formlabel1}><b style={{marginRight:'50px'}}>Customer ID :</b > {Dt.customer_id}</label><br/>
+                  <label className={classes.formlabel1}><b style={{marginRight:'30px'}}>Product Name :</b > {Dt. product_name}</label><br/>
+                  <label className={classes.formlabel1}><b>Product Design :</b></label><br/><img style={{marginLeft:'160px'}} src={`/${Dt.design}`} className="image1" /><br/><br/>
+                  <label className={classes.formlabel1}><b style={{marginRight:'80px'}}>Material :</b> {Dt.material}</label><br/>
+                  <label className={classes.formlabel1}><b style={{marginRight:'80px'}}>Color :</b> {Dt.color}</label><br/>
+                  <label className={classes.formlabel1}><b style={{marginRight:'40px'}}>Measurement :</b> {Dt.measurement} </label><br/>
+                  <label className={classes.formlabel1}><b style={{marginRight:'55px'}}>Description :</b> {Dt.description}</label><br/>
+                  </div>
+
+                 <br/> <div display='flex' align='center'>
+                           
+                          <Link to={location=> `/Customize/${Dt.customer_id}/${Dt.cus_product_id}`} onClick={()=>{statusUpdate1(Dt.cus_product_id)}} className={classes.accept}  >Accept</Link>
+                          <Link className={classes.reject}  to={location=> `/Reject/${Dt.customer_id}/${Dt.cus_product_id}`}>Reject</Link>
+                         
+                       
+                          </div><br/>
+              
+            
+           </div>
+            </Paper>
+         
+         </div>
         </Grid>
 
       </Grid>

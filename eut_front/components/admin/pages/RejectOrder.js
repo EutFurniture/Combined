@@ -1,13 +1,15 @@
-import React from 'react';
+import React,{useEffect,useState} from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
-import { useState,useEffect } from 'react';
-import { useParams } from 'react-router-dom';
 import clsx from 'clsx';
-import {toast} from 'react-toastify'
+import "react-notifications-component/dist/theme.css"
+
+
+
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Drawer from '@material-ui/core/Drawer';
+import Box from '@material-ui/core/Box';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import List from '@material-ui/core/List';
@@ -25,13 +27,13 @@ import NotificationsIcon from '@material-ui/icons/Notifications';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import {Redirect} from "react-router-dom"
-import Form from 'react-bootstrap/Form';
+
 import { Button } from 'react-bootstrap';
-import { Row } from 'react-bootstrap';
-import { Col } from 'react-bootstrap';
 
+import {useParams} from 'react-router-dom'
 import { mainListItems } from './listItems';
-
+import {toast} from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 
 function Copyright() {
@@ -82,9 +84,9 @@ const useStyles = makeStyles((theme) => ({
   menuButton: {
     marginRight: 36,
   },
-  // menuButtonHidden: {
-  //   display: 'none',
-  // },
+  menuButtonHidden: {
+    display: 'none',
+  },
   title: {
     flexGrow: 1,
     fontSize:40,
@@ -124,14 +126,6 @@ const useStyles = makeStyles((theme) => ({
     align:'center',
     
   },
-  user1:{
-    width:'150px',
-    height:'150px',
-    marginTop:'20px',
-    align:'center',
-    marginLeft:'60px',
-    borderRadius:'80px'
-},
   paper: {
     position:'relative',
     align:'center',
@@ -139,9 +133,10 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     overflow: 'auto',
     flexDirection: 'column',
+    marginLeft:'200px',
+    marginTop:'70px'
    
   },
-  
   fixedHeight: {
     height: 240,
   },
@@ -155,8 +150,6 @@ const useStyles = makeStyles((theme) => ({
     borderRadius:'50px'
   }
   
-  
-  
 }));
 
 const styles = {
@@ -167,24 +160,105 @@ const styles = {
   
 };
 
+toast.configure()
 
+export default function RejectOrder() {
 
-export default function ViewProfile() {
-
-    const dateOnly = (d) => {
-        const date = new Date(d);
-        const year = date.getFullYear();
-        const month = date.getMonth() + 1;
-        const day = date.getDate();
-        return `${year} - ${month} - ${day}`;
-      };
+  // const dateOnly = (d) => {
+  //   const date = new Date(d);
+  //   const year = date.getFullYear();
+  //   const month = date.getMonth() + 1;
+  //   const day = date.getDate();
+  //   return `${year} - ${month} - ${day}`;
+  // };
 
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
+  //const [state,setState]=useState({file:'',product_img:'',message:'',success:false})
+  
+  const {customer_id,order_id,product_id} = useParams();
+  const [Dt, setDt] = useState([])
+  // const [newdelivery_date, setNewDelivery] = useState();
+  // const [advanced, setNewAdvanced] = useState();
+  const [total, setNewTotal] = useState();
+  // const[cusname,setCusName]=useState("");
+   const [Cus, setCus] = useState([])
+  // const [o_id,setOID]=useState([])
+  // const [p_id,setPID]=useState([])
+  const [CusProduct, setCusProduct] = useState([])
+  // const [pList,setPList]=useState([])
   
 
+  useEffect(() => {
+    const fetchData = async () => {
+        const response = await axios.get('http://localhost:3001/ViewCustomerOrder', {
+            params: {
+               customer_id:customer_id,
+                
+            }
+        });
+  
+   setCus(response.data[0]);
+   const response3 = await axios.get('http://localhost:3001/ViewCusOrder', {
+    params: {
+        cus_product_id:cus_product_id,  
+    }
+    
+}); 
+setCusProduct(response3.data[0]);
+        
+    };
+    fetchData();
+  }, [customer_id]);
+
+  
+
+
+
+  const [categoryList,setCategoryList]=useState([])
+ useEffect(()=>{
+   axios.get("http://localhost:3001/loadcusorder").then((response)=>{
+     setCategoryList(response.data)
+   })
+ },[])
+
+ 
+    
+    
+ const [orderview1,setOrderView1]=useState([])
+
+  
+  
+ const { cus_product_id } = useParams();
+ const statusUpdate = async (cus_product_id) => {
+    const response = await axios.get('http://localhost:3001/OrderStatusReject', {
+        params: {
+            cus_product_id:cus_product_id,  
+        }
+        
+    });
+  alert("Order Removed from list");
+  window.location.href='/admin/pages/CustomizedOrders'
+  }
+
+ useEffect(() => {
+   const fetchData = async () => {
+       const response = await axios.get('http://localhost:3001/ViewCusOrder1', {
+           params: {
+               cus_product_id: cus_product_id,
+               
+           }
+       });
+ 
+       setDt(response.data[0]);
+          console.log(response.data[0]);
+   };
+   fetchData();
+ }, [cus_product_id]);
+
+ 
   const { id } = useParams();
-  const [Dt, setDt] = useState([])
+  const [Dts, setDts] = useState([])
  
  useEffect(() => {
   const fetchData = async () => {
@@ -195,7 +269,7 @@ export default function ViewProfile() {
           
       });
 
-      setDt(response.data[0]);
+      setDts(response.data[0]);
          console.log(response.data[0]);
 
   };
@@ -238,7 +312,6 @@ const [cusorderCount,setCusOrderCount]=useState([])
   }
   
   const customizedcount=cusorderCount.map(record=>record.count);
-  const total=Number(customizedcount);
 
 
 const Cuspage=()=>{
@@ -246,10 +319,12 @@ window.location.href='/admin/pages/CustomizedOrders'
 }
 
 
+ 
 
+    const handleClose1 = () => {
+        window.location.href='/CustomizeOrder'
+      };
   
-  
-
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -276,6 +351,9 @@ window.location.href='/admin/pages/CustomizedOrders'
     return <Redirect to="" />
   }
 
+  
+  
+
 
   return (
     <div className={classes.root}>
@@ -300,7 +378,7 @@ window.location.href='/admin/pages/CustomizedOrders'
             </Badge>
           </IconButton>
           
-          <img src={`/${Dt.emp_img}`} onClick={handleClick} className={classes.profile_img}/>
+          <img src={`/${Dts.emp_img}`} onClick={handleClick} className={classes.profile_img}/>
           <Menu
         id="simple-menu"
         anchorEl={anchorEl}
@@ -329,125 +407,53 @@ window.location.href='/admin/pages/CustomizedOrders'
         <Divider />
         <List style={{backgroundColor: 'rgb(37,37,94)', color:'white'}}>{mainListItems}</List>
         
-        
+      
       </Drawer>
       </div>
-      <main className={classes.content}>
+      <main  className={classes.content}>
         <div className={classes.appBarSpacer} />
         <Container maxWidth="lg" className={classes.container}>
-          <Grid container spacing={18}>
+          <Grid container spacing={20} >
         
             
             
 
             {/* Recent Orders */}
-            <Grid item xs={11} direction="row"  >
-            <Paper className={classes.paper}>
-            <div>
-              <Typography component="h1" variant="h6" color="inherit" align="left" width="100%" noWrap className={classes.title}>
-                    <strong> MY PROFILE</strong>
-              </Typography>
-              <br></br>
-              <div style={{display:'flex',backgroundColor:'#f2f3f4',borderRadius:'10px'}}>
-
-                  <div style={{width:'300px'}}>
-                  <img src={`/${Dt.emp_img}`} className={classes.user1} align='center'></img>
-
-                  <h2 style={{textAlign:'center'}}>{Dt.name}</h2> <br/>
-                 <Button href='/UpdateProfile' style={{color:'white',textDecoration:'none',borderRadius:'10px',backgroundColor:'green',fontSize:'18px',border:'none',width:'200px',marginLeft:'30px'}} >Edit Profile</Button>
-                 
-             
-                  </div>
-               <div style={{width:'800px',fontSize:'16px',Color:'white'}}>
-               <Form >
-              <Form.Group as={Row} controlId="formHorizontalName">
-                  <Form.Label column lg={3} >
-                   Employee ID :
-                  </Form.Label>
-                  <Col >
-                  <Form.Label column lg={4} >
-                   {Dt.id}
-                  </Form.Label>
-                  </Col>
-              </Form.Group><br/>
-              <Form.Group as={Row} controlId="formHorizontalName">
-                  <Form.Label column lg={3} >
-                   Full Name :
-                  </Form.Label>
-                  <Col >
-                  <Form.Label  column lg={4}>
-                  {Dt.name}
-                  </Form.Label>
-                  </Col>
-              </Form.Group><br/>
-              <Form.Group as={Row} controlId="formHorizontalName">
-                  <Form.Label column lg={3} >
-                   NIC :
-                  </Form.Label>
-                  <Col >
-                  <Form.Label column lg={2} >
-                  {Dt.NIC}
-                  </Form.Label>
-                  </Col>
-              </Form.Group><br/>
-              <Form.Group as={Row} controlId="formHorizontalName">
-                  <Form.Label column lg={3} >
-                   Email :
-                  </Form.Label>
-                  <Col >
-                  <Form.Label column lg={2} >
-                  {Dt.email} 
-                  </Form.Label>
-                  </Col>
-              </Form.Group><br/>
-              <Form.Group as={Row} controlId="formHorizontalName">
-                  <Form.Label column lg={3} >
-                   Phone No :
-                  </Form.Label>
-                  <Col >
-                  <Form.Label column lg={2} >
-                   {Dt.phone_no} 
-                  </Form.Label>
-                  </Col>
-              </Form.Group><br/>
-              <Form.Group as={Row} controlId="formHorizontalName">
-                  <Form.Label column lg={3} >
-                   Address :
-                  </Form.Label>
-                  <Col >
-                  <Form.Label column lg={2} >
-                    {Dt.address} 
-                  </Form.Label>
-                  </Col>
-              </Form.Group><br/>
-              
-              <Form.Group as={Row} controlId="formHorizontalName">
-                  <Form.Label column lg={3} >
-                   Job start Date :
-                  </Form.Label>
-                  <Col >
-                  <Form.Label column lg={2} >
-                  {dateOnly(Dt.job_start_date)}
-                  </Form.Label>
-                  </Col>
-              </Form.Group><br/>
-
-              </Form> 
-               </div>
+            <Grid item xs={10} direction="row"  >
+            
            
+            <div >
+              <Paper className={classes.paper}>
+              <Typography component="h3" variant="h6" color="inherit"  align="center" width="100%" noWrap className={classes.title}>
+              <strong>ORDER REJECT</strong>
+              
+            </Typography><br/>
+            <p style={{marginLeft:'20px',fontSize:'18px'}}>Sorry, Your Order has been rejected. We couldn't make the order that you are requested.</p>
+            <div display='flex' align='center'>
+            <Button type='submit' color="primary"  style={{marginLeft:'1px',marginRight:'20px'}} onClick={()=>{statusUpdate(Dt.cus_product_id)}} >
+           Send
+          </Button>
+
+          <Button style={{marginLeft:'20px'}} onClick={handleClose1} style={{color:'white',backgroundColor:'red',border:'none'}}>
+            Cancel
+          </Button>
+          </div>
+            
+              </Paper>
+              
               </div>
              
-              </div><br/>
-              
-            </Paper>
             </Grid>
  
           </Grid>
           
-         
+          <Box pt={4}>
+            <Copyright />
+          </Box>
         </Container>
       </main>
     </div>
   );
 }
 
+  

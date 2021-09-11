@@ -1,13 +1,13 @@
-import React from 'react';
+import React,{useEffect,useState} from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
-import { useState,useEffect } from 'react';
-import { useParams } from 'react-router-dom';
 import clsx from 'clsx';
+import {useParams} from "react-router-dom"
 import {toast} from 'react-toastify'
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Drawer from '@material-ui/core/Drawer';
+import Box from '@material-ui/core/Box';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import List from '@material-ui/core/List';
@@ -82,9 +82,9 @@ const useStyles = makeStyles((theme) => ({
   menuButton: {
     marginRight: 36,
   },
-  // menuButtonHidden: {
-  //   display: 'none',
-  // },
+  menuButtonHidden: {
+    display: 'none',
+  },
   title: {
     flexGrow: 1,
     fontSize:40,
@@ -124,14 +124,6 @@ const useStyles = makeStyles((theme) => ({
     align:'center',
     
   },
-  user1:{
-    width:'150px',
-    height:'150px',
-    marginTop:'20px',
-    align:'center',
-    marginLeft:'60px',
-    borderRadius:'80px'
-},
   paper: {
     position:'relative',
     align:'center',
@@ -141,7 +133,6 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
    
   },
-  
   fixedHeight: {
     height: 240,
   },
@@ -155,8 +146,6 @@ const useStyles = makeStyles((theme) => ({
     borderRadius:'50px'
   }
   
-  
-  
 }));
 
 const styles = {
@@ -169,22 +158,46 @@ const styles = {
 
 
 
-export default function ViewProfile() {
-
-    const dateOnly = (d) => {
-        const date = new Date(d);
-        const year = date.getFullYear();
-        const month = date.getMonth() + 1;
-        const day = date.getDate();
-        return `${year} - ${month} - ${day}`;
-      };
+export default function EditGifts() {
 
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
-  
+  const [state,setState]=useState({file:'',product_img:'',message:'',success:false})
+  const {product_id} = useParams();
+ const [Dt, setDt] = useState([])
+ const [newName, setNewName] = useState();
+ const [newPrice, setNewPrice] = useState();
+ const [newProduct_img,setNewProduct_img]=useState();
+ const [newQuantity,setNewQuantity]=useState();
+ 
+ const [giftList,setGiftList]=useState([])
+ useEffect(()=>{
+   axios.get("http://localhost:3001/loadGift").then((response)=>{
+     setGiftList(response.data)
+   })
+ },[])
 
-  const { id } = useParams();
-  const [Dt, setDt] = useState([])
+ useEffect(() => {
+  const fetchData = async () => {
+      const response = await axios.get('http://localhost:3001/viewGift', {
+          params: {
+            product_id:  product_id,
+              
+          }
+      });
+
+      setDt(response.data[0]);
+      setNewName(response.data[0].product_name)
+      setNewPrice(response.data[0].price)
+      setNewProduct_img(response.data[0].product_img)
+      setNewQuantity(response.data[0].quantity)
+        
+  };
+  fetchData();
+}, [product_id]);
+
+const { id } = useParams();
+  const [Dts, setDts] = useState([])
  
  useEffect(() => {
   const fetchData = async () => {
@@ -195,15 +208,20 @@ export default function ViewProfile() {
           
       });
 
-      setDt(response.data[0]);
+      setDts(response.data[0]);
          console.log(response.data[0]);
 
   };
   fetchData();
 }, [id]);
 
+const [anchorEl, setAnchorEl] = React.useState(null);
 
-const [cusorderCount,setCusOrderCount]=useState([])
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const [cusorderCount,setCusOrderCount]=useState([])
   useEffect(()=>{
     axios.get("http://localhost:3001/CustomizedOrderCount").then((response)=>{
       setCusOrderCount(response.data)
@@ -240,15 +258,55 @@ const [cusorderCount,setCusOrderCount]=useState([])
   const customizedcount=cusorderCount.map(record=>record.count);
   const total=Number(customizedcount);
 
-
 const Cuspage=()=>{
 window.location.href='/admin/pages/CustomizedOrders'
 }
 
+  
 
 
+
+const updateGift = (ID) => {
+  if(state.file)
+  {
+    let formData=new FormData();
+    formData.append('file',state.file) 
+    axios.post('http://localhost:3001/imageUpload',formData,{
+        'content-Type':'multipart/form-data',
+      })
+
+  axios.put("http://localhost:3001/updateGift", { product_name: newName,price:newPrice,product_img:state.file.name,quantity:newQuantity,product_id: product_id}).then(
+    (response) => {
+      
+      setGiftList(Dt.map((val) => {
+        return val.product_id === product_id ? {product_id: val.product_id,  product_name: val.product_name, price: val.price,product_img:val.product_img,quantity:val.quantity, 
+          name: newName,price:newPrice,product_img:newProduct_img,quantity:newQuantity } : val
+        
+      }))
   
+    }
   
+  )
+  alert("Gift Edited successfully") 
+  } 
+};
+
+const handleInput =(e) =>{
+  let reader =new FileReader();
+  let file=e.target.files[0]
+  reader.onloadend =() =>{
+    setState({
+      ...state,
+      file:file,
+      product_img:reader.result,
+      message:""
+    })
+  }
+  reader.readAsDataURL(file);
+}
+  
+
+
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -257,11 +315,7 @@ window.location.href='/admin/pages/CustomizedOrders'
     setOpen(false);
   };
 
-  const [anchorEl, setAnchorEl] = React.useState(null);
-
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
+ 
 
   const handleClose = () => {
     setAnchorEl(null);
@@ -300,7 +354,7 @@ window.location.href='/admin/pages/CustomizedOrders'
             </Badge>
           </IconButton>
           
-          <img src={`/${Dt.emp_img}`} onClick={handleClick} className={classes.profile_img}/>
+          <img src={`/${Dts.emp_img}`} onClick={handleClick} className={classes.profile_img}/>
           <Menu
         id="simple-menu"
         anchorEl={anchorEl}
@@ -328,8 +382,7 @@ window.location.href='/admin/pages/CustomizedOrders'
         </div>
         <Divider />
         <List style={{backgroundColor: 'rgb(37,37,94)', color:'white'}}>{mainListItems}</List>
-        
-        
+      
       </Drawer>
       </div>
       <main className={classes.content}>
@@ -342,109 +395,87 @@ window.location.href='/admin/pages/CustomizedOrders'
 
             {/* Recent Orders */}
             <Grid item xs={11} direction="row"  >
-            <Paper className={classes.paper}>
-            <div>
-              <Typography component="h1" variant="h6" color="inherit" align="left" width="100%" noWrap className={classes.title}>
-                    <strong> MY PROFILE</strong>
-              </Typography>
-              <br></br>
-              <div style={{display:'flex',backgroundColor:'#f2f3f4',borderRadius:'10px'}}>
+            
+  
+            <div >
+              <Paper className={classes.paper}>
+              <Typography component="h1" variant="h6" color="inherit"  align="center" width="100%" noWrap className={classes.title}>
+              <strong>UPDATE GIFT DETAILS</strong>
+            </Typography><br/>
 
-                  <div style={{width:'300px'}}>
-                  <img src={`/${Dt.emp_img}`} className={classes.user1} align='center'></img>
+            
+            <Form>
 
-                  <h2 style={{textAlign:'center'}}>{Dt.name}</h2> <br/>
-                 <Button href='/UpdateProfile' style={{color:'white',textDecoration:'none',borderRadius:'10px',backgroundColor:'green',fontSize:'18px',border:'none',width:'200px',marginLeft:'30px'}} >Edit Profile</Button>
-                 
-             
-                  </div>
-               <div style={{width:'800px',fontSize:'16px',Color:'white'}}>
-               <Form >
-              <Form.Group as={Row} controlId="formHorizontalName">
-                  <Form.Label column lg={3} >
-                   Employee ID :
-                  </Form.Label>
-                  <Col >
-                  <Form.Label column lg={4} >
-                   {Dt.id}
-                  </Form.Label>
-                  </Col>
-              </Form.Group><br/>
-              <Form.Group as={Row} controlId="formHorizontalName">
-                  <Form.Label column lg={3} >
-                   Full Name :
-                  </Form.Label>
-                  <Col >
-                  <Form.Label  column lg={4}>
-                  {Dt.name}
-                  </Form.Label>
-                  </Col>
-              </Form.Group><br/>
-              <Form.Group as={Row} controlId="formHorizontalName">
-                  <Form.Label column lg={3} >
-                   NIC :
-                  </Form.Label>
-                  <Col >
-                  <Form.Label column lg={2} >
-                  {Dt.NIC}
-                  </Form.Label>
-                  </Col>
-              </Form.Group><br/>
-              <Form.Group as={Row} controlId="formHorizontalName">
-                  <Form.Label column lg={3} >
-                   Email :
-                  </Form.Label>
-                  <Col >
-                  <Form.Label column lg={2} >
-                  {Dt.email} 
-                  </Form.Label>
-                  </Col>
-              </Form.Group><br/>
-              <Form.Group as={Row} controlId="formHorizontalName">
-                  <Form.Label column lg={3} >
-                   Phone No :
-                  </Form.Label>
-                  <Col >
-                  <Form.Label column lg={2} >
-                   {Dt.phone_no} 
-                  </Form.Label>
-                  </Col>
-              </Form.Group><br/>
-              <Form.Group as={Row} controlId="formHorizontalName">
-                  <Form.Label column lg={3} >
-                   Address :
-                  </Form.Label>
-                  <Col >
-                  <Form.Label column lg={2} >
-                    {Dt.address} 
-                  </Form.Label>
-                  </Col>
-              </Form.Group><br/>
-              
-              <Form.Group as={Row} controlId="formHorizontalName">
-                  <Form.Label column lg={3} >
-                   Job start Date :
-                  </Form.Label>
-                  <Col >
-                  <Form.Label column lg={2} >
-                  {dateOnly(Dt.job_start_date)}
-                  </Form.Label>
-                  </Col>
-              </Form.Group><br/>
+<Form.Group as={Row} controlId="formHorizontalName">
+     <Form.Label column lg={2} >
+      Gift Name :
+     </Form.Label>
+     <Col >
+       <Form.Control type="text" 
+      defaultValue={newName}
+      onChange={(event)=> {
+        setNewName(event.target.value);
+      }}
+       />
+     </Col>
+   </Form.Group><br/>
 
-              </Form> 
-               </div>
-           
+   <Form.Group as={Row} controlId="formHorizontalPrice">
+     <Form.Label column lg={2} >
+     Points :
+     </Form.Label>
+     <Col >
+       <Form.Control type="text" defaultValue={newPrice}
+       onChange={(event)=> {
+         setNewPrice(event.target.value);
+       }}
+       />
+     </Col>
+   </Form.Group><br/>
+  
+   
+<Form.Group as={Row} controlId="formHorizontalFile" className="mb-3">
+     <Form.Label column lg={2}>
+      Gift Image :</Form.Label>
+     <Col >
+       <Form.Control type="file" name="img" defaultValue={newProduct_img}   className={classes.imageInput}
+      onChange={handleInput}
+       />
+     </Col>
+     </Form.Group>  
+    
+
+   
+  
+   <Form.Group as={Row} controlId="formHorizontalQuantity">
+     <Form.Label column lg={2} >
+     Quantity :
+     </Form.Label>
+     <Col >
+       <Form.Control type="text" defaultValue={newQuantity}
+       onChange={(event)=> {
+         setNewQuantity(event.target.value);
+       }}
+       />
+     </Col>
+   </Form.Group><br/>
+   
+       <div align="center">
+       <Button  type="submit"   style={{fontSize:'20px',width:'200px'}} onClick={() => {updateGift(Dt.product_id)}}>Update</Button>
+       </div>
+      
+
+</Form>
+            
+              </Paper>
               </div>
-             
-              </div><br/>
-              
-            </Paper>
             </Grid>
  
           </Grid>
           
-         
+          <Box pt={4}>
+            <Copyright />
+          </Box>
         </Container>
       </main>
     </div>
