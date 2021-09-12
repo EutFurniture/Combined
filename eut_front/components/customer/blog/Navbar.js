@@ -202,8 +202,13 @@ export default function Navbar(userData) {
              customer_id:userData.userData.customer_id
             }
 
-            });
-            notify();
+            }).then((response)=>{
+                  notify();
+            })
+
+
+            
+           
       }
       const notify = () => {
 

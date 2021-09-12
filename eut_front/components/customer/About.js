@@ -96,5 +96,5 @@ class About extends Component {
 }
 
 export default GoogleApiWrapper({
-  apiKey: ('AIzaSyCaAPmnObVzSqtR1EW_Hut0FX0s1PTtsn8')
+  apiKey: ('AIzaSyBdaYp-FVpEqZASGxbydD9N2VVtY-sjeL8')
 })(About);
