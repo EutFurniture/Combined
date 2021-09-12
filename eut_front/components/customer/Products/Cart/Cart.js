@@ -8,6 +8,15 @@ import { makeStyles } from '@material-ui/core/styles';
 import Footer from '../../Footer'
 import DeleteIcon from '@material-ui/icons/Delete';
 import {apiurl} from '../../../../utils/common'
+import Navbar from '../../blog/Navbar'
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
+//import Link from '@material-ui/core/Link';
+import IconButton from '@material-ui/core/IconButton';
+import AddShoppingCart from '@material-ui/icons/AddShoppingCart';
+import NotificationsIcon from '@material-ui/icons/Notifications';
+import Badge from '@material-ui/core/Badge';
 const useStyles = makeStyles((theme) => ({
     container2: {
         marginLeft: '85%',
@@ -19,7 +28,8 @@ const useStyles = makeStyles((theme) => ({
         fontWeight: 'bold',
         textAlign: 'center'
 
-    }
+    },
+    
 
 }));
 export default function Cart(userData) {
@@ -78,7 +88,7 @@ export default function Cart(userData) {
         }
     }
 
-    const decreaseQuantity = async (customer_id, product_id, price) => {
+    const decreaseQuantity = async (product_id, price) => {
         
         const response4= await axios.get(apiurl +'/qut', {
             params: {
@@ -169,24 +179,24 @@ export default function Cart(userData) {
                     oid: o_id,
                     pid:a.product_id,
                     quty:a.quantity,
-                   total:a.totalprice
+                    total:a.totalprice
                 }
                
             });
         
         
         
-        });
-       
-            
+        });    
 
-        clearCart()
-
+        clearCart();
+        window.location.href=`/customer/checkout/${o_id}`;
 
     }
 
     return ( 
   <Fragment>
+
+
       {cartCount == 0 ? <EmptyCart /> :
         <Fragment>
        
@@ -211,7 +221,7 @@ export default function Cart(userData) {
                             <div className="col-10 mx-auto col-lg-2 my-2 my-lg-0">
                                 <div className="d-flex justify-content-center">
                                     <div>
-                                        <span className="btn btn-black mx-1" onClick={() => decreaseQuantity(item.customer_id, item.product_id, item.price)}>
+                                        <span className="btn btn-black mx-1" onClick={() => decreaseQuantity( item.product_id, item.price)}>
                                             -
                                         </span>
                                         <span className="btn btn-black mx-1">
@@ -267,13 +277,14 @@ export default function Cart(userData) {
                             </span>
                             <strong>Rs{total}</strong>
                         </h5>
-                        <button id="cart-to" onClick={() => insertorder(total)} className="btn btn-primary text-uppercase mb-2 px-3 mr-2"> <Link to={location =>`/customer/checkout/${userData.userData.customer_id}/${order}`} className="payment">Payhere</Link></button>
+                        <button id="cart-to" onClick={() => insertorder(total)} className="btn btn-primary text-uppercase mb-2 px-3 mr-2">pay</button>
                     </div>
                 </div>
             </div>
-           
+        
         </Fragment>
 }
+{/* <Link to={location =>`/customer/checkout/${userData.userData.customer_id}`} className="payment">Payhere</Link> */}
 
 <Footer />
         </Fragment>  

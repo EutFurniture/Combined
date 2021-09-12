@@ -208,7 +208,7 @@ export default function AddReturnedItem(userData) {
       
     }
   fetchData();
-  }, [employee_id]);      
+  }, []);      
 
 
 
@@ -292,9 +292,7 @@ export default function AddReturnedItem(userData) {
         </div>
         <Divider/>
         <List style={{backgroundColor: 'rgb(37, 37, 94)', color:'white'}}>{DpListItems}</List>
-        <Divider/>
-        <List style={{backgroundColor: 'rgb(37, 37, 94)', color:'white'}}>{Logout}</List>
-        <Divider/>
+
       </Drawer>
       </div>
      
@@ -317,16 +315,16 @@ export default function AddReturnedItem(userData) {
                 <div ><br/>
            
                 <div align = 'right'>
-            <Link  to='/AddForm' className="Addbtn"><AddCircleIcon style={{marginTop:'5px'}}/> Add New </Link> <br/>
+            <Link  to='/dPerson/AddForm' className="Addbtn"><AddCircleIcon style={{marginTop:'5px'}}/> Add New </Link> <br/>
             </div>        
                
         <Table striped bordered hover responsive>
         <thead className="tableheading">
           <tr>
-          <th scope="col">Order ID</th>
-            <th scope="col">Customer Name</th>
-            <th scope='col'>Address</th>
-            <th align="center">Phone Number</th>
+          <th scope="col">Return ID</th>
+            <th scope="col">Order ID</th>
+            <th scope='col'>Product ID</th>
+            <th align="center">Return Date</th>
             <th scope='col'>Action</th>
           </tr>
         </thead> 

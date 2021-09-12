@@ -1,34 +1,18 @@
 import React, { useState, useEffect } from "react";
-import clsx from 'clsx';
 import axios from "axios";
-
 import Form from 'react-bootstrap/Form';
 import { Button } from 'react-bootstrap';
 import { Row } from 'react-bootstrap';
 import { Col } from 'react-bootstrap';
-import { Redirect, useParams, Link } from "react-router-dom"
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+import {  useParams, Link } from "react-router-dom"
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import Drawer from '@material-ui/core/Drawer';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import List from '@material-ui/core/List';
+
 import Typography from '@material-ui/core/Typography';
-import IconButton from '@material-ui/core/IconButton';
-import Badge from '@material-ui/core/Badge';
+
 import Container from '@material-ui/core/Container';
 import Paper from '@material-ui/core/Paper';
-import MenuIcon from '@material-ui/icons/Menu';
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import NotificationsIcon from '@material-ui/icons/Notifications';
 import Grid from '@material-ui/core/Grid';
-import Divider from '@material-ui/core/Divider';
-import { useForm } from "react-hook-form";
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
 import Footer from "./Footer";
 import { Fragment } from "react";
 
@@ -148,13 +132,6 @@ update:{
 
 }));
 
-const styles = {
-  side: {
-    // backgroundColor:'rgb(37, 37, 94)',
-  }
-};
-
-
 
 
 export default function UpdateEmployee(userData) {
@@ -217,7 +194,7 @@ export default function UpdateEmployee(userData) {
 
 
       })
-      axios.put("http://localhost:3001/updateEmployee", { fname: newName, email: newEmail, address: newAddress, phone: newPhone_no, password: newpassword, proimg:state.file.name, customer_id: customer_id }).then(
+      axios.put("http://localhost:3001/updatecustomerimage", { fname: newName, email: newEmail, address: newAddress, phone: newPhone_no, password: newpassword, proimg:state.file.name, customer_id: customer_id }).then(
         (response) => {
 
           setEmployeeList(Dt.map((val) => {
@@ -235,7 +212,7 @@ export default function UpdateEmployee(userData) {
         axios.put("http://localhost:3001/updatecustomer", { fname: newName, email: newEmail, address: newAddress, phone: newPhone_no, password: newpassword, customer_id: customer_id }).then(
         (response) => {
 
-          setEmployeeList(Dt.map((val) => {
+          setEmployeeList( Dt.map((val) => {
             return val.customer_id === customer_id ? {
               customer_id: val.customer_id, fname: val.name, email: val.email, address: val.address, phone: val.phone_no, password: val.password,
               fname: newName, email: newEmail, address: newAddress, phone_no: newPhone_no, password: newpassword

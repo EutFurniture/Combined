@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from "react";
-import { FaBlackberry, FaStar } from 'react-icons/fa'
+import React, { useState } from "react";
+import { FaStar } from 'react-icons/fa'
 import Box from '@material-ui/core/Box';
 import { makeStyles } from '@material-ui/core/styles';
 import { Fragment } from "react";
 import Footer from "./Footer";
 import Blog from './blog/Blog';
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import {  useParams } from "react-router-dom";
+
 const colors = {
     orange: "#FFBA5A",
     grey: "#a9a9"
@@ -47,8 +48,7 @@ const Feedback = (userData) => {
     const [currentValue, setCurrentValue] = useState(0);
     const [hoverValue, setHovervalue] = useState(undefined);
     const [discript, setDiscript] = useState("");
-    const [Dt, setDt] = useState("");
-
+    const { customer_id } = useParams();
     const handleClick = value => {
         setCurrentValue(value)
     };
@@ -64,14 +64,17 @@ const Feedback = (userData) => {
 
     const submit = () => {
 
-        axios.put('http://localhost:3001/feedback', {
+        axios.get('http://localhost:3001/feedback', {
             currentValue: currentValue,
             discript: discript,
+            params:{
             customer_id: userData.userData.customer_id,
+            }
 
         }
 
         );
+        alert("successfully submitted.")
         console.log(discript);
         console.log(currentValue);
 

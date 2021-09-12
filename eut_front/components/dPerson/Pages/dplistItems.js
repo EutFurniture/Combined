@@ -4,20 +4,17 @@ import { Link } from 'react-router-dom'
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import Search from '@material-ui/icons/Search';
-import MyLocationIcon from '@material-ui/icons/MyLocation';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import PowerSettingsNewIcon from '@material-ui/icons/PowerSettingsNew';
 import DoneOutlineSharpIcon from '@material-ui/icons/DoneOutlineSharp';
 import RoomSharpIcon from '@material-ui/icons/RoomSharp';
-import CalendarTodayIcon from '@material-ui/icons/CalendarToday';
 import PersonIcon from '@material-ui/icons/Person';
 export const DpListItems = (
   <div  style={{backgroundColor: '#25255e'}}>
-    <ListItem button component={Link} to="/DpDashboard">
+    <ListItem button component={Link} to="/dPerson/DpDashboard">
       <ListItemIcon style={{color:'white'}}>
         <DashboardIcon />
       </ListItemIcon>
@@ -47,23 +44,20 @@ export const DpListItems = (
       </ListItemIcon>
       <ListItemText primary="ConfirmDelivery" />
       </ListItem>
-    <ListItem button component={Link} to="/Maps">
+    <ListItem button component={Link} to="/dPerson/Maps">
       <ListItemIcon style={{color:'white'}}>
         < RoomSharpIcon />
       </ListItemIcon>
       <ListItemText primary="Maps" />
     </ListItem>
-    
 
-<<<<<<< HEAD
+
  {/*} <ListItem button component={Link} to="/Locate">
       <ListItemIcon style={{color:'white'}}>
         < MyLocationIcon />
       </ListItemIcon>
       <ListItemText primary="Locate Me" />
 </ListItem> */}
-=======
->>>>>>> f0c375afff26ba37d8412cc38429f56277ebc6e7
 
    <ListItem button component={Link} to="/dPerson/DpProfile">
       <ListItemIcon style={{color:'white'}}>
@@ -73,7 +67,13 @@ export const DpListItems = (
     </ListItem>
     <br/>
      
-
+  {/*} <ListItem button component={Link} to="/CalendarEvent">
+      <ListItemIcon style={{color:'white'}}>
+        < MyLocationIcon />
+      </ListItemIcon>
+      <ListItemText primary="Events" />
+</ListItem> 
+<br/> */}
      
   </div>
 );

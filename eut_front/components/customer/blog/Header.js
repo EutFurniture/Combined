@@ -1,6 +1,6 @@
-import React,{useState} from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { makeStyles,withStyles } from '@material-ui/core/styles';
+import { makeStyles, withStyles } from '@material-ui/core/styles';
 import Toolbar from '@material-ui/core/Toolbar';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
@@ -18,10 +18,10 @@ import AccountCircle from '@material-ui/icons/AccountCircle';
 import ExitToApp from '@material-ui/icons/ExitToApp';
 import Modal from '@material-ui/core/Modal';
 import NotificationsIcon from '@material-ui/icons/Notifications';
-import {Redirect} from 'react-router-dom';
 import Badge from '@material-ui/core/Badge';
 import axios from 'axios';
-import {toast} from 'react-toastify'
+import AppBar from '@material-ui/core/AppBar';
+import { toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import Dialog from '@material-ui/core/Dialog';
 import MuiDialogTitle from '@material-ui/core/DialogTitle';
@@ -30,69 +30,73 @@ import MuiDialogActions from '@material-ui/core/DialogActions';
 import CloseIcon from '@material-ui/icons/Close';
 import { useParams } from "react-router-dom";
 
-function rand() {
-  return Math.round(Math.random() * 20) - 10;
-}
+
 
 
 const useStyles = makeStyles((theme) => ({
- 
- 
+  '@global': {
+    ul: {
+      margin: 0,
+      padding: 0,
+      listStyle: 'none',
+    },
+  },
+  appBar: {
+    borderBottom: `1px solid ${theme.palette.divider}`,
+  },
+
   toolbarSecondary: {
-    justifyContent:"space-between",
-    //overflowX: 'auto',
-    backgroundColor:'rgb(226, 226, 230)',
-    color:'black',  
-    
-       padding:"1%",
+    backgroundColor: 'rgb(226, 226, 230)',
+    color: 'black',
+
+    padding: "1%",
+
     boxShadow: theme.shadows[5],
   },
-  toolbarTitle:{
-    fontWeight:'bold',
-    
- justifyContent:'flex-start',
-    display:'grid',
+  toolbarTitle: {
+    flexGrow: 1,
+    fontWeight: 'bold'
   },
   toolbarLink: {
-    justifyContent:'flex-end',
-    display:'grid',
-    fontWeight:'bold',
-    padding: theme.spacing(1),
+
+    margin: theme.spacing(1, 1.5),
+    fontWeight: 'bold',
     flexShrink: 0,
-    textDecoration:'none',
-    '&:focus':{
-      backgroundColor:'black',
-      color:'white',
-     textDecoration:'none',
+    padding: theme.spacing(1),
+    textDecoration: 'none',
+    '&:focus': {
+      backgroundColor: 'black',
+      color: 'white',
+      textDecoration: 'none',
     },
-    '&:hover':{
-      backgroundColor:'black',
-      color:'white',
-     textDecoration:'none',
+    '&:hover': {
+      backgroundColor: 'black',
+      color: 'white',
+      textDecoration: 'none',
     }
   },
-  head:{
-    fontWeight:'bold',
-    color:'grey',
+  head: {
+    fontWeight: 'bold',
+    color: 'grey',
 
   },
-  check:{
-    backgroundColor:'grey',
-    fontWeight:'bold',
+  check: {
+    backgroundColor: 'grey',
+    fontWeight: 'bold',
   },
-  ass:{
-    textDecoration:'none',
-    color:"white",
-    '&:hover':{
-      textDecoration:'none',
-      color:'white',
+  ass: {
+    textDecoration: 'none',
+    color: "white",
+    '&:hover': {
+      textDecoration: 'none',
+      color: 'white',
     }
   }
-  
+
 }));
 
 const StyledMenu = withStyles({
-  
+
   paper: {
     border: '1px solid #d3d4d5',
   },
@@ -124,10 +128,10 @@ const StyledMenuItem = withStyles((theme) => ({
 }))(MenuItem);
 
 const styles = (theme) => ({
-  root: {
-    margin: 0,
-    padding: theme.spacing(2),
-  },
+  // root: {
+  //   margin: 0,
+  //   padding: theme.spacing(2),
+  // },
   closeButton: {
     position: 'absolute',
     right: theme.spacing(1),
@@ -135,16 +139,16 @@ const styles = (theme) => ({
     color: theme.palette.grey[500],
   },
 
-  gift:{
-    padding:"20px",
-    position:"relative",
-    right:"20%",
-    marginTop:'80%',
-    backgroundCloor:"black",
-    color:'white',
+  gift: {
+    padding: "20px",
+    position: "relative",
+    right: "20%",
+    marginTop: '80%',
+    backgroundCloor: "black",
+    color: 'white',
   },
-  
- 
+
+
 });
 
 
@@ -179,314 +183,315 @@ const DialogActions = withStyles((theme) => ({
 
 export default function Header(props) {
   const classes = useStyles();
-  const { sections, title,cust } = props;
+  const { title, sections, cust } = props;
   const { customer_id } = useParams();
-  const [anchorEl, setAnchorEl] = useState(null );
-  const [isAuth, setIsAuth]= useState(true);
+  const [anchorEl, setAnchorEl] = useState(null);
+
   const [open, setOpen] = useState(false);
-  const [cusorderCount,setCusOrderCount]=useState([])
-  const [cartCount,setCartCount]=useState([])
-  const [customer,setCustomer]=useState([])
-  
-  const  logout = (req,res) => {
-    req.session.destroy((err) =>{
-       res.redirect('/landing');
-    })
-};
-  
-if(!isAuth){
-  return <Redirect to='/landing' />
-}
+  const [cusorderCount, setCusOrderCount] = useState([])
+  const [cartCount, setCartCount] = useState([])
+  const [customer, setCustomer] = useState([])
+
+
+
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
-  toast.configure()
-  const a=cust.customer_id
 
-   const response1= axios.get("http://localhost:3001/CRcustorder",{
-    params:{
-      customer_id:a,
-    }
-   }).then((response)=>{
-      setCusOrderCount(response.data)
-      
+  const logout = () => {
+    axios.post("http://localhost:3001/logout").then((response) => {
+      window.location.href = '/'
     })
-    const response2= axios.get("http://localhost:3001/cartCount",{
-      params:{
-        customer_id:a,
-      }
-    }).then((response)=>{
-      setCartCount(response.data)
-     
-      
-    })
-    const response3= axios.get("http://localhost:3001/customer",{
-      params:{
-        customer_id:a,
-      }
-    }).then((response)=>{
-      setCustomer(response.data)
-      
-    })
-    
-   const point=customer.map(record=>record.points)
-  
-     
-    
+  }
+
+
+
+  toast.configure()
+
+
+
+
+  //  const response1= axios.get("http://localhost:3001/CRcustorder",{
+  //   params:{
+  //     customer_id:a,
+  //   }
+  //  }).then((response)=>{
+  //     setCusOrderCount(response.data)
+
+  //   })
+  //   const response2= axios.get("http://localhost:3001/cartCount",{
+  //     params:{
+  //       customer_id:a,
+  //     }
+  //   }).then((response)=>{
+  //     setCartCount(response.data)
+
+
+  //   })
+  //   const response3= axios.get("http://localhost:3001/customer",{
+  //     params:{
+  //       email:b,
+  //     }
+  //   }).then((response)=>{
+  //     setCustomer(response.data)
+
+  //   })
+
+  //  const point=customer.map(record=>record.points)
+
+
+
   const handleClose = () => {
     setAnchorEl(null);
   };
   const handleOpen = () => {
     setOpen(true);
   };
- 
 
-  const handleCloses= () => {
+
+  const handleCloses = () => {
     setOpen(false);
   };
-  
+
   const NotificationClick = async () => {
     const response = await axios.get('http://localhost:3001/customerNoficationActive', {
-       
-        
+
+
     });
     notify();
   }
-  const notify=()=>{
-   
-    toast.info(customToast,{position:toast.POSITION.TOP_RIGHT,autoClose:false})
-  
-  
-      }
+  const notify = () => {
 
-      const customToast=()=>{
-        return(
-          <div>
-            Hello,
-            Your customized Order has confirmed.
-            Pay the advance payment for this product.
-            <button style={{marginLeft:'10px',border:'none',backgroundColor:'white',padding:'5px 10px',borderRadius:'5px'}} onClick={Cuspage}>PAY</button>
-          </div>
-        )
-      }
-      const Cuspage=()=>{
-        window.location.href='/customer/notification'
-      }
-     const customizedcount=cusorderCount.map(record=>record.count);
-     const cardcount=cartCount.map(record=>record.count);
-     console.log(customizedcount);
-     const emptybody = (
-      <div className="shap"> 
-     
-     
-     <Dialog onClose={handleCloses} aria-labelledby="customized-dialog-title" open={open}>
-      
-       <DialogContent dividers>
-         
-         <Typography gutterBottom>
-           Sorry,This service is not available for you.
-         </Typography>
-         
-       </DialogContent>
-       <DialogActions>
-         <Button autoFocus onClick={handleCloses} class='btn btn-primary'>
-             
-          Close
-          
-         </Button>
-       </DialogActions>
-     </Dialog>
-     </div>
-        
-    
-     
-       
-    );
+    toast.info(customToast, { position: toast.POSITION.TOP_RIGHT, autoClose: false })
+
+
+  }
+
+  const customToast = () => {
+    return (
+      <div>
+        Hello,
+        Your customized Order has confirmed.
+        Pay the advance payment for this product.
+        <button style={{ marginLeft: '10px', border: 'none', backgroundColor: 'white', padding: '5px 10px', borderRadius: '5px' }} onClick={Cuspage}>PAY</button>
+      </div>
+    )
+  }
+  const Cuspage = () => {
+    window.location.href = '/customer/notification'
+  }
+  // const customizedcount=cusorderCount.map(record=>record.count);
+  //    const cardcount=cartCount.map(record=>record.count);
+
+  const emptybody = (
+    <div className="shap">
+
+
+      <Dialog onClose={handleCloses} aria-labelledby="customized-dialog-title" open={open}>
+
+        <DialogContent dividers>
+
+          <Typography gutterBottom>
+            Sorry,This service is not available for you.
+          </Typography>
+
+        </DialogContent>
+        <DialogActions>
+          <Button autoFocus onClick={handleCloses} class='btn btn-primary'>
+
+            Close
+
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </div>
+
+
+
+
+  );
   const body = (
-    
-    <div className="shap"> 
- 
-   
-   <Dialog onClose={handleCloses} aria-labelledby="customized-dialog-title" open={open}>
-     <DialogTitle id="customized-dialog-title" onClose={handleCloses}>
-     <h3 className="gitt"> Surprise gift !</h3>
-     </DialogTitle>
-     <DialogContent dividers>
-       <Typography gutterBottom>
-        <img src="../../images/giftt.jpg" className="giftt" />
-       </Typography>
-       <Typography gutterBottom>
-         You got {point} points
-         so we  give small gift for you.
-       </Typography>
-       <Typography gutterBottom>
-        So you can order gift below Rs.{point} .
-       </Typography>
-     </DialogContent>
-     <DialogActions>
-       <Button autoFocus onClick={handleCloses} class='btn btn-primary'>
-           <Link href='/customer/gift' className={classes.ass}>
-         Select gift
-         </Link>
-       </Button>
-     </DialogActions>
-   </Dialog>
-   </div>
-    
-  
- 
-     
+
+    <div className="shap">
+
+
+      <Dialog onClose={handleCloses} aria-labelledby="customized-dialog-title" open={open}>
+        <DialogTitle id="customized-dialog-title" onClose={handleCloses}>
+          <h3 className="gitt"> Surprise gift !</h3>
+        </DialogTitle>
+        <DialogContent dividers>
+          <Typography gutterBottom>
+            <img src="../../images/giftt.jpg" className="giftt" />
+          </Typography>
+          <Typography gutterBottom>
+            You got  points
+            so we  give small gift for you.
+          </Typography>
+          <Typography gutterBottom>
+            So you can order gift below Rs. .
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button autoFocus onClick={handleCloses} class='btn btn-primary'>
+            <Link href='/customer/gift' className={classes.ass}>
+              Select gift
+            </Link>
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </div>
+
+
+
+
   );
 
-   
+
 
 
   return (
     <React.Fragment>
-   
-      <Toolbar component="nav"  className={classes.toolbarSecondary}>
-      <Typography
-          component="h2"
-          variant="h5"
-          color="inherit"
-          align="center"
-          noWrap
-          className={classes.toolbarTitle}
-        >
-          {title}
-        </Typography>
-          <Link
-            color="inherit"
-            noWrap
-            variant="body2"
-            href='/customer/dashboard'
-           
-            className={classes.toolbarLink}
-          >
-            Home
-          </Link>
+      <AppBar position="static" color="default" elevation={0} className={classes.appBar}>
 
-          <Link
+        <Toolbar className={classes.toolbarSecondary}>
+          <Typography
+            component="h2"
+            variant="h5"
             color="inherit"
+            align="center"
             noWrap
-            variant="body2"
-            href='/customer/about'
-            className={classes.toolbarLink}
+            className={classes.toolbarTitle}
           >
-            About Us
-          </Link>
+            {title}
+          </Typography>
+          <nav>
+            <Link
+              color="inherit"
+              noWrap
+              variant="body2"
+              href='/customer/dashboard'
 
-          <Link
-            color="inherit"
-            noWrap
-            variant="body2"
-            href='/customer/dining'
-            className={classes.toolbarLink}
-          >
-           Product
-          </Link>
+              className={classes.toolbarLink}
+            >
+              Home
+            </Link>
 
-          <Link
-            color="inherit"
-            noWrap
-            variant="body2"
-            href='/customer/customization'
-            className={classes.toolbarLink}
-          >
-           Customization
-          </Link>
+            <Link
+              color="inherit"
+              noWrap
+              variant="body2"
+              href='/customer/about'
+              className={classes.toolbarLink}
+            >
+              About Us
+            </Link>
 
-          <div>
-          <Link
-            color="inherit"
-            noWrap
-            aria-controls="customized-menu"
-            aria-haspopup="true"
-            onClick={handleClick}
-            variant="body2"
-            href='#'
-            className={classes.toolbarLink}
-          >
-           My Account
-          </Link>
-          <StyledMenu
-        id="customized-menu"
-        anchorEl={anchorEl}
-        keepMounted
-        open={Boolean(anchorEl)}
-        onClose={handleClose}
-      >
-        <StyledMenuItem onClick={handleClose}>
-          <ListItemIcon >
-            <AccountCircle fontSize="small" />
-          </ListItemIcon>
-          <Link color="inherit"  className={classes.toolbarLink} variant="body2" href="/customer/profile"><ListItemText primary="Profile" /></Link>
-        </StyledMenuItem>   
-        <StyledMenuItem onClick={handleClose}>     
-        <ListItemIcon >
-            <ListAlt fontSize="small" />
-          </ListItemIcon>
-          <Link color="inherit"  className={classes.toolbarLink} variant="body2" href="/customer/history"><ListItemText primary="Order History" /></Link>
-        </StyledMenuItem>
-        <StyledMenuItem onClick={handleClose}>     
-        <ListItemIcon >
-            <Feedback fontSize="small" />
-          </ListItemIcon>
-          <Link color="inherit"  className={classes.toolbarLink} variant="body2" href="/customer/feedback"><ListItemText primary="Feedback" /></Link>
-        </StyledMenuItem>
-        {/* <StyledMenuItem onClick={handleClose}>     
-        <ListItemIcon >
-        <Redeem fontSize="small" />
-          </ListItemIcon>
-          <Link color="inherit"  className={classes.toolbarLink} variant="body2" ><ListItemText primary="Gift Data" /></Link>
-        </StyledMenuItem> */}
-        <StyledMenuItem onClick={handleClose}>
-          <ListItemIcon>
-            <Redeem fontSize="small" />
-          </ListItemIcon>
-        
-         <Link color="inherit" className={classes.toolbarLink}  variant="body2" onClick={handleOpen}> <ListItemText primary="Gift Data" /></Link>
-         <Modal
-        open={open}
-        onClose={handleCloses}
-        aria-labelledby="simple-modal-title"
-        aria-describedby="simple-modal-description"
-      >
-       {body}
-     
-      </Modal>
-     
-        </StyledMenuItem>
-       
-        <StyledMenuItem onClick={handleClose}>
-          <ListItemIcon>
-            <ExitToApp fontSize="small" />
-          </ListItemIcon>
-         <Link color="inherit" href="/landing"  variant="body2" className={classes.toolbarLink} onClick={() =>setIsAuth(false)}> <ListItemText primary="Logout" /></Link>
-        </StyledMenuItem>
-      </StyledMenu>
-         
-        </div>
-        <Link
-            color="inherit"
-            noWrap
-            variant="body2"
-            href='/customer/cart'
-            className={classes.toolbarLink}
-          >
-          <Badge badgeContent={cardcount} color="secondary">
-           <AddShoppingCart />
-           </Badge>
-          </Link>
+            <Link
+              color="inherit"
+              noWrap
+              variant="body2"
+              href='/customer/dining'
+              className={classes.toolbarLink}
+            >
+              Product
+            </Link>
 
-          <IconButton color="inherit">
-            <Badge badgeContent={customizedcount} color="secondary">
-              <NotificationsIcon onClick={NotificationClick}/>
-            </Badge>
-          </IconButton>
-           
-      </Toolbar>
-     
+            <Link
+              color="inherit"
+              noWrap
+              variant="body2"
+              href='/customer/customization'
+              className={classes.toolbarLink}
+            >
+              Customization
+            </Link>
+
+            <div>
+              <Link
+                color="inherit"
+                noWrap
+                aria-controls="customized-menu"
+                aria-haspopup="true"
+                onClick={handleClick}
+                variant="body2"
+                href='#'
+                className={classes.toolbarLink}
+              >
+                <AccountCircle fontSize="small" />
+              </Link>
+              <StyledMenu
+                id="customized-menu"
+                anchorEl={anchorEl}
+                keepMounted
+                open={Boolean(anchorEl)}
+                onClose={handleClose}
+              >
+                <StyledMenuItem onClick={handleClose}>
+                  <ListItemIcon >
+                    <AccountCircle fontSize="small" />
+                  </ListItemIcon>
+                  <Link color="inherit" className={classes.toolbarLink} variant="body2" href="/customer/profile"><ListItemText primary="Profile" /></Link>
+                </StyledMenuItem>
+                <StyledMenuItem onClick={handleClose}>
+                  <ListItemIcon >
+                    <ListAlt fontSize="small" />
+                  </ListItemIcon>
+                  <Link color="inherit" className={classes.toolbarLink} variant="body2" href="/customer/history"><ListItemText primary="Order History" /></Link>
+                </StyledMenuItem>
+                <StyledMenuItem onClick={handleClose}>
+                  <ListItemIcon >
+                    <Feedback fontSize="small" />
+                  </ListItemIcon>
+                  <Link color="inherit" className={classes.toolbarLink} variant="body2" href="/customer/feedback"><ListItemText primary="Feedback" /></Link>
+                </StyledMenuItem>
+
+                <StyledMenuItem onClick={handleClose}>
+                  <ListItemIcon>
+                    <Redeem fontSize="small" />
+                  </ListItemIcon>
+
+                  <Link color="inherit" className={classes.toolbarLink} variant="body2" onClick={handleOpen}> <ListItemText primary="Gift Data" /></Link>
+                  <Modal
+                    open={open}
+                    onClose={handleCloses}
+                    aria-labelledby="simple-modal-title"
+                    aria-describedby="simple-modal-description"
+                  >
+                    {body}
+
+                  </Modal>
+
+                </StyledMenuItem>
+
+                <StyledMenuItem onClick={logout}>
+                  <ListItemIcon>
+                    <ExitToApp fontSize="small" />
+                  </ListItemIcon>
+                  <ListItemText primary="Logout" />
+                </StyledMenuItem>
+              </StyledMenu>
+
+            </div>
+            <Link
+              color="inherit"
+              noWrap
+              variant="body2"
+              href='/customer/cart'
+              className={classes.toolbarLink}
+            >
+              <Badge color="secondary">
+                <AddShoppingCart badgeContent />
+              </Badge>
+            </Link>
+
+            <IconButton onClick={NotificationClick} color="inherit">
+              <Badge badgeContent color="secondary">
+                <NotificationsIcon />
+              </Badge>
+            </IconButton>
+          </nav>
+        </Toolbar>
+      </AppBar>
     </React.Fragment>
   );
 }
@@ -494,4 +499,5 @@ if(!isAuth){
 Header.propTypes = {
   sections: PropTypes.array,
   title: PropTypes.string,
+  cust: PropTypes.number,
 };

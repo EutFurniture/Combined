@@ -21,7 +21,6 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import {Redirect} from "react-router-dom";
-import ViewConDelivery from './ViewConDelivery'
 import { DpListItems, Logout } from './dplistItems';
 import 'bootstrap/dist/css/bootstrap.min.css';
 function Copyright() {
@@ -240,6 +239,7 @@ export default function ConfirmDelivery(userData) {
            <AccountCircleIcon   onClick={handleClick}/>
   
           </IconButton>
+          
           <Menu
         id="simple-menu"
         anchorEl={anchorEl}
@@ -271,9 +271,7 @@ export default function ConfirmDelivery(userData) {
         </div>
         <Divider/>
         <List style={{backgroundColor: 'rgb(37, 37, 94)', color:'white'}}>{DpListItems}</List>
-        <Divider/>
-        <List style={{backgroundColor: 'rgb(37, 37, 94)', color:'white'}}>{Logout}</List>
-        <Divider/>
+
       </Drawer>
       </div>
      

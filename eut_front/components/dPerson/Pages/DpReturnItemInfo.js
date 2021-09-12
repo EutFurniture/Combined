@@ -1,6 +1,5 @@
 import clsx from 'clsx';
 import axios from "axios";
-import { Link} from "react-router-dom";
 import React, {useState, useEffect} from 'react';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import { makeStyles } from '@material-ui/core/styles';
@@ -11,7 +10,6 @@ import Toolbar from '@material-ui/core/Toolbar';
 import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
-import Badge from '@material-ui/core/Badge';
 import Container from '@material-ui/core/Container';
 import Paper from '@material-ui/core/Paper';
 import MenuIcon from '@material-ui/icons/Menu';
@@ -237,9 +235,7 @@ export default function DeliveryInfo() {
         <Divider />
         <List style={{backgroundColor: 'rgb(37,37,94)', color:'white'}}>{DpListItems}</List>
         
-        <Divider />
-        <List style={{backgroundColor: 'rgb(37,37,94)', color:'white'}}>{Logout}</List>
-        <Divider />
+
       </Drawer>
       </div>  
       <main className={classes.content}>

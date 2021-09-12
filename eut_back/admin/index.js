@@ -189,130 +189,8 @@ const upload=multer({storage,
 app.post("/upload",upload.single('file'),(req,res)=> {
    
 })
-app.get("/gift",(req,res) =>{
-    db.query("SELECT * FROM products WHERE category_id=5",(err,result) =>{
-     
-            if(err) throw err;
-                   res.send(result);
-                 });
-        
-   
-})
 
 
- 
-
-  app.post('/addNewEmployee',(req,res)=>{
-    
-    const name = req.body.name;
-    const NIC = req.body.NIC;
-    const email = req.body.email;
-    const phone_no = req.body.phone_no;
-    const job_start_date = req.body.job_start_date;
-    const confirm_password = req.body.confirm_password;
-    const address = req.body.address;
-    const role = req.body.role;
-    const password = req.body.password;
-  
-   
-    var transport = nodemailer.createTransport(
-      {
-          service:'gmail',
-          auth: {
-              user: 'eutfurniture.group45@gmail.com',
-              pass:'eutgroup45@#'
-          }
-      }
-  )
-  const otp = Math.floor(100000 + Math.random() * 900000);
-  const head = 'otp code';
-  const mess = `Dear ${name}, 
-
-                  Your otp code is ${otp}
-                  Use this code to verify your Account.
-
-              With regrads,
-              Eut Furniture Team`;
-  
-  var mailOptions = {
-      from : 'eutfurniture.group45@gmail.com',
-      to: email,
-      subject: head,
-      text: mess
-  }
-  
-  transport.sendMail(mailOptions,function(error,info){
-      if(error){
-          console.log(error)
-      }
-      else{
-          console.log('Email sent' + info.response)
-          bcrypt.hash(password,saltRounds,(err,hash)=>{
-      
-              if(err){
-                  console.log(err);
-              }
-
-              const sqlAdd="INSERT INTO employee(name, NIC, email, phone_no, job_start_date,address, role,password) VALUES ( ?, ?, ?, ?, ?, ?,?, ?) ";
-              const values =[name,NIC,email ,phone_no ,job_start_date,address,role,hash];
-              db.query(sqlAdd,values,(err,result)=>{
-       
-      if(err){
-        console.log(err)
-      }else{
-        const sqlUser="INSERT INTO userlogin(u_email, u_name, u_password,user_role,u_otp,u_verify) VALUES ( ?, ?, ?,?,?,'0') ";
-              const valuesu =[name,email,hash,role,otp ];
-              db.query(sqlUser,valuesu,(err,result)=>{
-        res.send({message:"Email has been Sent"});
-              })
-      }
-})
-
-})
-
-}
-})    
-});
-
-app.post('/otpCheck', (req, res) => {
-
-  const email = req.body.email
-  const otp = req.body.otp
-
-  console.log(email)
-  console.log(otp)
-  db.query
-  ("SELECT * FROM userlogin WHERE u_email = ? AND u_otp = ?;", 
-  [email,otp], 
-  (err, result)=> {
-
-      if(err){
-          res.send({err: err})
-      }
-      if(result){
-          console.log(result);
-          if (result.length > 0) {
-              
-              db.query("UPDATE userlogin SET u_verify=? WHERE u_email = ? AND u_otp = ?", 
-              [1,email,otp], 
-              (err, result) => {
-
-                  if (err) {
-                      console.log(err);
-                  } else {
-                      res.send({message:"OTP code verified Successfully"});
-                  }
-              }
-              );
-              
-          }else{
-              res.send({message:"Correct otp code"});
-          }
-
-          
-      }}
-  );
-});
 
 
 // app.post('/adddeliver',(req,res)=>{
@@ -419,6 +297,131 @@ app.post('/login', (req, res) => {
 
 
 
+app.get("/gift",(req,res) =>{
+    db.query("SELECT * FROM products WHERE category_id=5",(err,result) =>{
+     
+            if(err) throw err;
+                   res.send(result);
+                 });
+        
+   
+})
+
+
+ 
+
+  app.post('/addNewEmployee',(req,res)=>{
+    
+    const name = req.body.name;
+    const NIC = req.body.NIC;
+    const email = req.body.email;
+    const phone_no = req.body.phone_no;
+    const job_start_date = req.body.job_start_date;
+    const confirm_password = req.body.confirm_password;
+    const address = req.body.address;
+    const role = req.body.role;
+    const password = req.body.password;
+  
+   
+    var transport = nodemailer.createTransport(
+      {
+          service:'gmail',
+          auth: {
+              user: 'eutfurniture.group45@gmail.com',
+              pass:'eutgroup45@#'
+          }
+      }
+  )
+  const otp = Math.floor(100000 + Math.random() * 900000);
+  const head = 'otp code';
+  const mess = `Dear ${name}, 
+
+                  Your otp code is ${otp}
+                  Use this code to verify your Account.
+
+              With regrads,
+              Eut Furniture Team`;
+  
+  var mailOptions = {
+      from : 'eutfurniture.group45@gmail.com',
+      to: email,
+      subject: head,
+      text: mess
+  }
+  
+  transport.sendMail(mailOptions,function(error,info){
+      if(error){
+          console.log(error)
+      }
+      else{
+          console.log('Email sent' + info.response)
+          bcrypt.hash(password,saltRounds,(err,hash)=>{
+      
+              if(err){
+                  console.log(err);
+              }
+
+              const sqlAdd="INSERT INTO employee(name, NIC, email, phone_no, job_start_date,address, role,password) VALUES ( ?, ?, ?, ?, ?, ?,?, ?) ";
+              const values =[name,NIC,email ,phone_no ,job_start_date,address,role,hash];
+              db.query(sqlAdd,values,(err,result)=>{
+       
+      if(err){
+        console.log(err)
+      }else{
+        const sqlUser="INSERT INTO userlogin(u_email, u_name, u_password,user_role,u_otp,u_verify) VALUES ( ?, ?, ?,?,?,'0') ";
+              const valuesu =[name,email,hash,role,otp ];
+              db.query(sqlUser,valuesu,(err,result)=>{
+        res.send({message:"Email has been Sent"});
+              })
+      }
+})
+
+})
+
+}
+})    
+});
+
+// app.post('/otpCheck', (req, res) => {
+
+  // const email = req.body.email
+  // const otp = req.body.otp
+
+  // console.log(email)
+  // console.log(otp)
+  // db.query
+  // ("SELECT * FROM userlogin WHERE u_email = ? AND u_otp = ?;", 
+  // [email,otp], 
+  // (err, result)=> {
+
+      // if(err){
+          // res.send({err: err})
+      // }
+      // if(result){
+          // console.log(result);
+          // if (result.length > 0) {
+              
+              // db.query("UPDATE userlogin SET u_verify=? WHERE u_email = ? AND u_otp = ?", 
+              // [1,email,otp], 
+              // (err, result) => {
+
+                  // if (err) {
+                      // console.log(err);
+                  // } else {
+                      // res.send({message:"OTP code verified Successfully"});
+                  // }
+              // }
+              // );
+              
+          // }else{
+              // res.send({message:"Correct otp code"});
+          // }
+
+          
+      // }}
+  // );
+// });
+
 app.post('/AddCategory',(req,res)=>{
   console.log(req.body)
   const name = req.body.name;
@@ -504,14 +507,14 @@ app.get('/CustomizedOrderCount',(req,res)=>{
   })
 })
 
-app.get('/loadcusorder',(req,res)=>{
-  db.query('SELECT customer_id,delivery_date,advanced_payment,total_payment FROM customized_products WHERE active=1 ',(err,result,fields)=>{
-      if(!err)
-      res.send(result);
-      else
-      console.log(err);
-  })
-})
+// app.get('/loadcusorder',(req,res)=>{
+//   db.query('SELECT customer_id,delivery_date,advanced_payment,total_payment FROM customized_products WHERE active=1 ',(err,result,fields)=>{
+//       if(!err)
+//       res.send(result);
+//       else
+//       console.log(err);
+//   })
+// })
 
 app.get('/loadProduct',(req,res)=>{
   db.query('SELECT * FROM products ;',(err,results,fields)=>{

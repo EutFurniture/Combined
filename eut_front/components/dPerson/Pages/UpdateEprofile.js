@@ -154,10 +154,8 @@ export default function UpdateEprofile(userData) {
   const { id } = useParams();
   const [Dt, setDt] = useState([])
   const [newName, setNewName] = useState();
-  const [newEmail, setNewEmail] = useState();
   const [newAddress, setNewAddress] = useState();
   const [newPhone_no, setNewPhone_no] = useState();
-  const [newPassword, setNewPassword] = useState();
   const [newEmp_img, setNewEmp_img] = useState();
   const [state, setState] = useState({ file: '', name: '', description: '', emp_img: "", message: "", success: false })
   const [employeeList, setEmployeeList] = useState([]);
@@ -165,7 +163,7 @@ export default function UpdateEprofile(userData) {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await axios.get('http://localhost:3001/DpProfile', {
+      const response = await axios.get('http://localhost:3001/dpprofile', {
         params: {
           id: userData.userData.id,
 
@@ -300,10 +298,7 @@ export default function UpdateEprofile(userData) {
         </div>
         <Divider />
         <List style={{backgroundColor: 'rgb(37,37,94)', color:'white'}}>{DpListItems}</List>
-        
-        <Divider />
-        <List style={{backgroundColor: 'rgb(37,37,94)', color:'white'}}>{Logout}</List>
-        <Divider />
+
       </Drawer>
       </div>
 
@@ -390,6 +385,7 @@ export default function UpdateEprofile(userData) {
 
           </Grid>
         </Container>
+        <Copyright/>
       </main>
       
     </div>

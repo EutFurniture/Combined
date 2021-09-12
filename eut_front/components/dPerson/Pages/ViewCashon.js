@@ -172,10 +172,7 @@ export default function ViewCashon(userData) {
    useEffect(() => {
    
     const fetchData = async () => {
-
-      
-     
-      const response = await Axios.get('http://localhost:3001/viewcashOnDelivery', {
+ const response = await Axios.get('http://localhost:3001/viewcashOnDelivery', {
             params: {
           employee_id: userData.userData.id
            }
@@ -186,7 +183,7 @@ export default function ViewCashon(userData) {
         console.log(employee_id);
       
     }
-  fetchData();
+fetchData();
   }, [employee_id]);      
 
 
@@ -271,9 +268,7 @@ export default function ViewCashon(userData) {
         </div>
         <Divider/>
         <List style={{backgroundColor: 'rgb(37, 37, 94)', color:'white'}}>{DpListItems}</List>
-        <Divider/>
-        <List style={{backgroundColor: 'rgb(37, 37, 94)', color:'white'}}>{Logout}</List>
-        <Divider/>
+
       </Drawer>
       </div>
      

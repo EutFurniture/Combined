@@ -56,13 +56,7 @@ app.get("/login", (req, res) => {
     }
   });
 
-  app.get("/login",(req,res)=>{
-    if(req.session.user){
-      res.send({loggedIn:true,user:req.session.user});
-    }else{
-      res.send({loggedIn:false});
-    }
-   });
+  
      
         // LOG INTO THE SYSTEM
 
@@ -98,69 +92,34 @@ app.get("/login", (req, res) => {
         
  });
 
-app.post('/addDelivers',(req,res)=>{
-    
-    const fullname = req.body.fullname
-    const NIC = req.body.NIC
-    const email = req.body.email
-    const address = req.body.address
-    const mobile = req.body.mobile
-    const password = req.body.password
-    const cpassword = req.body.cpassword
 
-    var transport = nodemailer.createTransport(
-        {
-            service:'gmail',
-            auth: {
-                user: 'eutfurniture.group45@gmail.com',
-                pass:'eutgroup45@#'
-            }
+
+const upload = multer({
+        storage,
+        limits:{
+          fileSize: 5000000
+        },
+        fileFilter(req,file,cb){
+          if(!file.originalname.match(/\.(jpeg|jpg|png)$/i)){
+            return  cb(new Error('pleaseupload image with type of jpg or jpeg'))
         }
-    )
-    const otp = Math.floor(100000 + Math.random() * 900000);
-    const head = 'otp code';
-    const mess = `Dear ${fullname}, 
+        cb(undefined,true)
+      }
+      })
+      
+app.post("/imageUpload",upload.single('file'),(req,res)=> {
+         
+})
 
-                    Your otp code is ${otp}
-                    Use this code to verify your Account.
-
-                With regrads,
-                Eut Furniture Team`;
-    
-    var mailOptions = {
-        from : 'eutfurniture.group45@gmail.com',
-        to: email,
-        subject: head,
-        text: mess
+app.get("/login",(req,res)=>{
+    if(req.session.user){
+      res.send({loggedIn:true,user:req.session.user});
+    }else{
+      res.send({loggedIn:false});
     }
-    
-    transport.sendMail(mailOptions,function(error,info){
-        if(error){
-            console.log(error)
-        }
-        else{
-            console.log('Email sent' + info.response)
-            bcrypt.hash(password,saltRounds,(err,hash)=>{
-        
-                if(err){
-                    console.log(err);
-                }
-          
-                db.query("INSERT INTO employee(name, NIC, email, phone_no, job_start_date, address, role) VALUES ( ?, ?, ?, ?,NOW(), ?,'Deliver'); INSERT INTO userlogin (u_email, u_name, u_password,user_role,u_otp,u_verify) VALUES (?,?,?,'Deliver',?,'0') ;", 
-                [fullname,NIC,email ,mobile ,address,email,fullname,hash,otp],(err,result)=>{
-                    if(err){
-                        console.log(err)
-                      }else{
-                        console.log(result);
-                        res.send({message:"Email has been Sent"});
-                      }
-                })
-              
-              })
-            
-        }
-    })    
-});
+   });
+   
+
 
 app.post('/create', (req, res) => {
     console.log(req.body);
@@ -190,6 +149,15 @@ app.get('/returnItem',(req, res) =>{
    
 })
 
+  //  EMPLOYEE SESSION 
+app.get('/employee', (req, res) => {
+    db.query("SELECT * FROM employee WHERE email=?",[req.query.email], (err, results, fields) => {
+       if(err) throw err;
+       res.send(results);
+     });
+    
+   });
+
     
         //VIEW DELIVERY DETAILS
 app.get("/DeliveryDetails",(req,res)=>{
@@ -206,13 +174,13 @@ app.get("/DeliveryDetails",(req,res)=>{
          // VIEW  DELIVERY TO CONFIRM
         
 app.get('/viewConfirmDelivery',(req, res) =>{
-            db.query("SELECT *  FROM orders  JOIN employee ON orders.employee_id = employee.id  WHERE orders.employee_id = ?  ", [req.query.employee_id],(err, results)=>
-             { 
-             console.log(req.query.employee_id);
-              res.send(results);
-             })
-             
-       })
+     db.query("SELECT *  FROM orders  JOIN employee ON orders.employee_id = employee.id  WHERE orders.employee_id = ? AND orders.status <> 'Completed'  ", [req.query.employee_id],(err, results)=>
+      { 
+      console.log(req.query.employee_id);
+       res.send(results);
+      })
+      
+})
 
 
  app.get('/dpprofile', (req, res) => {
@@ -233,23 +201,6 @@ app.get("/ReturnedDetails",(req,res)=>{
         });
             
     });
-
-const upload = multer({
-        storage,
-        limits:{
-          fileSize: 5000000
-        },
-        fileFilter(req,file,cb){
-          if(!file.originalname.match(/\.(jpeg|jpg|png)$/i)){
-            return  cb(new Error('pleaseupload image with type of jpg or jpeg'))
-        }
-        cb(undefined,true)
-      }
-      })
-      
-app.post("/imageUpload",upload.single('file'),(req,res)=> {
-         
-})
 
 
   app.put('/confirmdelivery/:order_id', (req,res) => {
@@ -322,35 +273,36 @@ app.get('/ReturnItemview', (req, res) => {
     
    });
   
+       
           // VIEW AVAILABLE DELIVERIES
 app.get('/viewAvailableDelivery',(req, res) =>{
-            db.query("  SELECT orders.order_id,customer.fname, customer.address, customer.phone FROM orders  JOIN customer ON orders.customer_id=customer.customer_id JOIN employee ON orders.employee_id=employee.id  WHERE orders.employee_id=?  ", [req.query.employee_id],(err, results)=>
-                      { 
-                      console.log(req.query.employee_id);
-                       res.send(results);
-                      })
-                      
+   db.query("  SELECT orders.order_id,customer.fname, customer.address, customer.phone FROM orders  JOIN customer ON orders.customer_id=customer.customer_id JOIN employee ON orders.employee_id=employee.id  WHERE orders.employee_id=? AND orders.status <> 'Completed'  ", [req.query.employee_id],(err, results)=>
+             { 
+             console.log(req.query.employee_id);
+              res.send(results);
+             })
+             
 })
 
 // VIEW CASH ON DELIVERIES TO CONFIRM
 app.get('/viewcashOnDelivery',(req, res) =>{
-    db.query("   SELECT *  FROM  payment  JOIN orders ON  payment.order_id = orders.order_id WHERE orders.employee_id=? AND payment.payment_method='cash on delivery' ", [req.query.employee_id],(err, results)=>
-     { 
-     console.log(req.query.employee_id);
-      res.send(results);
-     })
-     
-  })
-
+  db.query("   SELECT *  FROM  payment  JOIN orders ON  payment.order_id = orders.order_id WHERE orders.employee_id=? AND payment.payment_method='cash on delivery' AND orders.status <> 'completed' ", [req.query.employee_id],(err, results)=>
+   { 
+   console.log(req.query.employee_id);
+    res.send(results);
+   })
+   
+})
            // VIEW  DELIVERY TO CONFIRM
         
+        
 app.get('/viewConfirmDelivery',(req, res) =>{
-    db.query("SELECT *  FROM orders  JOIN employee ON orders.employee_id = employee.id  WHERE orders.employee_id = ?  ", [req.query.employee_id],(err, results)=>
-     { 
-     console.log(req.query.employee_id);
-      res.send(results);
-     })
-     
+     db.query("SELECT *  FROM orders  JOIN employee ON orders.employee_id = employee.id  WHERE orders.employee_id = ? AND orders.status <> 'Completed'  ", [req.query.employee_id],(err, results)=>
+      { 
+      console.log(req.query.employee_id);
+       res.send(results);
+      })
+      
 })
 
 
@@ -365,6 +317,50 @@ app.get("/viewproductFordeliver", (req, res) => {
                 }
             });
         });
+
+
+
+
+
+
+	  //CASH ON INCOME FOR AN EMPLOYEE
+app.get('/empTotalcashonIncome', (req, res) => {
+  db.query("SELECT SUM(total_price) AS eincome FROM orders JOIN payment ON orders.order_id= payment.order_id WHERE  orders.employee_id=?  AND payment.payment_method = 'cash on delivery' AND orders.status <> 'completed' ", [req.query.employee_id], (err, result, fields) => {
+    if (!err)
+      res.send(result);
+    else
+      console.log(err);
+  })
+})
+
+app.get('/freeCount', (req, res) => {
+  db.query("SELECT COUNT(order_id) AS freecount FROM orders WHERE employee_id=? AND orders.total_price > 50000  AND orders.status <> 'completed'", [req.query.employee_id], (err, result, fields) => {
+    if (!err)
+      res.send(result);
+    else
+      console.log(err);
+  })
+})
+
+
+  
+app.get('/empRecentOrders',(req, res) =>{
+      db.query(" SELECT  orderitem.product_id,products.product_name, orders.total_price, orders.order_last_date  FROM orderitem INNER JOIN orders ON orders.order_id = orderitem.order_id   JOIN products ON orderitem.product_id = products.product_id WHERE orders.employee_id=? AND orders.status='Completed' ORDER BY orders.order_last_date DESC LIMIT 5  ", [req.query.employee_id],(err, results)=>
+       { 
+       console.log(req.query.employee_id);
+        res.send(results);
+       })
+       
+    })
+    
+app.get('/empCountReturnItems', (req, res) => {
+        db.query('SELECT COUNT(return_id) AS returncount FROM return_item WHERE employee_id=?', [req.query.employee_id], (err, result, fields) => {
+          if (!err)
+            res.send(result);
+          else
+            console.log(err);
+        })
+      })
 
 app.listen(3001, () => {
             console.log("yay your server is running on port 3001");

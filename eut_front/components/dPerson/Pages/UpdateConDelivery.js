@@ -1,4 +1,3 @@
-
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
 import clsx from 'clsx';
@@ -13,18 +12,13 @@ import Toolbar from '@material-ui/core/Toolbar';
 import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
-import Badge from '@material-ui/core/Badge';
 import Container from '@material-ui/core/Container';
 import Paper from '@material-ui/core/Paper';
 import Link from '@material-ui/core/Link';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import NotificationsIcon from '@material-ui/icons/Notifications';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
 import {Redirect} from "react-router-dom"
 import Form from 'react-bootstrap/Form';
 import { Button } from 'react-bootstrap';
@@ -279,9 +273,8 @@ export default function UpdateConDelivery() {
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-         <MenuItem component={Link} to="/employee/DpProfile">Profile</MenuItem>
+        <MenuItem onClick={handleClose}>Profile</MenuItem>
         <MenuItem onClick={()=>setIsAuth(false)}>Logout</MenuItem>
-        <MenuItem component={Link} to="/Calender">Calendar</MenuItem>
       </Menu>
         </Toolbar>
       </AppBar>
@@ -300,10 +293,7 @@ export default function UpdateConDelivery() {
         </div>
         <Divider />
         <List style={{backgroundColor: 'rgb(37,37,94)', color:'white'}}>{DpListItems}</List>
-        
-        <Divider />
-        <List style={{backgroundColor: 'rgb(37,37,94)', color:'red'}}>{Logout}</List>
-        <Divider />
+
       </Drawer>
       </div>
       <main className={classes.content}>
@@ -321,7 +311,7 @@ export default function UpdateConDelivery() {
             <div >
               <Paper className={classes.paper}>
               <Typography component="h1" variant="h6" color="inherit"  align="center" width="100%" noWrap className={classes.title}>
-              <strong>UPDATE PRODUCT DETAILS</strong>
+              <strong>UPDATE DELIVERY</strong>
             </Typography><br/>
             <Form >
 

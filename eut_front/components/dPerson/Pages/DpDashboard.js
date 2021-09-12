@@ -1,6 +1,7 @@
 import React from 'react';
 import clsx from 'clsx';
 import axios from 'axios';
+import Axios from 'axios';
 import {Table} from 'react-bootstrap';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -18,16 +19,15 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import  './DpDashboard.css';
 import {Redirect} from "react-router-dom";
 import { useState  , useEffect} from 'react';
-import { Link } from "react-router-dom"; 
+import { Link, useParams } from "react-router-dom";
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Grid from '@material-ui/core/Grid';
 import Divider from '@material-ui/core/Divider';
 import { DpListItems, Logout } from './dplistItems';
-import Testimonial  from './Testimonial';
 import {toast} from 'react-toastify'
-import { ViewProductDeliver } from './ViewProductDeliver';
-
+//import Lines from './Lines';
+import ViewProductDeliver from './ViewProductDeliver';
 
 
 function Copyright() {
@@ -154,26 +154,75 @@ const styles = {
   }
 };
 
-
-
 toast.configure()
-const DpDashboard =()=> {
+export default function DpDashboard(userData) {
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
-
   const [returns_count,setReturnsCount]=useState([])
-  useEffect(()=>{
-    axios.get("http://localhost:3001/CountReturnItems").then((response)=>{
-      setReturnsCount(response.data)
-    })
-  },[])
-
+  const [user,setUser]=useState([])
+  const { employee_id } = useParams();
   const [totalcashon_income,setTotalcashonIncome]=useState([])
-  useEffect(()=>{
-    axios.get("http://localhost:3001/TotalcashonIncome").then((response)=>{
-      setTotalcashonIncome(response.data)
+  const [free_count,setFree_Count]=useState([])
+  useEffect(() => {
+  const fetchData = async () => {
+  const response = await Axios.get('http://localhost:3001/empRecentOrders', {
+            params: {
+          employee_id: userData.userData.id
+           }
+        });
+     
+        setUser(response.data);
+
+        console.log(employee_id);
+      
+    }
+
+  const response2= axios.get("http://localhost:3001/empCountReturnItems",{
+      params:{
+        employee_id: userData.userData.id,
+      }
+    }).then((response)=>{
+      setReturnsCount(response.data)
+         
     })
-  },[])
+
+
+    const response3= axios.get("http://localhost:3001/empTotalcashonIncome",{
+      params:{
+        employee_id: userData.userData.id,
+      }
+    }).then((response)=>{
+       setTotalcashonIncome(response.data)
+         
+    })
+	
+    const response4= axios.get("http://localhost:3001/freeCount",{
+      params:{
+        employee_id: userData.userData.id,
+      }
+    }).then((response)=>{
+       setFree_Count(response.data)
+         
+    })
+
+fetchData();
+}, [employee_id]);  
+
+
+
+	
+
+
+
+  
+ const [productList,setProductList]=useState([])
+  useEffect(()=>{
+    axios.get("http://localhost:3001/viewproductFordeliver").then((response)=>{
+      setProductList(response.data)
+    })
+  },[]) 
+
+
   
   const [pendingcount,setPendingCount]=useState([])
   useEffect(()=>{
@@ -183,12 +232,9 @@ const DpDashboard =()=> {
   },[])
 
   
-  const [Rorder,setRorder]=useState([])
-  useEffect(()=>{
-    axios.get("http://localhost:3001/recentLastOrders").then((response)=>{
-      setRorder(response.data)
-    })
-  },[])
+   
+
+
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -270,9 +316,7 @@ if(!isAuth){
         </div>
         <Divider />
         <List style={{backgroundColor: 'rgb(37, 37, 94)', color:'white'}}>{DpListItems}</List>
-        <Divider />
-        <List style={{backgroundColor: 'rgb(37, 37, 94)', color:'white'}}>{Logout}</List>
-        <Divider />
+
       </Drawer>
       </div>
 
@@ -303,28 +347,28 @@ if(!isAuth){
                                <h3>Total Cash On Payments</h3>
                                {totalcashon_income.map((record)=>{
                                  return(
-                                  <p style={{fontSize:'25px'}}>Rs.{record.income}</p>
+                                  <p style={{fontSize:'25px'}}>Rs.{totalcashon_income.map(record=>record.eincome)}</p>
                                  )
                                })}
                            </div>
 
                            <div className="card2">
                            <h2>Returned Items</h2>
-                           {returns_count.map((record)=>{
+                           {returns_count.map((item)=>{
                                  return(
-                                  <p style={{fontSize:'30px'}}>{record.returncount}</p>
+                                  <p style={{fontSize:'30px'}}>{returns_count.map(record=>record.returncount)}</p>
                                  )
                                })}
                            </div>
 
 
                            <div className="card4">
-                           <h3>Total No of Deliveries</h3>
-                               <p>52</p>
+                           <h3>Free Deliveries</h3>
+                               <p>over Rs.50 000</p>
                            </div>
                            <div className="card1">
-                               <h3>Free Deliveries </h3>
-                               <p>over Rs.50 000</p>
+                               <h3>No of Free Deliveries </h3>
+                               <p style={{fontSize:'30px'}}>{free_count.map(record=>record.freecount)}</p>
                            </div>
 
 
@@ -335,36 +379,40 @@ if(!isAuth){
         
               <div style={{marginLeft:'20px', marginTop:'70px'}}>
              
-               <h3><b>RECENT FIVE ORDERS</b></h3>
+               <h3><b>RECENT COMPLETED ORDERS</b></h3>
                </div>
-               <Table striped bordered hover responsive>   
-                  <tbody>
-                  {Rorder.map((record)=>{
-                                 return(
-                    <tr>
-                  
-             {/*}       <th><img src={`/${record.product_img}`} style={{height:'50px',width:'50px',marginLeft:'40px'}}/></th> */}
-                    <th >{record.product_id}</th>
-                    <th >{record.product_name}</th>
-                    <th>{record.total_price}</th>
-                    </tr>
-                                  )
-                                })}
-                  </tbody>
-              </Table>
+               <Table striped bordered hover responsive>
+             <tbody className="tablebody">
+             {user.map(item=>
+                <tr >
+                <td align="center">{item.product_id}</td>
+                <td align="center">{item.product_name}</td>
+                <td align="center">{item.total_price}</td>
+
+                </tr>
+               )}
+               </tbody> 
+             </Table>
                </Paper>
             </Grid>
+            
                        </div>
+                       
               </Paper>
+           
             </Grid>
-           <ViewProductDeliver />
+
+         
 
          </Grid>
-      
+         <Grid style={{marginTop:'10px'}} item xs={12} >
+         <Paper >
+         <ViewProductDeliver/>
+          </Paper>         
+            </Grid>
         </Container>
         <Copyright />
       </main>
     </div>
   );
 }
-export default DpDashboard;

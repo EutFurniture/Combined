@@ -19,6 +19,27 @@ export default function ProInfo (){
         };
         fetchData();
     }, [id]);
+
+
+    const propath =(catid)=>{
+        if(catid == 1){
+            window.location.href='/dining';
+        }
+        else if(catid == 2){
+            window.location.href='/table';
+        }
+        else if(catid == 3){
+            window.location.href='/chair';
+        }
+        else if(catid == 4){
+            window.location.href='/sofa';
+        }
+        else if(catid == 5){
+            window.location.href='/bed';
+        }
+
+
+    }
         return(
             <React.Fragment>
               
@@ -52,11 +73,11 @@ export default function ProInfo (){
                                 </p>
                                 {/* buttons */}
                                 <div>
-                                    <Link to="/dining">
-                                        <ButtonContainer>
+                                    
+                                        <ButtonContainer onClick={()=>propath(product.category_id)}>
                                             back to products
                                         </ButtonContainer>
-                                    </Link>
+                                    
                                     {/* <ButtonContainer
                                     cart
                                     disabled={inCart?true:false}
