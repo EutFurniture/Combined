@@ -1,5 +1,4 @@
-
-         import React, {useEffect,useState} from 'react';
+import React, {useEffect,useState} from 'react';
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Axios from 'axios';
 import { useParams } from "react-router-dom";
@@ -21,6 +20,8 @@ import UpdateConDeliveryRoute from './components/dPerson/pages/UpdateConDelivery
 import UpdateConDelivery from './components/dPerson/pages/UpdateConDelivery';
 import ViewCashon from './components/dPerson/pages/ViewCashon';
 import DpDashboard from './components/dPerson/pages/DpDashboard';
+import Lines from './components/dPerson/pages/Lines';
+
 const App1 = () => {
     const[LoginSt, setLoginSt] = useState();
     const[user , setUser] = useState([]);
@@ -49,6 +50,11 @@ const App1 = () => {
                 <Switch>
 
 
+
+                <Route path='/dPerson/DpDashboard'  >
+                <DpDashboard userData={response1.data[0]}  />
+                </Route>
+
                 <Route path='/dPerson/ViewAvailableDelivery'  >
                 <ViewAvailableDelivery  userData={response1.data[0]}  />
                 </Route>
@@ -70,7 +76,6 @@ const App1 = () => {
                 <DpProfile  userData={response1.data[0]}  />
                 </Route>
               
-
                 <Route path='/dPerson/updateEprofile'  >
                 < UpdateEprofile userData={response1.data[0]} />
                </Route>
