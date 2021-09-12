@@ -226,7 +226,7 @@ export default function AddCustomForm() {
 const [orderNotifyCount,setorderNotifyCount]=useState([]);
 
 useEffect(()=>{
-  Axios.get("http://localhost:3001/ordernotifyCount").then((response)=>{
+  Axios.get("http://localhost:3001/sales_ordernotifyCount").then((response)=>{
     setorderNotifyCount(response.data)
     
   })
@@ -240,7 +240,7 @@ console.log(ordercount);
 
 const [orderNotifymess,setorderNotifymess]=useState([])
 useEffect(()=>{
-  Axios.get("http://localhost:3001/ordernotifymess").then((response)=>{
+  Axios.get("http://localhost:3001/sales_ordernotifymess").then((response)=>{
     setorderNotifymess(response.data)
     
   })
@@ -253,7 +253,7 @@ const total = Number(ordercount)
 const NotificationClick = async () => {
  
 
-  const responsee = await Axios.get('http://localhost:3001/ordernotifyDeactive', {
+  const responsee = await Axios.get('http://localhost:3001/sales_ordernotifyDeactive', {
   });
 
 

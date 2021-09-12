@@ -379,7 +379,7 @@ export default function Dashboard() {
   const [orderNotifyCount,setorderNotifyCount]=useState([]);
 
   useEffect(()=>{
-    Axios.get("http://localhost:3001/ordernotifyCount").then((response)=>{
+    Axios.get("http://localhost:3001/sales_ordernotifyCount").then((response)=>{
       setorderNotifyCount(response.data)
       
     })
@@ -393,7 +393,7 @@ export default function Dashboard() {
 
   const [orderNotifymess,setorderNotifymess]=useState([])
   useEffect(()=>{
-    Axios.get("http://localhost:3001/ordernotifymess").then((response)=>{
+    Axios.get("http://localhost:3001/sales_ordernotifymess").then((response)=>{
       setorderNotifymess(response.data)
       
     })
@@ -406,7 +406,7 @@ export default function Dashboard() {
   const NotificationClick = async () => {
    
 
-    const responsee = await Axios.get('http://localhost:3001/ordernotifyDeactive', {
+    const responsee = await Axios.get('http://localhost:3001/sales_ordernotifyDeactive', {
     });
 
 

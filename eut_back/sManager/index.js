@@ -3,13 +3,13 @@ const mysql = require("mysql");
 const cors = require("cors");
 const app = express();
 const path = require('path');
-//const jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const { response } = require('express');
 const saltRounds = 10;
 const fs = require('fs');
-//const multer = require('multer');
-//require('dotenv').config();
+const multer = require('multer');
+require('dotenv').config();
 app.use(express.json());
 
 //const { ConnectionPolicyContext } = require("twilio/lib/rest/voice/v1/connectionPolicy");
@@ -165,11 +165,13 @@ app.get('/sales_view',(req,res)=>{
   app.put('/sales_updateEmployee', (req,res) => {
     const customer_id=req.body.customer_id;
     const fname = req.body.fname;
+    const lname = req.body.lname;
+   
     const email=req.body.email;
     const address=req.body.address;
     const phone=req.body.phone;
-    db.query("UPDATE customer SET fname = ?, email=?, address=?, phone=? WHERE customer_id = ?", 
-    [fname,email,address,phone,customer_id], 
+    db.query("UPDATE customer SET fname = ?, lname = ?, email=?, address=?, phone=? WHERE customer_id = ?", 
+    [fname,lname,email,address,phone,customer_id], 
     (err, result) => {
         if (err) {
             console.log(err);
@@ -185,12 +187,14 @@ app.get('/sales_view',(req,res)=>{
 app.post('/sales_create', (req,res) => {
     const id = req.body.id;
     const email = req.body.email;
-    const fname = req.body.name;
+    const fname = req.body.fname;
+    const lname = req.body.lname;
+    const NIC = req.body.NIC;
     const phone = req.body.phone;
     const address = req.body.address;
 
-    db.query('INSERT INTO customer (email, phone, address, fname) VALUES (?,?,?,?)', 
-    [email, phone, address, fname], (err, result) => {
+    db.query('INSERT INTO customer (email, phone, address, fname, lname, NIC) VALUES (?,?,?,?,?,?)', 
+    [email, phone, address, fname, lname, NIC], (err, result) => {
         if (err) {
             console.log(err)
         } else{
@@ -199,6 +203,9 @@ app.post('/sales_create', (req,res) => {
       }
     );
 });
+
+
+
 
 app.post('/sales_create_order', (req,res) => {
     const customer_id = req.body.customer_id;
@@ -460,7 +467,7 @@ app.get('/sales_ReturnItemReport',(req,res) => {
   });
   
   //DeliveryReport
-  app.get('/DeliveryReport',(req,res) => {
+  app.get('/sales_DeliveryReport',(req,res) => {
     db.query('SELECT products.product_name, orders.order_id,orders.order_last_date,orders.status FROM ((orderitem INNER JOIN orders ON orderitem.order_id=orders.order_id)INNER JOIN products ON orderitem.product_id=products.product_id) WHERE EXTRACT(MONTH FROM orders.o_date) = MONTH(CURRENT_TIMESTAMP)', (err, result) => {
         if(err) {
             console.log(err)
@@ -499,9 +506,7 @@ app.get('/sales_TotalIncome',(req,res) => {
   });
 
 
-
-
-  app.get("/login", (req, res) => {
+app.get("/login", (req, res) => {
     if (req.session.user) {
       res.send({ loggedIn: true, user: req.session.user });
     } else {
@@ -547,12 +552,68 @@ app.post('/login', (req, res) => {
 	);
 });
 
- 
 
- 
-
-
-
- 
-
- 
+//
+app.get("/sales_cashOnDelivery", (req, res) => {
+    db.query("SELECT orders.order_id,orders.employee_id,orders.total_price,orders.advance_price,payment.payment_status,payment.payment_method, orders.status FROM orders INNER JOIN payment ON orders.order_id=payment.order_id ORDER BY orders.order_id DESC", (err, result, fields) => {
+        if (err) {
+            console.log(err);
+        } else{
+            res.send(result);
+        }
+    });
+  });
+  
+  app.get("/sales_PaymentDetails",(req,res)=>{
+    order_id=req.params.order_id;
+    db.query("SELECT orders.order_id,orders.employee_id,orders.o_date,orders.order_last_date,orders.customer_id,orders.total_price,orders.advance_price,payment.payment_status, payment.payment_method,orders.status FROM orders INNER JOIN payment ON orders.order_id=payment.order_id WHERE orders.order_id=?",[req.query.order_id],(err,result)=>{
+        console.log(req.query.order_id);
+        res.send(result);
+    });
+        
+  });
+    
+  
+  
+  
+  app.get('/sales_ordernotifyCount',(req,res)=>{
+    db.query('SELECT COUNT(order_id) AS o_count FROM orders WHERE order_last_date="0000-00-00" ',(err,result,fields)=>{
+        if(!err)
+        res.send(result);
+        else
+        console.log(err);
+    })
+  })
+  
+  app.get('/sales_ordernotifyDeactive', (req,res) => {
+    db.query("UPDATE orders SET active=0 WHERE status ='Pending' AND active=1", 
+    (err, result) => {
+        if (err) {
+            console.log(err);
+        } else {
+            res.send(result);
+        }
+       }
+    );
+  });
+  
+  app.get('/sales_ordernotifymess',(req,res)=>{
+    db.query('SELECT COUNT(order_id) AS o_count FROM orders WHERE order_last_date="0000-00-00" ',(err,result,fields)=>{
+        if(!err)
+        res.send(result);
+        else
+        console.log(err);
+    })
+  })
+  
+   
+  app.get("/sales_vieworderNotification", (req, res) => {
+    db.query("SELECT order_id, customer_id, o_date, order_description, status, order_last_date FROM orders WHERE order_last_date='0000-00-00'  ;", (err, result, fields) => {
+        if (err) {
+            console.log(err);
+        } else{
+          res.send(result);
+        }
+    });
+  });
+   
