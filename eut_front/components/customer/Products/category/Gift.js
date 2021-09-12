@@ -24,11 +24,12 @@ export default function Gift(userData) {
 
     const orderToCart = async(id, price) => {
         const custid = userData.userData.customer_id;
+        const email = userData.userData.email;
         console.log(custid)
         console.log(id)
         const response1 = await axios.get('http://localhost:3001/customer', {
             params: {
-                  customer_id: custid,
+                  email: email,
                   
               }
       });

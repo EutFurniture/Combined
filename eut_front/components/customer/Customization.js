@@ -1,34 +1,59 @@
-import React ,{Fragment}from 'react';
+import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Axios from 'axios';
-import { useParams } from "react-router-dom";
+
+import clsx from 'clsx';
 import { useState } from 'react';
-import Footer from './Footer';
+
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
+import Drawer from '@material-ui/core/Drawer';
 import Box from '@material-ui/core/Box';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
+import Divider from '@material-ui/core/Divider';
+import IconButton from '@material-ui/core/IconButton';
+import Badge from '@material-ui/core/Badge';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
-//import Blog from './blog/Blog';
+import Link from '@material-ui/core/Link';
+import MenuIcon from '@material-ui/icons/Menu';
+import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
+import NotificationsIcon from '@material-ui/icons/Notifications';
+import Blog from './blog/Blog';
+
 import Form from 'react-bootstrap/Form';
 import { Button } from 'react-bootstrap';
 import { Row } from 'react-bootstrap';
 import { Col } from 'react-bootstrap';
-
-
+import axios from 'axios';
+import Footer from './Footer';
 
 //import { mainListItems, Logout } from './listItems';
 
 
- const drawerWidth = 240;
+
+function Copyright() {
+  return (
+    <Typography variant="body2" color="textSecondary" align="center">
+      {'Copyright © '}
+      <Link color="inherit" href="https://material-ui.com/">
+        Eut Furniture
+      </Link>{' '}
+      {new Date().getFullYear()}
+      {'.'}
+    </Typography>
+  );
+}
+
+const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
-    marginTop:'0%',
-    marginLeft:'15%',
   },
   toolbar: {
     paddingRight: 24, // keep right padding when drawer closed
@@ -63,7 +88,6 @@ const useStyles = makeStyles((theme) => ({
   },
   title: {
     flexGrow: 1,
-    fontSize:'25px',
   },
   drawerPaper: {
     position: 'relative',
@@ -90,10 +114,10 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
     height: '100vh',
     overflow: 'auto',
-    
+    backgroundColor:'#ede7f6'
   },
   container: {
-    paddingTop: theme.spacing(-2),
+    paddingTop: theme.spacing(4),
     paddingBottom: theme.spacing(4),
     alignContent:'center',
     align:'center',
@@ -102,11 +126,11 @@ const useStyles = makeStyles((theme) => ({
   paper: {
     position:'relative',
     align:'center',
-    padding: theme.spacing(3),
+    padding: theme.spacing(2),
     display: 'flex',
     overflow: 'auto',
     flexDirection: 'column',
-   
+  
   },
   fixedHeight: {
     height: 240,
@@ -114,9 +138,6 @@ const useStyles = makeStyles((theme) => ({
   mess:{
     color:"red",
     marginLeft:"17%",
-  },
-  lab:{
-    color:'black',
   },
   
 }));
@@ -136,51 +157,36 @@ const styles = {
   
 };
 
-export default function Customization(userData) {
+
+
+export default function AddDelivers() {
   const classes = useStyles();
-  const [state,setState]=useState({file:'',name:'',description:'',userImage:"",message:"",success:false})
+  const [open, setOpen] = React.useState(true);
+  const [state,setState]=useState({file:'',userImage:"",message:"",success:false})
   const[name,setName]=useState("");
+  const[sampleFile,setSampleFile]=useState("");
   const[description,setDescription]=useState("");
   const[measurement,setMeasurement]=useState("");
   const[material,setMaterial]=useState("");
   const[color,setColor]=useState("");
-  const { customer_id } = useParams();
-const id=userData.userData.customer_id;
-  const submitForm =(e) =>{
+ 
+
+  const submitForm =async(e) =>{
     e.preventDefault();
-      
     if(state.file)
     {
       let formData=new FormData();
       formData.append('file',state.file)
-     
 
-     Axios.post('http://localhost:3001/imageUpload', formData,{
-     
-    'content-Type':'multipart/form-data',
-    
-        
-        
+     const response=await axios.post('/imgupload',formData,{
+        'content-Type':'multipart/form-data'
       })
-      Axios.post('http://localhost:3001/customization', {
-     
-       
-            image:state.file.name,
-            name:name,
-            description:description,
-            measurement:measurement,
-            color:color,
-            material:material,
-            customer_id:id,
-            
-          })
-
+      console.log(response)
     }else{
       setState({
         ...state,
         message:'please select image'
       })
-     
     }
 
   }
@@ -195,18 +201,27 @@ const id=userData.userData.customer_id;
         userImage:reader.result,
         message:""
       })
-     
     }
     reader.readAsDataURL(file);
   }
 
-  
-  
-  return (
-    <Fragment>
  
-      <div className={classes.root}>
-       
+  const cust=()=>{
+    Axios.post('http://localhost:3001/customization',{
+      name:name,
+      sampleFile:sampleFile,
+      description:description,
+      measurement:measurement,
+      color:color
+  }).then(() =>{
+    console.log("success");
+  });
+  };
+  return (
+    <React.Fragment>
+<Blog />
+    <div className={classes.root}>
+
       <CssBaseline />
       
      
@@ -228,9 +243,9 @@ const id=userData.userData.customer_id;
               <strong>Make Customized order</strong>
             </Typography><br/>
 
-                 <Form  onSubmit={submitForm} >
+                 <Form  onSubmit={submitForm}>
                     <Form.Group as={Row} controlId="formHorizontalName">
-                      <Form.Label className={classes.lab} column lg={2} >
+                      <Form.Label column lg={2} >
                         Product Name :
                       </Form.Label>
                       <Col sm={10}>
@@ -243,7 +258,7 @@ const id=userData.userData.customer_id;
                     </Form.Group><br/>
 
                     <Form.Group as={Row} controlId="formHorizontalNIC">
-                      <Form.Label className={classes.lab} column lg={2}>
+                      <Form.Label column lg={2}>
                        Description :
                       </Form.Label>
                       <Col sm={10}>
@@ -255,10 +270,10 @@ const id=userData.userData.customer_id;
                       </Col>
                     </Form.Group><br/>
                     <Form.Group as={Row} controlId="formHorizontalFile" className="mb-3">
-                      <Form.Label className={classes.lab} column lg={2}>
+                      <Form.Label column lg={2}>
                         Upload Design :</Form.Label>
                       <Col sm={10}>
-                        <Form.Control type="file"  name="img"
+                        <Form.Control type="file" 
                         onChange={handleInput}
                           
                        />
@@ -269,7 +284,7 @@ const id=userData.userData.customer_id;
                  {state.userImage && (<img src={state.userImage}  width="10%" height="10%" alt="preview" />)}
                </div>
                     <Form.Group as={Row} controlId="formHorizontaladdress">
-                      <Form.Label className={classes.lab} column lg={2}>
+                      <Form.Label column lg={2}>
                       Measurement:
                       </Form.Label>
                       <Col sm={10}>
@@ -281,19 +296,19 @@ const id=userData.userData.customer_id;
                     </Form.Group><br/>
 
                     <Form.Group as={Row} controlId="formHorizontalmaterial">
-                      <Form.Label className={classes.lab} column lg={2}>
+                      <Form.Label column lg={2}>
                        Material :
                       </Form.Label>
                       <Col sm={10}>
-                        <Form.Control type="text" placeholder="type" 
+                        <Form.Control type="text"  
                         onChange={(event)=> {
                           setMaterial(event.target.value);
                         }}/>
                       </Col>
                     </Form.Group><br/>
 
-                    <Form.Group as={Row} controlId="formHorizontalcolor">
-                      <Form.Label className={classes.lab}  column lg={2}>
+                    <Form.Group as={Row} controlId="formHorizontalPassword">
+                      <Form.Label column lg={2}>
                        Color :
                       </Form.Label>
                       <Col sm={2}>
@@ -309,7 +324,7 @@ const id=userData.userData.customer_id;
                     
                         <div  style={styles.button_style}>
                        
-                        <Button  type="submit"  size='lg' >Submit</Button>
+                        <Button  type="submit" size='lg' >Submit</Button>
                         </div>
            
                 </Form>
@@ -324,10 +339,9 @@ const id=userData.userData.customer_id;
            
           </Box>
         </Container>
-       
+      
       </main>
     </div>
-   <Footer />
-    </Fragment>
+    </React.Fragment>
   );
 }

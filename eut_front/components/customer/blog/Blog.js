@@ -15,7 +15,7 @@ export default function Blog(userData) {
     <React.Fragment>
       <CssBaseline />
       <Container maxWidth="xxl" minWidth="360px">
-        <Header title="EUT FURNITURE" cust={userData.userData} />
+        <Header title="EUT FURNITURE"  />
         
       </Container>
      

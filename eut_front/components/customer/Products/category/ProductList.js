@@ -1,15 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import Title from '../Title';
+import {Link} from 'react-router-dom'
 //import styled from 'styled-components';
 import axios from 'axios';
 import { useParams } from "react-router-dom";
 import Pproduct from "../../Pproduct";
 import Footer from '../../Footer'
 import './productstyle.css'
+
+
+
 export default function ProductList(userData) {
     const { customer_id } = useParams();
     const [product, setDt] = useState([])
+
     useEffect(() => {
         const fetchData = async () => {
             const response = await axios.get('http://localhost:3001/dining', {
@@ -39,6 +43,8 @@ export default function ProductList(userData) {
 
     return (
         <React.Fragment>
+
+
             <Pproduct />
 
             <div className="py-5">

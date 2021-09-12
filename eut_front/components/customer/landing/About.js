@@ -2,12 +2,12 @@ import React, { Component, Fragment } from 'react';
 import Logo from '../../../images/home.jpg'
 import Footer from '../Footer';
 import Blog from './Blog';
-import { makeStyles } from '@material-ui/core/styles';
 import { Map, Marker, GoogleApiWrapper } from 'google-maps-react';
 import '../../customer/about.css'
 const mapStyles = {
   width: '100%',
-  height: '65%'
+  height: '65%',
+ 
 
 };
 
@@ -64,7 +64,7 @@ class About extends Component {
           <h5>Contact </h5>
           Phone: 0214 546 330 <br />
           Email :srieut@gmail.com
-<div>
+<div className="mappos">
           <h5>Find Us</h5><br />
           <Map
             google={this.props.google}
@@ -88,8 +88,9 @@ class About extends Component {
           </Map>
 
 </div>
+
         </div>
-        <Footer />
+        <Footer /> 
       </Fragment>
     );
   }
