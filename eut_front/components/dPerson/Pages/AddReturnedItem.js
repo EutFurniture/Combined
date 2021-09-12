@@ -292,9 +292,7 @@ export default function AddReturnedItem(userData) {
         </div>
         <Divider/>
         <List style={{backgroundColor: 'rgb(37, 37, 94)', color:'white'}}>{DpListItems}</List>
-        <Divider/>
-        <List style={{backgroundColor: 'rgb(37, 37, 94)', color:'white'}}>{Logout}</List>
-        <Divider/>
+
       </Drawer>
       </div>
      
@@ -317,7 +315,7 @@ export default function AddReturnedItem(userData) {
                 <div ><br/>
            
                 <div align = 'right'>
-            <Link  to='/AddForm' className="Addbtn"><AddCircleIcon style={{marginTop:'5px'}}/> Add New </Link> <br/>
+            <Link  to='/dPerson/AddForm' className="Addbtn"><AddCircleIcon style={{marginTop:'5px'}}/> Add New </Link> <br/>
             </div>        
                
         <Table striped bordered hover responsive>

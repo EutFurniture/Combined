@@ -177,7 +177,7 @@ export default function DpDashboard(userData) {
       
     }
 
-    const response2= axios.get("http://localhost:3001/empCountReturnItems",{
+  const response2= axios.get("http://localhost:3001/empCountReturnItems",{
       params:{
         employee_id: userData.userData.id,
       }
@@ -316,9 +316,7 @@ if(!isAuth){
         </div>
         <Divider />
         <List style={{backgroundColor: 'rgb(37, 37, 94)', color:'white'}}>{DpListItems}</List>
-        <Divider />
-        <List style={{backgroundColor: 'rgb(37, 37, 94)', color:'white'}}>{Logout}</List>
-        <Divider />
+
       </Drawer>
       </div>
 
@@ -397,14 +395,21 @@ if(!isAuth){
              </Table>
                </Paper>
             </Grid>
+            
                        </div>
+                       
               </Paper>
+           
             </Grid>
 
-           <ViewProductDeliver/>
+         
 
          </Grid>
-      
+         <Grid style={{marginTop:'10px'}} item xs={12} >
+         <Paper >
+         <ViewProductDeliver/>
+          </Paper>         
+            </Grid>
         </Container>
         <Copyright />
       </main>

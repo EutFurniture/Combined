@@ -22,7 +22,7 @@ const styles = {
 }
 }
 export default function ViewConDelivery(userData) {
- 
+   
   const [user,setUser]=useState([])
   const { employee_id } = useParams();
    useEffect(() => {
@@ -70,7 +70,7 @@ export default function ViewConDelivery(userData) {
               <td>{item.status}</td>
               
               <td align="center">
-            <Link style={styles.updatebtn} to={location=> `/employee/UpdateConDeliveryRoute/${item.order_id}`}>Click to Confirm </Link>
+            <Link style={styles.updatebtn} to={location=> `/dPerson/UpdateConDeliveryRoute/${item.order_id}`}>Click to Confirm </Link>
               
                   
               </td>
@@ -78,8 +78,6 @@ export default function ViewConDelivery(userData) {
          
         })}
 
-          
-          
         </tbody> 
       </Table>
     

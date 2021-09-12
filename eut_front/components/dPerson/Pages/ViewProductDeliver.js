@@ -17,7 +17,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
         <Grid container spacing={3}>
         {/* Recent Orders */}
         <Grid item xs={12}  direction="row"  >
-        <div className='box-main'>
+        <div>
                      
                 
         <Table striped bordered hover responsive>

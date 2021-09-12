@@ -233,6 +233,7 @@ export default function AddForm() {
            <AccountCircleIcon   onClick={handleClick}/>
   
           </IconButton>
+         
           <Menu
         id="simple-menu"
         anchorEl={anchorEl}
@@ -242,7 +243,7 @@ export default function AddForm() {
       >
         <MenuItem component={Link} to="/dPerson/DpProfile">Profile</MenuItem>
       <MenuItem component={Link} to="/Calender">Calendar</MenuItem>
-        <MenuItem onClick={()=>setIsAuth(false)}>Logout</MenuItem>
+ 
       </Menu>
         </Toolbar>
       </AppBar>
@@ -321,7 +322,7 @@ export default function AddForm() {
                         Employee ID :
                       </Form.Label>
                       <Col sm={10}>
-                        <Form.Control type="text" placeholder="Product ID" 
+                        <Form.Control type="text" placeholder="Employee ID" 
                         onChange={(event)=> {
                           setEmployee_id(event.target.value);
                         }}
