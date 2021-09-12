@@ -1,6 +1,9 @@
-import React, { useState } from "react";
+// 
+import React, { useState, useEffect} from "react";
 import clsx from 'clsx';
 import axios from "axios";
+import Axios from "axios";
+import {toast} from 'react-toastify'
 import Box from '@material-ui/core/Box';
 import Link from '@material-ui/core/Link'
 import Form from 'react-bootstrap/Form';
@@ -202,9 +205,11 @@ const styles = {
 };
 
 const schema = yup.object().shape({
-  name: yup.string().required(),
+  fname: yup.string().required(),
+  lname: yup.string().required(),
   email: yup.string().email().required(),
   address: yup.string().required(),
+  NIC: yup.string().max(10, "Must be 10 Characters.").min(10, "Must be 10 Characters."),
   phone: yup.string().max(10, "Must be 10 Digits.").min(10, "Must be 10 Digits.")
 })
 
@@ -218,13 +223,73 @@ export default function AddCustomForm() {
     resolver: yupResolver(schema),
 });
 
+const [orderNotifyCount,setorderNotifyCount]=useState([]);
+
+useEffect(()=>{
+  Axios.get("http://localhost:3001/ordernotifyCount").then((response)=>{
+    setorderNotifyCount(response.data)
+    
+  })
+},[])
+
+const ordercount=orderNotifyCount.map(record=>record.o_count);
+console.log(ordercount);
+
+
+
+
+const [orderNotifymess,setorderNotifymess]=useState([])
+useEffect(()=>{
+  Axios.get("http://localhost:3001/ordernotifymess").then((response)=>{
+    setorderNotifymess(response.data)
+    
+  })
+},[])
+const ordermesscount=orderNotifymess.map(record=>record.o_count);
+
+
+const total = Number(ordercount)
+
+const NotificationClick = async () => {
+ 
+
+  const responsee = await Axios.get('http://localhost:3001/ordernotifyDeactive', {
+  });
+
+
+    if(ordermesscount>0)
+    {
+      const customToastse=()=>{
+        return(
+          <div style={{fontSize:'15px'}}>
+            You have New {ordermesscount} Orders! <br></br><br></br>
+            <Button variant="contained"  onClick={Notification_page_order}>View</Button>
+          </div>
+        )
+      }
+
+      const notifyee=()=>{
+     
+        toast.info(customToastse,{position:toast.POSITION.TOP_RIGHT,autoClose:false})
+      
+      
+          }
+      notifyee();
+    }
+
+      const Notification_page_order=()=>{
+        window.location.href='/sManager/pages/Notification_order'
+        }
+}
   
   
   
   const addCustomer = (data)=>{
   
      axios.post('http://localhost:3001/sales_create',{
-       name:data.name,
+       fname:data.fname,
+       lname:data.lname,
+       NIC:data.NIC,
        email:data.email,
        phone:data.phone,
        address:data.address,
@@ -238,7 +303,9 @@ export default function AddCustomForm() {
          
       }
        });
-       console.log(data)
+       //console.log(data)
+       alert("Customer added successfully")  
+
   };
   
   
@@ -288,8 +355,8 @@ export default function AddCustomForm() {
             <b>Sales Manager</b>
           </Typography>
           <IconButton color="inherit">
-            <Badge badgeContent={4} color="secondary">
-              <NotificationsIcon />
+            <Badge badgeContent={total} color="secondary">
+              <NotificationsIcon onClick={NotificationClick}/>
             </Badge>
           </IconButton>
 
@@ -354,13 +421,32 @@ export default function AddCustomForm() {
                 
                     <Form.Group as={Row} controlId="formHorizontalName">
                       <Form.Label column lg={2} >
-                        Full Name :
+                        First Name :
                       </Form.Label>
                       <Col >
-                        <Form.Control type="text"   {...register('name')} required />
-                        {errors.name?.message && <p className=" errormessage" >{errors.name?.message}</p>}                        
+                        <Form.Control type="text"   {...register('fname')} required />
+                        {errors.fname?.message && <p className=" errormessage" >{errors.fname?.message}</p>}                        
                       </Col>
                     </Form.Group><br/>
+                    <Form.Group as={Row} controlId="formHorizontalName">
+                      <Form.Label column lg={2} >
+                        Last Name :
+                      </Form.Label>
+                      <Col >
+                        <Form.Control type="text"   {...register('lname')} required />
+                        {errors.lname?.message && <p className=" errormessage" >{errors.lname?.message}</p>}                        
+                      </Col>
+                    </Form.Group><br/>
+                    <Form.Group as={Row} controlId="formHorizontalNIC">
+                      <Form.Label column lg={2} >
+                       NIC :
+                      </Form.Label>
+                      <Col >
+                        <Form.Control type="text"   {...register('NIC')} required />
+                        {errors.NIC?.message && <p className=" errormessage" >{errors.NIC?.message}</p>}                        
+                      </Col>
+                    </Form.Group><br/>
+
                     
 
                     <Form.Group as={Row} controlId="formHorizontalEmail">
