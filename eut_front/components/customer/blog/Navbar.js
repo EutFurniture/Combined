@@ -171,7 +171,7 @@ const DialogActions = withStyles((theme) => ({
 }))(MuiDialogActions);
 
 
-export default function Pricing() {
+export default function Navbar(userData) {
       const classes = useStyles();
       const [anchorEl, setAnchorEl] = useState(null);
 
@@ -198,7 +198,9 @@ export default function Pricing() {
       }
       const NotificationClick = async () => {
             const response = await axios.get('http://localhost:3001/customerNoficationActive', {
-
+       params:{
+             customer_id:userData.userData.customer_id
+            }
 
             });
             notify();
@@ -223,6 +225,32 @@ export default function Pricing() {
       const Cuspage = () => {
             window.location.href = '/customer/notification'
       }
+
+
+//       const [cartCount,setCartCount]=useState([]);
+//       const [cusorderCount, setCusOrderCount] = useState([])
+//       const response1= axios.get("http://localhost:3001/cartCount",{
+//       params:{
+//         customer_id:userData.userData.customer_id,
+//       }
+//     }).then((response)=>{
+//       setCartCount(response.data)
+     
+      
+//     });
+    
+
+
+//     const response2= axios.get("http://localhost:3001/CRcustorder",{
+//     params:{
+//       customer_id:userData.userData.customer_id,
+//     }
+//    }).then((response)=>{
+//       setCusOrderCount(response.data)
+
+//     })
+//     const cardcount=cartCount.map(record=>record.count);
+//     const customizedcount=cusorderCount.map(record=>record.count);
       const body = (
 
             <div className="shap">
@@ -279,6 +307,23 @@ export default function Pricing() {
                                     <Link variant="body2" noWrap color="inherit" href="/customer/customization" className={classes.link}>
                                           Customization
                                     </Link>
+                                    <Link
+                                          color="inherit"
+                                          noWrap
+                                          variant="body2"
+                                          href='/customer/cart'
+                                          className={classes.toolbarLink}
+                                    >
+                                          <Badge color="secondary" badgeContent >
+                                                <AddShoppingCart />
+                                          </Badge>
+                                    </Link>
+
+                                    <IconButton onClick={NotificationClick} color="inherit">
+                                          <Badge badgeContent color="secondary">
+                                                <NotificationsIcon />
+                                          </Badge>
+                                    </IconButton>
 
                                     <Link
                                           color="inherit"
@@ -345,23 +390,7 @@ export default function Pricing() {
                                     </StyledMenu>
 
 
-                                    <Link
-                                          color="inherit"
-                                          noWrap
-                                          variant="body2"
-                                          href='/customer/cart'
-                                          className={classes.toolbarLink}
-                                    >
-                                          <Badge color="secondary">
-                                                <AddShoppingCart badgeContent />
-                                          </Badge>
-                                    </Link>
-
-                                    <IconButton onClick={NotificationClick} color="inherit">
-                                          <Badge badgeContent color="secondary">
-                                                <NotificationsIcon />
-                                          </Badge>
-                                    </IconButton>
+                                   
 
                               </nav>
                               {/* <Button href="#" color="primary" variant="outlined" className={classes.link}>
