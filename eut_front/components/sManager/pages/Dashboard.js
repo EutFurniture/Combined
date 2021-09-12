@@ -1,6 +1,10 @@
+// 
 import React from 'react';
 import clsx from 'clsx';
-
+import Axios from "axios";
+import {toast} from 'react-toastify'
+import { useState, useEffect} from "react";
+import { Button } from 'react-bootstrap';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Drawer from '@material-ui/core/Drawer';
@@ -24,6 +28,7 @@ import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import { mainListItems, Logout } from './listItems';
 import Chart from './Chart';
 import Deposits from './Deposits';
+import SalesOrderChart from '../../charts/SalesOrderChart';
 
 
 
@@ -140,6 +145,64 @@ export default function Dashboard() {
     setOpen(false);
   };
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const [orderNotifyCount,setorderNotifyCount]=useState([]);
+
+useEffect(()=>{
+  Axios.get("http://localhost:3001/ordernotifyCount").then((response)=>{
+    setorderNotifyCount(response.data)
+    
+  })
+},[])
+
+const ordercount=orderNotifyCount.map(record=>record.o_count);
+console.log(ordercount);
+
+
+
+
+const [orderNotifymess,setorderNotifymess]=useState([])
+useEffect(()=>{
+  Axios.get("http://localhost:3001/ordernotifymess").then((response)=>{
+    setorderNotifymess(response.data)
+    
+  })
+},[])
+const ordermesscount=orderNotifymess.map(record=>record.o_count);
+
+
+const total = Number(ordercount)
+
+const NotificationClick = async () => {
+ 
+
+  const responsee = await Axios.get('http://localhost:3001/ordernotifyDeactive', {
+  });
+
+
+    if(ordermesscount>0)
+    {
+      const customToastse=()=>{
+        return(
+          <div style={{fontSize:'15px'}}>
+            You have New {ordermesscount} Orders! <br></br><br></br>
+            <Button variant="contained"  onClick={Notification_page_order}>View</Button>
+          </div>
+        )
+      }
+
+      const notifyee=()=>{
+     
+        toast.info(customToastse,{position:toast.POSITION.TOP_RIGHT,autoClose:false})
+      
+      
+          }
+      notifyee();
+    }
+
+      const Notification_page_order=()=>{
+        window.location.href='/sManager/pages/Notification_order'
+        }
+}
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -166,8 +229,8 @@ export default function Dashboard() {
             <strong>SALES MANAGER</strong>
           </Typography>
           <IconButton color="inherit" fontSize="inherit">
-            <Badge badgeContent={4} color="secondary">
-            <NotificationsIcon />
+            <Badge badgeContent={total} color="secondary">
+            <NotificationsIcon onClick={NotificationClick}/>
             </Badge>
           </IconButton>
           <IconButton color="inherit" fontSize="inherit">
@@ -205,7 +268,7 @@ export default function Dashboard() {
             {/* Chart */}
             <Grid item xs={12} >
               <Paper className={fixedHeightPaper}>
-                <Chart />
+                <SalesOrderChart />
               </Paper>
             </Grid>
             {/* Recent Deposits */}
