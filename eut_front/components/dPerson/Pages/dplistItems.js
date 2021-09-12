@@ -14,7 +14,7 @@ import RoomSharpIcon from '@material-ui/icons/RoomSharp';
 import PersonIcon from '@material-ui/icons/Person';
 export const DpListItems = (
   <div  style={{backgroundColor: '#25255e'}}>
-    <ListItem button component={Link} to="/DpDashboard">
+    <ListItem button component={Link} to="/dPerson/DpDashboard">
       <ListItemIcon style={{color:'white'}}>
         <DashboardIcon />
       </ListItemIcon>
@@ -44,13 +44,13 @@ export const DpListItems = (
       </ListItemIcon>
       <ListItemText primary="ConfirmDelivery" />
       </ListItem>
-    <ListItem button component={Link} to="/Maps">
+    <ListItem button component={Link} to="/dPerson/Maps">
       <ListItemIcon style={{color:'white'}}>
         < RoomSharpIcon />
       </ListItemIcon>
       <ListItemText primary="Maps" />
     </ListItem>
-    
+
 
  {/*} <ListItem button component={Link} to="/Locate">
       <ListItemIcon style={{color:'white'}}>
