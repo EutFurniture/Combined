@@ -149,6 +149,15 @@ app.get('/returnItem',(req, res) =>{
    
 })
 
+  //  EMPLOYEE SESSION 
+app.get('/employee', (req, res) => {
+    db.query("SELECT * FROM employee WHERE email=?",[req.query.email], (err, results, fields) => {
+       if(err) throw err;
+       res.send(results);
+     });
+    
+   });
+
     
         //VIEW DELIVERY DETAILS
 app.get("/DeliveryDetails",(req,res)=>{
