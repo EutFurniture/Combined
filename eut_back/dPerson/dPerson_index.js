@@ -165,13 +165,13 @@ app.get("/DeliveryDetails",(req,res)=>{
          // VIEW  DELIVERY TO CONFIRM
         
 app.get('/viewConfirmDelivery',(req, res) =>{
-            db.query("SELECT *  FROM orders  JOIN employee ON orders.employee_id = employee.id  WHERE orders.employee_id = ?  ", [req.query.employee_id],(err, results)=>
-             { 
-             console.log(req.query.employee_id);
-              res.send(results);
-             })
-             
-       })
+     db.query("SELECT *  FROM orders  JOIN employee ON orders.employee_id = employee.id  WHERE orders.employee_id = ? AND orders.status <> 'Completed'  ", [req.query.employee_id],(err, results)=>
+      { 
+      console.log(req.query.employee_id);
+       res.send(results);
+      })
+      
+})
 
 
  app.get('/dpprofile', (req, res) => {
@@ -308,6 +308,50 @@ app.get("/viewproductFordeliver", (req, res) => {
                 }
             });
         });
+
+
+
+
+
+
+	  //CASH ON INCOME FOR AN EMPLOYEE
+app.get('/empTotalcashonIncome', (req, res) => {
+  db.query("SELECT SUM(total_price) AS eincome FROM orders JOIN payment ON orders.order_id= payment.order_id WHERE  orders.employee_id=?  AND payment.payment_method = 'cash on delivery' AND orders.status <> 'completed' ", [req.query.employee_id], (err, result, fields) => {
+    if (!err)
+      res.send(result);
+    else
+      console.log(err);
+  })
+})
+
+app.get('/freeCount', (req, res) => {
+  db.query("SELECT COUNT(order_id) AS freecount FROM orders WHERE employee_id=? AND orders.total_price > 50000  AND orders.status <> 'completed'", [req.query.employee_id], (err, result, fields) => {
+    if (!err)
+      res.send(result);
+    else
+      console.log(err);
+  })
+})
+
+
+  
+app.get('/empRecentOrders',(req, res) =>{
+      db.query(" SELECT  orderitem.product_id,products.product_name, orders.total_price, orders.order_last_date  FROM orderitem INNER JOIN orders ON orders.order_id = orderitem.order_id   JOIN products ON orderitem.product_id = products.product_id WHERE orders.employee_id=? AND orders.status='Completed' ORDER BY orders.order_last_date DESC LIMIT 5  ", [req.query.employee_id],(err, results)=>
+       { 
+       console.log(req.query.employee_id);
+        res.send(results);
+       })
+       
+    })
+    
+app.get('/empCountReturnItems', (req, res) => {
+        db.query('SELECT COUNT(return_id) AS returncount FROM return_item WHERE employee_id=?', [req.query.employee_id], (err, result, fields) => {
+          if (!err)
+            res.send(result);
+          else
+            console.log(err);
+        })
+      })
 
 app.listen(3001, () => {
             console.log("yay your server is running on port 3001");
