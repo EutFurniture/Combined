@@ -106,8 +106,8 @@ app.get('/sales_viewOrder',(req,res)=>{
 
 app.post("/sales_customization",(req,res)=> {
    
-    const image=req.body.image;
-    const name=req.body.name;
+    const product_img=req.body.product_img;
+    const product_name=req.body.product_name;
     const price=req.body.price;
     const description=req.body.description;
     const start_date=req.body.start_date;
@@ -115,7 +115,7 @@ app.post("/sales_customization",(req,res)=> {
     const material=req.body.material; 
     
       db.query(
-        "INSERT INTO promotions(description,price, start_date,end_date,name,material,image) VALUES (?,?,?,?,?,?,?)",[description,price, start_date, end_date,name,material,image],
+        "INSERT INTO products(description,price, start_date,end_date,product_name,material,product_img) VALUES (?,?,?,?,?,?,?)",[description,price, start_date, end_date,product_name,material,product_img],
         (err,result) =>{
             if(err){
                 console.log(err)
@@ -128,6 +128,7 @@ app.post("/sales_customization",(req,res)=> {
         
       
     })
+
 
 //Payments
 
