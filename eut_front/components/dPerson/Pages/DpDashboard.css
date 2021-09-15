@@ -132,6 +132,64 @@ main{
     border-radius: 5px;
     font-size: 20px;
 }
+.dpcardcollection{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 20px;
+    margin-right: 10px;
+    margin-left: 10px;
+    margin-top: 20px;
+}
+.dpcard1{
+    background: #d1ecf1;
+    color: #35a4ba;
+    padding: 25px;
+    text-align: center;
+ width: 270px;
+ height: 150px;
+    border-radius: 5px;
+    font-size: 20px;
+}
+.dpcard2{
+    background: #d2f9ee;
+    color: #38e1b0;
+    text-align: center;
+    padding: 25px;
+    width: 270px;
+    height: 150px;
+    border-radius: 5px;
+    font-size: 20px;
+}
+.dpcard3{
+    background: #d6d8d9;
+    color: #3a3e41;
+    text-align: center;
+    padding: 25px;
+    width: 270px;
+    height: 150px;
+    border-radius: 5px;
+    font-size: 20px;
+}
+.dpcard5{
+    background: #ffe5b4;
+    color: #ffb347;
+    text-align: center;
+    padding: 25px;
+    width: 270px;
+    height: 150px;
+    border-radius: 5px;
+    font-size: 18px;
+}
+.dpcard4{
+    background: #fddcdf;
+    color: #f65a6f;
+    text-align: center;
+    padding: 25px;
+    width: 270px;
+    height: 150px;
+    border-radius: 5px;
+    font-size: 20px;
+}
 
 @media only screen and(max-width:855px){
     .main_cards{
