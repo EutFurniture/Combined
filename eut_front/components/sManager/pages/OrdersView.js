@@ -77,8 +77,7 @@ const [modal, setModal] = useState(false);
                          <th scope="row"><br/>{record.order_id}</th>
                      
                          <td align="center"><br/>{record.customer_id}</td>
-                         <td>{record.order_type === "Showroom" ? <Alert variant="info">Showroom</Alert> : <Alert variant="primary">Online</Alert>}</td>
-                     
+                         <td align="center">{record.order_type === "Showroom" ? <Alert variant="info">Showroom</Alert> : record.order_type === "Online" ? <Alert variant="primary">Online</Alert> : record.order_type === "Customized" ? <Alert variant="success">Customized</Alert> : record.order_type}</td>
                    
                          <td align="center"><br/>{record.quantity}</td>
 
