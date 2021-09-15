@@ -262,9 +262,7 @@ export default function AddForm() {
         </div>
         <Divider />
         <List style={{backgroundColor: 'rgb(37, 37, 94)', color:'white'}}>{DpListItems}</List>
-        <Divider />
-        <List style={{backgroundColor: 'rgb(37, 37, 94)', color:'red'}}>{Logout}</List>
-        <Divider />
+
       </Drawer>
       </div>
       <main className={classes.content}>
@@ -361,7 +359,7 @@ export default function AddForm() {
 
                     
                         <div     align='center' style={styles.button_style}>
-                        <Button  type="submit" size='lg' href= '/dPerson/AddReturnedItem' >View Return Item</Button>
+                        <Button  type="submit" size='lg' href= '/dPerson/ViewProductDeliver' >View Product List</Button>
 
                         <Button  type="submit" size='lg' onClick={addReturnItem}>Add Returned Items</Button>
                          

@@ -342,74 +342,65 @@ if(!isAuth){
                           
                       </div>
 
-                       <div className="charts_right_cards">
-                           <div className="card1">
-                               <h3>Total Cash On Payments</h3>
-                               {totalcashon_income.map((record)=>{
+                      
+                      <div className="cardcollection">
+                           <div className="dpcard1">
+                             <h3>Total Cash On Payments</h3>
+                            {totalcashon_income.map((record)=>{
                                  return(
                                   <p style={{fontSize:'25px'}}>Rs.{totalcashon_income.map(record=>record.eincome)}</p>
                                  )
                                })}
                            </div>
 
-                           <div className="card2">
-                           <h2>Returned Items</h2>
-                           {returns_count.map((item)=>{
+                           <div className="dpcard2">
+							 <h3>No of Returned Items</h3>
+               {returns_count.map((item)=>{
                                  return(
                                   <p style={{fontSize:'30px'}}>{returns_count.map(record=>record.returncount)}</p>
                                  )
                                })}
                            </div>
-
-
-                           <div className="card4">
-                           <h3>Free Deliveries</h3>
-                               <p>over Rs.50 000</p>
+						    <div className="dpcard3">
+                            <h3>Free Deliveries</h3>
+                                <h4>over Rs.50 000</h4>
                            </div>
-                           <div className="card1">
-                               <h3>No of Free Deliveries </h3>
+
+                           <div className="dpcard4">
+						   <h3>No of Free Deliveries </h3>
                                <p style={{fontSize:'30px'}}>{free_count.map(record=>record.freecount)}</p>
                            </div>
+                </div>
 
-
+                      
                        </div>
-                       </div>
-                       <Grid style={{marginTop:'10px',marginLeft:'20px'}} item xs={6} >
-            <Paper >
-        
-              <div style={{marginLeft:'20px', marginTop:'70px'}}>
-             
-               <h3><b>RECENT COMPLETED ORDERS</b></h3>
-               </div>
-               <Table striped bordered hover responsive>
-             <tbody className="tablebody">
-             {user.map(item=>
-                <tr >
-                <td align="center">{item.product_id}</td>
-                <td align="center">{item.product_name}</td>
-                <td align="center">{item.total_price}</td>
-
-                </tr>
-               )}
-               </tbody> 
-             </Table>
-               </Paper>
-            </Grid>
             
                        </div>
-                       
+     <Grid style={{marginTop:'0px'}} item xs={12} >
+           <Paper >
+        <div style={{marginLeft:'20px', marginTop:'30px'}}>
+       
+         <h3><b>RECENT COMPLETED ORDERS</b></h3>
+         </div>
+         <Table striped bordered hover responsive>
+       <tbody className="tablebody">
+       {user.map(item=>
+          <tr >
+          <td align="center">{item.product_id}</td>
+          <td align="center">{item.product_name}</td>
+          <td align="center">{item.total_price}</td>
+
+          </tr>
+         )}
+         </tbody> 
+       </Table>
+          </Paper>         
+            </Grid>
               </Paper>
            
             </Grid>
-
-         
-
-         </Grid>
-         <Grid style={{marginTop:'10px'}} item xs={12} >
-         <Paper >
-         <ViewProductDeliver/>
-          </Paper>         
-            </Grid>
+           </Grid>
+        
         </Container>
         <Copyright />
       </main>
