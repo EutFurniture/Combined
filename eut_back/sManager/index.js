@@ -54,8 +54,15 @@ app.listen(3001,()=>{
 
 //Orders
 
+// app.get('/sales_loadOrders',(req,res)=>{
+//     db.query('SELECT orders.order_id, orderitem.quantity,DATE_FORMAT(orders.o_date,"%d-%m-%y") AS o_date,DATE_FORMAT(orders.order_last_date,"%d-%m-%y") AS order_last_date,orders.status,orderitem.total,orders.customer_id FROM orders INNER JOIN orderitem ON orders.order_id = orderitem.order_id ORDER BY orders.order_id  DESC;', (err, results, fields) => {
+//         if(err) throw err;
+//         res.send(results);
+//       });
+// })
+
 app.get('/sales_loadOrders',(req,res)=>{
-    db.query('SELECT orders.order_id, orderitem.quantity,DATE_FORMAT(orders.o_date,"%d-%m-%y") AS o_date,DATE_FORMAT(orders.order_last_date,"%d-%m-%y") AS order_last_date,orders.status,orderitem.total,orders.customer_id FROM orders INNER JOIN orderitem ON orders.order_id = orderitem.order_id ORDER BY orders.order_id  DESC;', (err, results, fields) => {
+    db.query('SELECT orders.order_id, orders.total_price, orderitem.quantity, DATE_FORMAT(orders.o_date,"%d-%m-%y") AS o_date,DATE_FORMAT(orders.order_last_date,"%d-%m-%y") AS order_last_date,orders.status,orders.customer_id, orders.order_type FROM orders INNER JOIN orderitem ON orders.order_id = orderitem.order_id ORDER BY orders.order_id  DESC;', (err, results, fields) => {
         if(err) throw err;
         res.send(results);
       });
@@ -207,16 +214,38 @@ app.post('/sales_create', (req,res) => {
 
 
 
+// app.post('/sales_create_order', (req,res) => {
+//     const customer_id = req.body.customer_id;
+//     const o_date = req.body.o_date;
+//     const order_last_date = req.body.order_last_date;
+//     const order_description = req.body.order_description;
+//     const total_price = req.body.total_price;
+   
+
+//     db.query('INSERT INTO orders(customer_id, o_date, order_last_date, order_description, total_price) VALUES (?,?,?,?,?)',
+//     [customer_id, o_date, order_last_date, order_description, total_price], (err, result) => {
+//         if (err) {
+//             console.log(err)
+//         } else{
+//             res.send("Values Inserted")
+//         }
+//       }
+//     );
+// });
+
 app.post('/sales_create_order', (req,res) => {
     const customer_id = req.body.customer_id;
     const o_date = req.body.o_date;
     const order_last_date = req.body.order_last_date;
     const order_description = req.body.order_description;
-    const total_price = req.body.total_price;
+    const status = req.body.status;
+    const order_advance_price = req.body.advance_price;
+    const order_type = req.body.order_type;
+    //const total_price = req.body.total_price;
    
 
-    db.query('INSERT INTO orders(customer_id, o_date, order_last_date, order_description, total_price) VALUES (?,?,?,?,?)',
-    [customer_id, o_date, order_last_date, order_description, total_price], (err, result) => {
+    db.query('INSERT INTO orders(customer_id, order_description, o_date, order_last_date, status, advance_price, order_type) VALUES (?,?,NOW(),NOW(),"Completed","0", "Showroom")',
+    [customer_id, order_description, o_date, order_last_date, status,], (err, result) => {
         if (err) {
             console.log(err)
         } else{
@@ -224,6 +253,47 @@ app.post('/sales_create_order', (req,res) => {
         }
       }
     );
+});
+
+app.post('/sales_create_orderitem', (req,res) => {
+  const order_id = req.body.order_id;
+  const product_id = req.body.product_id;
+  const quantity = req.body.quantity;
+  const total = req.body.quantity*req.body.price;
+  // const o_date = req.body.o_date;
+  // const order_last_date = req.body.order_last_date;
+ // const order_description = req.body.order_description;
+
+ 
+
+  db.query('INSERT INTO orderitem(order_id, product_id, quantity, total) VALUES (?,?,?,?);',
+  [order_id, product_id, quantity, total], (err, result) => {
+      if (err) {
+          console.log(err)
+      } else{
+          res.send("Values Inserted")
+      }
+    }
+  );
+});
+
+
+app.post('/sales_create_payment', (req,res) => {
+  
+  const payment_method = req.body.payment_method;
+  const payment_status = req.body.payment_status;
+  const order_id = req.body.order_id;
+  const total_price = req.body.total_price;
+ 
+  db.query('INSERT INTO payment(payment_method, payment_status, order_id ) VALUES (?,?,?); UPDATE orders SET total_price = ? WHERE order_id=(SELECT MAX(order_id) FROM orders)  ',
+  [payment_method, payment_status, order_id, total_price], (err, result) => {
+      if (err) {
+          console.log(err)
+      } else{
+          res.send("Values Inserted")
+      }
+    }
+  );
 });
 
 
@@ -616,4 +686,48 @@ app.get("/sales_cashOnDelivery", (req, res) => {
         }
     });
   });
+
+  app.get('/sales_orders2',(req,res) => {
+    db.query('SELECT * FROM orders WHERE order_id=(SELECT MAX(order_id) FROM orders', (err, result) => {
+        if(err) {
+            console.log(err)
+        }else {
+            res.send(result);
+        }
+    });
+  });
+
+
+  app.get('/sales_loadOrders2',(req,res) => {
+    db.query('SELECT order_id FROM orders WHERE order_id=(SELECT MAX(order_id) FROM orders)', (err, result) => {
+        if(err) {
+            console.log(err)
+        }else {
+            res.send(result);
+        }
+    });
+  });
+  
+  app.get('/sales_loadOrders3',(req,res) => {
+    db.query('SELECT total_price FROM orders WHERE order_id=(SELECT MAX(order_id) FROM orders)', (err, result) => {
+        if(err) {
+            console.log(err)
+        }else {
+            res.send(result);
+        }
+    });
+  });
+  
+  
+  app.get('/sales_loadOrders4',(req,res) => {
+    db.query('SELECT SUM(total) AS total_price FROM orderitem  WHERE order_id=(SELECT MAX(order_id) FROM orderitem)', (err, result) => {
+        if(err) {
+            console.log(err)
+        }else {
+            res.send(result);
+        }
+    });
+  });
+  
+  
    
