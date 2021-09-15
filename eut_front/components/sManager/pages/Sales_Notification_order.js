@@ -32,7 +32,7 @@ import {Button} from '@material-ui/core';
 
 
 import { mainListItems, Logout} from './listItems';
-import View_Notification_order from './View_Notification_order';
+import Sales_View_Notification_order from './Sales_View_Notification_order';
 
 
 
@@ -152,7 +152,7 @@ const styles = {
 
 toast.configure()
 
-export default function Notification_order() {
+export default function Sales_Notification_order() {
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
 
@@ -248,7 +248,7 @@ export default function Notification_order() {
       }
 
         const Notification_page_order=()=>{
-          window.location.href='/sManager/pages/Notification_order'
+          window.location.href='/sManager/pages/Sales_Notification_order'
           }
   }
 
@@ -353,7 +353,7 @@ export default function Notification_order() {
             <div >
               
               <Paper className={classes.paper}>
-                <View_Notification_order/>
+                <Sales_View_Notification_order/>
               </Paper>
               </div>
             </Grid>
