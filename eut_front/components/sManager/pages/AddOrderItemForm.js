@@ -37,8 +37,9 @@ import * as yup from "yup";
 
 
 import { mainListItems, Logout } from './listItems';
-import ChevronRight from "@material-ui/icons/ChevronRight";
+import {Table, Alert} from 'react-bootstrap';
 
+import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 
 function Copyright() {
   return (
@@ -208,8 +209,11 @@ const styles = {
 };
 
 const schema = yup.object().shape({
-  customer_id: yup.string().required(),
-  order_description: yup.string().required()
+  order_id: yup.string().required(),
+  product_id: yup.string().required(),
+  quantity: yup.string().required(),
+  price: yup.string().required(),
+  
 
 })
 
@@ -230,10 +234,14 @@ export default function AddCustomForm() {
 
   const addCustomer = (data)=>{
 
-     axios.post('http://localhost:3001/sales_create_order',{
-       customer_id: data.customer_id,
-       order_description: data.order_description,
-    
+     axios.post('http://localhost:3001/sales_create_orderitem',{
+       order_id: data.order_id,
+       product_id: data.product_id,
+       quantity: data.quantity,
+       price: data.price,
+       //total_price: data.total_price
+
+
       }).then((response)=>{
         if(response.data.message){
           alert('Order added successfully')
@@ -241,7 +249,7 @@ export default function AddCustomForm() {
 
       }
        });
-       //console.log(data)
+       console.log(data)
 
   };
 
@@ -252,6 +260,15 @@ export default function AddCustomForm() {
     setOpen(false);
   };
   const [anchorEl, setAnchorEl] = React.useState(null);
+//try
+  const [orderList, setOrderList] = useState([]);
+
+ useEffect(()=>{
+   axios.get("http://localhost:3001/sales_loadOrders2").then((response)=>{
+     setOrderList(response.data)
+   })
+ },[])
+  //tryend
 
   const [orderNotifyCount,setorderNotifyCount]=useState([]);
 
@@ -264,8 +281,6 @@ export default function AddCustomForm() {
 
   const ordercount=orderNotifyCount.map(record=>record.o_count);
   console.log(ordercount);
-
-
 
 
   const [orderNotifymess,setorderNotifymess]=useState([])
@@ -312,6 +327,15 @@ export default function AddCustomForm() {
           }
   }
 
+  const Go_product_order=()=>{
+    window.location.href='/sManager/pages/AddOrderItemForm'
+    };
+
+
+  const Go_payment_order=()=>{
+    window.location.href='/sManager/pages/AddPaymentForm'
+    };
+
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -319,10 +343,6 @@ export default function AddCustomForm() {
   const handleClose = () => {
     setAnchorEl(null);
   };
-
-  const Go_product_order=()=>{
-    window.location.href='/sManager/pages/AddOrderItemForm'
-    };
 
  // const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
@@ -407,42 +427,68 @@ export default function AddCustomForm() {
            <Paper className={classes.paper}>
 
            <Typography component="h1" variant="h6" color="inherit" align="center" width="100%" noWrap className={classes.title}>
-                  <strong> Add External Order </strong>
+                  <strong> Add Products </strong>
                 </Typography><br/>
-
-
-
+               
                 <Form onSubmit={handleSubmit(addCustomer)}>
 
-                    <Form.Group as={Row} controlId="formHorizontalName">
+                      <Form.Group as={Row} controlId="formHorizontalName">
                       <Form.Label column lg={2} >
-                        Customer ID :
+                        Order ID :
                       </Form.Label>
                       <Col >
-                        <Form.Control type="text"   {...register('customer_id')} required />
-                        {errors.customer_id?.message && <p className=" errormessage" >{errors.customer_id?.message}</p>}
-                      </Col>
+                      {orderList.map((record)=>{
+                          return(
+                        <Form.Control type="text"
+                        defaultValue={record.order_id}
+                              {...register('order_id')} required />
+                        // {errors.order_id?.message && <p className=" errormessage" >{errors.order_id?.message}</p>}
+                        )
+                      })}
+                        </Col>
                     </Form.Group><br/>
-
-
-
-
-                   
 
                     <Form.Group as={Row} controlId="formHorizontalPhoneNo">
                       <Form.Label column lg={2} >
-                       Order Description :
+                       Product ID :
                       </Form.Label>
                       <Col >
-                        <Form.Control type="text"   {...register('order_description')} required />
-                        {errors.order_description?.message && <p className=" errormessage" >{errors.order_description?.message}</p>}
+                        <Form.Control type="text"   {...register('product_id')} required />
+                        {errors.product_id?.message && <p className=" errormessage" >{errors.product_id?.message}</p>}
                       </Col>
                     </Form.Group><br/>
 
-                    <div align="center">
-                    
-                     <Button  style={{fontSize:'20px',width:'200px'}} type="submit" onClick={Go_product_order}>Product Details <ChevronRightIcon/></Button>
-                  
+                    <Form.Group as={Row} controlId="formHorizontalPhoneNo">
+                      <Form.Label column lg={2} >
+                       Quantity :
+                      </Form.Label>
+                      <Col >
+                        <Form.Control type="text"   {...register('quantity')} required />
+                        {errors.quantity?.message && <p className=" errormessage" >{errors.quantity?.message}</p>}
+                      </Col>
+                    </Form.Group><br/>
+
+                    <Form.Group as={Row} controlId="formHorizontalPhoneNo">
+                      <Form.Label column lg={2} >
+                       Price :
+                      </Form.Label>
+                      <Col >
+                        <Form.Control type="text"   {...register('price')} required />
+                        {errors.price?.message && <p className=" errormessage" >{errors.price?.message}</p>}
+                      </Col>
+                    </Form.Group><br/>
+
+
+
+                    <div align="right">
+
+                     <Button style={{fontSize:'20px',width:'200px'}} type="submit" onClick={Go_product_order}>Add <AddCircleOutlineIcon/> </Button>
+                     </div>
+                     <br/>
+
+                     <div align="right">
+
+                     <Button  style={{fontSize:'20px',width:'200px'}} type="submit" onClick={Go_payment_order}>Payment<ChevronRightIcon/></Button>
                      </div>
 
              </Form>
