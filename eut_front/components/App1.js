@@ -20,7 +20,7 @@ import UpdateConDeliveryRoute from './components/dPerson/pages/UpdateConDelivery
 import UpdateConDelivery from './components/dPerson/pages/UpdateConDelivery';
 import ViewCashon from './components/dPerson/pages/ViewCashon';
 import DpDashboard from './components/dPerson/pages/DpDashboard';
-
+import ViewProductDeliver from './components/dPerson/pages/ViewProductDeliver';
 import AddForm from './components/dPerson/pages/AddForm';
 import Maps from './components/dPerson/pages/Maps';
 import Calender from './components/dPerson/pages/Calender';
@@ -124,6 +124,9 @@ const App1 = () => {
                 <UpdateConDeliveryRoute userData={response1.data[0]} />
                </Route>
 
+               <Route path='/dPerson/ViewProductDeliver'  >
+                <ViewProductDeliver />
+               </Route>
 
                <Route path='/dPerson/AddForm'  >
                 <AddForm />
