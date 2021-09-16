@@ -1,4 +1,3 @@
-// 
 import React from 'react';
 import clsx from 'clsx';
 import Axios from "axios";
@@ -24,11 +23,13 @@ import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+import DashboardPaymentUI from './DashboardPaymentUI';
 
 import { mainListItems, Logout } from './listItems';
 import Chart from './Chart';
 import Deposits from './Deposits';
 import SalesOrderChart from '../../charts/SalesOrderChart';
+import Title from './Title';
 
 
 
@@ -263,26 +264,47 @@ const NotificationClick = async () => {
       <main className={classes.content}>
         <div className={classes.appBarSpacer} />
         <Container maxWidth="lg" className={classes.container}>
-         <h3>Dashboard</h3><br />
+         {/* <h3>Dashboard</h3><br /> */}
           <Grid container spacing={3}>
-            {/* Chart */}
-            <Grid item xs={12} >
-              <Paper className={fixedHeightPaper}>
-                <SalesOrderChart />
-              </Paper>
-            </Grid>
+          
             {/* Recent Deposits */}
        
             {/* Recent Orders */}
-            <Grid item xs={12}>
+            {/* <Grid item xs={12}>
               <Paper className={classes.paper}>
                 <Deposits />
               </Paper>
+            </Grid> */}
+
+            <Grid item xs={12}>
+              <Paper className={classes.paper}>
+                <DashboardPaymentUI />
+              </Paper>
             </Grid>
-          </Grid>
+      
+
+            {/* <Grid item xs={12}>
+              <Paper className={classes.paper}>
+                <DashboardOrdersView />
+              </Paper>
+            </Grid>
+
+            </Grid> */}
+          
+
+            {/* Chart */}
+             <Grid item xs={12} >
+              <Paper className={fixedHeightPaper} style={{height:'400px'}}>
+                <Title>Order Chart</Title>
+                <SalesOrderChart />
+              </Paper>
+            </Grid> 
+            </Grid>
+            
           <Box pt={4}>
             <Copyright />
           </Box>
+
         </Container>
       </main>
     </div>
