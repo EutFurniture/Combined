@@ -32,6 +32,20 @@ import Axios from 'axios';
 import {Button} from '@material-ui/core'
 
 import { mainListItems, Logout, Profile } from './listItems';
+import Box from '@material-ui/core/Box';
+
+function Copyright() {
+  return (
+    <Typography variant="body2" color="textSecondary" align="center">
+      {'Copyright © '}
+      <Link color="inherit" href="https://material-ui.com/">
+        Eut Furniture
+      </Link>{' '}
+      {new Date().getFullYear()}
+      {'.'}
+    </Typography>
+  );
+}
 
 const drawerWidth = 240;
 
@@ -106,7 +120,7 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
     height: '100vh',
     overflow: 'auto',
-    
+    backgroundColor:'#f0f8ff'
   },
  
   container: {
@@ -465,6 +479,11 @@ export default function EditPrioritizeOrders() {
               </div>
         </Grid>
         </Grid>  
+
+        <Box pt={4}>
+            <Copyright />
+        </Box>
+
         </Container>
       </main>
     </div>

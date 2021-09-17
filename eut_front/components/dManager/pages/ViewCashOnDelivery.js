@@ -51,7 +51,7 @@ input:{
 
 icon:{
   marginTop:'7px',
-  marginLeft:'120px',
+  marginLeft:'930px',
   color:'grey',
 },
 

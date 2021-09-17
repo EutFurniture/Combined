@@ -117,7 +117,7 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
     height: '100vh',
     overflow: 'auto',
-    backgroundColor:'#ede7f6'
+    backgroundColor:'#f0f8ff'
   },
   container: {
     paddingTop: theme.spacing(4),
@@ -171,7 +171,7 @@ const styles = {
   
   icon:{
     marginTop:'7px',
-    marginLeft:'120px',
+    marginLeft:'930px',
     color:'grey',
   },
   
