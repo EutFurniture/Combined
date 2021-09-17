@@ -1,9 +1,9 @@
-// 
-import React, { useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import clsx from 'clsx';
 import axios from "axios";
 import Axios from "axios";
 import {toast} from 'react-toastify'
+
 import Box from '@material-ui/core/Box';
 import Link from '@material-ui/core/Link'
 import Form from 'react-bootstrap/Form';
@@ -25,6 +25,7 @@ import Container from '@material-ui/core/Container';
 import Paper from '@material-ui/core/Paper';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
+import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import Grid from '@material-ui/core/Grid';
 import Divider from '@material-ui/core/Divider';
@@ -36,6 +37,9 @@ import * as yup from "yup";
 
 
 import { mainListItems, Logout } from './listItems';
+import {Table, Alert} from 'react-bootstrap';
+
+import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 
 function Copyright() {
   return (
@@ -56,7 +60,7 @@ const drawerWidth = 240;
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
-   
+
   },
   toolbar: {
     paddingRight: 24, // keep right padding when drawer closed
@@ -126,9 +130,9 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
     height: '100vh',
     overflow: 'auto',
-    
+
   },
- 
+
   container: {
     paddingTop: theme.spacing(4),
     paddingBottom: theme.spacing(4),
@@ -161,7 +165,7 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: '30px',
     display:'flex',
     //boxShadow:'5px 1px 2px 2px '
-    
+
   },
   categorybtn:{
       border:0,
@@ -194,7 +198,7 @@ addproducts:{
     display:'flex',
 },
 
-  
+
 
 }));
 
@@ -205,113 +209,49 @@ const styles = {
 };
 
 const schema = yup.object().shape({
-  fname: yup.string().required(),
-  lname: yup.string().required(),
-  email: yup.string().email().required(),
-  address: yup.string().required(),
-  NIC: yup.string().max(10, "Must be 10 Characters.").min(10, "Must be 10 Characters."),
-  phone: yup.string().max(10, "Must be 10 Digits.").min(10, "Must be 10 Digits.")
+  order_id: yup.string().required(),
+  product_id: yup.string().required(),
+  quantity: yup.string().required(),
+  price: yup.string().required(),
+  
+
 })
 
 
 export default function AddCustomForm() {
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
- 
+
 
   const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: yupResolver(schema),
 });
 
-const [orderNotifyCount,setorderNotifyCount]=useState([]);
-
-useEffect(()=>{
-  Axios.get("http://localhost:3001/sales_ordernotifyCount").then((response)=>{
-    setorderNotifyCount(response.data)
-    
-  })
-},[])
-
-const ordercount=orderNotifyCount.map(record=>record.o_count);
-console.log(ordercount);
 
 
 
 
-const [orderNotifymess,setorderNotifymess]=useState([])
-useEffect(()=>{
-  Axios.get("http://localhost:3001/sales_ordernotifymess").then((response)=>{
-    setorderNotifymess(response.data)
-    
-  })
-},[])
-const ordermesscount=orderNotifymess.map(record=>record.o_count);
 
-
-const total = Number(ordercount)
-
-const NotificationClick = async () => {
- 
-
-  const responsee = await Axios.get('http://localhost:3001/sales_ordernotifyDeactive', {
-  });
-
-
-    if(ordermesscount>0)
-    {
-      const customToastse=()=>{
-        return(
-          <div style={{fontSize:'15px'}}>
-            You have New {ordermesscount} Orders! <br></br><br></br>
-            <Button variant="contained"  onClick={Notification_page_order}>View</Button>
-          </div>
-        )
-      }
-
-      const notifyee=()=>{
-     
-        toast.info(customToastse,{position:toast.POSITION.TOP_RIGHT,autoClose:false})
-      
-      
-          }
-      notifyee();
-    }
-
-      const Notification_page_order=()=>{
-        window.location.href='/sManager/pages/Sales_Notification_order'
-        }
-}
-  
-  
-  
   const addCustomer = (data)=>{
-  
-     axios.post('http://localhost:3001/sales_create',{
-       fname:data.fname,
-       lname:data.lname,
-       NIC:data.NIC,
-       email:data.email,
-       phone:data.phone,
-       address:data.address,
-      
-       
-  
+
+     axios.post('http://localhost:3001/sales_create_orderitem',{
+       order_id: data.order_id,
+       product_id: data.product_id,
+       quantity: data.quantity,
+       price: data.price,
+       //total_price: data.total_price
+
+
       }).then((response)=>{
         if(response.data.message){
-          alert('Employee added successfully')
-          window.location.href='/sManager/pages/ManageCustom'
-         
+          alert('Order added successfully')
+          //window.location.href='/sManager/pages/ManageOrders'
+
       }
        });
-       //console.log(data)
-       alert("Customer added successfully")  
+       console.log(data)
 
   };
-  
-  
-
-  
-  
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -320,6 +260,81 @@ const NotificationClick = async () => {
     setOpen(false);
   };
   const [anchorEl, setAnchorEl] = React.useState(null);
+//try
+  const [orderList, setOrderList] = useState([]);
+
+ useEffect(()=>{
+   axios.get("http://localhost:3001/sales_loadOrders2").then((response)=>{
+     setOrderList(response.data)
+   })
+ },[])
+  //tryend
+
+  const [orderNotifyCount,setorderNotifyCount]=useState([]);
+
+  useEffect(()=>{
+    Axios.get("http://localhost:3001/sales_ordernotifyCount").then((response)=>{
+      setorderNotifyCount(response.data)
+
+    })
+  },[])
+
+  const ordercount=orderNotifyCount.map(record=>record.o_count);
+  console.log(ordercount);
+
+
+  const [orderNotifymess,setorderNotifymess]=useState([])
+  useEffect(()=>{
+    Axios.get("http://localhost:3001/sales_ordernotifymess").then((response)=>{
+      setorderNotifymess(response.data)
+
+    })
+  },[])
+  const ordermesscount=orderNotifymess.map(record=>record.o_count);
+
+
+  const total = Number(ordercount)
+
+  const NotificationClick = async () => {
+
+
+    const responsee = await Axios.get('http://localhost:3001/sales_ordernotifyDeactive', {
+    });
+
+
+      if(ordermesscount>0)
+      {
+        const customToastse=()=>{
+          return(
+            <div style={{fontSize:'15px'}}>
+              You have New {ordermesscount} Orders! <br></br><br></br>
+              <Button variant="contained"  onClick={Notification_page_order}>View</Button>
+            </div>
+          )
+        }
+
+        const notifyee=()=>{
+
+          toast.info(customToastse,{position:toast.POSITION.TOP_RIGHT,autoClose:false})
+
+
+            }
+        notifyee();
+      }
+
+        const Notification_page_order=()=>{
+          window.location.href='/sManager/pages/Sales_Notification_order'
+          }
+  }
+
+  const Go_product_order=()=>{
+    window.location.href='/sManager/pages/AddOrderItemForm'
+    };
+
+
+  const Go_payment_order=()=>{
+    window.location.href='/sManager/pages/AddPaymentForm'
+    };
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -360,10 +375,10 @@ const NotificationClick = async () => {
             </Badge>
           </IconButton>
 
-         
+
           <IconButton color="inherit" fontSize="inherit">
            <AccountCircleIcon   onClick={handleClick}/>
-  
+
           </IconButton>
           <Menu
         id="simple-menu"
@@ -377,7 +392,7 @@ const NotificationClick = async () => {
       </Menu>
 
         </Toolbar>
-        
+
       </AppBar>
       <div style={styles.side}>
       <Drawer
@@ -399,95 +414,88 @@ const NotificationClick = async () => {
         <Divider/>
       </Drawer>
       </div>
-     
+
       <main style={{backgroundColor: '#f0f8ff'}} className={classes.content}>
         <div className={classes.appBarSpacer} />
         <Container  maxWidth="lg" className={classes.container}>
-        
+
         <Grid  container spacing={10}>
         {/* Recent Orders */}
         <Grid item xs={11}  direction="row"  >
-        
+
         <div >
            <Paper className={classes.paper}>
-               
+
            <Typography component="h1" variant="h6" color="inherit" align="center" width="100%" noWrap className={classes.title}>
-                  <strong> Add New Customer </strong>
+                  <strong> Add Products </strong>
                 </Typography><br/>
-        
-                 
-                 
+               
                 <Form onSubmit={handleSubmit(addCustomer)}>
-                
-                    <Form.Group as={Row} controlId="formHorizontalName">
+
+                      <Form.Group as={Row} controlId="formHorizontalName">
                       <Form.Label column lg={2} >
-                        First Name :
+                        Order ID :
                       </Form.Label>
                       <Col >
-                        <Form.Control type="text"   {...register('fname')} required />
-                        {errors.fname?.message && <p className=" errormessage" >{errors.fname?.message}</p>}                        
-                      </Col>
-                    </Form.Group><br/>
-                    <Form.Group as={Row} controlId="formHorizontalName">
-                      <Form.Label column lg={2} >
-                        Last Name :
-                      </Form.Label>
-                      <Col >
-                        <Form.Control type="text"   {...register('lname')} required />
-                        {errors.lname?.message && <p className=" errormessage" >{errors.lname?.message}</p>}                        
-                      </Col>
-                    </Form.Group><br/>
-                    <Form.Group as={Row} controlId="formHorizontalNIC">
-                      <Form.Label column lg={2} >
-                       NIC :
-                      </Form.Label>
-                      <Col >
-                        <Form.Control type="text"   {...register('NIC')} required />
-                        {errors.NIC?.message && <p className=" errormessage" >{errors.NIC?.message}</p>}                        
-                      </Col>
+                      {orderList.map((record)=>{
+                          return(
+                        <Form.Control type="text"
+                        defaultValue={record.order_id}
+                              {...register('order_id')} required />
+                        // {errors.order_id?.message && <p className=" errormessage" >{errors.order_id?.message}</p>}
+                        )
+                      })}
+                        </Col>
                     </Form.Group><br/>
 
-                    
-
-                    <Form.Group as={Row} controlId="formHorizontalEmail">
+                    <Form.Group as={Row} controlId="formHorizontalPhoneNo">
                       <Form.Label column lg={2} >
-                       Email :
+                       Product ID :
                       </Form.Label>
                       <Col >
-                        <Form.Control type="text"   {...register('email')} required />
-                        {errors.email?.message && <p className=" errormessage" >{errors.email?.message}</p>}                        
-                      </Col>
-                    </Form.Group><br/>
-
-                    <Form.Group as={Row} controlId="formHorizontalAddress">
-                      <Form.Label column lg={2} >
-                       Address :
-                      </Form.Label>
-                      <Col >
-                        <Form.Control type="text"   {...register('address')} required />
-                        {errors.address?.message && <p className=" errormessage" >{errors.address?.message}</p>}                        
+                        <Form.Control type="text"   {...register('product_id')} required />
+                        {errors.product_id?.message && <p className=" errormessage" >{errors.product_id?.message}</p>}
                       </Col>
                     </Form.Group><br/>
 
                     <Form.Group as={Row} controlId="formHorizontalPhoneNo">
                       <Form.Label column lg={2} >
-                       Phone No :
+                       Quantity :
                       </Form.Label>
                       <Col >
-                        <Form.Control type="text"   {...register('phone')} required />
-                        {errors.phone?.message && <p className=" errormessage" >{errors.phone?.message}</p>}                        
+                        <Form.Control type="text"   {...register('quantity')} required />
+                        {errors.quantity?.message && <p className=" errormessage" >{errors.quantity?.message}</p>}
                       </Col>
                     </Form.Group><br/>
 
-                    <div align="center">
-                     <Button  style={{fontSize:'20px',width:'200px'}} type="submit"  >Submit</Button>
-                     </div> 
-                   
+                    <Form.Group as={Row} controlId="formHorizontalPhoneNo">
+                      <Form.Label column lg={2} >
+                       Price :
+                      </Form.Label>
+                      <Col >
+                        <Form.Control type="text"   {...register('price')} required />
+                        {errors.price?.message && <p className=" errormessage" >{errors.price?.message}</p>}
+                      </Col>
+                    </Form.Group><br/>
+
+
+
+                    <div align="right">
+
+                     <Button style={{fontSize:'20px',width:'200px'}} type="submit" onClick={Go_product_order}>Add <AddCircleOutlineIcon/> </Button>
+                     </div>
+                     <br/>
+
+                     <div align="right">
+
+                     <Button  style={{fontSize:'20px',width:'200px'}} type="submit" onClick={Go_payment_order}>Payment<ChevronRightIcon/></Button>
+                     </div>
+
              </Form>
 
 
-  
-    
+
+
           </Paper>
          </div>
         </Grid>

@@ -755,7 +755,7 @@ const NotificationClick = async () => {
     }
 
       const Notification_page_order=()=>{
-        window.location.href='/sManager/pages/Notification_order'
+        window.location.href='/sManager/pages/Sales_Notification_order'
         }
 }
 

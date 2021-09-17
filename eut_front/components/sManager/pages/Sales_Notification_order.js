@@ -1,31 +1,39 @@
-import React from 'react';
+import React,{useState,useEffect} from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import axios from 'axios';
 import clsx from 'clsx';
-import { useState , useEffect} from 'react';
+
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Drawer from '@material-ui/core/Drawer';
 import Box from '@material-ui/core/Box';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
+import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
-import List from '@material-ui/core/List';
 import IconButton from '@material-ui/core/IconButton';
+import Badge from '@material-ui/core/Badge';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
-import { Link, useParams } from "react-router-dom";
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
+import NotificationsIcon from '@material-ui/icons/Notifications';
+import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import {Redirect} from "react-router-dom";
-import { Table } from 'react-bootstrap';
-import AddCircleIcon from '@material-ui/icons/AddCircle';
-import { DpListItems, Logout } from './dplistItems';
+import {Link} from 'react-router-dom';
+
+import {toast} from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+import Axios from 'axios';
+import {Button} from '@material-ui/core';
+
+
+import { mainListItems, Logout} from './listItems';
+import Sales_View_Notification_order from './Sales_View_Notification_order';
+
 
 
 function Copyright() {
@@ -40,7 +48,6 @@ function Copyright() {
     </Typography>
   );
 }
-
 
 const drawerWidth = 240;
 
@@ -133,34 +140,118 @@ const useStyles = makeStyles((theme) => ({
 
 const styles = {
   side:{
-    backgroundColor:'rgb(37, 37, 94)',
+    backgroundColor:'rgb(37,37,94)',
   },
   pack:{
     justifyContent:'flex-around',
     marginLeft:'20px'
   }  ,
-  button_style:{
-    display:'flex',
-    justifyContent:'space-between',
-  }
   
 };
 
-const dateOnly = (d) => {
-  const date = new Date(d);
-  const year = date.getFullYear();
-  const month = date.getMonth() + 1;
-  const day = date.getDate();
-  return `${year} - ${month} - ${day}`;
-};
 
+toast.configure()
 
-
-
- function ViewProductDeliver() {
- 
-   const classes = useStyles();
+export default function Sales_Notification_order() {
+  const classes = useStyles();
   const [open, setOpen] = React.useState(true);
+
+  const [paymentNotifyCount,setpaymentNotifyCount]=useState([])
+  useEffect(()=>{
+    Axios.get("http://localhost:3001/cashPaymentnotifyCount").then((response)=>{
+      setpaymentNotifyCount(response.data)
+      
+    })
+  },[])
+
+  const paymentcount=paymentNotifyCount.map(record=>record.count);
+  console.log(paymentcount);
+
+
+  const [returnNotifyCount,setreturnNotifyCount]=useState([])
+  useEffect(()=>{
+    Axios.get("http://localhost:3001/returnnotifyCount").then((response)=>{
+      setreturnNotifyCount(response.data)
+      
+    })
+  },[])
+
+  const returncount=returnNotifyCount.map(record=>record.r_count);
+  console.log(returncount);
+
+  const [orderNotifyCount,setorderNotifyCount]=useState([])
+  useEffect(()=>{
+    Axios.get("http://localhost:3001/sales_ordernotifyCount").then((response)=>{
+      setorderNotifyCount(response.data)
+      
+    })
+  },[])
+
+  const ordercount=orderNotifyCount.map(record=>record.o_count);
+  console.log(ordercount);
+
+  const [returnNotifymess,setreturnNotifymess]=useState([])
+  useEffect(()=>{
+    Axios.get("http://localhost:3001/returnnotifymess").then((response)=>{
+      setreturnNotifymess(response.data)
+      
+    })
+  },[])
+  const returnmesscount=returnNotifymess.map(record=>record.r_count);
+
+  const [paymentNotifymess,setpaymentNotifymess]=useState([])
+  useEffect(()=>{
+    Axios.get("http://localhost:3001/paymentnotifymess").then((response)=>{
+      setpaymentNotifymess(response.data)
+      
+    })
+  },[])
+  const paymentmesscount=paymentNotifymess.map(record=>record.count);
+ 
+
+  const [orderNotifymess,setorderNotifymess]=useState([])
+  useEffect(()=>{
+    Axios.get("http://localhost:3001/sales_ordernotifymess").then((response)=>{
+      setorderNotifymess(response.data)
+      
+    })
+  },[])
+  const ordermesscount=orderNotifymess.map(record=>record.o_count);
+
+
+  const total =  Number(ordercount)
+
+  const NotificationClick = async () => {
+   
+
+    const responsee = await Axios.get('http://localhost:3001/sales_ordernotifyDeactive', {
+    });
+
+      if(ordermesscount>0)
+      {
+        const customToastse=()=>{
+          return(
+            <div style={{fontSize:'15px'}}>
+              You have New {ordermesscount} Orders! <br></br><br></br>
+              <Button variant="contained" onClick={Notification_page_order}>View</Button>
+            </div>
+          )
+        }
+
+        const notifyee=()=>{
+       
+          toast.info(customToastse,{position:toast.POSITION.TOP_RIGHT,autoClose:false})
+        
+        
+            }
+        notifyee();
+      }
+
+        const Notification_page_order=()=>{
+          window.location.href='/sManager/pages/Sales_Notification_order'
+          }
+  }
+
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -168,28 +259,17 @@ const dateOnly = (d) => {
     setOpen(false);
   };
 
-  const [productList,setProductList]=useState([])
-  useEffect(()=>{
-    axios.get("http://localhost:3001/viewproductFordeliver").then((response)=>{
-      setProductList(response.data)
-    })
-  },[])     
-
   
 
+  const [anchorEl, setAnchorEl] = React.useState(null);
 
-    const [anchorEl, setAnchorEl] = React.useState(null);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
 
-    const handleClick = (event) => {
-        setAnchorEl(event.currentTarget);
-    };
-    
-    const handleClose = () => {
-        setAnchorEl(null);
-    };
-    
-
- // const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   const[isAuth,setIsAuth]=useState(true);
 
@@ -197,13 +277,11 @@ const dateOnly = (d) => {
     return <Redirect to="" />
   }
 
-
-
   return (
     <div className={classes.root}>
       <CssBaseline />
       <AppBar position="absolute" className={clsx(classes.appBar, open && classes.appBarShift)}>
-        <Toolbar className={classes.toolbar} style={{backgroundColor: 'rgb(37, 37, 94)'}}>
+        <Toolbar className={classes.toolbar} style={{backgroundColor: 'rgb(37,37,94)'}}>
           <IconButton
             edge="start"
             color="inherit"
@@ -214,24 +292,25 @@ const dateOnly = (d) => {
             <MenuIcon />
           </IconButton>
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-            <strong>DELIVERY PERSON</strong>
+            <strong>SALES MANAGER</strong>
           </Typography>
-          <IconButton color="inherit" fontSize="inherit">
-           <AccountCircleIcon   onClick={handleClick}/>
-  
+
+          <IconButton color="inherit">
+            <Badge badgeContent={total} color="secondary">
+              <NotificationsIcon onClick={NotificationClick}/>
+            </Badge>
           </IconButton>
-         
-          <Menu
-        id="simple-menu"
-        anchorEl={anchorEl}
-        keepMounted
-        open={Boolean(anchorEl)}
-        onClose={handleClose}
-      >
-        <MenuItem component={Link} to="/dPerson/DpProfile">Profile</MenuItem>
-      <MenuItem component={Link} to="/Calender">Calendar</MenuItem>
- 
-      </Menu>
+
+           
+          <IconButton color="inherit" fontSize="inherit">
+           <AccountCircleIcon onClick={handleClick}  />
+          </IconButton>
+
+          <Menu id="simple-menu" anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={handleClose}>
+            <MenuItem onClick={handleClose}><Link to='/sManager/pages/ManageProfile' style={{textDecoration:'none',color:'black'}}>Profile</Link></MenuItem>
+            <MenuItem onClick={()=>setIsAuth(false)}>Logout</MenuItem>
+          </Menu>
+          
         </Toolbar>
       </AppBar>
       <div style={styles.side}>
@@ -242,15 +321,18 @@ const dateOnly = (d) => {
         }}
         open={open}
       >
-        <div className={classes.toolbarIcon} style={{backgroundColor: 'rgb(37, 37, 94)', color:'white'}}>
+        <div className={classes.toolbarIcon} style={{backgroundColor: 'rgb(37,37,94)', color:'white'}}>
           <IconButton onClick={handleDrawerClose} style={{color:'white'}}>
             <ChevronLeftIcon />
           </IconButton>
         </div>
         <Divider />
-        <List style={{backgroundColor: 'rgb(37, 37, 94)', color:'white'}}>{DpListItems}</List>
+        <List style={{backgroundColor: 'rgb(37,37,94)', color:'white'}}>{mainListItems}</List>
         <Divider />
-        <List style={{backgroundColor: 'rgb(37, 37, 94)', color:'red'}}>{Logout}</List>
+        {/* <List style={{backgroundColor: 'rgb(37,37,94)', color:'white'}}>{Profile}</List> */}
+        <Divider />
+        <Divider />
+        <List style={{backgroundColor: 'rgb(37,37,94)', color:'white'}}>{Logout}</List>
         <Divider />
       </Drawer>
       </div>
@@ -260,42 +342,18 @@ const dateOnly = (d) => {
           <Grid container spacing={3}>
         
             
-            
+              <Typography component="h1" variant="h6" color="inherit" align="center" width="100%" noWrap className={classes.title}>
+                    <strong>NEW NOTIFICATIONS</strong>
+              </Typography>
 
             {/* Recent Orders */}
-            <Grid item xs={10} style={styles.pack} >
+            <Grid item xs={12}  direction="row"  >
             
   
             <div >
+              
               <Paper className={classes.paper}>
-              <Typography component="h1" variant="h6" color="inherit"  width="100%" noWrap className={classes.title}>
-              <strong>PRODUCTS LIST </strong>
-            </Typography><br/>
-            <div align = 'right'>
-            <Link  to='/dPerson/AddForm' className="Addbtn"><AddCircleIcon style={{marginTop:'5px'}}/> Add New </Link> <br/>
-            </div>    
-
-          <Table striped bordered hover responsive>
-        <thead className="tableheading">
-          <tr>
-             <th scope="col">Product ID</th>
-             <th scope="col">Product Name</th>
-             <th scope="col">Image</th>
-            </tr>
-        </thead> 
-     
-       <tbody className="tablebody">
-       {productList.map(item=>
-                <tr >
-                <td align="center">{item.product_id}</td>
-                <td align="center">{item.product_name}</td>
-                <td align="center"><img src={item.product_img} className='image'/></td>
-                
-</tr>
- )}
-  </tbody> 
-      </Table>
-            
+                <Sales_View_Notification_order/>
               </Paper>
               </div>
             </Grid>
@@ -311,4 +369,3 @@ const dateOnly = (d) => {
   );
 }
 
-export default ViewProductDeliver ;

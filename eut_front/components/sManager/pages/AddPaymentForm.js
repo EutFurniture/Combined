@@ -1,9 +1,9 @@
-// 
-import React, { useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import clsx from 'clsx';
 import axios from "axios";
 import Axios from "axios";
 import {toast} from 'react-toastify'
+
 import Box from '@material-ui/core/Box';
 import Link from '@material-ui/core/Link'
 import Form from 'react-bootstrap/Form';
@@ -36,6 +36,7 @@ import * as yup from "yup";
 
 
 import { mainListItems, Logout } from './listItems';
+
 
 function Copyright() {
   return (
@@ -205,12 +206,10 @@ const styles = {
 };
 
 const schema = yup.object().shape({
-  fname: yup.string().required(),
-  lname: yup.string().required(),
-  email: yup.string().email().required(),
-  address: yup.string().required(),
-  NIC: yup.string().max(10, "Must be 10 Characters.").min(10, "Must be 10 Characters."),
-  phone: yup.string().max(10, "Must be 10 Digits.").min(10, "Must be 10 Digits.")
+  order_id: yup.string().required(),
+  payment_method: yup.string().required(),
+  payment_status: yup.string().required(),
+  total_price: yup.string().required(),
 })
 
 
@@ -223,96 +222,33 @@ export default function AddCustomForm() {
     resolver: yupResolver(schema),
 });
 
-const [orderNotifyCount,setorderNotifyCount]=useState([]);
-
-useEffect(()=>{
-  Axios.get("http://localhost:3001/sales_ordernotifyCount").then((response)=>{
-    setorderNotifyCount(response.data)
-    
-  })
-},[])
-
-const ordercount=orderNotifyCount.map(record=>record.o_count);
-console.log(ordercount);
 
 
-
-
-const [orderNotifymess,setorderNotifymess]=useState([])
-useEffect(()=>{
-  Axios.get("http://localhost:3001/sales_ordernotifymess").then((response)=>{
-    setorderNotifymess(response.data)
-    
-  })
-},[])
-const ordermesscount=orderNotifymess.map(record=>record.o_count);
-
-
-const total = Number(ordercount)
-
-const NotificationClick = async () => {
- 
-
-  const responsee = await Axios.get('http://localhost:3001/sales_ordernotifyDeactive', {
-  });
-
-
-    if(ordermesscount>0)
-    {
-      const customToastse=()=>{
-        return(
-          <div style={{fontSize:'15px'}}>
-            You have New {ordermesscount} Orders! <br></br><br></br>
-            <Button variant="contained"  onClick={Notification_page_order}>View</Button>
-          </div>
-        )
-      }
-
-      const notifyee=()=>{
-     
-        toast.info(customToastse,{position:toast.POSITION.TOP_RIGHT,autoClose:false})
-      
-      
-          }
-      notifyee();
-    }
-
-      const Notification_page_order=()=>{
-        window.location.href='/sManager/pages/Sales_Notification_order'
-        }
-}
   
   
   
   const addCustomer = (data)=>{
   
-     axios.post('http://localhost:3001/sales_create',{
-       fname:data.fname,
-       lname:data.lname,
-       NIC:data.NIC,
-       email:data.email,
-       phone:data.phone,
-       address:data.address,
+     axios.post('http://localhost:3001/sales_create_payment',{
+       order_id: data.order_id,  
       
-       
-  
+
+       payment_method: data.payment_method,
+       payment_status: data.payment_status, 
+
+       total_price: data.total_price,
+      
       }).then((response)=>{
         if(response.data.message){
-          alert('Employee added successfully')
-          window.location.href='/sManager/pages/ManageCustom'
+          alert('Order added successfully')
+          //window.location.href='/sManager/pages/ManageOrders'
          
       }
        });
-       //console.log(data)
-       alert("Customer added successfully")  
-
+       console.log(data)
+        
   };
   
-  
-
-  
-  
-
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -321,6 +257,104 @@ const NotificationClick = async () => {
   };
   const [anchorEl, setAnchorEl] = React.useState(null);
 
+  //try
+  const [orderList, setOrderList] = useState([]);
+
+ useEffect(()=>{
+   axios.get("http://localhost:3001/sales_loadOrders2").then((response)=>{
+     setOrderList(response.data)
+   })
+ },[])
+
+
+  //tryend
+
+  //try
+  const [priceList, setPriceList] = useState([]);
+
+ useEffect(()=>{
+   axios.get("http://localhost:3001/sales_loadOrders3").then((response)=>{
+     setPriceList(response.data)
+   })
+ },[])
+
+
+  //tryend
+
+   //try
+   const [totalList, setTotalList] = useState([]);
+
+   useEffect(()=>{
+     axios.get("http://localhost:3001/sales_loadOrders4").then((response)=>{
+       setTotalList(response.data)
+     })
+   },[])
+  
+  
+    //tryend
+
+  const [orderNotifyCount,setorderNotifyCount]=useState([]);
+
+  useEffect(()=>{
+    Axios.get("http://localhost:3001/sales_ordernotifyCount").then((response)=>{
+      setorderNotifyCount(response.data)
+      
+    })
+  },[])
+  
+  const ordercount=orderNotifyCount.map(record=>record.o_count);
+  console.log(ordercount);
+  
+  
+  
+  
+  const [orderNotifymess,setorderNotifymess]=useState([])
+  useEffect(()=>{
+    Axios.get("http://localhost:3001/sales_ordernotifymess").then((response)=>{
+      setorderNotifymess(response.data)
+      
+    })
+  },[])
+  const ordermesscount=orderNotifymess.map(record=>record.o_count);
+  
+  
+  const total = Number(ordercount)
+  
+  
+  const NotificationClick = async () => {
+   
+  
+    const responsee = await Axios.get('http://localhost:3001/sales_ordernotifyDeactive', {
+    });
+  
+  
+      if(ordermesscount>0)
+      {
+        const customToastse=()=>{
+          return(
+            <div style={{fontSize:'15px'}}>
+              You have New {ordermesscount} Orders! <br></br><br></br>
+              <Button variant="contained"  onClick={Notification_page_order}>View</Button>
+            </div>
+          )
+        }
+  
+        const notifyee=()=>{
+       
+          toast.info(customToastse,{position:toast.POSITION.TOP_RIGHT,autoClose:false})
+        
+        
+            }
+        notifyee();
+      }
+  
+        const Notification_page_order=()=>{
+          window.location.href='/sManager/pages/Sales_Notification_order'
+          }
+  }
+
+  
+
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -328,6 +362,10 @@ const NotificationClick = async () => {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  // const Notification_page_order=()=>{
+  //   window.location.href='/sManager/pages/Notification_order'
+  //   };
 
  // const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
@@ -412,75 +450,90 @@ const NotificationClick = async () => {
            <Paper className={classes.paper}>
                
            <Typography component="h1" variant="h6" color="inherit" align="center" width="100%" noWrap className={classes.title}>
-                  <strong> Add New Customer </strong>
+                  <strong> Add Payment Details </strong>
                 </Typography><br/>
         
                  
                  
                 <Form onSubmit={handleSubmit(addCustomer)}>
                 
+                <Form.Group as={Row} controlId="formHorizontalName">
+                      <Form.Label column lg={2} >
+                        Order ID :
+                      </Form.Label>
+                      <Col >
+                      {orderList.map((record)=>{
+                          return(
+                        <Form.Control type="text"
+                        defaultValue={record.order_id}
+                        
+                       
+                              {...register('order_id')} required />
+                        // {errors.order_id?.message && <p className=" errormessage" >{errors.order_id?.message}</p>}
+                        )
+
+
+                      })}
+                        </Col>
+                    </Form.Group><br/>
+
                     <Form.Group as={Row} controlId="formHorizontalName">
                       <Form.Label column lg={2} >
-                        First Name :
+                        Total :
                       </Form.Label>
                       <Col >
-                        <Form.Control type="text"   {...register('fname')} required />
-                        {errors.fname?.message && <p className=" errormessage" >{errors.fname?.message}</p>}                        
-                      </Col>
+                      {totalList.map((record)=>{
+                          return(
+                        <Form.Control type="text"
+                        defaultValue={record.total_price}
+                        
+                       
+                              {...register('total_price')} required />
+                        // {errors.order_id?.message && <p className=" errormessage" >{errors.order_id?.message}</p>}
+                        )
+
+
+                      })}
+                        </Col>
                     </Form.Group><br/>
-                    <Form.Group as={Row} controlId="formHorizontalName">
+
+                    {/* <Form.Group as={Row} controlId="formHorizontalPhoneNo">
                       <Form.Label column lg={2} >
-                        Last Name :
+                       Total cost :
                       </Form.Label>
                       <Col >
-                        <Form.Control type="text"   {...register('lname')} required />
-                        {errors.lname?.message && <p className=" errormessage" >{errors.lname?.message}</p>}                        
+                        <Form.Control type="text"   {...register('total_price')} required />
+                        {errors.total_price?.message && <p className=" errormessage" >{errors.total_price?.message}</p>}                        
                       </Col>
-                    </Form.Group><br/>
-                    <Form.Group as={Row} controlId="formHorizontalNIC">
+                    </Form.Group><br/> */}
+
+                    <Form.Group as={Row} controlId="formHorizontalPhoneNo">
                       <Form.Label column lg={2} >
-                       NIC :
+                       Payment Method :
                       </Form.Label>
                       <Col >
-                        <Form.Control type="text"   {...register('NIC')} required />
-                        {errors.NIC?.message && <p className=" errormessage" >{errors.NIC?.message}</p>}                        
+                        <Form.Control type="text"   {...register('payment_method')} required />
+                        {errors.payment_method?.message && <p className=" errormessage" >{errors.payment_method?.message}</p>}                        
                       </Col>
                     </Form.Group><br/>
 
                     
 
-                    <Form.Group as={Row} controlId="formHorizontalEmail">
-                      <Form.Label column lg={2} >
-                       Email :
-                      </Form.Label>
-                      <Col >
-                        <Form.Control type="text"   {...register('email')} required />
-                        {errors.email?.message && <p className=" errormessage" >{errors.email?.message}</p>}                        
-                      </Col>
-                    </Form.Group><br/>
-
-                    <Form.Group as={Row} controlId="formHorizontalAddress">
-                      <Form.Label column lg={2} >
-                       Address :
-                      </Form.Label>
-                      <Col >
-                        <Form.Control type="text"   {...register('address')} required />
-                        {errors.address?.message && <p className=" errormessage" >{errors.address?.message}</p>}                        
-                      </Col>
-                    </Form.Group><br/>
-
                     <Form.Group as={Row} controlId="formHorizontalPhoneNo">
                       <Form.Label column lg={2} >
-                       Phone No :
+                       Payment Status :
                       </Form.Label>
                       <Col >
-                        <Form.Control type="text"   {...register('phone')} required />
-                        {errors.phone?.message && <p className=" errormessage" >{errors.phone?.message}</p>}                        
+                        <Form.Control type="text"   {...register('payment_status')} required />
+                        {errors.payment_status?.message && <p className=" errormessage" >{errors.payment_status?.message}</p>}                        
                       </Col>
                     </Form.Group><br/>
 
+                  
+                 
+
                     <div align="center">
-                     <Button  style={{fontSize:'20px',width:'200px'}} type="submit"  >Submit</Button>
+                     <Button  style={{fontSize:'20px',width:'200px'}} type="submit" >Submit</Button>
                      </div> 
                    
              </Form>

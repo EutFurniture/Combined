@@ -29,7 +29,7 @@ const styles = {
       },
 }
 
-function View_Notification_order() {
+function Sales_View_Notification_order() {
 
     const [orderList,setorderList]=useState([])
   useEffect(()=>{
@@ -133,4 +133,4 @@ function View_Notification_order() {
     )
 }
 
-export default View_Notification_order;
+export default Sales_View_Notification_order;
