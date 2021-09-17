@@ -298,10 +298,7 @@ export default function UpdateEprofile(userData) {
         </div>
         <Divider />
         <List style={{backgroundColor: 'rgb(37,37,94)', color:'white'}}>{DpListItems}</List>
-        
-        <Divider />
-        <List style={{backgroundColor: 'rgb(37,37,94)', color:'white'}}>{Logout}</List>
-        <Divider />
+
       </Drawer>
       </div>
 
@@ -373,7 +370,7 @@ export default function UpdateEprofile(userData) {
 
                     <div align="center">
                     <Button style={{ fontSize: '20px', width: '200px' }} type="submit" onClick={() => {updateEmployeeProfile(Dt.id)}} >
-               <Link to="/dPerson/DpProfile"   className={classes.update}>Update</Link>  
+                     Update
                     </Button>
                     </div>
 

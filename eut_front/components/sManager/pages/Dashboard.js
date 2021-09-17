@@ -1,6 +1,9 @@
 import React from 'react';
 import clsx from 'clsx';
-
+import Axios from "axios";
+import {toast} from 'react-toastify'
+import { useState, useEffect} from "react";
+import { Button } from 'react-bootstrap';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Drawer from '@material-ui/core/Drawer';
@@ -20,10 +23,13 @@ import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+import DashboardPaymentUI from './DashboardPaymentUI';
 
 import { mainListItems, Logout } from './listItems';
 import Chart from './Chart';
 import Deposits from './Deposits';
+import SalesOrderChart from '../../charts/SalesOrderChart';
+import Title from './Title';
 
 
 
@@ -140,6 +146,64 @@ export default function Dashboard() {
     setOpen(false);
   };
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const [orderNotifyCount,setorderNotifyCount]=useState([]);
+
+useEffect(()=>{
+  Axios.get("http://localhost:3001/sales_ordernotifyCount").then((response)=>{
+    setorderNotifyCount(response.data)
+    
+  })
+},[])
+
+const ordercount=orderNotifyCount.map(record=>record.o_count);
+console.log(ordercount);
+
+
+
+
+const [orderNotifymess,setorderNotifymess]=useState([])
+useEffect(()=>{
+  Axios.get("http://localhost:3001/sales_ordernotifymess").then((response)=>{
+    setorderNotifymess(response.data)
+    
+  })
+},[])
+const ordermesscount=orderNotifymess.map(record=>record.o_count);
+
+
+const total = Number(ordercount)
+
+const NotificationClick = async () => {
+ 
+
+  const responsee = await Axios.get('http://localhost:3001/sales_ordernotifyDeactive', {
+  });
+
+
+    if(ordermesscount>0)
+    {
+      const customToastse=()=>{
+        return(
+          <div style={{fontSize:'15px'}}>
+            You have New {ordermesscount} Orders! <br></br><br></br>
+            <Button variant="contained"  onClick={Notification_page_order}>View</Button>
+          </div>
+        )
+      }
+
+      const notifyee=()=>{
+     
+        toast.info(customToastse,{position:toast.POSITION.TOP_RIGHT,autoClose:false})
+      
+      
+          }
+      notifyee();
+    }
+
+      const Notification_page_order=()=>{
+        window.location.href='/sManager/pages/Sales_Notification_order'
+        }
+}
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -166,8 +230,8 @@ export default function Dashboard() {
             <strong>SALES MANAGER</strong>
           </Typography>
           <IconButton color="inherit" fontSize="inherit">
-            <Badge badgeContent={4} color="secondary">
-            <NotificationsIcon />
+            <Badge badgeContent={total} color="secondary">
+            <NotificationsIcon onClick={NotificationClick}/>
             </Badge>
           </IconButton>
           <IconButton color="inherit" fontSize="inherit">
@@ -200,26 +264,47 @@ export default function Dashboard() {
       <main className={classes.content}>
         <div className={classes.appBarSpacer} />
         <Container maxWidth="lg" className={classes.container}>
-         <h3>Dashboard</h3><br />
+         {/* <h3>Dashboard</h3><br /> */}
           <Grid container spacing={3}>
-            {/* Chart */}
-            <Grid item xs={12} >
-              <Paper className={fixedHeightPaper}>
-                <Chart />
-              </Paper>
-            </Grid>
+          
             {/* Recent Deposits */}
        
             {/* Recent Orders */}
-            <Grid item xs={12}>
+            {/* <Grid item xs={12}>
               <Paper className={classes.paper}>
                 <Deposits />
               </Paper>
+            </Grid> */}
+
+            <Grid item xs={12}>
+              <Paper className={classes.paper}>
+                <DashboardPaymentUI />
+              </Paper>
             </Grid>
-          </Grid>
+      
+
+            {/* <Grid item xs={12}>
+              <Paper className={classes.paper}>
+                <DashboardOrdersView />
+              </Paper>
+            </Grid>
+
+            </Grid> */}
+          
+
+            {/* Chart */}
+             <Grid item xs={12} >
+              <Paper className={fixedHeightPaper} style={{height:'400px'}}>
+                <Title>Order Chart</Title>
+                <SalesOrderChart />
+              </Paper>
+            </Grid> 
+            </Grid>
+            
           <Box pt={4}>
             <Copyright />
           </Box>
+
         </Container>
       </main>
     </div>

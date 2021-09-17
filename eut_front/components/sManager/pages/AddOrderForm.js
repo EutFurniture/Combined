@@ -1,6 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import clsx from 'clsx';
 import axios from "axios";
+import Axios from "axios";
+import {toast} from 'react-toastify'
+
 import Box from '@material-ui/core/Box';
 import Link from '@material-ui/core/Link'
 import Form from 'react-bootstrap/Form';
@@ -22,6 +25,7 @@ import Container from '@material-ui/core/Container';
 import Paper from '@material-ui/core/Paper';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
+import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import Grid from '@material-ui/core/Grid';
 import Divider from '@material-ui/core/Divider';
@@ -33,6 +37,8 @@ import * as yup from "yup";
 
 
 import { mainListItems, Logout } from './listItems';
+import ChevronRight from "@material-ui/icons/ChevronRight";
+
 
 function Copyright() {
   return (
@@ -53,7 +59,7 @@ const drawerWidth = 240;
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
-   
+
   },
   toolbar: {
     paddingRight: 24, // keep right padding when drawer closed
@@ -123,9 +129,9 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
     height: '100vh',
     overflow: 'auto',
-    
+
   },
- 
+
   container: {
     paddingTop: theme.spacing(4),
     paddingBottom: theme.spacing(4),
@@ -158,7 +164,7 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: '30px',
     display:'flex',
     //boxShadow:'5px 1px 2px 2px '
-    
+
   },
   categorybtn:{
       border:0,
@@ -191,7 +197,7 @@ addproducts:{
     display:'flex',
 },
 
-  
+
 
 }));
 
@@ -203,45 +209,42 @@ const styles = {
 
 const schema = yup.object().shape({
   customer_id: yup.string().required(),
-  o_date: yup.string().required(),
-  order_last_date: yup.string().required(),
-  order_description: yup.string().required(),
-  total_price: yup.string().required(),
-  
+  order_description: yup.string().required()
+
 })
 
 
 export default function AddCustomForm() {
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
- 
+
 
   const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: yupResolver(schema),
 });
 
-  
-  
-  
+
+
+
+
+
   const addCustomer = (data)=>{
-  
+
      axios.post('http://localhost:3001/sales_create_order',{
-       customer_id: data.customer_id, 
-       o_date: data.o_date, 
-       order_last_date: data.order_last_date, 
-       order_description: data.order_description, 
-       total_price: data.total_price
-      
+       customer_id: data.customer_id,
+       order_description: data.order_description,
+    
       }).then((response)=>{
         if(response.data.message){
           alert('Order added successfully')
           //window.location.href='/sManager/pages/ManageOrders'
-         
+
       }
        });
-       console.log(data)
+       //console.log(data)
+
   };
-  
+
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -250,6 +253,65 @@ export default function AddCustomForm() {
   };
   const [anchorEl, setAnchorEl] = React.useState(null);
 
+  const [orderNotifyCount,setorderNotifyCount]=useState([]);
+
+  useEffect(()=>{
+    Axios.get("http://localhost:3001/sales_ordernotifyCount").then((response)=>{
+      setorderNotifyCount(response.data)
+
+    })
+  },[])
+
+  const ordercount=orderNotifyCount.map(record=>record.o_count);
+  console.log(ordercount);
+
+
+
+
+  const [orderNotifymess,setorderNotifymess]=useState([])
+  useEffect(()=>{
+    Axios.get("http://localhost:3001/sales_ordernotifymess").then((response)=>{
+      setorderNotifymess(response.data)
+
+    })
+  },[])
+  const ordermesscount=orderNotifymess.map(record=>record.o_count);
+
+
+  const total = Number(ordercount)
+
+  const NotificationClick = async () => {
+
+
+    const responsee = await Axios.get('http://localhost:3001/sales_ordernotifyDeactive', {
+    });
+
+
+      if(ordermesscount>0)
+      {
+        const customToastse=()=>{
+          return(
+            <div style={{fontSize:'15px'}}>
+              You have New {ordermesscount} Orders! <br></br><br></br>
+              <Button variant="contained"  onClick={Notification_page_order}>View</Button>
+            </div>
+          )
+        }
+
+        const notifyee=()=>{
+
+          toast.info(customToastse,{position:toast.POSITION.TOP_RIGHT,autoClose:false})
+
+
+            }
+        notifyee();
+      }
+
+        const Notification_page_order=()=>{
+          window.location.href='/sManager/pages/Sales_Notification_order'
+          }
+  }
+
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -257,6 +319,10 @@ export default function AddCustomForm() {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const Go_product_order=()=>{
+    window.location.href='/sManager/pages/AddOrderItemForm'
+    };
 
  // const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
@@ -284,15 +350,15 @@ export default function AddCustomForm() {
             <b>Sales Manager</b>
           </Typography>
           <IconButton color="inherit">
-            <Badge badgeContent={4} color="secondary">
-              <NotificationsIcon />
+            <Badge badgeContent={total} color="secondary">
+              <NotificationsIcon onClick={NotificationClick}/>
             </Badge>
           </IconButton>
 
-         
+
           <IconButton color="inherit" fontSize="inherit">
            <AccountCircleIcon   onClick={handleClick}/>
-  
+
           </IconButton>
           <Menu
         id="simple-menu"
@@ -306,7 +372,7 @@ export default function AddCustomForm() {
       </Menu>
 
         </Toolbar>
-        
+
       </AppBar>
       <div style={styles.side}>
       <Drawer
@@ -328,56 +394,40 @@ export default function AddCustomForm() {
         <Divider/>
       </Drawer>
       </div>
-     
+
       <main style={{backgroundColor: '#f0f8ff'}} className={classes.content}>
         <div className={classes.appBarSpacer} />
         <Container  maxWidth="lg" className={classes.container}>
-        
+
         <Grid  container spacing={10}>
         {/* Recent Orders */}
         <Grid item xs={11}  direction="row"  >
-        
+
         <div >
            <Paper className={classes.paper}>
-               
+
            <Typography component="h1" variant="h6" color="inherit" align="center" width="100%" noWrap className={classes.title}>
                   <strong> Add External Order </strong>
                 </Typography><br/>
-        
-                 
-                 
+
+
+
                 <Form onSubmit={handleSubmit(addCustomer)}>
-                
+
                     <Form.Group as={Row} controlId="formHorizontalName">
                       <Form.Label column lg={2} >
                         Customer ID :
                       </Form.Label>
                       <Col >
                         <Form.Control type="text"   {...register('customer_id')} required />
-                        {errors.customer_id?.message && <p className=" errormessage" >{errors.customer_id?.message}</p>}                        
-                      </Col>
-                    </Form.Group><br/>
-                    
-
-                    <Form.Group as={Row} controlId="formHorizontalEmail">
-                      <Form.Label column lg={2} >
-                     Date :
-                      </Form.Label>
-                      <Col >
-                        <Form.Control type="date"   {...register('o_date')} required />
-                        {errors.o_date?.message && <p className=" errormessage" >{errors.o_date?.message}</p>}                        
+                        {errors.customer_id?.message && <p className=" errormessage" >{errors.customer_id?.message}</p>}
                       </Col>
                     </Form.Group><br/>
 
-                    <Form.Group as={Row} controlId="formHorizontalAddress">
-                      <Form.Label column lg={2} >
-                      Due Date :
-                      </Form.Label>
-                      <Col >
-                        <Form.Control type="date"   {...register('order_last_date')} required />
-                        {errors.order_last_date?.message && <p className=" errormessage" >{errors.order_last_date?.message}</p>}                        
-                      </Col>
-                    </Form.Group><br/>
+
+
+
+                   
 
                     <Form.Group as={Row} controlId="formHorizontalPhoneNo">
                       <Form.Label column lg={2} >
@@ -385,32 +435,21 @@ export default function AddCustomForm() {
                       </Form.Label>
                       <Col >
                         <Form.Control type="text"   {...register('order_description')} required />
-                        {errors.order_description?.message && <p className=" errormessage" >{errors.order_description?.message}</p>}                        
-                      </Col>
-                    </Form.Group><br/>
-
-
-
-
-                    <Form.Group as={Row} controlId="formHorizontalPhoneNo">
-                      <Form.Label column lg={2} >
-                       Total Price :
-                      </Form.Label>
-                      <Col >
-                        <Form.Control type="text"   {...register('total_price')} required />
-                        {errors.total_price?.message && <p className=" errormessage" >{errors.total_price?.message}</p>}                        
+                        {errors.order_description?.message && <p className=" errormessage" >{errors.order_description?.message}</p>}
                       </Col>
                     </Form.Group><br/>
 
                     <div align="center">
-                     <Button  style={{fontSize:'20px',width:'200px'}} type="submit"  >Submit</Button>
-                     </div> 
-                   
+                    
+                     <Button  style={{fontSize:'20px',width:'200px'}} type="submit" onClick={Go_product_order}>Product Details <ChevronRightIcon/></Button>
+                  
+                     </div>
+
              </Form>
 
 
-  
-    
+
+
           </Paper>
          </div>
         </Grid>

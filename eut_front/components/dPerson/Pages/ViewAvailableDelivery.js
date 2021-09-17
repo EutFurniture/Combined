@@ -248,7 +248,6 @@ export default function ViewAvailableDelivery(userData) {
         onClose={handleClose}
       >
         <MenuItem component={Link} to="/dPerson/DpProfile">Profile</MenuItem>
-      <MenuItem component={Link} to="/Calender">Calendar</MenuItem>
         <MenuItem onClick={()=>setIsAuth(false)}>Logout</MenuItem>
       </Menu>
 
@@ -271,9 +270,7 @@ export default function ViewAvailableDelivery(userData) {
         </div>
         <Divider/>
         <List style={{backgroundColor: 'rgb(37, 37, 94)', color:'white'}}>{DpListItems}</List>
-        <Divider/>
-        <List style={{backgroundColor: 'rgb(37, 37, 94)', color:'white'}}>{Logout}</List>
-        <Divider/>
+
       </Drawer>
       </div>
      

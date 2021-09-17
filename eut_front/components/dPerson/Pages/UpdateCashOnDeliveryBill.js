@@ -270,7 +270,6 @@ export default function UpdateCashOnDeliveryBill() {
         onClose={handleClose}
       >
         <MenuItem component={Link} to="/dPerson/DpProfile">Profile</MenuItem>
-      <MenuItem component={Link} to="/Calender">Calendar</MenuItem>
         <MenuItem onClick={()=>setIsAuth(false)}>Logout</MenuItem>
       </Menu>
         </Toolbar>
@@ -290,10 +289,7 @@ export default function UpdateCashOnDeliveryBill() {
         </div>
         <Divider />
         <List style={{backgroundColor: 'rgb(37,37,94)', color:'white'}}>{DpListItems}</List>
-        
-        <Divider />
-        <List style={{backgroundColor: 'rgb(37,37,94)', color:'white'}}>{Logout}</List>
-        <Divider />
+ 
       </Drawer>
       </div>
       <main className={classes.content}>

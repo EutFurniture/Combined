@@ -3,8 +3,9 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Axios from 'axios';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 
+import {toast} from 'react-toastify'
 import clsx from 'clsx';
-import { useState } from 'react';
+import { useState, useEffect} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Box from '@material-ui/core/Box';
@@ -106,6 +107,7 @@ const useStyles = makeStyles((theme) => ({
   title: {
     flexGrow: 1,
   },
+  
   drawerPaper: {
     position: 'relative',
     whiteSpace: 'nowrap',
@@ -143,6 +145,7 @@ const useStyles = makeStyles((theme) => ({
   paper: {
    
     padding: theme.spacing(2),
+    width: '1000px',
     display: 'flex',
     overflow: 'auto',
     flexDirection: 'column',
@@ -176,6 +179,66 @@ export default function Dashboard() {
     setOpen(false);
   };
 
+  const [orderNotifyCount,setorderNotifyCount]=useState([]);
+
+  useEffect(()=>{
+    Axios.get("http://localhost:3001/sales_ordernotifyCount").then((response)=>{
+      setorderNotifyCount(response.data)
+      
+    })
+  },[])
+
+  const ordercount=orderNotifyCount.map(record=>record.o_count);
+  console.log(ordercount);
+
+  
+ 
+
+  const [orderNotifymess,setorderNotifymess]=useState([])
+  useEffect(()=>{
+    Axios.get("http://localhost:3001/sales_ordernotifymess").then((response)=>{
+      setorderNotifymess(response.data)
+      
+    })
+  },[])
+  const ordermesscount=orderNotifymess.map(record=>record.o_count);
+
+
+  const total = Number(ordercount)
+
+  const NotificationClick = async () => {
+   
+
+    const responsee = await Axios.get('http://localhost:3001/sales_ordernotifyDeactive', {
+    });
+
+
+      if(ordermesscount>0)
+      {
+        const customToastse=()=>{
+          return(
+            <div style={{fontSize:'15px'}}>
+              You have New {ordermesscount} Orders! <br></br><br></br>
+              <Button variant="contained"  onClick={Notification_page_order}>View</Button>
+            </div>
+          )
+        }
+
+        const notifyee=()=>{
+       
+          toast.info(customToastse,{position:toast.POSITION.TOP_RIGHT,autoClose:false})
+        
+        
+            }
+        notifyee();
+      }
+
+        const Notification_page_order=()=>{
+          window.location.href='/sManager/pages/Sales_Notification_order'
+          }
+  }
+
+
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   const handleClick = (event) => {
@@ -189,13 +252,13 @@ export default function Dashboard() {
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
   const [state,setState]=useState({file:'',name:'',description:'',userImage:"",message:"",success:false})
-  const[name,setName]=useState("");
+  const[product_name,setName]=useState("");
   const[description,setDescription]=useState("");
   const[price,setPrice]=useState("");
   const[material,setMaterial]=useState("");
   const[start_date,setStartdate]=useState("");
   const[end_date,setEnddate]=useState("");
-  const[image,setImage]=useState("");
+  const[product_img,setImage]=useState("");
   
 
   const submitForm =(e) =>{
@@ -211,8 +274,8 @@ export default function Dashboard() {
       Axios.post('http://localhost:3001/sales_customization', {
      
        
-            image:state.file.name,
-            name:name,
+            product_img:state.file.name,
+            product_name:product_name,
             description:description,
             price:price,
             start_date:start_date,
@@ -270,8 +333,8 @@ export default function Dashboard() {
             <strong>SALES MANAGER</strong>
           </Typography>
           <IconButton color="inherit" fontSize="inherit">
-            <Badge badgeContent={4} color="secondary">
-              <NotificationsIcon />
+            <Badge badgeContent={total} color="secondary">
+              <NotificationsIcon onClick={NotificationClick}/>
             </Badge>
           </IconButton>
           <IconButton color="inherit" fontSize="inherit">
@@ -326,10 +389,11 @@ export default function Dashboard() {
   
             <div >
               <Paper className={classes.paper}>
-              <Typography component="h1" variant="h6" color="inherit"  width="100%" noWrap className={classes.title}>
-              <strong>Publish Promotion</strong>
-            </Typography><br/>
-
+              <Typography  component="h1" variant="h6" color="inherit" align="center" width="100%" noWrap className={classes.title}>
+                  <h1>Publish Promotions </h1>
+                  <br/>
+                </Typography>
+             
                  <Form  onSubmit={submitForm} >
                     <Form.Group as={Row} controlId="formHorizontalName">
                       <Form.Label className={classes.lab} column lg={2} >

@@ -138,7 +138,6 @@ const styles = {
 
 export default function Customization(userData) {
   const classes = useStyles();
-  const [open, setOpen] = React.useState(true);
   const [state,setState]=useState({file:'',name:'',description:'',userImage:"",message:"",success:false})
   const[name,setName]=useState("");
   const[description,setDescription]=useState("");

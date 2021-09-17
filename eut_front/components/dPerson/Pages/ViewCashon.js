@@ -172,10 +172,7 @@ export default function ViewCashon(userData) {
    useEffect(() => {
    
     const fetchData = async () => {
-
-      
-     
-      const response = await Axios.get('http://localhost:3001/viewcashOnDelivery', {
+ const response = await Axios.get('http://localhost:3001/viewcashOnDelivery', {
             params: {
           employee_id: userData.userData.id
            }
@@ -186,7 +183,7 @@ export default function ViewCashon(userData) {
         console.log(employee_id);
       
     }
-  fetchData();
+fetchData();
   }, [employee_id]);      
 
 
@@ -248,7 +245,6 @@ export default function ViewCashon(userData) {
         onClose={handleClose}
       >
         <MenuItem component={Link} to="/dPerson/DpProfile">Profile</MenuItem>
-      <MenuItem component={Link} to="/Calender">Calendar</MenuItem>
         <MenuItem onClick={()=>setIsAuth(false)}>Logout</MenuItem>
       </Menu>
 
@@ -271,9 +267,7 @@ export default function ViewCashon(userData) {
         </div>
         <Divider/>
         <List style={{backgroundColor: 'rgb(37, 37, 94)', color:'white'}}>{DpListItems}</List>
-        <Divider/>
-        <List style={{backgroundColor: 'rgb(37, 37, 94)', color:'white'}}>{Logout}</List>
-        <Divider/>
+
       </Drawer>
       </div>
      
@@ -301,7 +295,7 @@ export default function ViewCashon(userData) {
         <thead className="tableheading">
           <tr>
              <th scope="col">Order ID</th>
-             <th scope="col">Payment ID</th>
+        
              <th scope="col">Payment Status</th>
              <th scope='col'>Action</th>
           </tr>
@@ -311,7 +305,7 @@ export default function ViewCashon(userData) {
        {user.map(item=>
                 <tr >
                 <td align="center">{item.order_id}</td>
-                <td align="center">{item.payment_id}</td>
+               
                 <td align="center">{item.payment_status}</td>
                 <td align="center">
                 <Link style={styles.updatebtn} to={location=> `/dPerson/UpdateCashOnDeliveryBillRoute/${item.payment_id}`}>Click to Confirm </Link>

@@ -293,10 +293,7 @@ export default function UpdateConDelivery() {
         </div>
         <Divider />
         <List style={{backgroundColor: 'rgb(37,37,94)', color:'white'}}>{DpListItems}</List>
-        
-        <Divider />
-        <List style={{backgroundColor: 'rgb(37,37,94)', color:'white'}}>{Logout}</List>
-        <Divider />
+
       </Drawer>
       </div>
       <main className={classes.content}>
@@ -314,7 +311,7 @@ export default function UpdateConDelivery() {
             <div >
               <Paper className={classes.paper}>
               <Typography component="h1" variant="h6" color="inherit"  align="center" width="100%" noWrap className={classes.title}>
-              <strong>UPDATE PRODUCT DETAILS</strong>
+              <strong>UPDATE DELIVERY</strong>
             </Typography><br/>
             <Form >
 

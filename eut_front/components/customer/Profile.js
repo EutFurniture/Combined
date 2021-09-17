@@ -56,7 +56,8 @@ export default function Profile(userData) {
                     <img src={`/${user.proimg}`} alt="myprofile" class="rounded-circle" width="150" height="150" />
                     <div class="mt-3">
                       <h4>{user.fname} {user.lname}</h4>
-                      <h6>{user.points}</h6>
+                    
+                      <h6>Points:{user.points}</h6>
                      
                       
                     </div>
@@ -73,7 +74,7 @@ export default function Profile(userData) {
                     <div class="col-sm-3">
                       <h6 class="mb-0">Full Name</h6>
                     </div>
-                    <div class="col-sm-9 text-secondary">
+                    <div class="col-sm-9  text-secondary">
                     {user.fname}
                     </div>
                   </div>
@@ -93,6 +94,15 @@ export default function Profile(userData) {
                     </div>
                     <div class="col-sm-9 text-secondary">
                      {user.phone}
+                    </div>
+                  </div>
+                  <hr/>
+                  <div class="row">
+                    <div class="col-sm-3">
+                      <h6 class="mb-0">Address</h6>
+                    </div>
+                    <div class="col-sm-9 text-secondary">
+                     {user.address}
                     </div>
                   </div>
                   <hr/>

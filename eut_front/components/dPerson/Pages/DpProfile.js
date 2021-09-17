@@ -27,8 +27,6 @@ import { DpListItems, Logout } from './dplistItems';
 
 const drawerWidth = 240;
 
-
-
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
@@ -140,14 +138,16 @@ const styles = {
     width: '400px',
     textDecoration: 'none',
     height: '100px',
-    marginRight: '5px',
+    marginLeft: '400px',
+    border:'white',
+    borderRadius:'5px',
     fontSize: '25px',
     paddingLeft: '15px',
     paddingRight: '15px',
     paddingTop: '5px',
     paddingBottom: '5px',
     color: 'white',
-    borderRadius: '0px',
+    borderRadius: '20px',
     align: 'left'
   }
 };
@@ -226,7 +226,7 @@ export default function DpProfile(userData) {
 
          <MenuItem component={Link} to="/dPerson/DpProfile">Profile</MenuItem>
         <MenuItem onClick={()=>setIsAuth(false)}>Logout</MenuItem>
-        <MenuItem component={Link} to="/Calender">Calendar</MenuItem>
+    
             <MenuIcon />
           </IconButton>
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
@@ -245,7 +245,6 @@ export default function DpProfile(userData) {
       >
         <MenuItem component={Link} to="/dPerson/DpProfile">Profile</MenuItem>
         <MenuItem onClick={()=>setIsAuth(false)}>Logout</MenuItem>
-        <MenuItem component={Link} to="/Calender">Calendar</MenuItem>
       </Menu>
         </Toolbar> 
       </AppBar>
@@ -264,9 +263,7 @@ export default function DpProfile(userData) {
         </div>
         <Divider />
         <List style={{backgroundColor: 'rgb(37,37,94)', color:'white'}}>{DpListItems}</List>
-        <Divider />
-        <List style={{backgroundColor: 'rgb(37,37,94)', color:'white'}}>{Logout}</List>
-        <Divider />
+
       </Drawer>
       </div>
      
@@ -278,7 +275,7 @@ export default function DpProfile(userData) {
            
           <Grid item xs={10}  >
             <div >
-              <Paper className={classes.paper} style={{backgroundColor: '#BDF5F6', color:'black', fontSize:15}} >
+              <Paper className={classes.paper} style={{backgroundColor: '#FFFFFF', color:'black', fontSize:15}} >
               <div class="d-flex flex-column align-items-center text-center" >
                  <br/>
                  <img src={`/${user.emp_img}`} alt="myprofile"  width="200" height="200" />

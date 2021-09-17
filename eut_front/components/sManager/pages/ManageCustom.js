@@ -1,11 +1,14 @@
+// 
 import { Link } from "react-router-dom";
 import clsx from 'clsx';
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import Axios from "axios";
+import {toast} from 'react-toastify'
 import CustomView from './CustomView';
 import {Redirect} from "react-router-dom"
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
-
+import { Button } from 'react-bootstrap';
 import "../../../css/manageCustom.css"
 
 import { makeStyles } from '@material-ui/core/styles';
@@ -132,6 +135,8 @@ const styles = {
 export default function ManageCustom() {
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
+
+  
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -139,6 +144,65 @@ export default function ManageCustom() {
     setOpen(false);
   };
   const [anchorEl, setAnchorEl] = React.useState(null);
+
+  const [orderNotifyCount,setorderNotifyCount]=useState([]);
+
+useEffect(()=>{
+  Axios.get("http://localhost:3001/sales_ordernotifyCount").then((response)=>{
+    setorderNotifyCount(response.data)
+    
+  })
+},[])
+
+const ordercount=orderNotifyCount.map(record=>record.o_count);
+console.log(ordercount);
+
+
+
+
+const [orderNotifymess,setorderNotifymess]=useState([])
+useEffect(()=>{
+  Axios.get("http://localhost:3001/sales_ordernotifymess").then((response)=>{
+    setorderNotifymess(response.data)
+    
+  })
+},[])
+const ordermesscount=orderNotifymess.map(record=>record.o_count);
+
+
+const total = Number(ordercount)
+
+const NotificationClick = async () => {
+ 
+
+  const responsee = await Axios.get('http://localhost:3001/sales_ordernotifyDeactive', {
+  });
+
+
+    if(ordermesscount>0)
+    {
+      const customToastse=()=>{
+        return(
+          <div style={{fontSize:'15px'}}>
+            You have New {ordermesscount} Orders! <br></br><br></br>
+            <Button variant="contained"  onClick={Notification_page_order}>View</Button>
+          </div>
+        )
+      }
+
+      const notifyee=()=>{
+     
+        toast.info(customToastse,{position:toast.POSITION.TOP_RIGHT,autoClose:false})
+      
+      
+          }
+      notifyee();
+    }
+
+      const Notification_page_order=()=>{
+        window.location.href='/sManager/pages/Sales_Notification_order'
+        }
+}
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -150,6 +214,9 @@ export default function ManageCustom() {
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
   const[isAuth,setIsAuth]=useState(true);
+
+
+  
 
   if(!isAuth){
     return <Redirect to="" />
@@ -173,8 +240,8 @@ export default function ManageCustom() {
             <b>Sales Manager</b>
           </Typography>
           <IconButton color="inherit">
-            <Badge badgeContent={4} color="secondary">
-              <NotificationsIcon />
+            <Badge badgeContent={total} color="secondary">
+              <NotificationsIcon onClick={NotificationClick}/>
             </Badge>
           </IconButton>
           <IconButton color="inherit" fontSize="inherit">
@@ -189,7 +256,7 @@ export default function ManageCustom() {
         onClose={handleClose}
       >
         <MenuItem onClick={handleClose}>Profile</MenuItem>
-        <MenuItem onClick={()=>setIsAuth(false)}>Logout</MenuItem>
+        <MenuItem onClick={()=>setIsAuth(false)}>Logout </MenuItem>
       </Menu>
         </Toolbar>
       </AppBar>

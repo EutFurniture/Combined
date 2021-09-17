@@ -1,3 +1,4 @@
+// 
 import "../../../css/manageCustom.css";
 import { Link, Switch } from "react-router-dom";
 import SearchIcon from '@material-ui/icons/Search';
@@ -41,7 +42,7 @@ const [modal, setModal] = useState(false);
               <div ><br/>
                 <div className='box-main'>
                 <div className="searchbar">
-                   <input type="text" onChange={(e)=>{setSearchTerm(e.target.value);}} placeholder="Search"/>
+                   <input type="text" onChange={(e)=>{setSearchTerm(e.target.value);}} placeholder="Search by Name or Email"/>
                    <SearchIcon  className='searchicon'/>
                 </div>
                 <Link  to='/sManager/pages/AddCustomForm' className="Addbtn"><AddCircleIcon style={{marginTop:'0px'}}/> Add New</Link>
@@ -96,3 +97,4 @@ const [modal, setModal] = useState(false);
            
   )
 }
+

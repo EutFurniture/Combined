@@ -12,6 +12,7 @@ import Img2 from '../../../images/add.jpg';
 import Image from '../../../images/home1.jpeg';
 import '../Footer.css'
 import Caresoul from '../Caresoul'
+import Navbar from './Navbar'
 const useStyles = makeStyles((theme) => ({
   mainGrid: {
     marginTop: theme.spacing(1),
@@ -64,7 +65,7 @@ export default function Home() {
 
   return (
     <React.Fragment>
-      
+     
       <CssBaseline />
       <Container maxWidth="xxl"  minWidth='360px'>
         

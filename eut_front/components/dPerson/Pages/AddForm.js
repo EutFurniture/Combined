@@ -233,6 +233,7 @@ export default function AddForm() {
            <AccountCircleIcon   onClick={handleClick}/>
   
           </IconButton>
+         
           <Menu
         id="simple-menu"
         anchorEl={anchorEl}
@@ -241,8 +242,8 @@ export default function AddForm() {
         onClose={handleClose}
       >
         <MenuItem component={Link} to="/dPerson/DpProfile">Profile</MenuItem>
-      <MenuItem component={Link} to="/Calender">Calendar</MenuItem>
         <MenuItem onClick={()=>setIsAuth(false)}>Logout</MenuItem>
+ 
       </Menu>
         </Toolbar>
       </AppBar>
@@ -261,9 +262,7 @@ export default function AddForm() {
         </div>
         <Divider />
         <List style={{backgroundColor: 'rgb(37, 37, 94)', color:'white'}}>{DpListItems}</List>
-        <Divider />
-        <List style={{backgroundColor: 'rgb(37, 37, 94)', color:'red'}}>{Logout}</List>
-        <Divider />
+
       </Drawer>
       </div>
       <main className={classes.content}>
@@ -321,7 +320,7 @@ export default function AddForm() {
                         Employee ID :
                       </Form.Label>
                       <Col sm={10}>
-                        <Form.Control type="text" placeholder="Product ID" 
+                        <Form.Control type="text" placeholder="Employee ID" 
                         onChange={(event)=> {
                           setEmployee_id(event.target.value);
                         }}
@@ -360,7 +359,7 @@ export default function AddForm() {
 
                     
                         <div     align='center' style={styles.button_style}>
-                        <Button  type="submit" size='lg' href= '/dPerson/AddReturnedItem' >View Return Item</Button>
+                        <Button  type="submit" size='lg' href= '/dPerson/ViewProductDeliver' >View Product List</Button>
 
                         <Button  type="submit" size='lg' onClick={addReturnItem}>Add Returned Items</Button>
                          
