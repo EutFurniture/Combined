@@ -258,7 +258,7 @@ export default function ViewCashOnDelivery(){
                     <td>{record.status === "Completed" ? <Alert variant="success">Completed</Alert> : record.status === "Returned" ? <Alert variant="danger">Returned</Alert> : record.status === "Pending" ? <Alert variant="warning">Pending</Alert> : record.status}</td>                    
                     <td align="center">
                       <br/>
-                    <Link style={styles.viewbtn} to={location=> `/CashOnDeliveryInfoRoute/${record.order_id}`}> View </Link>
+                    <Link style={styles.viewbtn} to={location=> `/Sales_CashOnDeliveryInfoRoute/${record.order_id}`}> View </Link>
                     {/* <Link style={styles.updatebtn} to={location=> `/UpdateCashOnDeliveryRoute/${record.order_id}`}> Update </Link> */}
                     </td>
                     

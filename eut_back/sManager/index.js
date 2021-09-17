@@ -729,6 +729,32 @@ app.get("/sales_cashOnDelivery", (req, res) => {
         }
     });
   });
+
+  app.get("/sales_OrderItemDetails",(req,res)=>{
+    order_id=req.params.order_id;
+    db.query("SELECT * FROM orderitem WHERE order_id=?",[req.query.order_id],(err,result)=>{
+        console.log(req.query.order_id);
+        res.send(result);
+    });
+        
+  })
+  
+  app.get('/sales_loadOrdersDashboard',(req,res)=>{
+    db.query('SELECT orders.order_id, orders.total_price, orderitem.quantity, DATE_FORMAT(orders.o_date,"%d-%m-%y") AS o_date,DATE_FORMAT(orders.order_last_date,"%d-%m-%y") AS order_last_date,orders.status,orders.customer_id, orders.order_type FROM orders INNER JOIN orderitem ON orders.order_id = orderitem.order_id GROUP BY orders.order_id ORDER BY orders.order_id  DESC LIMIT 2;', (err, results, fields) => {
+        if(err) throw err;
+        res.send(results);
+      });
+  })
+  
+  app.get("/sales_cashOnDeliveryDashboard", (req, res) => {
+    db.query("SELECT orders.order_id,orders.employee_id,orders.total_price,orders.advance_price,payment.payment_status,payment.payment_method, orders.status FROM orders INNER JOIN payment ON orders.order_id=payment.order_id ORDER BY orders.order_id DESC LIMIT 2", (err, result, fields) => {
+        if (err) {
+            console.log(err);
+        } else{
+            res.send(result);
+        }
+    });
+  });
   
   
    
