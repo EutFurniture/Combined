@@ -295,7 +295,7 @@ if(!isAuth){
       >
         <MenuItem component={Link} to="/dPerson/DpProfile">Profile</MenuItem>
         <MenuItem onClick={()=>setIsAuth(false)}>Logout</MenuItem>
-        <MenuItem component={Link} to="/Calender">Calendar</MenuItem>
+ 
       </Menu>
    
 

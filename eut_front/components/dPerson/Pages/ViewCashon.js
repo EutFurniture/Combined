@@ -245,7 +245,6 @@ fetchData();
         onClose={handleClose}
       >
         <MenuItem component={Link} to="/dPerson/DpProfile">Profile</MenuItem>
-      <MenuItem component={Link} to="/Calender">Calendar</MenuItem>
         <MenuItem onClick={()=>setIsAuth(false)}>Logout</MenuItem>
       </Menu>
 
@@ -296,7 +295,7 @@ fetchData();
         <thead className="tableheading">
           <tr>
              <th scope="col">Order ID</th>
-             <th scope="col">Payment ID</th>
+        
              <th scope="col">Payment Status</th>
              <th scope='col'>Action</th>
           </tr>
@@ -306,7 +305,7 @@ fetchData();
        {user.map(item=>
                 <tr >
                 <td align="center">{item.order_id}</td>
-                <td align="center">{item.payment_id}</td>
+               
                 <td align="center">{item.payment_status}</td>
                 <td align="center">
                 <Link style={styles.updatebtn} to={location=> `/dPerson/UpdateCashOnDeliveryBillRoute/${item.payment_id}`}>Click to Confirm </Link>

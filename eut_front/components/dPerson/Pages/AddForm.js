@@ -242,7 +242,7 @@ export default function AddForm() {
         onClose={handleClose}
       >
         <MenuItem component={Link} to="/dPerson/DpProfile">Profile</MenuItem>
-      <MenuItem component={Link} to="/Calender">Calendar</MenuItem>
+        <MenuItem onClick={()=>setIsAuth(false)}>Logout</MenuItem>
  
       </Menu>
         </Toolbar>

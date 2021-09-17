@@ -226,7 +226,7 @@ export default function DpProfile(userData) {
 
          <MenuItem component={Link} to="/dPerson/DpProfile">Profile</MenuItem>
         <MenuItem onClick={()=>setIsAuth(false)}>Logout</MenuItem>
-        <MenuItem component={Link} to="/Calender">Calendar</MenuItem>
+    
             <MenuIcon />
           </IconButton>
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
@@ -245,7 +245,6 @@ export default function DpProfile(userData) {
       >
         <MenuItem component={Link} to="/dPerson/DpProfile">Profile</MenuItem>
         <MenuItem onClick={()=>setIsAuth(false)}>Logout</MenuItem>
-        <MenuItem component={Link} to="/Calender">Calendar</MenuItem>
       </Menu>
         </Toolbar> 
       </AppBar>
@@ -276,7 +275,7 @@ export default function DpProfile(userData) {
            
           <Grid item xs={10}  >
             <div >
-              <Paper className={classes.paper} style={{backgroundColor: '#BDF5F6', color:'black', fontSize:15}} >
+              <Paper className={classes.paper} style={{backgroundColor: '#FFFFFF', color:'black', fontSize:15}} >
               <div class="d-flex flex-column align-items-center text-center" >
                  <br/>
                  <img src={`/${user.emp_img}`} alt="myprofile"  width="200" height="200" />
