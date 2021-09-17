@@ -259,7 +259,7 @@ export default function AddDelivers() {
         return(
           <div style={{fontSize:'15px'}}>
             You have {paymentmesscount} New Payment Confirmations from Deliver Person! <br></br><br></br>
-            <Button variant="contained" onClick={Notification_page_payment}>View</Button>
+            <Button variant="contained" color="primary" onClick={Notification_page_payment}>View</Button>
           </div>
         )
       }
@@ -281,7 +281,7 @@ export default function AddDelivers() {
           return(
             <div style={{fontSize:'15px'}}>
               You have {returnmesscount} New Return Delivery Confirmations from Deliver Person! <br></br><br></br>
-              <Button variant="contained" onClick={Notification_page_return}>View</Button>
+              <Button variant="contained" color="primary" onClick={Notification_page_return}>View</Button>
             </div>
           )
         }
@@ -301,7 +301,7 @@ export default function AddDelivers() {
           return(
             <div style={{fontSize:'15px'}}>
               You have New {ordermesscount} Delivery Confirmations from Deliver Person! <br></br><br></br>
-              <Button variant="contained" onClick={Notification_page_order}>View</Button>
+              <Button variant="contained" color="primary" onClick={Notification_page_order}>View</Button>
             </div>
           )
         }

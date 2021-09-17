@@ -157,7 +157,7 @@ const dateOnly = (d) => {
                         </div>
 
                         <div>
-                        <Form.Group as={Row} controlId="formGridState">
+                        <Form.Group as={Row} controlId="formGridtoDate">
                         <Form.Label column lg={2}>
                             To Date
                         </Form.Label>
@@ -165,7 +165,9 @@ const dateOnly = (d) => {
                         <Form.Control type = "date" onChange={(event)=> {setTodate(event.target.value);}} />
                         </Col>   
                         </Form.Group> 
-                        </div>                
+                        </div>
+
+                                       
                                        
                         <div>
                         <Button variant="contained" color="primary" onClick={()=>{Delivery()}}>Click to View</Button>

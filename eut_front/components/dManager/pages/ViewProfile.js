@@ -100,7 +100,7 @@ export default function ViewProfile() {
                     <strong> VIEW PROFILE</strong>
               </Typography>
               <br></br>
-              <div style={{display:"flex" , justifyContent:"space-even" , flexWrap:"wrap"}}>
+              <div style={{display:"flex" , justifyContent:"space-between" , flexWrap:"wrap"}}>
                 <div>
                   <img src={`/${Dt.emp_img}`} className={classes.user1} align='center'></img>
                 </div>

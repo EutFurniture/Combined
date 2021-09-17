@@ -74,7 +74,7 @@ function View_Notification_Return() {
                                 </Form.Label>
                                 <Col >
                                 <Form.Label column lg={2} >
-                                {val.NIC}
+                                {val.nic}
                                 </Form.Label>
                                 </Col>
                             </Form.Group><br/>

@@ -3,8 +3,14 @@ import Chart from "react-apexcharts";
 import axios from 'axios';
 import Title from './Title';
 
+
+
+//1-Sep-2021
 const dateOnly = (d) => {
+  // const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
   const date = new Date(d);
+  // const curr = months[date.getMonth()]
+  // console.log(curr)
   const year = date.getFullYear();
   const month = date.getMonth() + 1;
   const day = date.getDate();
