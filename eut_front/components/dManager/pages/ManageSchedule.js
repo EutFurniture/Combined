@@ -31,6 +31,7 @@ import {Button} from '@material-ui/core';
 
 import { mainListItems, Logout, Profile } from './listItems';
 import ViewSchedule from './ViewSchedule';
+import ViewScheduleCalender from './ViewScheduleCalender';
 
 
 function Copyright() {
@@ -394,6 +395,7 @@ export default function ManageSchedule() {
               <Paper className={classes.paper}> 
               
               <ViewSchedule/>
+              {/* <ViewScheduleCalender/> */}
               </Paper>
             </Grid>
 
