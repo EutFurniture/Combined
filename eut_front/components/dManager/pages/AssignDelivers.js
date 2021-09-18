@@ -36,7 +36,7 @@ import {toast} from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
 
-import { mainListItems, Logout,Profile } from './listItems';
+import { mainListItems, Logo } from './listItems';
 import Assign from './Assign';
 
 function Copyright() {
@@ -434,14 +434,14 @@ export default function AssignDelivers() {
             <ChevronLeftIcon />
           </IconButton>
         </div>
+
+        <Divider />
+        <List style={{backgroundColor: 'rgb(37,37,94)', color:'white'}}>{Logo}</List>
+        <Divider />
         <Divider />
         <List style={{backgroundColor: 'rgb(37,37,94)', color:'white'}}>{mainListItems}</List>
         <Divider />
-        <List style={{backgroundColor: 'rgb(37,37,94)', color:'white'}}>{Profile}</List>
-        <Divider />
-        <Divider />
-        <List style={{backgroundColor: 'rgb(37,37,94)', color:'white'}}>{Logout}</List>
-        <Divider />
+
       </Drawer>
       </div>
 

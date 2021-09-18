@@ -442,7 +442,7 @@ export default function DeliveryInfo() {
               <ListGroup style={{ width: '20rem',textAlign: 'left'}}>
                   <ListGroup.Item  active> Order Details</ListGroup.Item>
                   <ListGroup.Item >Order Id : {Dt.order_id} </ListGroup.Item>
-                  <ListGroup.Item > Order Description : {Dt.order_description} </ListGroup.Item>
+                  <ListGroup.Item > Order Type : {Dt.order_type} </ListGroup.Item>
                   <ListGroup.Item >Order Date : {dateOnly(Dt.o_date)}</ListGroup.Item>
                   <ListGroup.Item >Last Date : {dateOnly(Dt.order_last_date)}</ListGroup.Item>
 

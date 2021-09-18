@@ -30,7 +30,7 @@ import Axios from 'axios';
 import {Button} from '@material-ui/core';
 
 
-import { mainListItems, Logout, Profile } from './listItems';
+import { mainListItems, Logo } from './listItems';
 import Box from '@material-ui/core/Box';
 function Copyright() {
   return (
@@ -457,14 +457,14 @@ export default function DeliverInfo() {
             <ChevronLeftIcon />
           </IconButton>
         </div>
+
+        <Divider />
+        <List style={{backgroundColor: 'rgb(37,37,94)', color:'white'}}>{Logo}</List>
+        <Divider />
         <Divider />
         <List style={{backgroundColor: 'rgb(37,37,94)', color:'white'}}>{mainListItems}</List>
         <Divider />
-        <List style={{backgroundColor: 'rgb(37,37,94)', color:'white'}}>{Profile}</List>
-        <Divider />
-        <Divider />
-        <List style={{backgroundColor: 'rgb(37,37,94)', color:'white'}}>{Logout}</List>
-        <Divider />
+        
       </Drawer>
       </div>
      

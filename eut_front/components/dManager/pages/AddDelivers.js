@@ -39,7 +39,7 @@ import { Button } from '@material-ui/core';
 import { Row } from 'react-bootstrap';
 import { Col } from 'react-bootstrap';
 
-import { mainListItems, Logout, Profile } from './listItems';
+import { mainListItems, Logo } from './listItems';
 
 
 
@@ -431,15 +431,14 @@ export default function AddDelivers() {
             <ChevronLeftIcon />
           </IconButton>
         </div>
+
+        <Divider />
+        <List style={{backgroundColor: 'rgb(37,37,94)', color:'white'}}>{Logo}</List>
+        <Divider />
         <Divider />
         <List style={{backgroundColor: 'rgb(37,37,94)', color:'white'}}>{mainListItems}</List>
         <Divider />
-        <List style={{backgroundColor: 'rgb(37,37,94)', color:'white'}}>{Profile}</List>
-        <Divider />
-        <Divider />
-        <Divider />
-        <List style={{backgroundColor: 'rgb(37,37,94)', color:'white'}}>{Logout}</List>
-        <Divider />
+        
       </Drawer>
       </div>
       <main className={classes.content}>

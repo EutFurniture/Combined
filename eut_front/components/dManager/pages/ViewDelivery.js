@@ -52,10 +52,10 @@ searchbar:{
   boxShadow: '0px 0px 12px -5px rgba(0, 0, 0, 0.75)',
 },
 
-input:{
+inputsearch:{
   border:'none',
   fontSize:'18px',
-  paddingLeft:'10px',
+  paddingLeft:'20px',
 },
 
 icon:{
@@ -79,7 +79,7 @@ export default function ViewDelivery(){
     <div>
 
     <div style={styles.searchbar}>
-    <input type="text" onChange={(e)=>{setSearchTerm(e.target.value);}} placeholder="Search" style={styles.input}/>
+    <input type="text" onChange={(e)=>{setSearchTerm(e.target.value);}} placeholder="Search" style={styles.inputsearch}/>
     <SearchIcon  className='searchicon' style={styles.icon}/>
     </div>
     <br></br>
