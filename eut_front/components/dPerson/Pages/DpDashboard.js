@@ -163,6 +163,7 @@ export default function DpDashboard(userData) {
   const { employee_id } = useParams();
   const [totalcashon_income,setTotalcashonIncome]=useState([])
   const [free_count,setFree_Count]=useState([])
+  const [cash_count,setCash_Count]=useState([])
   useEffect(() => {
   const fetchData = async () => {
   const response = await Axios.get('http://localhost:3001/empRecentOrders', {
@@ -196,12 +197,21 @@ export default function DpDashboard(userData) {
          
     })
 	
-    const response4= axios.get("http://localhost:3001/freeCount",{
+    const response4= axios.get("http://localhost:3001/deliveryCount",{
       params:{
         employee_id: userData.userData.id,
       }
     }).then((response)=>{
        setFree_Count(response.data)
+         
+    })
+
+    const response5= axios.get("http://localhost:3001/cashonCount",{
+      params:{
+        employee_id: userData.userData.id,
+      }
+    }).then((response)=>{
+      setCash_Count(response.data)
          
     })
 
@@ -341,17 +351,15 @@ if(!isAuth){
                           </div>
                           
                       </div>
-
                       
                       <div className="cardcollection">
-                           <div className="dpcard1">
-                             <h3>Total Cash On Payments</h3>
-                            {totalcashon_income.map((record)=>{
-                                 return(
-                                  <p style={{fontSize:'25px'}}>Rs.{totalcashon_income.map(record=>record.eincome)}</p>
-                                 )
-                               })}
+
+                      <div className="dpcard4">
+						   <h3>No of available Deliveries </h3>
+                               <p style={{fontSize:'30px'}}>{free_count.map(record=>record.freecount)}</p>
                            </div>
+
+
 
                            <div className="dpcard2">
 							 <h3>No of Returned Items</h3>
@@ -361,14 +369,19 @@ if(!isAuth){
                                  )
                                })}
                            </div>
-						    <div className="dpcard3">
-                            <h3>Free Deliveries</h3>
-                                <h4>over Rs.50 000</h4>
-                           </div>
 
-                           <div className="dpcard4">
-						   <h3>No of Free Deliveries </h3>
-                               <p style={{fontSize:'30px'}}>{free_count.map(record=>record.freecount)}</p>
+                           <div className="dpcard3">
+						   <h3>No of Cash on Deliveries </h3>
+                               <p style={{fontSize:'30px'}}>{cash_count.map(record=>record.cashcount)}</p>
+                           </div>				
+
+                           <div className="dpcard1">
+                             <h3>Cash On Payments </h3>
+                            {totalcashon_income.map((record)=>{
+                                 return(
+                                  <p style={{fontSize:'25px'}}>Rs.{totalcashon_income.map(record=>record.eincome)}</p>
+                                 )
+                               })}
                            </div>
                 </div>
 
@@ -383,12 +396,22 @@ if(!isAuth){
          <h3><b>RECENT COMPLETED ORDERS</b></h3>
          </div>
          <Table striped bordered hover responsive>
+         <thead className="tableheading">
+          <tr>
+             <th scope="col">Product ID</th>
+             <th scope="col">Product Name</th>
+             <th scope='col'>Total price</th>
+          </tr>
+        </thead> 
+
+
        <tbody className="tablebody">
        {user.map(item=>
           <tr >
           <td align="center">{item.product_id}</td>
           <td align="center">{item.product_name}</td>
-          <td align="center">{item.total_price}</td>
+          <td align="center">{item.total_price.toString()
+            .replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",") }</td>
 
           </tr>
          )}

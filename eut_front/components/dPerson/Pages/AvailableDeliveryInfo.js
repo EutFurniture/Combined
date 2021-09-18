@@ -290,17 +290,7 @@ if(!isAuth){
                   </Col>
               </Form.Group><br/>
               
-             
-              <Form.Group as={Row} controlId="formHorizontalName">
-                  <Form.Label column lg={2} >
-                   Order Desription :
-                  </Form.Label>
-                  <Col >
-                  <Form.Label column lg={2} >
-                  {Dt.order_description}
-                  </Form.Label>
-                  </Col>
-              </Form.Group><br/>              
+                          
               <Form.Group as={Row} controlId="formHorizontalOrderdate">
                   <Form.Label column lg={2} >
                    Order Date :
@@ -321,6 +311,30 @@ if(!isAuth){
                   </Form.Label>
                   </Col>
               </Form.Group><br/>
+
+
+              <Form.Group as={Row} controlId="formHorizontalOrderlastdate">
+                  <Form.Label column lg={2} >
+                   payment method :
+                  </Form.Label>
+                  <Col >
+                  <Form.Label column lg={2} >
+                  {Dt.payment_method}
+                  </Form.Label>
+                  </Col>
+              </Form.Group><br/>
+
+              <Form.Group as={Row} controlId="formHorizontalOrderlastdate">
+                  <Form.Label column lg={2} >
+                  Payment Status :
+                  </Form.Label>
+                  <Col >
+                  <Form.Label column lg={2} >
+                  {Dt.payment_status}
+                  </Form.Label>
+                  </Col>
+              </Form.Group><br/>
+
               </div>
               </Paper>
               </div>
