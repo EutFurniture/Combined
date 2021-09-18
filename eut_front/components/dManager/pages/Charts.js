@@ -34,7 +34,10 @@ function Charts() {
 
         
         const total=priceList.map(record=>record.total);
+        
         const date=priceList.map(record=>dateOnly(record.order_last_date));
+        
+        
 
   return (
       <div className="app">

@@ -16,7 +16,7 @@ import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
 import AssignmentIcon from '@material-ui/icons/Assignment';
 import PowerSettingsNewIcon from '@material-ui/icons/PowerSettingsNew';
 //import { Redirect } from "react-router-dom";
-
+import WeekendIcon from '@material-ui/icons/Weekend';
 
 export const mainListItems = (
   <div>
@@ -84,6 +84,17 @@ export const Profile = (
         <EditIcon/>
       </ListItemIcon >
       <ListItemText primary="Edit Profile"/>
+    </ListItem>
+  </div>
+);
+
+export const Logo = (
+  <div>
+    <ListItem >
+      <ListItemIcon style={{color:'white'}}>
+        <WeekendIcon/>
+      </ListItemIcon >
+      <ListItemText primary="EUT FURNITURE"/>
     </ListItem>
   </div>
 );

@@ -33,7 +33,7 @@ import {Button} from '@material-ui/core';
 import Box from '@material-ui/core/Box';
 
           
-import { mainListItems, Logout, Profile } from './listItems';
+import { mainListItems, Logo } from './listItems';
 
 
 function Copyright() {
@@ -420,13 +420,12 @@ export default function DeliveryInfo() {
           </IconButton>
         </div>
         <Divider />
+        <List style={{backgroundColor: 'rgb(37,37,94)', color:'white'}}>{Logo}</List>
+        <Divider />
+        <Divider />
         <List style={{backgroundColor: 'rgb(37,37,94)', color:'white'}}>{mainListItems}</List>
         <Divider />
-        <List style={{backgroundColor: 'rgb(37,37,94)', color:'white'}}>{Profile}</List>
-        <Divider />
-        <Divider />
-        <List style={{backgroundColor: 'rgb(37,37,94)', color:'white'}}>{Logout}</List>
-        <Divider />
+       
       </Drawer>
       </div>
      

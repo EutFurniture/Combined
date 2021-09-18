@@ -29,7 +29,7 @@ import Axios from 'axios';
 import {toast} from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import {Button} from '@material-ui/core';
-import { mainListItems, Logout, Profile } from './listItems';
+import { mainListItems, Logo } from './listItems';
 import Charts from './Charts';
 import Orders from './Orders';
 import ViewTotalCash from './ViewTotalCash';
@@ -377,15 +377,14 @@ export default function Dashboard1() {
             <ChevronLeftIcon />
           </IconButton>
         </div>
+
+        <Divider />
+        <List style={{backgroundColor: 'rgb(37,37,94)', color:'white'}}>{Logo}</List>
+        <Divider />
         <Divider />
         <List style={{backgroundColor: 'rgb(37,37,94)', color:'white'}}>{mainListItems}</List>
         <Divider />
-        <List style={{backgroundColor: 'rgb(37,37,94)', color:'white'}}>{Profile}</List>
-        <Divider />
-        <Divider />
-        <Divider />
-        <List style={{backgroundColor: 'rgb(37,37,94)' , color:'white'}}>{Logout}</List>
-        <Divider />
+        
       </Drawer>
       </div>
       

@@ -43,7 +43,7 @@ class ViewTotalCash extends Component{
                 <div>
                  {this.state.records.map((record)=>{
                    return(
-                       <h2>Rs {record.total - record.advance}.00</h2>
+                       <h2>Rs {record.total}</h2>
                    )
                  })}
                 </div>
