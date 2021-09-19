@@ -147,7 +147,7 @@ const styles = {
     paddingTop: '5px',
     paddingBottom: '5px',
     color: 'white',
-    borderRadius: '20px',
+    borderRadius: '5px',
     align: 'left'
   }
 };
