@@ -23,6 +23,7 @@ import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import {Redirect} from "react-router-dom";
 import { DpListItems, Logout } from './dplistItems';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
+import {Button} from '@material-ui/core';
 import 'bootstrap/dist/css/bootstrap.min.css';
 function Copyright() {
   return (
@@ -313,10 +314,10 @@ export default function AddReturnedItem(userData) {
                
                 <div ><br/>
            
-                <div align = 'right'>
-            <Link  to='/dPerson/AddForm' className="Addbtn"><AddCircleIcon style={{marginTop:'5px'}}/> Add New </Link> <br/>
-            </div>        
-               
+                <div align="right"> 
+<Button variant="contained" color="primary" type="submit"  size='large' href='/dPerson/AddForm'><AddCircleIcon/> Add New</Button>
+    </div>  
+    <br/>
         <Table striped bordered hover responsive>
         <thead className="tableheading">
           <tr>
