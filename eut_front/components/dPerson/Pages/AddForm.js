@@ -1,55 +1,37 @@
-import React from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import Axios from 'axios';
 import clsx from 'clsx';
-import { useState } from 'react';
+import Axios from "axios";
+import axios from "axios";
+import { Link} from "react-router-dom";
+import React, {useState, useEffect} from 'react';
+import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Drawer from '@material-ui/core/Drawer';
-import Box from '@material-ui/core/Box';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import Divider from '@material-ui/core/Divider';
 import List from '@material-ui/core/List';
+import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import Container from '@material-ui/core/Container';
-import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
-import Link from '@material-ui/core/Link';
 import MenuIcon from '@material-ui/icons/Menu';
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import {Redirect} from "react-router-dom";
-import Form from 'react-bootstrap/Form';
+import Grid from '@material-ui/core/Grid';
+import Divider from '@material-ui/core/Divider';
+import {useParams} from 'react-router-dom'
+import { Form,Row,Col } from "react-bootstrap";
+import MenuItem from '@material-ui/core/MenuItem';
+import Menu from '@material-ui/core/Menu';
+import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+import { DpListItems } from './dplistItems';
+
 import { Button } from 'react-bootstrap';
-import { Row } from 'react-bootstrap';
-import { Col } from 'react-bootstrap';
-
-import { DpListItems, Logout } from './dplistItems';
-
-
-function Copyright() {
-  return (
-    <Typography variant="body2" color="textSecondary" align="center">
-      {'Copyright © '}
-      <Link color="inherit" href="https://material-ui.com/">
-        Eut Furniture
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
-
-
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
+   
   },
   toolbar: {
     paddingRight: 24, // keep right padding when drawer closed
@@ -85,6 +67,13 @@ const useStyles = makeStyles((theme) => ({
   title: {
     flexGrow: 1,
   },
+  userimage : {
+    height: 60,
+    width: 60,
+    borderRadius:100,
+    borderColor:'white',
+
+  },
   drawerPaper: {
     position: 'relative',
     whiteSpace: 'nowrap',
@@ -110,44 +99,60 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
     height: '100vh',
     overflow: 'auto',
-    backgroundColor:'#ede7f6'
+    
   },
+ 
   container: {
     paddingTop: theme.spacing(4),
     paddingBottom: theme.spacing(4),
     alignContent:'center',
     align:'center',
-    
   },
   paper: {
-    position:'relative',
-    align:'center',
     padding: theme.spacing(2),
     display: 'flex',
     overflow: 'auto',
     flexDirection: 'column',
-   
   },
   fixedHeight: {
-    height: 240,
+    height: 'auto',
   },
-  
 }));
 
 const styles = {
   side:{
     backgroundColor:'rgb(37, 37, 94)',
   },
+
+  card:{
+    display:"flex",
+    flexDirection :"row",
+    justifyContent:"space-between",
+  },
+
   pack:{
     justifyContent:'flex-around',
     marginLeft:'20px'
   }  ,
-  button_style:{
-    display:'flex',
-    justifyContent:'space-between',
+  updatebtn:{
+    backgroundColor: '#041957',
+    width: '400px',
+    textDecoration: 'none',
+    height: '100px',
+    marginLeft: '400px',
+    border:'white',
+    borderRadius:'5px',
+    fontSize: '25px',
+    paddingLeft: '15px',
+    paddingRight: '15px',
+    paddingTop: '5px',
+    paddingBottom: '5px',
+    color: 'white',
+    borderRadius: '20px',
+    align: 'left'
   }
-  
 };
+
 
 const dateOnly = (d) => {
   const date = new Date(d);
@@ -157,10 +162,71 @@ const dateOnly = (d) => {
   return `${year} - ${month} - ${day}`;
 };
 
+export default function AddForm(userData) {
+  const [user,setUser]=useState([])
+  const { id } = useParams();
+  
+  useEffect(() => {
+    const fetchData = async () => {
+        const response = await Axios.get('http://localhost:3001/dpprofile', {
+            params: {
+              id:userData.userData.id,
+                
+            }
+        });
+       
+        setUser(response.data[0]);
+        
+    };
+    fetchData();
+  }, [id]);
+  const [product_id, setProduct_id]= useState("");
+  const [order_id, setOrder_id]= useState("");
+  const [return_date, setReturn_date]= useState("");
+  const [reason, setReason]= useState("");
 
-export default function AddForm() {
+  console.log(userData.userData.id)
+   const addReturnItem = () => {
+     Axios.get('http://localhost:3001/create', {
+       params:{ 
+      employee_id:userData.userData.id,product_id: product_id,
+      order_id: order_id,
+      return_date: return_date,
+      reason: reason,
+       },
+    
+    
+     })
+     
+     Axios.get('http://localhost:3001/create_return', {
+      
+     params:{
+      order_id: order_id,
+}
+     
+      
+   
+    }).then(() => { 
+      alert("Details added success");
+    });
+    
+
+
+
+
+   };
+   const [deliverList,setdeliverList]=useState([])
+   useEffect(()=>{
+     axios.get('http://localhost:3001/deliverid').then((response)=>{
+       setdeliverList(response.data)
+     })
+   }, [])
+  
+  
+ 
   const classes = useStyles();
   const [open, setOpen] = React.useState(true);
+
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -169,49 +235,22 @@ export default function AddForm() {
   };
 
 
-   const [product_id, setProduct_id]= useState("");
-   const [order_id, setOrder_id]= useState("");
-   const [return_date, setReturn_date]= useState("");
-   const [reason, setReason]= useState("");
-   const [employee_id, setEmployee_id]= useState("");
-  
+  const [anchorEl, setAnchorEl] = React.useState(null);
 
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
 
-    const addReturnItem = () => {
-      Axios.post('http://localhost:3001/create', {
-       
-        product_id: product_id,
-        employee_id: employee_id,
-        order_id: order_id,
-        return_date: return_date,
-        reason: reason,
-     
-      }).then(() => { 
-        alert("Details added success");
-      });
-    };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
-    const [anchorEl, setAnchorEl] = React.useState(null);
-
-    const handleClick = (event) => {
-        setAnchorEl(event.currentTarget);
-    };
-    
-    const handleClose = () => {
-        setAnchorEl(null);
-    };
-    
-
- // const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
   const[isAuth,setIsAuth]=useState(true);
 
   if(!isAuth){
     return <Redirect to="" />
   }
-
-
-
   return (
     <div className={classes.root}>
       <CssBaseline />
@@ -224,6 +263,10 @@ export default function AddForm() {
             onClick={handleDrawerOpen}
             className={clsx(classes.menuButton, open && classes.menuButtonHidden)}
           >
+
+         <MenuItem component={Link} to="/dPerson/DpProfile">Profile</MenuItem>
+        <MenuItem onClick={()=>setIsAuth(false)}>Logout</MenuItem>
+    
             <MenuIcon />
           </IconButton>
           <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
@@ -233,7 +276,6 @@ export default function AddForm() {
            <AccountCircleIcon   onClick={handleClick}/>
   
           </IconButton>
-         
           <Menu
         id="simple-menu"
         anchorEl={anchorEl}
@@ -243,9 +285,8 @@ export default function AddForm() {
       >
         <MenuItem component={Link} to="/dPerson/DpProfile">Profile</MenuItem>
         <MenuItem onClick={()=>setIsAuth(false)}>Logout</MenuItem>
- 
       </Menu>
-        </Toolbar>
+        </Toolbar> 
       </AppBar>
       <div style={styles.side}>
       <Drawer
@@ -261,33 +302,32 @@ export default function AddForm() {
           </IconButton>
         </div>
         <Divider />
-        <List style={{backgroundColor: 'rgb(37, 37, 94)', color:'white'}}>{DpListItems}</List>
+        <List style={{backgroundColor: 'rgb(37,37,94)', color:'white'}}>{DpListItems}</List>
 
       </Drawer>
       </div>
-      <main className={classes.content}>
+     
+      <main className={classes.content}  >
         <div className={classes.appBarSpacer} />
-        <Container maxWidth="lg" className={classes.container}>
-          <Grid container spacing={3}>
-        
-            
-            
-
-            {/* Recent Orders */}
-            <Grid item xs={10} style={styles.pack} >
-            
-  
+        <Container maxWidth="lg" className={classes.container}  style={styles.pack} >
+          <Grid container spacing={3} >
+                  
+           
+          <Grid item xs={10}  >
             <div >
-              <Paper className={classes.paper}>
-              <Typography component="h1" variant="h6" color="inherit"  width="100%" noWrap className={classes.title}>
-              <strong>ADD RETURNED ITEM DETAILS</strong>
-            </Typography><br/>
+              <Paper className={classes.paper} style={{backgroundColor: '#FFFFFF', color:'black', fontSize:15}} >
 
-                 <Form >
+                
+              <br></br>
+              <div>
+
+
+
+              <Form >
                     <div className = "info">
   
 
-
+             
                     <Form.Group as={Row} controlId="formHorizontalOrder_id">
                       <Form.Label column lg={2}>
                         Order ID :
@@ -315,18 +355,6 @@ export default function AddForm() {
                       </Col>
                     </Form.Group><br/>
 
-                    <Form.Group as={Row} controlId="formHorizontalProduct_id">
-                      <Form.Label column lg={2}>
-                        Employee ID :
-                      </Form.Label>
-                      <Col sm={10}>
-                        <Form.Control type="text" placeholder="Employee ID" 
-                        onChange={(event)=> {
-                          setEmployee_id(event.target.value);
-                        }}
-                        />
-                      </Col>
-                    </Form.Group><br/>
 
                     <Form.Group as={Row} controlId="formHorizontalReturn_date">
                       <Form.Label column lg={2}>
@@ -353,31 +381,38 @@ export default function AddForm() {
                       </Col>
                     </Form.Group><br/>
 
+             
+       
                           </div>
   
                   
 
                     
-                        <div     align='center' style={styles.button_style}>
-                        <Button  type="submit" size='lg' href= '/dPerson/ViewProductDeliver' >View Product List</Button>
-
-                        <Button  type="submit" size='lg' onClick={addReturnItem}>Add Returned Items</Button>
+                        <div     align='left' >
                          
+                          <Button  type="submit" size='lg' href= '/dPerson/ViewProductDeliver' >View Product List</Button>
+                      
+                        <div     align='right' >
+      
+                        <Button  type="submit" size='lg'  onClick={addReturnItem}>Add Returned Items</Button>
+                        </div>
                      </div>
                 </Form>
-            
+
+    
+      
+              </div>
+             
               </Paper>
+
               </div>
             </Grid>
- 
+
           </Grid>
           
-          <Box pt={4}>
-            <Copyright />
-          </Box>
+          
         </Container>
       </main>
     </div>
   );
 }
-

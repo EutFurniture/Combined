@@ -271,9 +271,7 @@ const dateOnly = (d) => {
               <Typography component="h1" variant="h6" color="inherit"  width="100%" noWrap className={classes.title}>
               <strong>PRODUCTS LIST </strong>
             </Typography><br/>
-            <div align = 'right'>
-            <Link  to='/dPerson/AddForm' className="Addbtn"><AddCircleIcon style={{marginTop:'5px'}}/> Add New </Link> <br/>
-            </div>    
+               
 
           <Table striped bordered hover responsive>
         <thead className="tableheading">
@@ -289,7 +287,7 @@ const dateOnly = (d) => {
                 <tr >
                 <td align="center">{item.product_id}</td>
                 <td align="center">{item.product_name}</td>
-                <td align="center"><img src={item.product_img} className='image'/></td>
+                <td align="center"><img src={`/${item.product_img}`} className='image'/></td>
                 
 </tr>
  )}
