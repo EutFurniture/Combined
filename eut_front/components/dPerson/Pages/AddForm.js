@@ -23,15 +23,7 @@ import { Form,Row,Col } from "react-bootstrap";
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
-<<<<<<< HEAD:client/components/dPerson/Pages/AddForm.js
-<<<<<<< HEAD:client/components/dPerson/Pages/AddForm.js
 import { DpListItems, Logo } from './dplistItems';
-=======
-import { DpListItems } from './dplistItems';
->>>>>>> 508813daf1bd5269df379e79ba16c3cf8c9a28ad:eut_front/components/dPerson/Pages/AddForm.js
-=======
-import { DpListItems } from './dplistItems';
->>>>>>> 508813daf1bd5269df379e79ba16c3cf8c9a28ad:eut_front/components/dPerson/Pages/AddForm.js
 
 import { Button } from 'react-bootstrap';
 const drawerWidth = 240;
@@ -173,8 +165,6 @@ const dateOnly = (d) => {
 export default function AddForm(userData) {
   const [user,setUser]=useState([])
   const { id } = useParams();
-<<<<<<< HEAD:client/components/dPerson/Pages/AddForm.js
-<<<<<<< HEAD:client/components/dPerson/Pages/AddForm.js
   const [employee,setEmployee]=useState([])
   useEffect(() => {
    axios.get("http://localhost:3001/employee", {
@@ -188,12 +178,6 @@ export default function AddForm(userData) {
    });
 
 }, [])
-=======
-  
->>>>>>> 508813daf1bd5269df379e79ba16c3cf8c9a28ad:eut_front/components/dPerson/Pages/AddForm.js
-=======
-  
->>>>>>> 508813daf1bd5269df379e79ba16c3cf8c9a28ad:eut_front/components/dPerson/Pages/AddForm.js
   useEffect(() => {
     const fetchData = async () => {
         const response = await Axios.get('http://localhost:3001/dpprofile', {
@@ -238,24 +222,10 @@ export default function AddForm(userData) {
       alert("Details added success");
     });
     
-<<<<<<< HEAD:client/components/dPerson/Pages/AddForm.js
-<<<<<<< HEAD:client/components/dPerson/Pages/AddForm.js
 
 
 
 
-=======
-
-
-
-
->>>>>>> 508813daf1bd5269df379e79ba16c3cf8c9a28ad:eut_front/components/dPerson/Pages/AddForm.js
-=======
-
-
-
-
->>>>>>> 508813daf1bd5269df379e79ba16c3cf8c9a28ad:eut_front/components/dPerson/Pages/AddForm.js
    };
    const [deliverList,setdeliverList]=useState([])
    useEffect(()=>{
@@ -344,15 +314,9 @@ export default function AddForm(userData) {
           </IconButton>
         </div>
         <Divider />
-<<<<<<< HEAD:client/components/dPerson/Pages/AddForm.js
-<<<<<<< HEAD:client/components/dPerson/Pages/AddForm.js
         <List style={{backgroundColor: 'rgb(37,37,94)', color:'white'}}>{Logo}</List> 
         <Divider />
         <Divider />
-=======
->>>>>>> 508813daf1bd5269df379e79ba16c3cf8c9a28ad:eut_front/components/dPerson/Pages/AddForm.js
-=======
->>>>>>> 508813daf1bd5269df379e79ba16c3cf8c9a28ad:eut_front/components/dPerson/Pages/AddForm.js
         <List style={{backgroundColor: 'rgb(37,37,94)', color:'white'}}>{DpListItems}</List>
 
       </Drawer>
@@ -371,15 +335,9 @@ export default function AddForm(userData) {
                 
               <br></br>
               <div>
-<<<<<<< HEAD:client/components/dPerson/Pages/AddForm.js
 
 
 
-=======
-
-
-
->>>>>>> 508813daf1bd5269df379e79ba16c3cf8c9a28ad:eut_front/components/dPerson/Pages/AddForm.js
               <Form >
                     <div className = "info">
   

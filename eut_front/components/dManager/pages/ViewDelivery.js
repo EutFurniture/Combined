@@ -56,13 +56,7 @@ inputsearch:{
   border:'none',
   fontSize:'18px',
   paddingLeft:'20px',
-<<<<<<< HEAD:client/components/dManager/pages/ViewDelivery.js
-<<<<<<< HEAD:client/components/dManager/pages/ViewDelivery.js
   width:'900px'
-=======
->>>>>>> 508813daf1bd5269df379e79ba16c3cf8c9a28ad:eut_front/components/dManager/pages/ViewDelivery.js
-=======
->>>>>>> 508813daf1bd5269df379e79ba16c3cf8c9a28ad:eut_front/components/dManager/pages/ViewDelivery.js
 },
 
 icon:{
@@ -86,15 +80,7 @@ export default function ViewDelivery(){
     <div>
 
     <div style={styles.searchbar}>
-<<<<<<< HEAD:client/components/dManager/pages/ViewDelivery.js
-<<<<<<< HEAD:client/components/dManager/pages/ViewDelivery.js
     <input type="text" onChange={(e)=>{setSearchTerm(e.target.value);}} placeholder="Search" style={styles.inputsearch} />
-=======
-    <input type="text" onChange={(e)=>{setSearchTerm(e.target.value);}} placeholder="Search" style={styles.inputsearch}/>
->>>>>>> 508813daf1bd5269df379e79ba16c3cf8c9a28ad:eut_front/components/dManager/pages/ViewDelivery.js
-=======
-    <input type="text" onChange={(e)=>{setSearchTerm(e.target.value);}} placeholder="Search" style={styles.inputsearch}/>
->>>>>>> 508813daf1bd5269df379e79ba16c3cf8c9a28ad:eut_front/components/dManager/pages/ViewDelivery.js
     <SearchIcon  className='searchicon' style={styles.icon}/>
     </div>
     <br></br>

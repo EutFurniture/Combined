@@ -367,10 +367,6 @@ export default function AvailableDeliveryInfo() {
                   <Col >
                   <Form.Label column lg={2} >
                   {dateOnly(Dt.order_last_date)}
-<<<<<<< HEAD:client/components/dPerson/Pages/AvailableDeliveryInfo.js
-<<<<<<< HEAD:client/components/dPerson/Pages/AvailableDeliveryInfo.js
-=======
->>>>>>> 508813daf1bd5269df379e79ba16c3cf8c9a28ad:eut_front/components/dPerson/Pages/AvailableDeliveryInfo.js
                   </Form.Label>
                   </Col>
               </Form.Group><br/>
@@ -383,10 +379,6 @@ export default function AvailableDeliveryInfo() {
                   <Col >
                   <Form.Label column lg={2} >
                   {Dt.payment_method}
-<<<<<<< HEAD:client/components/dPerson/Pages/AvailableDeliveryInfo.js
-=======
->>>>>>> 508813daf1bd5269df379e79ba16c3cf8c9a28ad:eut_front/components/dPerson/Pages/AvailableDeliveryInfo.js
-=======
                   </Form.Label>
                   </Col>
               </Form.Group><br/>
@@ -398,46 +390,10 @@ export default function AvailableDeliveryInfo() {
                   <Col >
                   <Form.Label column lg={2} >
                   {Dt.payment_status}
->>>>>>> 508813daf1bd5269df379e79ba16c3cf8c9a28ad:eut_front/components/dPerson/Pages/AvailableDeliveryInfo.js
                   </Form.Label>
                   </Col>
               </Form.Group><br/>
 
-<<<<<<< HEAD:client/components/dPerson/Pages/AvailableDeliveryInfo.js
-<<<<<<< HEAD:client/components/dPerson/Pages/AvailableDeliveryInfo.js
-              <Form.Group as={Row} controlId="formHorizontalOrderlastdate">
-                  <Form.Label column lg={2} >
-                  Payment Status :
-                  </Form.Label>
-                  <Col >
-                  <Form.Label column lg={2} >
-=======
-
-              <Form.Group as={Row} controlId="formHorizontalOrderlastdate">
-                  <Form.Label column lg={2} >
-                   payment method :
-                  </Form.Label>
-                  <Col >
-                  <Form.Label column lg={2} >
-                  {Dt.payment_method}
-                  </Form.Label>
-                  </Col>
-              </Form.Group><br/>
-
-              <Form.Group as={Row} controlId="formHorizontalOrderlastdate">
-                  <Form.Label column lg={2} >
-                  Payment Status :
-                  </Form.Label>
-                  <Col >
-                  <Form.Label column lg={2} >
->>>>>>> 508813daf1bd5269df379e79ba16c3cf8c9a28ad:eut_front/components/dPerson/Pages/AvailableDeliveryInfo.js
-                  {Dt.payment_status}
-                  </Form.Label>
-                  </Col>
-              </Form.Group><br/>
-
-=======
->>>>>>> 508813daf1bd5269df379e79ba16c3cf8c9a28ad:eut_front/components/dPerson/Pages/AvailableDeliveryInfo.js
               </div>
               </Paper> 
           </div>

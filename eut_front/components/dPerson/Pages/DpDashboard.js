@@ -165,8 +165,6 @@ export default function DpDashboard(userData) {
   const [totalcashon_income,setTotalcashonIncome]=useState([])
   const [free_count,setFree_Count]=useState([])
   const [cash_count,setCash_Count]=useState([])
-<<<<<<< HEAD:client/components/dPerson/Pages/DpDashboard.js
-<<<<<<< HEAD:client/components/dPerson/Pages/DpDashboard.js
   
   
   useEffect(() => {
@@ -183,10 +181,6 @@ export default function DpDashboard(userData) {
 }, [])
   
   
-=======
->>>>>>> 508813daf1bd5269df379e79ba16c3cf8c9a28ad:eut_front/components/dPerson/Pages/DpDashboard.js
-=======
->>>>>>> 508813daf1bd5269df379e79ba16c3cf8c9a28ad:eut_front/components/dPerson/Pages/DpDashboard.js
   useEffect(() => {
   const fetchData = async () => {
   const response = await Axios.get('http://localhost:3001/empRecentOrders', {
@@ -437,15 +431,7 @@ if(!isAuth){
           <tr >
           <td align="center">{item.product_id}</td>
           <td align="center">{item.product_name}</td>
-<<<<<<< HEAD:client/components/dPerson/Pages/DpDashboard.js
-<<<<<<< HEAD:client/components/dPerson/Pages/DpDashboard.js
           <td align="center">Rs. {item.total_price.toString()
-=======
-          <td align="center">{item.total_price.toString()
->>>>>>> 508813daf1bd5269df379e79ba16c3cf8c9a28ad:eut_front/components/dPerson/Pages/DpDashboard.js
-=======
-          <td align="center">{item.total_price.toString()
->>>>>>> 508813daf1bd5269df379e79ba16c3cf8c9a28ad:eut_front/components/dPerson/Pages/DpDashboard.js
             .replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",") }</td>
 
           </tr>

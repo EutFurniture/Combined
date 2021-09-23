@@ -31,14 +31,7 @@ import {Button} from '@material-ui/core';
 import {toast} from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
-<<<<<<< HEAD:client/components/dManager/pages/DeliveryInfo.js
 import { mainListItems, Logo } from './listItems';
-=======
-import { mainListItems, Logout, Profile } from './listItems';
-<<<<<<< HEAD:client/components/dManager/pages/DeliveryInfo.js
->>>>>>> 508813daf1bd5269df379e79ba16c3cf8c9a28ad:eut_front/components/dManager/pages/DeliveryInfo.js
-=======
->>>>>>> 508813daf1bd5269df379e79ba16c3cf8c9a28ad:eut_front/components/dManager/pages/DeliveryInfo.js
 import Box from '@material-ui/core/Box';
 
 

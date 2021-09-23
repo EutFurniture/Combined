@@ -404,28 +404,12 @@ export default function Dashboard1() {
         </div>
 
         <Divider />
-<<<<<<< HEAD:client/components/dManager/pages/Dashboard.js
-<<<<<<< HEAD:client/components/dManager/pages/Dashboard.js
         <List style={{backgroundColor: 'rgb(37,37,94)', color:'white'}}>{Logo}</List> 
-=======
-        <List style={{backgroundColor: 'rgb(37,37,94)', color:'white'}}>{Logo}</List>
->>>>>>> 508813daf1bd5269df379e79ba16c3cf8c9a28ad:eut_front/components/dManager/pages/Dashboard.js
-=======
-        <List style={{backgroundColor: 'rgb(37,37,94)', color:'white'}}>{Logo}</List>
->>>>>>> 508813daf1bd5269df379e79ba16c3cf8c9a28ad:eut_front/components/dManager/pages/Dashboard.js
         <Divider />
         <Divider />
         <List style={{backgroundColor: 'rgb(37,37,94)', color:'white'}}>{mainListItems}</List>
         <Divider />
-<<<<<<< HEAD:client/components/dManager/pages/Dashboard.js
-<<<<<<< HEAD:client/components/dManager/pages/Dashboard.js
 
-=======
-        
->>>>>>> 508813daf1bd5269df379e79ba16c3cf8c9a28ad:eut_front/components/dManager/pages/Dashboard.js
-=======
-        
->>>>>>> 508813daf1bd5269df379e79ba16c3cf8c9a28ad:eut_front/components/dManager/pages/Dashboard.js
       </Drawer>
       </div>
 

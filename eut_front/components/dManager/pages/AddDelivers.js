@@ -40,13 +40,6 @@ import { Row } from 'react-bootstrap';
 import { Col } from 'react-bootstrap';
 
 import { mainListItems, Logo } from './listItems';
-<<<<<<< HEAD:client/components/dManager/pages/AddDelivers.js
-<<<<<<< HEAD:client/components/dManager/pages/AddDelivers.js
-=======
-=======
->>>>>>> 508813daf1bd5269df379e79ba16c3cf8c9a28ad:eut_front/components/dManager/pages/AddDelivers.js
-
->>>>>>> 508813daf1bd5269df379e79ba16c3cf8c9a28ad:eut_front/components/dManager/pages/AddDelivers.js
 
 import { useParams } from 'react-router-dom';
 

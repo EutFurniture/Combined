@@ -32,15 +32,7 @@ import Axios from 'axios';
 import {Button} from '@material-ui/core';
 import Box from '@material-ui/core/Box';
 
-<<<<<<< HEAD:client/components/dManager/pages/CashOnDeliveryInfo.js
-<<<<<<< HEAD:client/components/dManager/pages/CashOnDeliveryInfo.js
         
-=======
-          
->>>>>>> 508813daf1bd5269df379e79ba16c3cf8c9a28ad:eut_front/components/dManager/pages/CashOnDeliveryInfo.js
-=======
-          
->>>>>>> 508813daf1bd5269df379e79ba16c3cf8c9a28ad:eut_front/components/dManager/pages/CashOnDeliveryInfo.js
 import { mainListItems, Logo } from './listItems';
 
 
